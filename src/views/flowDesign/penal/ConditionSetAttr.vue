@@ -5,6 +5,9 @@ import { StartNode } from "../nodes/Start/index";
 import { Field } from "~/components/Render/interface";
 import { FormProperty } from "~/views/flowDesign/index";
 import { computed, inject, Ref, ref, watchEffect, reactive } from "vue";
+import { Delete, CirclePlus, CircleClose } from "@element-plus/icons-vue";
+
+import EventGroupFilter from "~/components/EventGroup/index.vue";
 
 const labelPosition = ref("single");
 const sizeForm = reactive({
@@ -24,7 +27,7 @@ const sizeForm = reactive({
   weekday: "",
   monthday: "",
 });
-
+const planB = ref(false)
 const daysInMonth = computed(() => {
   const days = [];
   for (let i = 1; i <= 31; i++) {
@@ -42,9 +45,11 @@ const $emits = defineEmits<{
   (e: "update:node", modelValue: StartNode): void;
 }>();
 const { node } = useVModels($props, $emits);
+console.log(node.value, "StartNode");
 const { fields } = inject<{
   fields: Ref<Field[]>;
 }>("nodeHooks")!;
+
 // 全部可写
 const allWriteable = computed({
   get() {
@@ -155,7 +160,7 @@ const changeRequired = (row: FormProperty) => {
 // 在子组件中定义 submitEvent 方法
 const submitEvent = () => {
   // 在这里写入您的提交逻辑
-  console.log("执行了提交逻辑");
+  console.log(node.value,"执行了提交逻辑");
 };
 
 // 暴露 submitEvent 方法给父组件使用
@@ -182,6 +187,13 @@ watchEffect(() => {
     }
   });
 });
+
+/**
+ * 添加条件条件组b
+ */
+const addGroup = () => {
+  planB.value=!planB.value
+};
 </script>
 
 <template>
@@ -284,8 +296,31 @@ watchEffect(() => {
 
         <el-form-item label="触发事件A：">
           <div class="pannel">
-            <span>添加事件</span>
-            <span>添加事件组b</span>
+
+            <EventGroupFilter v-model="node.conditions" :filter-fields="fields" />
+            <div class="underright">
+
+              <el-button @click="addGroup" v-show="!planB" :icon="CirclePlus" link type="primary" class="filter-filter-item__add">
+                添加事件组b
+              </el-button>
+            </div>
+
+
+          </div>
+        </el-form-item>
+
+        <el-form-item label="触发事件B：" v-show="planB">
+          <div class="pannel">
+
+            <EventGroupFilter v-model="node.conditions" :filter-fields="fields" />
+            <div class="underright">
+
+              <el-button @click="addGroup"  link type="primary" class="filter-filter-item__add">
+               删除
+              </el-button>
+            </div>
+
+            
           </div>
         </el-form-item>
       </div>
@@ -305,5 +340,13 @@ watchEffect(() => {
   min-height: 200px;
   padding: 18px 15px;
   background-color: #f5f8fc;
+}
+.underright {
+  width: 100%;
+  height: 12px;
+}
+.filter-filter-item__add {
+  position: absolute;
+  right: 12px;
 }
 </style>

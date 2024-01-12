@@ -10,7 +10,7 @@ import {
   nextTick,
   ref,
   watchEffect,
-  defineExpose
+  defineExpose,
 } from "vue";
 
 export interface StartContentProps {
@@ -24,6 +24,26 @@ export interface NodeProps {
   close?: boolean;
   arrow?: boolean;
   errorInfo?: ErrorInfo;
+}
+/**
+ * 筛选规则
+ */
+ export interface FilterRules {
+  logicalOperator: "or" | "and";
+  conditions: Condition[];
+  groups: FilterRules[];
+}
+
+/**
+ * 字段筛选结果
+ */
+export interface Condition {
+  // 筛选字段
+  field: string | null;
+  // 条件运算符
+  operator: string;
+  // 筛选值
+  value: any | null;
 }
 const $props = withDefaults(defineProps<NodeProps>(), {
   readOnly: false,
@@ -57,17 +77,23 @@ const onOpenPenal = (v: number) => {
     type: "conditionSet",
     name: "流程类型设置",
     formProperties: [],
+    def: false,
+    conditions: {
+      logicalOperator: "and",
+      conditions: [],
+      groups: [],
+    } as FilterRules,
   } as unknown as StartNode);
-  if (v==2) {
+  if (v == 2) {
     process = ref<FlowNode>({
-    id: "root2",
-    pid: null,
-    type: "customers",
-    name: "受众客户设置",
-    formProperties: [],
-  } as unknown as StartNode);
+      id: "root2",
+      pid: null,
+      type: "customers",
+      name: "受众客户设置",
+      formProperties: [],
+    } as unknown as StartNode);
   }
-  console.log(`output->node.value`, node.value,process.value, v);
+  console.log(`output->node.value`, node.value, process.value, v);
 
   openPenal(process.value);
 };

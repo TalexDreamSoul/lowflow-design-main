@@ -1,147 +1,115 @@
 <script setup lang="ts" name="ConditionFilter">
-import {FilterRules} from "~/components/Condition/index";
-import {Field} from "~/components/Render/interface";
-import {useVModel} from "@vueuse/core";
-import {Delete, CirclePlus, CircleClose} from "@element-plus/icons-vue";
-import Trigger from './Trigger.vue'
-import Operator from './Operator.vue'
-import Render from '~/components/Render/index'
+import { FilterRules } from "./index";
+import { Field } from "~/components/Render/interface";
+import { useVModel } from "@vueuse/core";
+import { Delete, CirclePlus, CircleClose } from "@element-plus/icons-vue";
+import Trigger from "./Trigger.vue";
+import Operator from "./Operator.vue";
+import Render from "~/components/Render/index";
 
 const $props = defineProps<{
-  filterFields: Field[],
-  modelValue: FilterRules
-}>()
+  filterFields: Field[];
+  modelValue: FilterRules;
+}>();
 const $emits = defineEmits<{
-  (e: 'update:modelValue', modelValue: FilterRules): void
-  (e: 'addCondition', index: number): void
-  (e: 'delCondition', index: number): void
-  (e: 'delGroup'): void
-}>()
-const filterRules = useVModel($props, 'modelValue', $emits)
+  (e: "update:modelValue", modelValue: FilterRules): void;
+  (e: "addCondition", index: number): void;
+  (e: "delCondition", index: number): void;
+  (e: "delGroup"): void;
+}>();
+const filterRules = useVModel($props, "modelValue", $emits);
 /**
  * 添加条件
  */
 const addRule = () => {
-  filterRules.value.conditions.push(
-      {
-        field: null,
-        operator: 'equal',
-        value: null
-      }
-  )
-}
+  filterRules.value.conditions.push({
+    field: null,
+    operator: "equal",
+    value: null,
+  });
+};
 /**
  * 删除条件
  * @param index
  */
 const handleDel = (index: number) => {
-  filterRules.value.conditions.splice(index, 1)
+  filterRules.value.conditions.splice(index, 1);
   if (filterRules.value.conditions.length <= 0) {
-    $emits('delGroup')
+    $emits("delGroup");
   }
-  $emits('delCondition', index)
-}
+  $emits("delCondition", index);
+};
 /**
  * 条件条件组
  */
 const addGroup = () => {
   filterRules.value.groups.push({
-    logicalOperator: 'and',
-    conditions: [{
-      field: null,
-      operator: '',
-      value: null
-    }],
-    groups: []
-  })
-}
+    logicalOperator: "and",
+    conditions: [
+      {
+        field: null,
+        operator: "",
+        value: null,
+      },
+    ],
+    groups: [],
+  });
+};
 /**
  * 删除条件组
  * @param index
  */
 const delGroup = (index: number) => {
-  filterRules.value.groups.splice(index, 1)
-}
+  filterRules.value.groups.splice(index, 1);
+};
 </script>
 
 <template>
   <div class="filter-container">
     <div class="logical-operator">
       <div class="logical-operator__line"></div>
-      <el-switch
-          v-model="filterRules.logicalOperator"
-          inline-prompt
-          style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A"
-          active-value="and"
-          inactive-value="or"
-          active-text="且"
-          inactive-text="或"
-      />
+      <el-switch v-model="filterRules.logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" />
     </div>
     <div class="filter-option-content">
       <el-form :label-width="0" :inline="true" :model="filterRules">
-        <el-row v-for="(item, index) in filterRules.conditions" :key="`${item.field}-${index}`" :gutter="5"
-                class="filter-item-rule">
+        <el-row v-for="(item, index) in filterRules.conditions" :key="`${item.field}-${index}`" :gutter="5" class="filter-item-rule">
           <el-col :xs="24" :sm="7">
             <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%;">
-              <trigger
-                  ref="triggerRef"
-                  :options="$props.filterFields.filter(e=>e.value!==undefined)"
-                  :filter-rules="filterRules"
-                  v-model="item.field"
-                  @update:model-value="item.value = null"
-              />
+              <trigger ref="triggerRef" :options="$props.filterFields.filter(e=>e.value!==undefined)" :filter-rules="filterRules" v-model="item.field" @update:model-value="item.value = null" />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="5" v-if="item.field">
             <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%;">
-              <operator
-                  ref="operatorRef"
-                  v-model="item.operator"
-              />
+              <operator ref="operatorRef" v-model="item.operator" />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="10" v-if="item.field">
             <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%;">
-              <Render
-                  :field="$props.filterFields.find(e=>e.id===item.field)"
-                  v-model="item.value"
-              />
+              <Render :field="$props.filterFields.find(e=>e.id===item.field)" v-model="item.value" />
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="2" style="display: flex;align-items: center;flex-direction: row-reverse;">
-            <el-button
-                plain circle
-                type="danger"
-                :icon="Delete"
-                @click="handleDel(index)"
-            />
+            <el-button plain circle type="danger" :icon="Delete" @click="handleDel(index)" />
           </el-col>
         </el-row>
-        <ConditionFilter
-            v-for="(item,index) in filterRules.groups"
-            :key="index"
-            @delGroup="delGroup(index)"
-            v-model="filterRules.groups[index]"
-            :filterFields="filterFields"
-        >
+        <ConditionFilter v-for="(item,index) in filterRules.groups" :key="index" @delGroup="delGroup(index)" v-model="filterRules.groups[index]" :filterFields="filterFields">
           <el-button @click="delGroup(index)" :icon="CircleClose" class="filter-filter-item__add">
             删除条件组
           </el-button>
         </ConditionFilter>
-        <div v-if="filterRules.groups.length===0 && filterRules.conditions.length===0"
-             class="filter-item-rule"/>
+        <div v-if="filterRules.groups.length===0 && filterRules.conditions.length===0" class="filter-item-rule" />
       </el-form>
       <div class="filter-item-rule">
         <el-button @click="addRule" :icon="CirclePlus" class="filter-filter-item__add">
-          添加条件
+          添加事件
         </el-button>
         <el-button @click="addGroup" :icon="CirclePlus" class="filter-filter-item__add">
-          添加条件组
+          添加事件组
         </el-button>
-        <slot/>
+        <slot />
       </div>
     </div>
+
   </div>
 </template>
 
@@ -152,7 +120,7 @@ const delGroup = (index: number) => {
 }
 
 .filter-container {
-  background-color: var(--el-fill-color-blank);
+  background-color: #f5f8fc;
   border-radius: 3px;
   display: flex;
 

@@ -14,12 +14,15 @@ const $emits = defineEmits<{
   (e: 'update:node', modelValue: ConditionNode): void
 }>()
 const {node} = useVModels($props, $emits)
+console.log(node.value,"ConditionNode")
+
 const {fields} = inject<{
   fields: Ref<Field[]>
 }>('nodeHooks')!
 </script>
 
 <template>
+  
   <ConditionFilter v-model="node.conditions" :filter-fields="fields"/>
 </template>
 

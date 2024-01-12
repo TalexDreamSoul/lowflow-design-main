@@ -3,16 +3,31 @@ import NodeTree from "../index.vue";
 import AddBut from "../Add/index.vue";
 import { BranchNode } from "./index";
 import { FlowNode } from "../Node/index";
-import { inject } from "vue";
+import { inject, ref } from "vue";
+import { StartNode } from "../Start";
 
 export interface BranchProps {
   node: BranchNode;
 }
 
 withDefaults(defineProps<BranchProps>(), {});
-const { addNode } = inject<{
+const { addNode, openPenal } = inject<{
   addNode: (type: string, node: FlowNode) => void;
+  openPenal: (node: FlowNode) => void;
 }>("nodeHooks")!;
+
+const onOpenPenal = () => {
+  console.log(`output->node.value111`);
+  let process = ref<FlowNode>({
+    id: "root2",
+    pid: null,
+    type: "customers",
+    name: "受众客户设置",
+    formProperties: [],
+  } as unknown as StartNode);
+  console.log(`output->node.value`, process.value);
+  openPenal(process.value);
+};
 </script>
 
 <template>
@@ -35,7 +50,7 @@ const { addNode } = inject<{
     </div>
   </div>
   <!--添加节点-->
-  <add-but @add-node="(type:string)=>addNode(type,node)" class="branch-but" />
+  <add-but @add-node="(type:string)=>addNode(type,node)"  @open-Penal="onOpenPenal()"  class="branch-but" />
 </template>
 
 <style scoped lang="scss">

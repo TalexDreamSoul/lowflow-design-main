@@ -141,6 +141,14 @@ onUnmounted(() => {
     </div>
     <!--属性面板-->
     <NodePenal ref="nodePenalRef" />
+
+    <div class="zoombottom">
+      <el-button :icon="Plus" @click="zoom += 10" :disabled="zoom >= 170" circle></el-button>
+      <span>{{ zoom }}%</span>
+      <el-button :icon="Minus" @click="zoom -= 10" circle :disabled="zoom <= 50"></el-button>
+      <el-button @click="validate">校验</el-button>
+      <el-button @click="converterBpmn" type="primary" :icon="Download">转bpmn</el-button>
+    </div>
   </div>
 
 </template>
@@ -168,6 +176,7 @@ onUnmounted(() => {
       justify-content: space-between;
       width: 100%;
       font-size: 16px;
+      height: 50px;
     }
     span {
       margin: 0 10px;
@@ -179,9 +188,23 @@ onUnmounted(() => {
       text-align: center;
       color: #ccc;
       cursor: pointer;
+      font-size: 24px;
+      transform: rotate(90deg);
+      height: 32px;
+      width: 32px;
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
     }
   }
-
+  .zoombottom {
+    padding: 8px 30px 8px 20px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    width: 300px;
+    right: 5px;
+  }
   .dark {
     position: fixed;
     z-index: 999;
@@ -197,6 +220,8 @@ onUnmounted(() => {
     align-items: center;
     flex-direction: column;
     padding-top: 100px;
+    height: 100vh;
+    width: 100vw;
   }
 }
 </style>

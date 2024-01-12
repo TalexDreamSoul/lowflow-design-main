@@ -18,6 +18,7 @@ import {
   Share,
   WarnTriangleFilled,
 } from "@element-plus/icons-vue";
+import { FilterRules, StartNode } from "../Start";
 
 export interface NodeProps {
   icon?: string;
@@ -50,6 +51,9 @@ const $emits = defineEmits<{
 }>();
 const { node } = useVModels($props, $emits);
 const showInput = ref(false);
+//是否是兜底策略器
+const insuranceStrategist = ref(false);
+
 const inputRef = ref<InstanceType<typeof ElInput>>();
 const formSize = useFormSize();
 const getComponentWidth = computed<string>(() => {
@@ -64,6 +68,7 @@ const { addNode, delNode, openPenal } = inject<{
   openPenal: (node: FlowNode) => void;
 }>("nodeHooks")!;
 const onOpenPenal = () => {
+  console.log(`output->node.value111`);
   if ($props.readOnly) return;
   if (node.value.type == "start") return;
   console.log(`output->node.value`, node.value);
@@ -80,6 +85,77 @@ const onClickOutside = () => {
   if (showInput.value) {
     showInput.value = false;
   }
+};
+
+const addonOpenPenal = (type: String) => {
+  console.log(`output->node.value111`);
+  openPenal(node.value);
+  let process;
+  switch (type) {
+    case "strategistSet":
+      //流量策略器设置
+      process = ref<FlowNode>({
+        id: "root1",
+        pid: null,
+        type: "strategistSet",
+        name: "流量策略器设置",
+        formProperties: [],
+        def: false,
+        conditions: {
+          logicalOperator: "and",
+          conditions: [],
+          groups: [],
+        } as FilterRules,
+      } as unknown as StartNode);
+      openPenal(process.value);
+      break;
+    case "diverter":
+      //流量策略器设置--分流
+      process = ref<FlowNode>({
+        id: "root1",
+        pid: null,
+        type: "diverter",
+        name: "分流器",
+        formProperties: [],
+        def: false,
+        conditions: {
+          logicalOperator: "and",
+          conditions: [],
+          groups: [],
+        } as FilterRules,
+      } as unknown as StartNode);
+      openPenal(process.value);
+      break;
+    case "policySettings":
+      //选择策略器设置，可以无限点出来后面的Select policySettings
+      process = ref<FlowNode>({
+        id: "root1",
+        pid: null,
+        type: "policySettings",
+        name: "选择策略器设置",
+        formProperties: [],
+        def: false,
+        conditions: {
+          logicalOperator: "and",
+          conditions: [],
+          groups: [],
+        } as FilterRules,
+      } as unknown as StartNode);
+      openPenal(process.value);
+      break;
+
+    default:
+      break;
+  }
+  // let process = ref<FlowNode>({
+  //   id: "root2",
+  //   pid: null,
+  //   type: "customers",
+  //   name: "受众客户设置",
+  //   formProperties: [],
+  // } as unknown as StartNode);
+  // console.log(`output->node.value`, process.value);
+  // openPenal(process.value);
 };
 </script>
 
@@ -110,7 +186,7 @@ const onClickOutside = () => {
       </div>
       <slot></slot>
     </el-card>
-    <add-but @add-node="(type:string)=>addNode(type,node)" />
+    <add-but @add-node="(type:string)=>addNode(type,node)" @open-Penal="(type:string)=>addonOpenPenal(type)" :insuranceStrategist="insuranceStrategist" />
   </div>
 </template>
 
