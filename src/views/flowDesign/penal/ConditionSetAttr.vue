@@ -111,51 +111,7 @@ const allHidden = computed({
     }
   },
 });
-/**
- * 更改隐藏
- * @param row
- */
-const changeHidden = (row: FormProperty) => {
-  if (row.hidden) {
-    row.readable = false;
-    row.writeable = false;
-    row.required = false;
-  }
-};
-/**
- * 更改可写
- * @param row
- */
-const changeWriteable = (row: FormProperty) => {
-  if (row.writeable) {
-    row.readable = false;
-    row.hidden = false;
-  } else {
-    row.required = false;
-  }
-};
-/**
- * 更改可读
- * @param row
- */
-const changeReadable = (row: FormProperty) => {
-  if (row.readable) {
-    row.writeable = false;
-    row.required = false;
-    row.hidden = false;
-  }
-};
-/**
- * 更改必填
- * @param row
- */
-const changeRequired = (row: FormProperty) => {
-  if (row.required) {
-    row.writeable = true;
-    row.readable = false;
-    row.hidden = false;
-  }
-};
+
 
 // 在子组件中定义 submitEvent 方法
 const submitEvent = () => {

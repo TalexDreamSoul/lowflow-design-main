@@ -28,7 +28,7 @@ export interface NodeProps {
 /**
  * 筛选规则
  */
- export interface FilterRules {
+export interface FilterRules {
   logicalOperator: "or" | "and";
   conditions: Condition[];
   groups: FilterRules[];
@@ -91,6 +91,12 @@ const onOpenPenal = (v: number) => {
       type: "customers",
       name: "受众客户设置",
       formProperties: [],
+      def: false,
+      conditions: {
+        logicalOperator: "and",
+        conditions: [],
+        groups: [],
+      } as FilterRules,
     } as unknown as StartNode);
   }
   console.log(`output->node.value`, node.value, process.value, v);

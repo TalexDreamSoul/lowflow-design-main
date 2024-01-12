@@ -12,8 +12,6 @@ import { Field } from "~/components/Render/interface";
 import { StartNode } from "~/views/flowDesign/nodes/Start/index";
 import { EndNode } from "~/views/flowDesign/nodes/End/index";
 
-
-
 // 流程节点
 
 const process = ref<FlowNode>({
@@ -116,5 +114,17 @@ const fields = ref<Field[]>([
   },
 ]);
 </script>
-<style>
+<style   lang="scss">
+.custom-collapse-item {
+  .el-collapse-item__header {
+    border-bottom: none !important;
+    background-color: #f5f8fc !important;
+    padding-left: 12px;
+  }
+  .el-collapse-item__wrap {
+    border-bottom: none !important;
+    background-color: #f5f8fc !important;
+    padding: 0px 10px;
+  }
+}
 </style>

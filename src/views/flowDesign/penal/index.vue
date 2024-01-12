@@ -60,7 +60,8 @@ defineExpose({
     <template #default>
       <component ref="childComponent" :node="flowNode" :is="nodeProps[flowNode!.type]" />
     </template>
-    <template  v-if="flowNode.type&&flowNode.type==='conditionSet'" #footer>
+    <!-- v-if="flowNode.type&&flowNode.type==='conditionSet'" -->
+    <template  #footer>
       <div style="flex: auto">
         <el-button @click="onClickOutside">取消</el-button>
         <el-button type="primary" @click="submitDrawer,visible = false;">保存</el-button>
