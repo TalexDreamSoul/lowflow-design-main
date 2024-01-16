@@ -3,7 +3,7 @@ import Segmented from "~/components/Segmented";
 import { useVModels } from "@vueuse/core";
 import { StartNode } from "../nodes/Start/index";
 import { Field } from "~/components/Render/interface";
-import { FormProperty } from "~/views/flowDesign/index";
+import { FormProperty } from "~/views copy/flowDesign/index";
 import { computed, inject, Ref, ref, watchEffect, reactive } from "vue";
 import { Delete, CirclePlus, CircleClose } from "@element-plus/icons-vue";
 

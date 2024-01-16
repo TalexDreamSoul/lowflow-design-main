@@ -1,9 +1,9 @@
 <script setup lang="ts" name="flowDesign">
-import NodeTree from "./nodes/index.vue";
-import NodePenal from "./penal/index.vue";
-import { FlowNode } from "./nodes/Node/index";
-import useNode from "./hooks/useNode";
-import { reactive, computed, onUnmounted, provide, ref } from "vue";
+import NodeTree from "../../views/flowDesign/nodes/index.vue";
+import NodePenal from "../../views/flowDesign/penal/index.vue";
+import { FlowNode } from "../../views/flowDesign/nodes/Node/index";
+import useNode from "../../views/flowDesign/hooks/useNode";
+import { reactive, computed, onUnmounted, provide, ref, inject} from "vue";
 import { Plus, Minus, Download, Sunny, Moon } from "@element-plus/icons-vue";
 import { useVModels } from "@vueuse/core";
 import { Field } from "~/components/Render/interface";
@@ -39,18 +39,18 @@ const toggleRotation = () => {
 const openPenal = (node: FlowNode) => {
   nodePenalRef.value?.open(node);
 };
-const { addNode, delNode, validateNodes, addNodeRef } = useNode(
+const {  validateNodes, addNodeRef } = useNode(
   process,
   fields
 );
+
 provide("nodeHooks", {
   readOnly: false,
   fields: fields,
-  addNode,
-  delNode,
   addNodeRef,
   openPenal,
 });
+
 const handleZoom = (e: WheelEvent) => {
   if (e.shiftKey) {
     if (e.deltaY > 0) {
@@ -140,7 +140,7 @@ onUnmounted(() => {
       <NodeTree :node="process" />
     </div>
     <!--属性面板-->
-    <NodePenal ref="nodePenalRef" />
+    <NodePenal  ref="nodePenalRef" />
 
     <div class="zoombottom">
       <el-button :icon="Plus" @click="zoom += 10" :disabled="zoom >= 170" circle></el-button>

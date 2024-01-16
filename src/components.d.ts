@@ -52,6 +52,8 @@ declare module 'vue' {
     EventGroup: typeof import('./components/EventGroup/index.ts')['default']
     Interface: typeof import('./components/Render/interface.ts')['default']
     RoleSelection: typeof import('./components/RoleSelection/index.ts')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     Segmented: typeof import('./components/Segmented/index.ts')['default']
     UserSelection: typeof import('./components/UserSelection/index.ts')['default']
   }

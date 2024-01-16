@@ -95,7 +95,7 @@ const addonOpenPenal = (type: String) => {
     case "strategistSet":
       //流量策略器设置
       process = ref<FlowNode>({
-        id: "root1",
+        id: "strategistSet",
         pid: null,
         type: "strategistSet",
         name: "流量策略器设置",
@@ -112,7 +112,7 @@ const addonOpenPenal = (type: String) => {
     case "diverter":
       //流量策略器设置--分流
       process = ref<FlowNode>({
-        id: "root1",
+        id: "diverter",
         pid: null,
         type: "diverter",
         name: "分流器",
@@ -129,7 +129,7 @@ const addonOpenPenal = (type: String) => {
     case "policySettings":
       //选择策略器设置，可以无限点出来后面的Select policySettings
       process = ref<FlowNode>({
-        id: "root1",
+        id: "policySettings",
         pid: null,
         type: "policySettings",
         name: "选择策略器设置",

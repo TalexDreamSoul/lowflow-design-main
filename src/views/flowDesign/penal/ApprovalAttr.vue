@@ -5,7 +5,7 @@ import {ApprovalNode} from '../nodes/Approval/index'
 import {computed, inject, Ref, ref, watchEffect} from "vue";
 import {CircleCheck, CircleClose, Switch, Plus, Minus} from "@element-plus/icons-vue";
 import {Field} from "~/components/Render/interface";
-import {FormProperty} from "~/views/flowDesign/index";
+import {FormProperty} from "~/views copy/flowDesign/index";
 import UserSelection from "~/components/UserSelection";
 import RoleSelection from "~/components/RoleSelection";
 

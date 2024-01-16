@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ClickOutside as vClickOutside } from "element-plus";
 import { FlowNode } from "../nodes/Node/index";
-import { type Component, ref } from "vue";
+import { type Component, ref, inject } from "vue";
 import ApprovalAttr from "./ApprovalAttr.vue";
 import CcAttr from "./CcAttr.vue";
 import StartAttr from "./StartAttr.vue";
 import ConditionAttr from "./ConditionAttr.vue";
 import ConditionSetAttr from "./ConditionSetAttr.vue";
 import CustomersAttr from "./CustomersAttr.vue";
+import PolicySettingsAttr from "./PolicySettingsAttr.vue";
 
 const nodeProps: Record<string, Component> = {
   start: StartAttr,
@@ -16,6 +17,7 @@ const nodeProps: Record<string, Component> = {
   condition: ConditionAttr,
   conditionSet: ConditionSetAttr,
   customers: CustomersAttr,
+  policySettings: PolicySettingsAttr,
 };
 
 let flowNode = ref<FlowNode>({
@@ -47,6 +49,8 @@ const submitDrawer = () => {
 defineExpose({
   open,
 });
+;
+
 </script>
 
 <template>
@@ -64,7 +68,7 @@ defineExpose({
     <template  #footer>
       <div style="flex: auto">
         <el-button @click="onClickOutside">取消</el-button>
-        <el-button type="primary" @click="submitDrawer,visible = false;">保存</el-button>
+        <el-button type="primary" @click="submitDrawer">保存</el-button>
       </div>
     </template>
   </el-drawer>
