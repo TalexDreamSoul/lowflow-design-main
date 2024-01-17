@@ -1,5 +1,5 @@
 import {FlowNode} from '../Node/index'
-import {FormProperty, OperationPermissions} from "~/views/flowDesign/index";
+import {FormProperty, OperationPermissions} from "~/views copy/flowDesign/index";
 
 export interface ApprovalNode extends FlowNode {
     // 审批方式

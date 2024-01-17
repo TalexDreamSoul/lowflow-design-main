@@ -5,7 +5,7 @@ import {ConditionNode, FilterRules} from '../nodes/Condition/index'
 import {ApprovalNode} from '../nodes/Approval/index'
 import {CcNode} from '../nodes/Cc/index'
 import {ref, Ref} from "vue";
-import {FormProperty} from "~/views copy/flowDesign/index";
+import {FormProperty} from "~/views/flowDesign/index";
 import {Field} from "~/components/Render/interface";
 
 const useNode = (node: Ref<FlowNode>, fields: Ref<Field[]>) => {
@@ -192,15 +192,52 @@ const useNode = (node: Ref<FlowNode>, fields: Ref<Field[]>) => {
         }
     }
 
+    /**
+     * 添加网关
+     * @param currentNode
+     */
+    const addPolicySettings = (currentNode: FlowNode) => {
+        const child = currentNode.child
+        const id = generateId()
+        const exclusiveNode = {
+            id: id,
+            pid: currentNode.id,
+            type: 'policySettings',
+            name: '选择策略器设置',
+            child: child,
+            children: [],
+            formProperties: [],
+            def: false,
+            conditions: {
+              logicalOperator: "and",
+              conditions: [],
+              groups: [],
+            } as FilterRules,
+        } as ExclusiveNode
+        currentNode.child = exclusiveNode
+        if (child) {
+            child.pid = id
+        }
+        addConnection(currentNode.child)
+        addConnection(currentNode.child)
+        if (exclusiveNode.children.length > 0) {
+            const condition = exclusiveNode.children[exclusiveNode.children.length - 1] as ConditionNode
+            condition.def = true
+            condition.name = '默认条件'
+        }
+    }
+    
     const addNodes: Record<string, (currentNode: FlowNode) => void> = {
         condition: addConnection,
         approval: addApproval,
         cc: addCc,
-        exclusive: addExclusive
+        exclusive: addExclusive,
+        policySettings: addPolicySettings
     }
 
     const addNode = (type: string, currentNode: FlowNode) => {
         const fun = addNodes[type]
+        console.log(fun,"funfunfunfunfunfunfun")
         if (fun) {
             fun(currentNode)
         }

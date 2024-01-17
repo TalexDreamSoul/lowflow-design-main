@@ -11,6 +11,11 @@ import EventGroupFilter from "~/components/EventGroup/index.vue";
 import BehaviorFoldingGroup from "~/components/BehaviorFoldingGroup/index.vue";
 import { FlowNode } from "../nodes/Node";
 
+
+import useNode from '../../flowDesign/hooks/useNode'; // 请替换为正确的路径
+
+
+
 const labelPosition = ref("single");
 const sizeForm = reactive({
   name: "",
@@ -40,10 +45,7 @@ const daysInMonth = computed(() => {
   return days;
 });
 const daysOfWeek = computed(() => ["一", "二", "三", "四", "五", "六", "日"]);
-const { addNode, delNode } = inject<{
-  addNode: (type: string, currentNode: FlowNode) => void;
-  delNode: (node: FlowNode) => void;
-}>("nodeHooks")!;
+
 export interface ApprovalAttr {
   node: StartNode;
 }
@@ -120,11 +122,13 @@ const allHidden = computed({
     }
   },
 });
+const { addNode } = useNode(node, fields);
 
 // 在子组件中定义 submitEvent 方法
 const submitEvent = () => {
   // 在这里写入您的提交逻辑
   console.log(node.value, "执行了提交逻辑");
+  // addNode("approval",node.value)
   addNode("policySettings",node.value)
 
 };

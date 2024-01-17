@@ -89,7 +89,6 @@ const onClickOutside = () => {
 
 const addonOpenPenal = (type: String) => {
   console.log(`output->node.value111`);
-  openPenal(node.value);
   let process;
   switch (type) {
     case "strategistSet":
@@ -186,7 +185,7 @@ const addonOpenPenal = (type: String) => {
       </div>
       <slot></slot>
     </el-card>
-    <add-but @add-node="(type:string)=>addNode(type,node)" @open-Penal="(type:string)=>addonOpenPenal(type)" :insuranceStrategist="insuranceStrategist" />
+    <add-but @add-node="(type:string)=>addNode(type,node)" @open-Penal="(type:string)=>addonOpenPenal(type,node)" :insuranceStrategist="insuranceStrategist" />
   </div>
 </template>
 

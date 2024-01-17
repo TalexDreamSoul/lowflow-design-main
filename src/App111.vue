@@ -4,7 +4,7 @@
   </el-config-provider>
 </template>
 <script setup lang="ts">
-import FlowDesign from "~/views copy/flowDesign/index.vue";
+import FlowDesign from "~/views/flowDesign/index.vue";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import { FlowNode } from "~/views/flowDesign/nodes/Node/index";
 import { ref } from "vue";

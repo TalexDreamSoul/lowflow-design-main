@@ -9,7 +9,7 @@ const $emits = defineEmits<{
   (e: "addNode", type: string): void;
 }>();
 
-const addApprovalNode1 = () => {
+const addApprovalNodetest = () => {
   $emits("addNode", "approval");
 };
 const addCcNode = () => {
@@ -40,15 +40,11 @@ const addApprovalNode = (type: any) => {
           </div>
         </div>
 
-        <!-- <div @click="addApprovalNode1" class="node-select-block">
+        <div @click="addCcNode" class="node-select-block">
           <el-icon>
             <Share />
           </el-icon>
-          <div class="innerdiv">
-            <el-text tag="b">addApprovalNode</el-text><br />
-            <el-text class="mx-1" size="small">按设置的比例自动对客户随机分流，并执行动作</el-text>
-          </div>
-        </div> -->
+        </div>
         <div @click="addApprovalNode('diverter')" v-if="!insuranceStrategist" class="node-select-block">
           <el-icon>
             <Share />
