@@ -3,11 +3,13 @@ import NodeTree from "../../views/flowDesign/nodes/index.vue";
 import NodePenal from "../../views/flowDesign/penal/index.vue";
 import { FlowNode } from "../../views/flowDesign/nodes/Node/index";
 import useNode from "../../views/flowDesign/hooks/useNode";
-import { reactive, computed, onUnmounted, provide, ref, inject} from "vue";
+import { reactive, computed, onUnmounted, provide, ref, inject } from "vue";
 import { Plus, Minus, Download, Sunny, Moon } from "@element-plus/icons-vue";
 import { useVModels } from "@vueuse/core";
 import { Field } from "~/components/Render/interface";
 import { downloadXml } from "~/api/modules/model";
+
+import SingleGroup from "~/components/singleGroup/index.vue";
 
 export interface FlowDesignProps {
   process: FlowNode;
@@ -27,6 +29,18 @@ const nodePenalRef = ref<InstanceType<typeof NodePenal>>();
 const zoom = ref(100);
 const getScale = computed(() => zoom.value / 100);
 const putdown = ref<boolean>(false);
+const disturbsettings = ref<boolean>(false);
+const conditions = ref<object>({
+  logicalOperator: "and",
+  conditions: [],
+  groups: [],
+});
+const value = ref("");
+const disturbsettingsValue = ref(1);
+const defaultTime = ref<[Date, Date]>([
+  new Date(2000, 1, 1, 0, 0, 0),
+  new Date(2000, 2, 1, 23, 59, 59),
+]);
 
 const rotateStyle = computed(() => {
   return putdown.value ? "rotate(-90deg)" : "rotate(90deg)";
@@ -39,10 +53,7 @@ const toggleRotation = () => {
 const openPenal = (node: FlowNode) => {
   nodePenalRef.value?.open(node);
 };
-const {  validateNodes, addNodeRef } = useNode(
-  process,
-  fields
-);
+const { validateNodes, addNodeRef } = useNode(process, fields);
 
 provide("nodeHooks", {
   readOnly: false,
@@ -99,39 +110,61 @@ onUnmounted(() => {
     <!--放大/缩小-->
     <div class="zoom">
       <div class="flex-space">
-        <div style="display: flex; align-items: center;">
-          <div style="width:150px">策略流程名称</div>
-          <el-input label="策略流程名称" v-model="formInline.strategyName" placeholder="策略流程名称" size="large" :style="{width: '100%'}" suffix-icon="search" clearable />
+        <el-form-item label="策略流程名称：">
+          <el-input label="策略流程名称" v-model="formInline.strategyName" placeholder="策略流程名称" size="large" :style="{width: '400px',height:'40px'}" clearable />
+        </el-form-item>
+        <div :class="putdown?'baseSet baseSetpoz':'baseSet'" @click="toggleRotation">
+          展开基础设置
+          <el-icon class="icondown" :style="{ transform: rotateStyle }">
+            <DArrowRight />
+          </el-icon>
         </div>
-        <div style="padding: 8px 30px 8px 20px">
-          <!-- <el-button :icon="Plus" @click="zoom += 10" :disabled="zoom >= 170" circle></el-button>
-          <span>{{ zoom }}%</span>
-          <el-button :icon="Minus" @click="zoom -= 10" circle :disabled="zoom <= 50"></el-button>
-          -->
-          <el-button @click="validate">返回</el-button>
-          <el-button @click="validate">保存草稿</el-button>
-          <el-button @click="converterBpmn" type="primary">提交审核</el-button>
+        <div class="rommButtonGroup">
+          <el-button @click="validate" round>返回</el-button>
+          <el-button @click="validate" round>保存草稿</el-button>
+          <el-button @click="converterBpmn" type="primary" round class="primarystyle">提交审核</el-button>
 
         </div>
       </div>
 
       <div v-show="putdown">
-        <el-form-item label="Activity zone">
-          <el-select v-model="formInline.region" placeholder="Activity zone" clearable>
-            <el-option label="Zone one" value="shanghai" />
-            <el-option label="Zone two" value="beijing" />
+        <el-form-item label="勿扰设置">
+          <el-switch v-model="disturbsettings" inline-prompt style="--el-switch-on-color: #4078E0;" />
+
+        </el-form-item>
+        <div class="garyblock">
+          <el-date-picker v-model="value" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" :default-time="defaultTime" />
+          <el-text>为客户勿扰时间段，勿扰时间内触达则</el-text>
+          <el-select v-model="disturbsettingsValue" style="width: 240px;">
+            <el-option label="放弃本次触达且退出流程" :value="1"></el-option>
+            <el-option label="待勿扰时段结束立即触达" :value="2"></el-option>
+            <el-option label="放弃本次触达且不退出流程" :value="3"></el-option>
           </el-select>
+        </div>
+        <el-form-item label="目标设置">
+          <el-switch v-model="disturbsettings" inline-prompt style="--el-switch-on-color: #4078E0;" />
+          <el-text type="primary" style="cursor: pointer;">
+            <el-icon size="14">
+              <CirclePlusFilled />
+            </el-icon>
+            筛选目标
+          </el-text>
         </el-form-item>
-        <el-form-item label="Activity time">
-          <el-date-picker v-model="formInline.date" type="date" placeholder="Pick a date" clearable />
-        </el-form-item>
-        <!-- <el-form-item>
-          <el-button type="primary" @click="onSubmit">Query</el-button>
-        </el-form-item> -->
+
+        <div class="garyblock">
+          <SingleGroup v-model="conditions" :filter-fields="fields" />
+        </div>
+
+        <div class="garyblock">
+          <el-date-picker v-model="value" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" :default-time="defaultTime" />
+          <el-text>为客户勿扰时间段，勿扰时间内触达则</el-text>
+          <el-select v-model="disturbsettingsValue" style="width: 240px;">
+            <el-option label="放弃本次触达且退出流程" :value="1"></el-option>
+            <el-option label="待勿扰时段结束立即触达" :value="2"></el-option>
+            <el-option label="放弃本次触达且不退出流程" :value="3"></el-option>
+          </el-select>
+        </div>
       </div>
-      <el-icon class="icondown" :size="24" :style="{ transform: rotateStyle }" @click="toggleRotation">
-        <DArrowRight />
-      </el-icon>
 
     </div>
 
@@ -140,7 +173,7 @@ onUnmounted(() => {
       <NodeTree :node="process" />
     </div>
     <!--属性面板-->
-    <NodePenal  ref="nodePenalRef" />
+    <NodePenal ref="nodePenalRef" />
 
     <div class="zoombottom">
       <el-button :icon="Plus" @click="zoom += 10" :disabled="zoom >= 170" circle></el-button>
@@ -166,36 +199,48 @@ onUnmounted(() => {
   .zoom {
     background: #fff;
     box-shadow: 0 2px 11px rgba(175, 186, 200, 0.45);
-    padding: 8px 24px 8px 20px;
+    padding: 24px;
     position: fixed;
     z-index: 1;
-    width: 100%;
+    left: 0;
+    right: 0;
     .flex-space {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
       width: 100%;
       font-size: 16px;
       height: 50px;
+      align-items: center;
     }
     span {
       margin: 0 10px;
     }
-    .icondown {
-      width: 100%;
-      font-size: 24px;
-      margin: 0 auto;
-      text-align: center;
-      color: #ccc;
-      cursor: pointer;
-      font-size: 24px;
-      transform: rotate(90deg);
-      height: 32px;
-      width: 32px;
+    .baseSetpoz {
       position: absolute;
-      left: 50%;
-      bottom: 10px;
+      left: 45%;
+      bottom: 0px;
+      margin-bottom: 0px !important;
     }
+    .rommButtonGroup {
+      position: absolute;
+      right: 24px;
+      top: 24px;
+    }
+    .baseSet {
+      cursor: pointer;
+      color: #4078e0;
+      font-size: 14px;
+      margin-left: 16px;
+      margin-bottom: 22px;
+      .icondown {
+        width: 100%;
+        transform: rotate(90deg);
+        height: 32px;
+        width: 32px;
+      }
+    }
+  }
+  .primarystyle {
+    background: linear-gradient(to top, #598ff1, #205ccb);
   }
   .zoombottom {
     padding: 8px 30px 8px 20px;
@@ -222,6 +267,25 @@ onUnmounted(() => {
     padding-top: 100px;
     height: 100vh;
     width: 100vw;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, #eeeff6, #3880e41c);
+      z-index: -1; /* 将伪元素置于底层 */
+    }
+  }
+  .garyblock {
+    background: #f2f4f8;
+    border-radius: 4px 4px 4px 4px;
+    opacity: 0.6;
+    padding: 24px;
   }
 }
 </style>

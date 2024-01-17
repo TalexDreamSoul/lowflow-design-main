@@ -9,7 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     BehaviorFoldingGroup: typeof import('./components/BehaviorFoldingGroup/index.ts')['default']
     Condition: typeof import('./components/Condition/index.ts')['default']
-    copy: typeof import('./components/BehaviorFoldingGroup/index.js')['default']
+    copy: typeof import('./components/EventGroup copy/index.ts')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
@@ -55,6 +55,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Segmented: typeof import('./components/Segmented/index.ts')['default']
+    SingleGroup: typeof import('./components/singleGroup/index.ts')['default']
     UserSelection: typeof import('./components/UserSelection/index.ts')['default']
   }
 }

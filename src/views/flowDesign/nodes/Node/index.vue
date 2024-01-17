@@ -169,13 +169,15 @@ const addonOpenPenal = (type: String) => {
           <WarnTriangleFilled @click.stop />
         </el-icon>
       </el-tooltip>
-      <template #header>
+      <!-- <template #header>
         <div class="head">
-          <el-text style="color: #fff;" tag="b" truncated @click.stop="onShowInput">
+          <el-text style="font-size: 20px;
+          font-weight: 500;
+          color: #000000;" tag="b" truncated @click.stop="onShowInput">
             {{ node.name }}
           </el-text>
         </div>
-      </template>
+      </template> -->
       <div @click.stop>
         <el-popconfirm title="您确定要删除该节点吗？" width="200" :hide-after="0" placement="right-start" @confirm="delNode(node)">
           <template #reference>
@@ -226,8 +228,9 @@ const addonOpenPenal = (type: String) => {
     position: relative;
     overflow: visible;
     min-height: v-bind(getComponentHeight);
-    width: v-bind(getComponentWidth);
-
+    // width: v-bind(getComponentWidth);
+    width: 800px;
+    background: #ffffff;
     .node-close {
       position: absolute;
       top: -10px;
@@ -251,7 +254,7 @@ const addonOpenPenal = (type: String) => {
     :deep(.el-card__header) {
       padding: calc(var(--el-card-padding) - 18px)
         calc(var(--el-card-padding) - 13px);
-      background: v-bind(color);
+      //background: v-bind(color);
       border-radius: 7px 7px 0 0;
 
       .head {
