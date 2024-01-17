@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {CcNode} from './index'
 import {ref, watchEffect} from "vue";
-import {getList, User} from "~/api/modules/user";
+import {getList, User} from "~/api/index";
 
 export interface CcContentProps {
   node: CcNode

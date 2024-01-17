@@ -7,7 +7,6 @@ import { reactive, computed, onUnmounted, provide, ref, inject } from "vue";
 import { Plus, Minus, Download, Sunny, Moon } from "@element-plus/icons-vue";
 import { useVModels } from "@vueuse/core";
 import { Field } from "~/components/Render/interface";
-import { downloadXml } from "~/api/modules/model";
 
 import SingleGroup from "~/components/singleGroup/index.vue";
 
@@ -95,7 +94,6 @@ const converterBpmn = () => {
     groupId: "",
     remark: "",
   };
-  downloadXml(processModel);
 };
 // 按住shift键滚动鼠标滚轮，可以放大/缩小
 window.addEventListener("wheel", handleZoom);

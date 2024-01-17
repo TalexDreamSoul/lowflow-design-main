@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {getById} from '~/api/modules/role'
+import {getById} from '~/api/index'
 import {componentSizeMap, useFormSize} from 'element-plus'
 import {computed, onMounted, reactive} from "vue";
 

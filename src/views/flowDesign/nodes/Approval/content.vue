@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {ApprovalNode} from './index'
 import {inject, Ref, ref, watchEffect} from "vue";
-import {getList, User} from '~/api/modules/user'
-import {getList as getRoles, Role} from '~/api/modules/role'
+import {getList, User} from '~/api/index'
+import {getList as getRoles, Role} from '~/api/index'
 import {Field} from "~/components/Render/interface";
 
 export interface ApprovalContentProps {

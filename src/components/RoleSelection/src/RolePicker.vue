@@ -3,7 +3,7 @@ import {useVModel} from '@vueuse/core'
 import {TreeNodeData} from 'element-plus/es/components/tree/src/tree.type'
 import {type ElTree} from 'element-plus'
 import {reactive, ref, watch} from "vue";
-import {getList} from "~/api/modules/role";
+import {getList} from "~/api/index";
 import {School, Check} from "@element-plus/icons-vue";
 
 export type ModelValueType = string | string[] | null | undefined

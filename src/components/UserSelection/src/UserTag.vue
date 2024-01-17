@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {getByUsername} from '~/api/modules/user'
+import {getByUsername} from '~/api/index'
 import {componentSizeMap, useFormSize} from 'element-plus'
 import {computed, onMounted, reactive} from "vue";
 

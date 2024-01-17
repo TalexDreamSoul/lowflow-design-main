@@ -1,11 +1,11 @@
 import path from 'path'
-import {defineConfig} from 'vite'
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import Components from 'unplugin-vue-components/vite'
-import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
-import {viteMockServe} from "vite-plugin-mock"
+import { viteMockServe } from "vite-plugin-mock"
 
 import Unocss from 'unocss/vite'
 import {
@@ -34,19 +34,16 @@ export default defineConfig({
         },
     },
     server: {
-        host: '0.0.0.0',
+        hmr: true,
+        open: "/#/",
         port: 3200,
-        open: true,
         proxy: {
-            '/api': {
-                target: 'http://172.30.3.6:18700/',
-                changeOrigin: true,
-                ws: true,
-                rewrite: (path) => path.replace(/^\/api/, ''),
-                secure: false
-            }
-        }
-    },
+            "/api": {
+            target: "http://172.30.3.6:18700",
+            changeOrigin: true,
+          },
+        },
+      },
     plugins: [
         vue(),
         vueJsx(),
@@ -81,7 +78,7 @@ export default defineConfig({
                 }),
             ],
             rules: [
-                ['flex-center', {display: 'flex', 'align-items': 'center', 'justify-content': 'center'}]
+                ['flex-center', { display: 'flex', 'align-items': 'center', 'justify-content': 'center' }]
             ],
             transformers: [
                 transformerDirectives(),

@@ -6,7 +6,8 @@ import { Delete, CirclePlus, CircleClose } from "@element-plus/icons-vue";
 import Trigger from "./Trigger.vue";
 import Operator from "./Operator.vue";
 import Render from "~/components/Render/index";
-
+import { dictFilterTree } from "~/api/index";
+import { onMounted } from "vue";
 const $props = defineProps<{
   filterFields: Field[];
   modelValue: FilterRules;
@@ -28,6 +29,15 @@ const addRule = () => {
     value: null,
   });
 };
+
+onMounted(() => {
+  getdictFilterTree()
+});
+const getdictFilterTree = async() => {
+  let res = await dictFilterTree();
+  console.log("Mounted", res);
+};
+
 /**
  * 删除条件
  * @param index
@@ -67,16 +77,11 @@ const delGroup = (index: number) => {
 <template>
   <div>
     <el-select class="trigger-container" v-model="data" filterable placeholder="选择字段">
-      <el-option
-          v-for="item in $props.options"
-          :key="item.id"
-          :label="item.title"
-          :value="item.id"
-      />
+      <el-option v-for="item in $props.options" :key="item.id" :label="item.title" :value="item.id" />
     </el-select>
   </div>
   <div class="filter-container">
-    
+
     <div class="logical-operator">
       <div class="logical-operator__line"></div>
       <el-switch v-model="filterRules.logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" />
