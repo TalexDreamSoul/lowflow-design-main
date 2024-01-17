@@ -4,7 +4,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 export const routes: RouterOptions['routes'] = [
   {
     path: '/',
-    redirect: '/dashboard',
+    redirect: '/design',
   },
   {
     path: '/pinia',
