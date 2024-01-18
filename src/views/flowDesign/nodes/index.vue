@@ -6,10 +6,10 @@ import ConditionNode from './Condition/index.vue'
 import ExclusiveNode from './Exclusive/index.vue'
 // import PolicySettings from './PolicySettings/index.vue'
 // import EndNode from './End/index.vue'
-import {type Component, inject} from 'vue'
+import {type Component, inject, watchEffect } from 'vue'
 import {FlowNode} from './Node/index'
 
-defineProps<{
+const props = defineProps<{
   node: FlowNode
 }>()
 const nodes: Record<string, Component> = {
@@ -21,6 +21,11 @@ const nodes: Record<string, Component> = {
   policySettings: StartNode,
   // end: EndNode
 }
+
+watchEffect(() => {
+  console.log("@updated", props.node)
+})
+
 const {addNodeRef} = inject<{
   addNodeRef: (id: string, ref: any) => void
 }>('nodeHooks')!

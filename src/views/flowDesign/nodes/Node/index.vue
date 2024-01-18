@@ -8,7 +8,7 @@ import {
   useFormSize,
 } from "element-plus";
 import { FlowNode, ErrorInfo } from "./index";
-import { type Component, computed, inject, nextTick, ref } from "vue";
+import { type Component, computed, inject, nextTick, ref, Ref } from "vue";
 import {
   List,
   Stamp,
@@ -187,7 +187,7 @@ const addonOpenPenal = (type: String) => {
       </div>
       <slot></slot>
     </el-card>
-    <add-but @add-node="(type:string)=>addNode(type,node)" @open-Penal="(type:string)=>addonOpenPenal(type,node)" :insuranceStrategist="insuranceStrategist" />
+    <add-but @add-node="(type:string)=>addNode(type,node)" @open-panel="addonOpenPenal" :insuranceStrategist="insuranceStrategist" />
   </div>
 </template>
 

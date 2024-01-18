@@ -93,6 +93,7 @@ const useNode = (node: Ref<FlowNode>, fields: Ref<Field[]>) => {
      * @param currentNode
      */
     const addApproval = (currentNode: FlowNode) => {
+        console.log("node", currentNode)
         const child = currentNode.child
         const id = generateId()
         currentNode.child = {

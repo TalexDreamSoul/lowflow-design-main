@@ -57,8 +57,11 @@ const $emits = defineEmits<{
 }>();
 const { node } = useVModels($props, $emits);
 console.log(node.value, "StartNode");
-const { fields } = inject<{
+const { addNode, delNode, fields, forceUpdateProcess } = inject<{
   fields: Ref<Field[]>;
+  addNode: (type: string, currentNode: FlowNode) => void;
+  delNode: (node: FlowNode) => void;
+  forceUpdateProcess: (node: FlowNode) => void;
 }>("nodeHooks")!;
 
 // 全部可写
@@ -122,15 +125,20 @@ const allHidden = computed({
     }
   },
 });
-const { addNode } = useNode(node, fields);
+// const { addNode } = useNode(node, fields);
 
 // 在子组件中定义 submitEvent 方法
 const submitEvent = () => {
   // 在这里写入您的提交逻辑
   console.log(node.value, "执行了提交逻辑");
-  // addNode("approval",node.value)
-  addNode("policySettings",node.value)
 
+  addNode("approval",node.value)
+
+  // 父组件 process update
+  console.log(node.value)
+  forceUpdateProcess(node.value)
+
+  // addNode("policySettings",node.value)
 };
 
 // 暴露 submitEvent 方法给父组件使用

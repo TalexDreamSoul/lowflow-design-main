@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ClickOutside as vClickOutside } from "element-plus";
 import { FlowNode } from "../nodes/Node/index";
-import { type Component, ref, inject } from "vue";
+import { type Component, ref, inject, watch } from "vue";
 import ApprovalAttr from "./ApprovalAttr.vue";
 import CcAttr from "./CcAttr.vue";
 import StartAttr from "./StartAttr.vue";
@@ -19,6 +19,10 @@ const nodeProps: Record<string, Component> = {
   customers: CustomersAttr,
   policySettings: PolicySettingsAttr,
 };
+
+const { forceUpdateProcess } = inject<{
+  forceUpdateProcess: (node: FlowNode) => void;
+}>("nodeHooks")!;
 
 let flowNode = ref<FlowNode>({
   id: "",

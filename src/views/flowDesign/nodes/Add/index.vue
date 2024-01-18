@@ -7,6 +7,7 @@ const centerDialogVisible = ref(false);
 const props = defineProps(["insuranceStrategist"]);
 const $emits = defineEmits<{
   (e: "addNode", type: string): void;
+  (e: "openPanel", type: string): void;
 }>();
 
 const addApprovalNodetest = () => {
@@ -21,7 +22,7 @@ const addExclusiveNode = () => {
 
 const addApprovalNode = (type: any) => {
   // Traffic Strategist Settings流量策略器设置
-  $emits("open-Penal", type);
+  $emits("openPanel", type);
   centerDialogVisible.value = false;
 };
 </script>

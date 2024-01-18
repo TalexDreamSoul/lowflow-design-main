@@ -3,7 +3,7 @@ import NodeTree from "../../views/flowDesign/nodes/index.vue";
 import NodePenal from "../../views/flowDesign/penal/index.vue";
 import { FlowNode } from "../../views/flowDesign/nodes/Node/index";
 import useNode from "../../views/flowDesign/hooks/useNode";
-import { reactive, computed, onUnmounted, provide, ref, inject } from "vue";
+import { reactive, computed, onUnmounted, provide, ref, inject, watch } from "vue";
 import { Plus, Minus, Download, Sunny, Moon } from "@element-plus/icons-vue";
 import { useVModels } from "@vueuse/core";
 import { Field } from "~/components/Render/interface";
@@ -52,13 +52,24 @@ const toggleRotation = () => {
 const openPenal = (node: FlowNode) => {
   nodePenalRef.value?.open(node);
 };
-const { validateNodes, addNodeRef } = useNode(process, fields);
+
+const wrapperNode = ref(process.value)
+
+const forceUpdateProcess = (node: FlowNode) => {
+  process.value = node
+  wrapperNode.value = node
+};
+
+const { addNode, delNode, validateNodes, addNodeRef } = useNode(process, fields);
 
 provide("nodeHooks", {
   readOnly: false,
   fields: fields,
   addNodeRef,
   openPenal,
+  addNode,
+  delNode,
+  forceUpdateProcess
 });
 
 const handleZoom = (e: WheelEvent) => {
@@ -168,7 +179,7 @@ onUnmounted(() => {
 
     <!--流程树-->
     <div class="node-container">
-      <NodeTree :node="process" />
+      <NodeTree :node="wrapperNode" />
     </div>
     <!--属性面板-->
     <NodePenal ref="nodePenalRef" />
