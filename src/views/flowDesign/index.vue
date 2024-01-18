@@ -161,18 +161,11 @@ onUnmounted(() => {
         </el-form-item>
 
         <div class="garyGroup">
+          
           <SingleGroup v-model="conditions" :filter-fields="fields" />
         </div>
 
-        <div class="garyblock">
-          <el-date-picker v-model="value" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" :default-time="defaultTime" />
-          <el-text>为客户勿扰时间段，勿扰时间内触达则</el-text>
-          <el-select v-model="disturbsettingsValue" style="width: 240px;">
-            <el-option label="放弃本次触达且退出流程" :value="1"></el-option>
-            <el-option label="待勿扰时段结束立即触达" :value="2"></el-option>
-            <el-option label="放弃本次触达且不退出流程" :value="3"></el-option>
-          </el-select>
-        </div>
+        
       </div>
 
     </div>
@@ -293,13 +286,11 @@ onUnmounted(() => {
   .garyblock {
     background: #f2f4f8;
     border-radius: 4px 4px 4px 4px;
-    opacity: 0.6;
     padding: 24px;
   }
   .garyGroup {
     background: #f2f4f8;
     border-radius: 4px 4px 4px 4px;
-    opacity: 0.6;
   }
 }
 </style>

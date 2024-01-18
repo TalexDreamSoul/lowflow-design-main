@@ -75,8 +75,18 @@ const addGroup = () => {
  * 删除条件组
  * @param index
  */
-const delGroup = (index: number) => {
-  filterRules.value.groups.splice(index, 1);
+const toggleLogicalOperator = () => {
+  console.log(filterRules.value.logicalOperator);
+  switch (filterRules.value.logicalOperator) {
+    case "and":
+      filterRules.value.logicalOperator = "or";
+      break;
+    default:
+      filterRules.value.logicalOperator = "and";
+      break;
+  }
+  // filterRules.value.logicalOperator == 'and' ? 'or' : 'and'
+  //  $emits('update:modelValue', filterRules.logicalOperator === 'and' ? 'or' : 'and');
 };
 </script>
 
@@ -84,17 +94,42 @@ const delGroup = (index: number) => {
   <div class="toppannel">
     目标{{ filterRules.length?filterRules.length:"一" }}
   </div>
+
   <div class="filter-wrap">
+    <div class="garyblock">
+      <el-text>客户进入流程后，在</el-text>&nbsp;
+      <el-input v-model="input" type="number" style="width: 100px" />&nbsp;
+      <el-select v-model="selectedType" style="width: 150px">
+        <el-option value="month" label="月份">分钟</el-option>
+        <el-option value="week" label="周">小时</el-option>
+        <el-option value="day" label="天">天</el-option>
+      </el-select>&nbsp;
+      <el-text>内完成以下转化事件，则认为完成目标</el-text>
+
+    </div>
     <div>
-      <el-select class="trigger-container" v-model="dictFilterValue" filterable>
-        <el-option v-for="item in dictFilter?.events" :key="item.id" :label="item.eventType" :value="item.id" />
-      </el-select>
+      <el-select v-model="dictFilterValue" style="width: 240px">
+        <el-option-group v-for="group in dictFilter?.events" :key="group.eventType" :label="group.eventTypeName">
+          <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
+        </el-option-group>
+      </el-select>&nbsp;
+      <el-text type="primary" style="cursor: pointer;" @click="addRule">
+        <el-icon size="14">
+          <CirclePlusFilled />
+        </el-icon>
+        筛选条件
+      </el-text>
+
     </div>
     <div class="filter-container">
-
-      <div class="logical-operator">
+      <div class="fontstyle">
+        并且满足
+      </div>
+      <div class="logical-operator" v-if="filterRules.conditions.length>1">
         <div class="logical-operator__line"></div>
-        <el-switch v-model="filterRules.logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" />
+        <div class="custom-switch" :class="{ active: filterRules.logicalOperator === 'and' }" @click="toggleLogicalOperator">
+          {{ filterRules.logicalOperator === 'and' ? '且' : '或' }}
+        </div>
       </div>
       <div class="filter-option-content">
         <el-form :label-width="0" :inline="true" :model="filterRules">
@@ -118,22 +153,9 @@ const delGroup = (index: number) => {
               <el-button plain circle type="danger" :icon="Delete" @click="handleDel(index)" />
             </el-col>
           </el-row>
-          <ConditionFilter v-for="(item,index) in filterRules.groups" :key="index" @delGroup="delGroup(index)" v-model="filterRules.groups[index]" :filterFields="filterFields">
-            <el-button @click="delGroup(index)" :icon="CircleClose" class="filter-filter-item__add">
-              删除条件组
-            </el-button>
-          </ConditionFilter>
+
           <div v-if="filterRules.groups.length===0 && filterRules.conditions.length===0" class="filter-item-rule" />
         </el-form>
-        <div class="filter-item-rule">
-          <el-button @click="addRule" :icon="CirclePlus" class="filter-filter-item__add">
-            添加事件
-          </el-button>
-          <el-button @click="addGroup" :icon="CirclePlus" class="filter-filter-item__add">
-            添加事件组
-          </el-button>
-          <slot />
-        </div>
       </div>
 
     </div>
@@ -156,60 +178,45 @@ const delGroup = (index: number) => {
 }
 .filter-wrap {
   padding: 24px;
-
+  width: 50%;
+  .garyblock {
+    margin-bottom: 16px;
+  }
   .filter-container {
     //background-color: #f5f8fc;
     //border-radius: 3px;
     display: flex;
-
-    .logical-operator {
+    .fontstyle {
+      font-size: 14px;
+      font-weight: 400;
+      color: #000000;
       position: relative;
       display: flex;
       align-items: center;
       overflow: hidden;
       min-width: 60px;
       padding-right: 5px;
+    }
+    .logical-operator {
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      min-width: 40px;
 
       .logical-operator__line {
         position: absolute;
-        left: calc(32% - 1px);
-        width: 30px;
+        left: calc(35% - 1px);
         border-width: 1px 0 1px 1px;
         border-top-style: solid;
         border-bottom-style: solid;
         border-left-style: solid;
-        border-top-color: var(--el-border-color);
-        border-bottom-color: var(--el-border-color);
-        border-left-color: var(--el-border-color);
+        border-left-color: #4078e0;
         border-image: initial;
         border-right-style: initial;
         border-right-color: initial;
         border-radius: 5px 0 0 5px;
-        height: calc(100% - 48px);
-
-        &::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          right: 0;
-          transform: translateX(100%) translateY(-50%);
-          width: 6px;
-          height: 6px;
-          border: var(--el-border);
-          border-radius: 50%;
-        }
-
-        &::after {
-          content: "";
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          transform: translateX(100%) translateY(50%);
-          width: 6px;
-          height: 6px;
-          border: var(--el-border);
-          border-radius: 50%;
-        }
+        height: calc(100% - 22px);
       }
     }
 
@@ -229,5 +236,21 @@ const delGroup = (index: number) => {
       }
     }
   }
+}
+.custom-switch {
+  border: 1px solid #4078e0;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  font-weight: 500;
+  color: #4078e0;
+  font-size: 14px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
 }
 </style>
