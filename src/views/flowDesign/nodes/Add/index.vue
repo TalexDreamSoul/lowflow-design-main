@@ -66,7 +66,7 @@ const addApprovalNode = (type: any) => {
         </div>
       </div>
     </el-dialog>
-    <el-button :icon="Plus" type="primary" style="z-index: 1;background: linear-gradient(180deg, #205ccb 0%, #598ff1 100%);" @click="centerDialogVisible = true" circle></el-button>
+    <el-button :icon="Plus" type="primary" style="background: linear-gradient(180deg, #205ccb 0%, #598ff1 100%);" @click="centerDialogVisible = true" circle></el-button>
 
   </div>
 </template>

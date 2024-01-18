@@ -149,7 +149,7 @@ onUnmounted(() => {
           </el-text>
         </el-form-item>
 
-        <div class="garyblock">
+        <div class="garyGroup">
           <SingleGroup v-model="conditions" :filter-fields="fields" />
         </div>
 
@@ -284,6 +284,11 @@ onUnmounted(() => {
     border-radius: 4px 4px 4px 4px;
     opacity: 0.6;
     padding: 24px;
+  }
+  .garyGroup {
+    background: #f2f4f8;
+    border-radius: 4px 4px 4px 4px;
+    opacity: 0.6;
   }
 }
 </style>
