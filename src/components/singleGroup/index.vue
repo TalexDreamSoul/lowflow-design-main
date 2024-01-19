@@ -150,7 +150,12 @@ const toggleLogicalOperator = () => {
               </el-form-item>
             </el-col>
             <el-col :xs="24" :sm="2" style="display: flex;align-items: center;flex-direction: row-reverse;">
-              <el-button plain circle type="danger" :icon="Delete" @click="handleDel(index)" />
+              <el-text v-if="index==0" type="primary" style="cursor: pointer;" @click="handleDel(index)">
+                <el-icon size="14">
+                  <Delete />
+                </el-icon>
+                删除
+              </el-text>
             </el-col>
           </el-row>
 
