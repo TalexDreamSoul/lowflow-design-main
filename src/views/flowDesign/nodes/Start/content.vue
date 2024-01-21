@@ -184,7 +184,7 @@ const onOpenPenal = (v: number) => {
 .startnodeWrap {
   padding: 24px;
   .hearder {
-    width: 120px;
+    //width: 120px;
     height: 24px;
     font-size: 18px;
     font-weight: 500;

@@ -8,10 +8,10 @@ import ExclusiveNode from './Exclusive/index.vue'
 // import EndNode from './End/index.vue'
 import {type Component, inject, watchEffect } from 'vue'
 import {FlowNode} from './Node/index'
-
 const props = defineProps<{
   node: FlowNode
 }>()
+
 const nodes: Record<string, Component> = {
   start: StartNode,
   approval: ApprovalNode,

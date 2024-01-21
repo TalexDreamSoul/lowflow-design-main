@@ -229,7 +229,7 @@ const addonOpenPenal = (type: String) => {
     overflow: visible;
     min-height: v-bind(getComponentHeight);
     // width: v-bind(getComponentWidth);
-    width: 800px;
+    //width: 800px;
     background: #ffffff;
     .node-close {
       position: absolute;

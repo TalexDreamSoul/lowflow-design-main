@@ -132,7 +132,7 @@ const submitEvent = () => {
   // 在这里写入您的提交逻辑
   console.log(node.value, "执行了提交逻辑");
 
-  addNode("approval",node.value)
+  addNode("policySettings",node.value)
 
   // 父组件 process update
   console.log(node.value)
@@ -172,6 +172,19 @@ watchEffect(() => {
 const addGroup = () => {
   planB.value = !planB.value;
 };
+const toggleLogicalOperator = () => {
+  console.log(logicalOperator.value);
+  switch (logicalOperator.value) {
+    case "and":
+      logicalOperator.value = "or";
+      break;
+    default:
+      logicalOperator.value = "and";
+      break;
+  }
+  // logicalOperator.value == 'and' ? 'or' : 'and'
+  //  $emits('update:modelValue', filterRules.logicalOperator === 'and' ? 'or' : 'and');
+};
 </script>
 
 <template>
@@ -202,7 +215,10 @@ const addGroup = () => {
               <div class="filter-container">
                 <div class="logical-operator">
                   <div class="logical-operator__line"></div>
-                  <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" />
+                  <div class="custom-switch" :class="{ active: logicalOperator === 'and' }" @click="toggleLogicalOperator">
+                    {{ logicalOperator === 'and' ? '且' : '或' }}
+                  </div>
+                  <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
                 </div>
                 <div class="filter-option-content">
 
@@ -409,44 +425,17 @@ const addGroup = () => {
 
     .logical-operator__line {
       position: absolute;
-      left: calc(32% - 1px);
-      width: 30px;
+      left: calc(22% - 1px);
       border-width: 1px 0 1px 1px;
       border-top-style: solid;
       border-bottom-style: solid;
       border-left-style: solid;
-      border-top-color: var(--el-border-color);
-      border-bottom-color: var(--el-border-color);
-      border-left-color: var(--el-border-color);
+      border-left-color: #4078e0;
       border-image: initial;
       border-right-style: initial;
       border-right-color: initial;
       border-radius: 5px 0 0 5px;
-      height: calc(100% - 48px);
-
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 0;
-        transform: translateX(100%) translateY(-50%);
-        width: 6px;
-        height: 6px;
-        border: var(--el-border);
-        border-radius: 50%;
-      }
-
-      &::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        transform: translateX(100%) translateY(50%);
-        width: 6px;
-        height: 6px;
-        border: var(--el-border);
-        border-radius: 50%;
-      }
+      height: calc(100% - 22px);
     }
   }
 
@@ -465,5 +454,22 @@ const addGroup = () => {
       width: 100%;
     }
   }
+  .custom-switch {
+    border: 1px solid #4078e0;
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    background: #fff;
+    font-weight: 500;
+    color: #4078e0;
+    font-size: 14px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1;
+  }
 }
+
 </style>

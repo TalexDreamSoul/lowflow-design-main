@@ -147,7 +147,7 @@ const useNode = (node: Ref<FlowNode>, fields: Ref<Field[]>) => {
             id: id,
             pid: currentNode.id,
             type: 'cc',
-            name: '抄送人',
+            name: '选择策略器名称',
             child: child,
             users: [],
             formProperties: fields.value.map(item => {
@@ -197,7 +197,8 @@ const useNode = (node: Ref<FlowNode>, fields: Ref<Field[]>) => {
         condition: addConnection,
         approval: addApproval,
         cc: addCc,
-        exclusive: addExclusive
+        exclusive: addExclusive,
+        policySettings: addCc
     }
 
     const addNode = (type: string, currentNode: FlowNode) => {

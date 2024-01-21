@@ -62,13 +62,29 @@ const addGroup = () => {
 const delGroup = (index: number) => {
   filterRules.value.groups.splice(index, 1);
 };
+
+const toggleLogicalOperator = () => {
+  console.log(filterRules.value.logicalOperator);
+  switch (filterRules.value.logicalOperator) {
+    case "and":
+      filterRules.value.logicalOperator = "or";
+      break;
+    default:
+      filterRules.value.logicalOperator = "and";
+      break;
+  }
+  // filterRules.value.logicalOperator == 'and' ? 'or' : 'and'
+  //  $emits('update:modelValue', filterRules.logicalOperator === 'and' ? 'or' : 'and');
+};
 </script>
 
 <template>
   <div class="filter-container">
     <div class="logical-operator">
       <div class="logical-operator__line"></div>
-      <el-switch v-model="filterRules.logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" />
+      <div class="custom-switch" :class="{ active: filterRules.logicalOperator === 'and' }" @click="toggleLogicalOperator">
+        {{ filterRules.logicalOperator === 'and' ? '且' : '或' }}
+      </div>
     </div>
     <div class="filter-option-content">
       
@@ -135,44 +151,17 @@ const delGroup = (index: number) => {
 
     .logical-operator__line {
       position: absolute;
-      left: calc(32% - 1px);
-      width: 30px;
+      left: calc(22% - 1px);
       border-width: 1px 0 1px 1px;
       border-top-style: solid;
       border-bottom-style: solid;
       border-left-style: solid;
-      border-top-color: var(--el-border-color);
-      border-bottom-color: var(--el-border-color);
-      border-left-color: var(--el-border-color);
+      border-left-color: #4078e0;
       border-image: initial;
       border-right-style: initial;
       border-right-color: initial;
       border-radius: 5px 0 0 5px;
-      height: calc(100% - 48px);
-
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 0;
-        transform: translateX(100%) translateY(-50%);
-        width: 6px;
-        height: 6px;
-        border: var(--el-border);
-        border-radius: 50%;
-      }
-
-      &::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        transform: translateX(100%) translateY(50%);
-        width: 6px;
-        height: 6px;
-        border: var(--el-border);
-        border-radius: 50%;
-      }
+      height: calc(100% - 22px);
     }
   }
 
@@ -191,5 +180,21 @@ const delGroup = (index: number) => {
       width: 100%;
     }
   }
+}
+.custom-switch {
+  border: 1px solid #4078e0;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  font-weight: 500;
+  color: #4078e0;
+  font-size: 14px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
 }
 </style>
