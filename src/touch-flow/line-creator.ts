@@ -152,16 +152,16 @@ export function genJP() {
     },
     EndpointStyles: [null, null],
     EndpointHoverStyle: {
-      fill: '#1565C0', stroke: '#1565C0', radius: 4,
+      fill: '#579DF6', stroke: '#579DF6', radius: 4,
       strokeWidth: 1
     },
     EndpointHoverStyles: [null, null],
-    HoverPaintStyle: { stroke: '#1565C0', strokeWidth: 3 },
+    HoverPaintStyle: { stroke: '#579DF6', strokeWidth: 3 },
     LabelStyle: { color: "black" }, //标签的默认样式，用css写法。
     LogEnabled: false,
     Overlays: [],
     MaxConnections: 10,
-    PaintStyle: { stroke: '#1565C0', strokeWidth: 1, joinstyle: 'round' },
+    PaintStyle: { stroke: '#579DF6', strokeWidth: 1, joinstyle: 'round' },
     ReattachConnections: true,
     RenderMode: "svg",
     Scope: "jsPlumb_DefaultScope",
@@ -237,9 +237,14 @@ export const refreshLines = (root: HTMLElement, genner: any) => {
 
   _donner(jp, genner)
 
-  flows.forEach((flow: Element) => {
+  flows.forEach((flow: Element, index: number) => {
     const nextPoint = flow.querySelector('.fake-point')!
 
-    drawPath(root, nextPoint as HTMLElement, genner)
+    if (flows.length % 2 !== 0 && (index + 1) === (flows.length + 1) / 2) {
+      if (!nextLayer.className.includes('TouchFlow')) return
+      quoter && root.classList.add('single-line')
+    }
+
+    else drawPath(root, nextPoint as HTMLElement, genner)
   })
 }

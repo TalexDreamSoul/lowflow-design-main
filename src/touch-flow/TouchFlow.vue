@@ -42,8 +42,6 @@ function refreshCurves() {
 
   const genner = () => __genner.length ? _genner() : [..._genner(), jp]
 
-  console.log(genner())
-
   refreshLines(f[0].value, genner)
 }
 
