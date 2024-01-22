@@ -88,28 +88,32 @@ provide('save', (regFunc: () => void) => {
         </div>
     </div>
 
-    <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
-      <div class="Dialog-Sections">
-        <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section">
-          <p>
-            <el-icon v-if="item.icon.type === 'comp'">
-              <component :is="item.icon.value" />
-            </el-icon>
-            <img v-else :src="item.icon.value" />
-            {{ item.title }}
-          </p>
-          <span v-text="item.desc" />
+    <teleport to="body">
+      <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
+        <div class="Dialog-Sections">
+          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section">
+            <p>
+              <el-icon v-if="item.icon.type === 'comp'">
+                <component :is="item.icon.value" />
+              </el-icon>
+              <img v-else :src="item.icon.value" />
+              {{ item.title }}
+            </p>
+            <span v-text="item.desc" />
+          </div>
         </div>
-      </div>
-    </el-dialog>
+      </el-dialog>
+    </teleport>
 
-    <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title">
-      <component :p="p" :is="drawerOptions.comp" />
-      <template #footer>
-        <el-button @click="drawerOptions.visible = false">取消</el-button>
-        <el-button @click="handleSave" type="primary">保存</el-button>
-      </template>
-    </el-drawer>
+    <teleport to="body">
+      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title">
+        <component :p="p" :is="drawerOptions.comp" />
+        <template #footer>
+          <el-button @click="drawerOptions.visible = false">取消</el-button>
+          <el-button @click="handleSave" type="primary">保存</el-button>
+        </template>
+      </el-drawer>
+    </teleport>
   </el-card>
 
   <el-button @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
