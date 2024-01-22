@@ -27,14 +27,14 @@ export interface ILine {
 }
 
 export function drawPath(source: HTMLElement, target: any, genner: any) {
-  const [, , , _, , jp] = genner()
+  const [__, ___, , _, , jp] = genner()
   const exist = target._conn
 
   if (exist) {
     exist.remove()
   }
 
-  if (!_) {
+  if (!_ || !__ || !___?._) {
     return jp.connect({
       source,
       target
