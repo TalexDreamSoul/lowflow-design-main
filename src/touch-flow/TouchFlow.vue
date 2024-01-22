@@ -191,18 +191,18 @@ const refreshLines = () => {
 
   jp.reset()
 
-  nowDom._pointU = ((100000 + (Math.random() * 1000000)).toString(16).slice(6))
-  nowDom._point = jp.addEndpoint(nowDom, {
-    anchor: ['Bottom'],
-    uuid: nowDom._pointU
-  })
+  // nowDom._pointU = ((100000 + (Math.random() * 1000000)).toString(16).slice(6))
+  // nowDom._point = jp.addEndpoint(nowDom, {
+  //   anchor: ['Bottom'],
+  //   uuid: nowDom._pointU
+  // })
 
-  jp.makeSource(nowDom, {
-    endpoint: "Dot",
-    anchor: "Continuous"
-  })
+  // jp.makeSource(nowDom, {
+  //   endpoint: "Dot",
+  //   anchor: "Continuous"
+  // })
 
-  const rootU = nowDom._pointU
+  // const rootU = nowDom._pointU
 
   const flows = nextLayer.querySelectorAll('.TouchFlow')
 
@@ -214,16 +214,16 @@ const refreshLines = () => {
     console.log("N", nextPoint)
 
     // if (!nextPoint._point) {
-      nextPoint._pointU = ((100000 + (Math.random() * 1000000)).toString(16).slice(6))
-      nextPoint._point = jp.addEndpoint(nextPoint, {
-        anchor: ['Top'],
-        uuid: nextPoint._pointU
-      })
+      // nextPoint._pointU = ((100000 + (Math.random() * 1000000)).toString(16).slice(6))
+      // nextPoint._point = jp.addEndpoint(nextPoint, {
+      //   anchor: ['Top'],
+      //   uuid: nextPoint._pointU
+      // })
 
-      jp.makeTarget(nextPoint, {
-        endpoint: "Dot",
-        anchor: "Continuous"
-      })
+      // jp.makeTarget(nextPoint, {
+      //   endpoint: "Dot",
+      //   anchor: "Continuous"
+      // })
     // }
 
     // if (nextPoint._conn) {
@@ -238,9 +238,9 @@ const refreshLines = () => {
     // }
 
     nextPoint._conn = jp.connect({
-      uuids: [rootU, nextPoint._pointU]
-      // source: nowDom,
-      // target: nextPoint,
+      // uuids: [rootU, nextPoint._pointU]
+      source: nowDom,
+      target: nextPoint,
     })
 
     // drawPath(nowDom, nextPoint as HTMLElement)
@@ -252,7 +252,7 @@ watch(props.p, () => {
   nextTick(refreshLines)
 }, { deep: true })
 
-// watch(() => width.value + height.value, refreshLines)
+watch(() => width.value + height.value, refreshLines)
 </script>
 
 <template>
@@ -302,15 +302,13 @@ watch(props.p, () => {
   width: 32px;
   height: 32px;
 
-  top: 0%;
-  left: 50%;
+  top: -30%;
+  left: 20%;
 
   transform: translate(-50%, -50%);
 
   position: none;
   border-radius: 50%;
-
-  background-color: blue;
 }
 
 .single-line:has(div.PBlock) {
