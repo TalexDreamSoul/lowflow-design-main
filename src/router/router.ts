@@ -22,6 +22,10 @@ export const routes: RouterOptions['routes'] = [
   {
     path: '/page',
     component: () => import('../../src/views/pagenull/index.vue')
+  },
+  {
+    path: '/design/new',
+    component: () => import('../../src/touch-flow/FlowPage.vue')
   }
 ]
 

@@ -19,3 +19,9 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+declare module globalThis {
+  interface Window {
+    jsPlumb: any
+  }
+}
