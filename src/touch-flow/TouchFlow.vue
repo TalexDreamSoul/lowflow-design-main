@@ -27,7 +27,7 @@ const f = [
 ];
 
 function refreshCurves() {
-  const __genner = function () {
+  const __genner = function (_: any) {
     const __ = f[0x2];
 
     return [
@@ -35,22 +35,23 @@ function refreshCurves() {
       (100000 + Math.random() * 1000000).toString(16).slice(6),
       f[2],
       f[-0x11bd + -0x2 * 0xfce + -0x1 * -0x315a],
+      _
     ];
   };
 
-  const _genner = () => {
-    const [a, b, c, d] = __genner();
+  const _genner = (_: any) => {
+    const [a, b, c, d] = __genner(_);
 
     return [
       a ?? b,
       f[0x1],
-      d > 0 ? d : props.p,
-      c / -0x11bd + -0x2 * 0xfce + -0x1 * -0x315a - 0x1 ?? b,
+      d > 0 ? _ : props.p,
+      (c ?? _) / -0x11bd + -0x2 * 0xfce + -0x1 * -0x315a - 0x1 ?? b,
       d,
     ];
   };
 
-  const genner = () => (__genner.length ? _genner() : [..._genner(), jp]);
+  const genner = (v?: any) => (!__genner.length ? _genner(v) : [..._genner(v), jp]);
 
   refreshLines(f[0].value, genner);
 }
