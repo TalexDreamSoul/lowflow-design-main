@@ -131,7 +131,7 @@ provide('save', (regFunc: () => boolean) => {
 .Dialog-Sections {
   display: flex;
 
-  gap: 2rem;
+  gap: .5rem;
 }
 
 .PBlock-Section {
