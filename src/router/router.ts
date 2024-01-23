@@ -1,14 +1,17 @@
 import type { RouterOptions } from 'vue-router'
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 export const routes: RouterOptions['routes'] = [
   {
     path: '/',
-    redirect: '/design',
+    redirect: '/designNew',
   },
   {
     path: '/pinia',
-    component: () => import('../../src/views/Pinia/PiniaExample.vue'),
+    component: () => import('../views/Pinia/PiniaExample.vue'),
+    meta: {
+      hideTopMenu: true,
+    },
   },
   {
     path: '/design',
@@ -16,20 +19,32 @@ export const routes: RouterOptions['routes'] = [
   },
   {
     path: '/dashboard',
-    component: () => import('../../src/views/dashboard/index.vue')
+    component: () => import('../views/dashboard/index.vue'),
+    meta: {
+      hideTopMenu: true,
+    },
   },
 
   {
     path: '/page',
-    component: () => import('../../src/views/pagenull/index.vue')
+    component: () => import('../views/pagenull/index.vue'),
+    meta: {
+      hideTopMenu: true,
+    },
   },
+
   {
-    path: '/design/new',
-    component: () => import('../../src/touch-flow/FlowPage.vue')
+    path: '/designNew',
+    component: () => import('../../src/touch-flow/FlowPage.vue'),
+
   }
+  // 添加需要隐藏 TopMenu 的页面，并设置 meta.hideTopMenu 为 true
 ]
 
-export const router = createRouter({
-  history: createWebHashHistory(),
+
+const router = createRouter({
+  history: createWebHistory(),
   routes,
-})
+});
+
+export default router;

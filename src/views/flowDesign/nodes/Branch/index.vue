@@ -31,6 +31,26 @@ const onOpenPenal = () => {
 </script>
 
 <template>
+  <div class="branchwarp">
+    <div class="flex-btw">
+      <div>
+        分支名称A
+      </div>
+      <div>
+        <span class="righttext">
+          流量分配
+        </span>
+        <span  class="icontext">
+          50%
+        </span> 
+      </div>
+    </div>
+    <div>
+      <el-empty description="尚未配置" image-size="76px"/>
+      
+    </div>
+
+  </div>
   <div class="branch-node">
     <!--添加新分支按钮-->
     <div class="add-branch">
@@ -50,10 +70,12 @@ const onOpenPenal = () => {
     </div>
   </div>
   <!--添加节点-->
-  <add-but @add-node="(type:string)=>addNode(type,node)"  @open-Penal="onOpenPenal()"  class="branch-but" />
+  <add-but @add-node="(type:string)=>addNode(type,node)" @open-Penal="onOpenPenal()" class="branch-but" />
 </template>
 
 <style scoped lang="scss">
+
+:root { --el-empty-padding: 20px 0; }
 .branch-node {
   display: flex;
   //border-top: var(--el-border);
@@ -156,6 +178,31 @@ const onOpenPenal = () => {
     width: 1px;
     height: 100%;
     background-color: var(--el-border-color);
+  }
+}
+
+.branchwarp {
+  width: 416px;
+  padding: 24px;
+  background: #ffffff;
+  box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.02);
+  border-radius: 8px 8px 8px 8px;
+  opacity: 1;
+  .flex-btw {
+    display: flex;
+    justify-content: space-between;
+    .righttext {
+      height: 16px;
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.6);
+    }
+    .icontext {
+      height: 16px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #00c068;
+    }
   }
 }
 </style>
