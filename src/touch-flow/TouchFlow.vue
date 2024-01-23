@@ -248,7 +248,7 @@ div.PBlock {
           width: 100%;
           height: 100%;
 
-          opacity: .15;
+          opacity: 0.12;
           border-radius: 0 4px 4px 0;
           background-color: var(--theme-color, red);
         }
@@ -273,7 +273,7 @@ div.PBlock {
     display: flex;
     margin-top: 0.75rem;
 
-    gap: .5rem;
+    gap: 0.5rem;
 
     font-size: 14px;
   }
@@ -281,7 +281,6 @@ div.PBlock {
   position: relative;
 
   left: 50%;
-
 
   border-radius: 8px;
 
