@@ -89,16 +89,18 @@ const props = defineProps<{
 
 function saveData() {
   const lp: string = props.p.labelPosition
-  if (!lp) return
+  if (!lp) return false
 
   const funcs = sizeForm.time.funcs
 
   const [parse] = funcs[lp.toLowerCase()]
 
   props.p.time = parse(sizeForm);
+
+  return true
 }
 
-type IRegSaveFunc = (regFunc: () => void) => void
+type IRegSaveFunc = (regFunc: () => boolean) => void
 const regSaveFunc: IRegSaveFunc = inject('save')!
 regSaveFunc(saveData)
 
