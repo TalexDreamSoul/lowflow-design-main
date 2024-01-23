@@ -35,7 +35,7 @@ function refreshCurves() {
       (100000 + Math.random() * 1000000).toString(16).slice(6),
       f[2],
       f[-0x11bd + -0x2 * 0xfce + -0x1 * -0x315a],
-      _
+      _,
     ];
   };
 
@@ -51,17 +51,15 @@ function refreshCurves() {
     ];
   };
 
-  const genner = (v?: any) => (!__genner.length ? _genner(v) : [..._genner(v), jp]);
+  const genner = (v?: any) =>
+    !__genner.length ? _genner(v) : [..._genner(v), jp];
 
   refreshLines(f[0].value, genner);
 }
 
-watch(
-  props.p,
-  () => {
-    nextTick(refreshCurves);
-  }
-);
+watch(props.p, () => {
+  nextTick(refreshCurves);
+});
 
 watch(() => width.value + height.value, refreshCurves);
 </script>
@@ -89,7 +87,7 @@ watch(() => width.value + height.value, refreshCurves);
   position: relative;
   display: flex;
 
-  margin: 10px 20px 265px;
+  margin: 10px 20px 320px;
 
   justify-content: center;
 
@@ -121,20 +119,14 @@ watch(() => width.value + height.value, refreshCurves);
 }
 
 .fake-point {
-  svg {
-    transform: translate(-50%, -50%);
-
-    background-color: #00000010;
-  }
-
   z-index: 100;
   position: absolute;
 
   width: 32px;
   height: 32px;
 
-  top: -35%;
-  left: 20%;
+  top: -52%;
+  left: 30%;
 
   transform: translate(-50%, -50%);
 
@@ -147,13 +139,13 @@ watch(() => width.value + height.value, refreshCurves);
     content: "";
     position: absolute;
 
-    bottom: -145px;
+    bottom: -180px;
     left: 50%;
 
     transform: translate(-50%, -50%);
 
     width: 2px;
-    height: 85px;
+    height: 110px;
 
     background-color: var(--el-color-primary);
   }
@@ -162,7 +154,7 @@ watch(() => width.value + height.value, refreshCurves);
     content: "";
     position: absolute;
 
-    bottom: -110px;
+    bottom: -140px;
     left: 50%;
 
     transform: translate(-50%, -50%) scale(0.5, 1) rotate(-45deg);

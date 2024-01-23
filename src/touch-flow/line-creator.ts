@@ -152,7 +152,7 @@ export function genJP() {
     },
     EndpointStyles: [null, null],
     EndpointHoverStyle: {
-      fill: '#579DF6', stroke: '#579DF6', radius: 4,
+      fill: '#579DF600', stroke: '#579DF600', radius: 4,
       strokeWidth: 1
     },
     EndpointHoverStyles: [null, null],
