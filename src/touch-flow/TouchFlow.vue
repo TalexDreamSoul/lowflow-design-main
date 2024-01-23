@@ -220,7 +220,7 @@ div.PBlock {
     }
 
     padding: 16px;
-    width: 320px;
+    width: 280px;
     background: linear-gradient(
         180deg,
         #f2f4f8 0%,
@@ -247,15 +247,14 @@ div.PBlock {
           width: 100%;
           height: 100%;
 
-          opacity: .25;
+          opacity: 0.12;
           border-radius: 0 4px 4px 0;
           background-color: var(--theme-color, red);
         }
 
         position: relative;
 
-        width: 100%;
-
+        width: 280px;
         border: none;
         border-left: 4px solid var(--theme-color, red);
 
@@ -273,7 +272,7 @@ div.PBlock {
     display: flex;
     margin-top: 0.75rem;
 
-    gap: 2rem;
+    gap: 0.5rem;
 
     font-size: 14px;
   }
@@ -281,7 +280,6 @@ div.PBlock {
   position: relative;
 
   left: 50%;
-
 
   border-radius: 8px;
 

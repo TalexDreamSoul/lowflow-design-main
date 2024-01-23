@@ -16,9 +16,9 @@ const disturbOptions = [
     <!-- @click="disturb.enable = !disturb.enable" -->
     <p class="Basic-Block-Head">
       <span>目标设置</span>
-      <el-switch inline-prompt active-text="开" inactive-text="关" v-model="target.enable" />
+      <el-switch inline-prompt v-model="target.enable" style="--el-switch-on-color: #4078E0;" />
     </p>
-    <div :class="{ disabled: !target.enable }" class="Basic-Block-Content">
+    <div :class="{ disabled: !target.enable }" class="Basic-Block-Content" v-if="target.enable">
       <div class="Target-Block">
         <p>目标一</p>
       </div>

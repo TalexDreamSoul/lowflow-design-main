@@ -222,11 +222,7 @@ onUnmounted(() => {
       bottom: 0px;
       margin-bottom: 0px !important;
     }
-    .rommButtonGroup {
-      position: absolute;
-      right: 24px;
-      top: 24px;
-    }
+
     .baseSet {
       cursor: pointer;
       color: #4078e0;
@@ -239,6 +235,11 @@ onUnmounted(() => {
         height: 32px;
         width: 32px;
       }
+    }
+    .rommButtonGroup {
+      position: absolute;
+      right: 24px;
+      top: 24px;
     }
   }
   .primarystyle {

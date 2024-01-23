@@ -1,21 +1,17 @@
 <script setup lang="ts">
-import BasicDisturb from './BasicDisturb.vue'
-import BasicTarget from '../page/BasicTarget.vue'
+import BasicDisturb from "./BasicDisturb.vue";
+import BasicTarget from "../page/BasicTarget.vue";
 const props = defineProps<{
-  basic: any
-}>()
-
+  basic: any;
+}>();
 </script>
 
 <template>
   <div class="TouchFlow-Header">
     <div class="TouchFlow-Header-Start">
       <span>策略流程名称：</span>
-      <el-input style="width: 60%" placeholder="策略流程名称" v-model="basic.flowName" />
-      &nbsp;
-      <el-button @click="basic._expand = !basic._expand" type="primary" plain text>
-        {{ basic._expand ? '收起' : '展开' }}基础设置
-      </el-button>
+      <el-input placeholder="策略流程名称" v-model="basic.flowName" :style="{width: '400px',height:'40px'}" />
+      
     </div>
     <div>
       <el-button round>返回</el-button>
@@ -28,6 +24,12 @@ const props = defineProps<{
     <BasicDisturb :disturb="basic.disturb" />
     <BasicTarget :target="basic.target" />
   </div>
+      <div @click="basic._expand = !basic._expand" :class="basic._expand?'baseSet baseSetpoz':'baseSet'">
+        {{ basic._expand ? '收起' : '展开' }}基础设置
+        <el-icon class="icondown" :style="{ transform: basic._expand ?'rotate(-90deg)' : 'rotate(90deg)'}">
+          <DArrowRight />
+        </el-icon>
+      </div>
 </template>
 
 <style lang="scss">
@@ -43,8 +45,9 @@ const props = defineProps<{
 
   &-Head {
     span {
-      margin-right: .5rem;
+      margin-right: 0.5rem;
       line-height: 30px;
+      color: #666;
     }
 
     display: flex;
@@ -64,9 +67,10 @@ const props = defineProps<{
     line-height: 2.5rem;
 
     background-color: var(--el-fill-color);
-
+    font-size: 14px;
+    color: #333;
     &.disabled::before {
-      opacity: .75;
+     // opacity: 0.35;
       pointer-events: unset;
     }
 
@@ -83,16 +87,41 @@ const props = defineProps<{
 
       opacity: 0;
       pointer-events: none;
-      transition: .25s;
+      transition: 0.25s;
       background-color: var(--el-fill-color-dark);
     }
   }
 }
 
+
+.baseSet {
+  cursor: pointer;
+    color: #4078e0;
+    font-size: 14px;
+    margin-left: 16px;
+    margin-bottom: 6px;
+    position: absolute;
+    top: 22px;
+    left: 530px;
+  .icondown {
+    width: 100%;
+    transform: rotate(90deg);
+    height: 32px;
+    width: 32px;
+  }
+}
+.baseSetpoz {
+  position: absolute;
+  left: 45% !important;
+  bottom: 10px !important;
+  margin-bottom: 0px !important;
+  top: unset;
+}
 .TouchFlow-Header {
   &-Start {
     span {
       line-height: 30px;
+      color: #666;
     }
 
     display: flex;
@@ -100,7 +129,7 @@ const props = defineProps<{
     justify-content: space-between;
     align-items: center;
 
-    width: 50%;
+    // width: 50%;
   }
 
   position: relative;
