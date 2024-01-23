@@ -40,30 +40,13 @@ export const getList = (roleIds?: string[]) => {
 
 import { DepartmentListResponse, DepartmentUserParams, DepartmentUserResponse } from './types'
 
-export const getDepartmentApi = () => {
-    return request.get<DepartmentListResponse>({ url: '/mock/department/list' })
-}
 
-export const getUserByIdApi = (params: DepartmentUserParams) => {
-    return request.get<DepartmentUserResponse>({ url: '/mock/department/users', params })
-}
 
+// 分割线api/营销触达
 export const dictFilterTree = () => {
     return request.post({ url: '/api/dictFilterTree.do'})
 }
-
-export const saveUserApi = (data: any) => {
-    return request.post({ url: '/mock/department/user/save', data })
-}
-
-export const saveDepartmentApi = (data: any) => {
-    return request.post({ url: '/mock/department/save', data })
-}
-
-export const deleteDepartmentApi = (ids: string[] | number[]) => {
-    return request.post({ url: '/mock/department/delete', data: { ids } })
-}
-
-export const getDepartmentTableApi = (params: any) => {
-    return request.get({ url: '/mock/department/table/list', params })
+// 营销触达节点统计
+export const getmarketingTouchNodeStatistics = (data: any) => {
+    return request.post({ url: '/api/marketingTouchNodeStatistics', data })
 }
