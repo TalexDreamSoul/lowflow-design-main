@@ -9,23 +9,19 @@ const props = defineProps<{
 
 <template>
   <div class="TouchFlow-Header">
-    <el-row :gutter="20">
-      <el-col :span="16">
-        <div class="TouchFlow-Header-Start">
-          <span>策略流程名称：</span>
-          <el-input style="width: 60%" placeholder="策略流程名称" v-model="basic.flowName" />
-          &nbsp;
-          <el-button @click="basic._expand = !basic._expand" type="primary" plain text>
-            {{ basic._expand ? '收起' : '展开' }}基础设置
-          </el-button>
-        </div>
-      </el-col>
-      <el-col :span="8">
-        <el-button>返回</el-button>
-        <el-button>保存草稿</el-button>
-        <el-button type="primary">提交审核</el-button>
-      </el-col>
-    </el-row>
+    <div class="TouchFlow-Header-Start">
+      <span>策略流程名称：</span>
+      <el-input style="width: 60%" placeholder="策略流程名称" v-model="basic.flowName" />
+      &nbsp;
+      <el-button @click="basic._expand = !basic._expand" type="primary" plain text>
+        {{ basic._expand ? '收起' : '展开' }}基础设置
+      </el-button>
+    </div>
+    <div>
+      <el-button round>返回</el-button>
+      <el-button round>保存草稿</el-button>
+      <el-button round type="primary">提交审核</el-button>
+    </div>
   </div>
 
   <div class="TouchFlow-Addon">
@@ -100,13 +96,18 @@ const props = defineProps<{
     }
 
     display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    width: 50%;
   }
 
   position: relative;
   display: flex;
 
-  justify-content: center;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 
   height: 80px;
 }

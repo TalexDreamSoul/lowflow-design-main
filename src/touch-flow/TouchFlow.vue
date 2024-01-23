@@ -83,7 +83,25 @@ watch(() => width.value + height.value, refreshCurves)
 }
 
 .start-add {
+  &.display {
+    opacity: 1;
+
+    pointer-events: unset;
+  }
+  &:hover {
+    opacity: .95;
+  }
   z-index: 10;
+  position: absolute;
+
+  left: 50%;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
+
+  transition: .25s;
 }
 
 .fake-point {
@@ -168,7 +186,8 @@ div.PBlock {
 
     border-radius: 8px;
     border: 1px solid var(--el-border-color);
-    background-color: var(--el-fill-color);
+    // background-color: var(--el-fill-color);
+    background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%) rgba(255, 255, 255, 0.4);
   }
 
   &-Content {
@@ -186,11 +205,15 @@ div.PBlock {
     margin-top: .75rem;
 
     gap: 2rem;
+
+    font-size: 14px;
   }
 
   position: relative;
 
   left: 50%;
+
+  width: 80%;
 
   border-radius: 8px;
 

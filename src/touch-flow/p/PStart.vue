@@ -2,6 +2,7 @@
 import { ref, reactive, computed, provide } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import ConditionSetAttr from '../p/start/ConditionSetAttr.vue'
+import CustomersAttr from '../p/start/CustomersAttr.vue'
 import PolicySettingsAttr from '../p/start/PolicySettingsAttr.vue'
 const props = defineProps<{
   p?: any,
@@ -49,6 +50,13 @@ function openCondition() {
   })
 }
 
+function openCustomer() {
+  openDrawer({
+    title: "受众客户设置",
+    comp: CustomersAttr
+  })
+}
+
 function openDrawer(comp: any) {
   dialogVisible.value = false
 
@@ -92,6 +100,8 @@ const flowTime = computed(() => {
   return `${date1Text} 至 ${date2Text}`
 })
 
+const conditioned = computed(() => flowType.value !== '-' && flowTime.value !== '-')
+
 let _saveFunc: Function | null = null
 
 function handleSave() {
@@ -112,20 +122,25 @@ provide('save', (regFunc: () => void) => {
   <el-card class="PBlock">
     <p>进入流程设置</p>
     <div class="PBlock-Content">
-      <div @click="openCondition" class="PBlock-Section">
+      <div @click="openCondition" :class="{ checked: conditioned }" class="PBlock-Section">
         <p>
           <el-icon>
             <Position />
           </el-icon>
           进入条件
+          <span v-if="conditioned">
+            <el-icon>
+              <CircleCheckFilled />
+            </el-icon>
+          </span>
         </p>
-        <span v-if="flowType !== '-' && flowTime !== '-'" style="opacity: .75;font-size: 14px">
+        <span v-if="conditioned" style="opacity: .75;font-size: 14px">
           <span>流程类型：{{ flowType }}</span><br />
           <span>进入时间：{{ flowTime }}</span><br />
         </span>
         <span v-else>设置流程类型、流程有效期、流程开始时间、进入限制。</span>
       </div>
-      <div class="PBlock-Section">
+      <div @click=openCustomer class="PBlock-Section">
         <p>
           <el-icon>
             <User />
@@ -157,14 +172,15 @@ provide('save', (regFunc: () => void) => {
       <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title">
         <component :p="p" :is="drawerOptions.comp" />
         <template #footer>
-          <el-button @click="drawerOptions.visible = false">取消</el-button>
-          <el-button @click="handleSave" type="primary">保存</el-button>
+          <el-button round @click="drawerOptions.visible = false">取消</el-button>
+          <el-button round @click="handleSave" type="primary">保存</el-button>
         </template>
       </el-drawer>
     </teleport>
   </el-card>
 
-  <el-button @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
+  <el-button :class="{ display: conditioned }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus"
+    circle />
 </template>
 
 <style lang="scss">
@@ -172,21 +188,53 @@ provide('save', (regFunc: () => void) => {
   p {
     margin: 0;
   }
+
   display: flex;
 
   gap: 2rem;
 }
 
 .PBlock-Section {
+  p {
+    &::before {
+      content: "";
+      position: absolute;
+
+      left: 0;
+      bottom: 3px;
+
+      width: 60%;
+      height: 8px;
+
+      transition: .25s;
+      transform: scaleX(0) translateX(-100%);
+      background: linear-gradient(82deg,
+          rgba(64, 120, 224, 0.4) 0%,
+          rgba(64, 120, 224, 0) 100%);
+    }
+
+    span {
+      float: right;
+
+      font-size: 1.25rem;
+
+      color: #00C068 !important;
+    }
+
+    position: relative;
+  }
+
+  &.checked {
+    p {
+      &::before {
+        transform: scaleX(1) translateX(0%);
+      }
+
+      color: var(--el-color-primary);
+    }
+  }
+
   width: 50%;
-}
-
-.start-add {
-  position: absolute;
-
-  left: 50%;
-
-  transform: translate(-50%, -50%);
 }
 
 .PBlock-Section .el-icon {
