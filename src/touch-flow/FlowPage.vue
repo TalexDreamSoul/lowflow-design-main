@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
-import FlowHeader from '../touch-flow/page/FlowHeader.vue'
-import TouchFlow from './TouchFlow.vue'
+import { reactive } from "vue";
+import FlowHeader from "../touch-flow/page/FlowHeader.vue";
+import TouchFlow from "./TouchFlow.vue";
 const props = defineProps<{
-  modelValue?: boolean,
-}>()
+  modelValue?: boolean;
+}>();
 
 const flowOptions = reactive({
   basic: {
@@ -13,12 +13,12 @@ const flowOptions = reactive({
     disturb: {
       enable: false,
       time: [],
-      action: 0
+      action: 0,
     },
     target: {
       enable: false,
-      list: []
-    }
+      list: [],
+    },
   },
   p: {
     type: 'start',
@@ -34,7 +34,7 @@ const flowOptions = reactive({
       <el-header>
         <FlowHeader :basic="flowOptions.basic" />
       </el-header>
-      <el-main class="bg">
+      <el-main class="node-container">
         <el-scrollbar>
           <TouchFlow :p="flowOptions.p" />
         </el-scrollbar>
@@ -66,9 +66,10 @@ div.el-dialog {
     height: 80px;
 
     overflow: hidden;
-    transition: height .25s;
+    transition: height 0.25s;
     background-color: var(--el-fill-color-lighter);
-    box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.125);
+    box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02),
+      0 2px 4px rgba(0, 0, 0, 0.125);
   }
 
   .el-main {
@@ -79,7 +80,7 @@ div.el-dialog {
     flex-direction: column;
     align-items: center;
 
-    background-color: var(--el-fill-color);
+   // background-color: var(--el-fill-color);
   }
 
   position: absolute;
@@ -91,10 +92,28 @@ div.el-dialog {
   overflow: hidden;
 }
 
-.bg {
-  background-image: linear-gradient(90deg, rgba(60, 10, 30, 0.04) 1px, transparent 0),
-    linear-gradient(1turn, rgba(60, 10, 30, 0.04) 1px, transparent 0);
-  background-size: calc((100% - 10px) / 30) 50px;
-  background-position: 5px 5px;
+.node-container {
+  margin: 0 auto;
+  transform: scale(v-bind(getScale));
+  transform-origin: 50% 0 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding-top: 100px;
+  height: 100vh;
+  width: 100vw;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #eeeff6, #3880e41c);
+    z-index: -1; /* 将伪元素置于底层 */
+  }
 }
 </style>

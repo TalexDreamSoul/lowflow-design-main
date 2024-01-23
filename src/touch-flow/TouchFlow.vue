@@ -1,26 +1,30 @@
 <script setup lang="ts">
-import PStartVue from './p/PStart.vue';
-import PPolicySettings from './p/PPolicySettings.vue';
-import { useWindowSize } from '@vueuse/core'
-import { ref, watch, nextTick } from 'vue';
-import { refreshLines, genJP } from './line-creator'
+import PStartVue from "./p/PStart.vue";
+import PPolicySettings from "./p/PPolicySettings.vue";
+import { useWindowSize } from "@vueuse/core";
+import { ref, watch, nextTick } from "vue";
+import { refreshLines, genJP } from "./line-creator";
 
 const props = defineProps<{
-  p: any
-}>()
+  p: any;
+}>();
 
 const comps = {
-  'start': PStartVue,
-  'PolicySettings': PPolicySettings
-}
+  start: PStartVue,
+  PolicySettings: PPolicySettings,
+};
 
-const now = ref()
+const now = ref();
 
-const { width, height } = useWindowSize()
+const { width, height } = useWindowSize();
 
-const jp = genJP()
+const jp = genJP();
 
-const f = [now, eval('!![] + ![] - !!([] + !![]) + [[]][!![]]'), ((100000 + (Math.random() * 1000000)).toString(16).slice(6))]
+const f = [
+  now,
+  eval("!![] + ![] - !!([] + !![]) + [[]][!![]]"),
+  (100000 + Math.random() * 1000000).toString(16).slice(6),
+];
 
 function refreshCurves() {
   const __genner = function () {
@@ -28,28 +32,38 @@ function refreshCurves() {
 
     return [
       f[0].value,
-      ((100000 + (Math.random() * 1000000)).toString(16).slice(6)),
+      (100000 + Math.random() * 1000000).toString(16).slice(6),
       f[2],
-      f[-0x11bd + -0x2 * 0xfce + -0x1 * -0x315a]
+      f[-0x11bd + -0x2 * 0xfce + -0x1 * -0x315a],
     ];
-  }
+  };
 
   const _genner = () => {
-    const [a, b, c, d] = __genner()
+    const [a, b, c, d] = __genner();
 
-    return [a ?? b, f[0x1], d > 0 ? d : props.p, c / -0x11bd + -0x2 * 0xfce + -0x1 * -0x315a - 0X1 ?? b, d]
-  }
+    return [
+      a ?? b,
+      f[0x1],
+      d > 0 ? d : props.p,
+      c / -0x11bd + -0x2 * 0xfce + -0x1 * -0x315a - 0x1 ?? b,
+      d,
+    ];
+  };
 
-  const genner = () => __genner.length ? _genner() : [..._genner(), jp]
+  const genner = () => (__genner.length ? _genner() : [..._genner(), jp]);
 
-  refreshLines(f[0].value, genner)
+  refreshLines(f[0].value, genner);
 }
 
-watch(props.p, () => {
-  nextTick(refreshCurves)
-}, { deep: true })
+watch(
+  props.p,
+  () => {
+    nextTick(refreshCurves);
+  },
+  { deep: true }
+);
 
-watch(() => width.value + height.value, refreshCurves)
+watch(() => width.value + height.value, refreshCurves);
 </script>
 
 <template>
@@ -90,7 +104,7 @@ watch(() => width.value + height.value, refreshCurves)
   }
 
   &:hover {
-    opacity: .95;
+    opacity: 0.95;
   }
 
   z-index: 10;
@@ -103,7 +117,7 @@ watch(() => width.value + height.value, refreshCurves)
   transform: translate(-50%, -50%);
   background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
 
-  transition: .25s;
+  transition: 0.25s;
 }
 
 .fake-point {
@@ -151,7 +165,7 @@ watch(() => width.value + height.value, refreshCurves)
     bottom: -110px;
     left: 50%;
 
-    transform: translate(-50%, -50%) scale(.5, 1) rotate(-45deg);
+    transform: translate(-50%, -50%) scale(0.5, 1) rotate(-45deg);
 
     border: 10px solid var(--el-color-primary);
     border-radius: 5px;
@@ -160,7 +174,6 @@ watch(() => width.value + height.value, refreshCurves)
     // background-color: var(--el-color-primary);
   }
 }
-
 
 div.PBlock {
   p {
@@ -198,15 +211,25 @@ div.PBlock {
     }
 
     span {
-      opacity: .75;
+      color: #999;
+      .contentdeep {
+        font-size: 14px;
+        line-height: 17px;
+        font-size: var(--el-text-font-size);
+        color: #333;
+      }
     }
 
-    padding: 10px;
-
-    border-radius: 8px;
-    border: 1px solid var(--el-border-color);
-    // background-color: var(--el-fill-color);
-    background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%) rgba(255, 255, 255, 0.4);
+    padding: 16px;
+    width: 320px;
+    background: linear-gradient(
+        180deg,
+        #f2f4f8 0%,
+        rgba(242, 244, 248, 0.4) 100%
+      )
+      rgba(255, 255, 255, 0.4);
+    border-radius: 8px 8px 8px 8px;
+    opacity: 1;
   }
 
   &-Content {
@@ -243,13 +266,13 @@ div.PBlock {
     }
 
     .el-icon {
-      top: .125rem;
+      top: 0.125rem;
 
-      margin-bottom: .5rem;
+      margin-bottom: 0.5rem;
     }
 
     display: flex;
-    margin-top: .75rem;
+    margin-top: 0.75rem;
 
     gap: 2rem;
 
@@ -260,7 +283,6 @@ div.PBlock {
 
   left: 50%;
 
-  width: 80%;
 
   border-radius: 8px;
 
