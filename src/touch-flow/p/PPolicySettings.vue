@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, reactive, computed, provide } from 'vue'
+import { ref, reactive, nextTick, provide } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import ConditionSetAttr from './start/ConditionSetAttr.vue'
 import PolicySettingsAttr from './start/PolicySettingsAttr.vue'
+
 const props = defineProps<{
   p?: any,
 }>()
@@ -51,40 +52,47 @@ function openDrawer(comp: any) {
   drawerOptions.visible = true
 }
 
-let _saveFunc: Function | null = null
+let _saveFunc: (() => boolean) | null = null
 
 function handleSave() {
-  if (!_saveFunc) return
+  if (!_saveFunc || !_saveFunc()) return
 
-  _saveFunc()
+  dialogVisible.value = false
+  drawerOptions.visible = false
 }
 
-provide('save', (regFunc: () => void) => {
+provide('save', (regFunc: () => boolean) => {
   _saveFunc = regFunc
 })
 </script>
 
 <template>
-  <el-card style="width: 200px" class="PBlock">
-    <p>选择策略器 {{ p.name }}</p>
+  <el-card style="width: 355px" class="PBlock">
+    <p class="title">
+      选择策略器 {{ p.name }}
+      <el-button text type="primary">
+        <el-icon><Delete /></el-icon>
+        删除
+      </el-button>
+    </p>
     <div class="PBlock-Content theme">
-      <div @click="openCondition" class="PBlock-Section">
+      <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">
         <p>
           客户属性行为分流
         </p>
         <span>不分流</span>
       </div>
-      <div @click="openCondition" class="PBlock-Section">
+      <div style="--theme-color: #7DC757" @click="openCondition" class="PBlock-Section">
           <p>
-            客户属性行为分流
+            延迟设置
           </p>
-          <span>不分流</span>
+          <span>立即针对符合该策略器条件的客户发送触达</span>
         </div>
-        <div @click="openCondition" class="PBlock-Section">
+        <div style="--theme-color: #FFB858" @click="openCondition" class="PBlock-Section">
           <p>
-            客户属性行为分流
+            APP推送
           </p>
-          <span>不分流</span>
+          <span>积极分子标题：参加活动赢好礼</span>
         </div>
     </div>
 
@@ -109,8 +117,8 @@ provide('save', (regFunc: () => void) => {
       <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title">
         <component :p="p" :is="drawerOptions.comp" />
         <template #footer>
-          <el-button @click="drawerOptions.visible = false">取消</el-button>
-          <el-button @click="handleSave" type="primary">保存</el-button>
+          <el-button round @click="drawerOptions.visible = false">取消</el-button>
+          <el-button round @click="handleSave" type="primary">保存</el-button>
         </template>
       </el-drawer>
     </teleport>

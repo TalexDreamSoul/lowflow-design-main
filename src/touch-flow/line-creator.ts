@@ -190,8 +190,8 @@ function _genner(genner: any, el: HTMLElement) {
   const [, , p] = genner()
 
   return {
-    have: (p?.child?.length ?? 0),
-    _multiple: (p?.child instanceof Array && p?.child.length > 1),
+    have: (p?.children?.length ?? 0),
+    _multiple: (p?.children instanceof Array && p?.children.length > 1),
     nextLayer: (el.parentElement?.nextElementSibling),
     quoter: (el.parentElement?.nextElementSibling)?.className.includes('TouchFlow')
   }

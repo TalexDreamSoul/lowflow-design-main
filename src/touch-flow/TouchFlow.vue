@@ -59,9 +59,9 @@ watch(() => width.value + height.value, refreshCurves)
       <component :p="p" :is="comps[p.type]" />
     </div>
   </div>
-  <template v-if="p.child">
+  <template v-if="p.children">
     <div class="TouchFlow-Layer">
-      <TouchFlow v-for="child in p.child" :p="child" />
+      <TouchFlow v-for="child in p.children" :p="child" />
     </div>
   </template>
 </template>
@@ -75,7 +75,7 @@ watch(() => width.value + height.value, refreshCurves)
   position: relative;
   display: flex;
 
-  margin: 10px 20px 260px;
+  margin: 10px 20px 265px;
 
   justify-content: center;
 
@@ -88,9 +88,11 @@ watch(() => width.value + height.value, refreshCurves)
 
     pointer-events: unset;
   }
+
   &:hover {
     opacity: .95;
   }
+
   z-index: 10;
   position: absolute;
 
@@ -117,7 +119,7 @@ watch(() => width.value + height.value, refreshCurves)
   width: 32px;
   height: 32px;
 
-  top: -30%;
+  top: -35%;
   left: 20%;
 
   transform: translate(-50%, -50%);
@@ -162,6 +164,22 @@ watch(() => width.value + height.value, refreshCurves)
 
 div.PBlock {
   p {
+    &.title {
+      .el-button {
+        position: absolute;
+
+        right: 20px;
+      }
+      display: flex;
+
+      gap: 2rem;
+
+      align-items: center;
+      justify-content: space-between;
+
+      width: 100%;
+    }
+
     margin: 0;
     font-size: 1.25rem;
   }
@@ -175,6 +193,7 @@ div.PBlock {
     }
 
     p {
+      margin: 5px 0;
       font-size: 1rem;
     }
 
@@ -193,6 +212,34 @@ div.PBlock {
   &-Content {
     &.theme {
       flex-direction: column;
+
+      & .PBlock-Section {
+        &::before {
+          z-index: -1;
+          content: "";
+          position: absolute;
+
+          left: 0;
+          top: 0;
+
+          width: 100%;
+          height: 100%;
+
+          opacity: .25;
+          border-radius: 0 4px 4px 0;
+          background-color: var(--theme-color, red);
+        }
+
+        position: relative;
+
+        width: 100%;
+
+        border: none;
+        border-left: 4px solid var(--theme-color, red);
+
+        border-radius: 4px;
+        background: unset;
+      }
     }
 
     .el-icon {

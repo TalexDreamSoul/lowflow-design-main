@@ -22,7 +22,7 @@ const flowOptions = reactive({
   },
   p: {
     type: 'start',
-    child: []
+    children: []
   }
 })
 

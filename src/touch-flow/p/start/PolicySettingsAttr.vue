@@ -11,7 +11,7 @@ const origin = {
   selectedType: "",
   num: 1,
 }
-const sizeForm = reactive({});
+const sizeForm = reactive<typeof origin>(origin);
 
 function reset() {
   Object.assign(sizeForm, origin)
@@ -31,17 +31,40 @@ function toggleLogicalOperator() {
 
 function saveData() {
   if (!sizeForm.name) {
-    return ElMessage.warning({
+    ElMessage.warning({
       message: "请输入策略名称"
-    });
+    })
+
+    return false
   }
 
-  if (!props.p.child) {
-    props.p.child = [{ ...sizeForm }]
-  } else props.p.child.push({ ...sizeForm })
+  if (!props.p.children) {
+    props.p.children = [{ ...sizeForm }]
+  } else {
+    const arr = [ ...props.p.children ]
+
+    while ( arr.length ) {
+      const item = arr.shift()
+
+      if (item.name === sizeForm.name) {
+        ElMessage.warning({
+          message: "策略名称重复"
+        });
+
+        return false
+      }
+
+      if ( item.children )
+        arr.push(...item.children)
+    }
+
+    props.p.children.push({ ...sizeForm })
+  }
+
+  return true
 }
 
-type IRegSaveFunc = (regFunc: () => void) => void
+type IRegSaveFunc = (regFunc: () => boolean) => void
 const regSaveFunc: IRegSaveFunc = inject('save')!
 regSaveFunc(saveData)
 </script>

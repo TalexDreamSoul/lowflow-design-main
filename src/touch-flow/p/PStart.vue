@@ -13,36 +13,6 @@ const drawerOptions = reactive({
   visible: false
 })
 
-const comps = [
-  {
-    icon: {
-      type: 'comp',
-      value: Stamp
-    },
-    title: "选择策略器",
-    desc: "按客户属性行为或触发事件对客户筛选分流，并执行动作。",
-    comp: PolicySettingsAttr
-  },
-  {
-    icon: {
-      type: 'comp',
-      value: Stamp
-    },
-    title: "分流器",
-    desc: "按设置的比例自动对客户随机分流，并执行动作",
-    comp: ConditionSetAttr
-  },
-  {
-    icon: {
-      type: 'comp',
-      value: Stamp
-    },
-    title: "兜底选择器",
-    desc: "按设置的比例自动对客户随机分流，并执行动作",
-    comp: ConditionSetAttr
-  },
-]
-
 function openCondition() {
   openDrawer({
     title: "流程类型设置",
@@ -102,18 +72,58 @@ const flowTime = computed(() => {
 
 const conditioned = computed(() => flowType.value !== '-' && flowTime.value !== '-')
 
-let _saveFunc: Function | null = null
+const doDiverse = computed(() => {
+  const { children } = props.p
+
+  if (!children?.length) return false
+
+  return [...children].find(child => 'PolicySettings' === child?.type)
+})
+
+const _comps = [
+  {
+    icon: {
+      type: 'comp',
+      value: Stamp
+    },
+    title: "选择策略器",
+    desc: "按客户属性行为或触发事件对客户筛选分流，并执行动作。",
+    comp: PolicySettingsAttr
+  },
+  {
+    icon: {
+      type: 'comp',
+      value: Stamp
+    },
+    title: "分流器",
+    desc: "按设置的比例自动对客户随机分流，并执行动作。",
+    show: () => !doDiverse.value,
+    comp: ConditionSetAttr
+  },
+  {
+    icon: {
+      type: 'comp',
+      value: Stamp
+    },
+    title: "兜底选择器",
+    desc: "筛选未进入本节点下选择策略器的客户，并执行动作。",
+    show: () => doDiverse.value,
+    comp: ConditionSetAttr
+  },
+]
+
+let _saveFunc: (() => boolean) | null = null
 
 function handleSave() {
-  if (!_saveFunc) return
-
-  _saveFunc()
+  if (!_saveFunc || !_saveFunc()) return
 
   dialogVisible.value = false
   drawerOptions.visible = false
 }
 
-provide('save', (regFunc: () => void) => {
+const comps = computed(() => _comps.filter(comp => comp?.show?.() ?? true))
+
+provide('save', (regFunc: () => boolean) => {
   _saveFunc = regFunc
 })
 </script>

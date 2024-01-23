@@ -10,7 +10,6 @@ import { getmarketingTouchNodeStatistics } from "~/api/index";
 
 import BehaviorFoldingGroup from "~/components/BehaviorFoldingGroup/index.vue";
 
-const labelPosition = ref("single");
 const sizeForm = reactive({
   name: "",
   region: "",
@@ -37,107 +36,33 @@ const $props = defineProps<ApprovalAttr>();
 const $emits = defineEmits<{
   (e: "update:node", modelValue: StartNode): void;
 }>();
-const { node } = useVModels($props, $emits);
-console.log(node.value, "StartNode");
-const { fields } = inject<{
-  fields: Ref<Field[]>;
-}>("nodeHooks")!;
+
 const logicalOperator = ref("and");
 const num = ref(100);
 const marketingTouchNode = ref();
 
-// 全部可写
-const allWriteable = computed({
-  get() {
-    return node.value.formProperties.every((e) => e.writeable);
-  },
-  set(val) {
-    node.value.formProperties.forEach((e) => (e.writeable = val));
-    if (val) {
-      allReadable.value = false;
-      allHidden.value = false;
-    } else {
-      allRequired.value = false;
-    }
-  },
-});
-
-function onSubmit() {
-  console.log("submit!");
-}
-// 全部必填
-const allRequired = computed({
-  get() {
-    return node.value.formProperties.every((e) => e.required);
-  },
-  set(val) {
-    node.value.formProperties.forEach((e) => (e.required = val));
-    if (val) {
-      allWriteable.value = true;
-      allReadable.value = false;
-      allHidden.value = false;
-    }
-  },
-});
-// 全部可读
-const allReadable = computed({
-  get() {
-    return node.value.formProperties.every((e) => e.readable);
-  },
-  set(val) {
-    node.value.formProperties.forEach((e) => (e.readable = val));
-    if (val) {
-      allWriteable.value = false;
-      allHidden.value = false;
-      allRequired.value = false;
-    }
-  },
-});
-// 全部隐藏
-const allHidden = computed({
-  get() {
-    return node.value.formProperties.every((e) => e.hidden);
-  },
-  set(val) {
-    node.value.formProperties.forEach((e) => (e.hidden = val));
-    if (val) {
-      allWriteable.value = false;
-      allRequired.value = false;
-      allReadable.value = false;
-    }
-  },
-});
-
-// 在子组件中定义 submitEvent 方法
-const submitEvent = () => {
-  // 在这里写入您的提交逻辑
-  console.log(node.value, "执行了提交逻辑");
-};
-
-// 暴露 submitEvent 方法给父组件使用
-defineExpose({ submitEvent });
-watchEffect(() => {
-  const formProperties = node.value.formProperties;
-  node.value.formProperties = fields.value
-    .filter((e) => e.value !== undefined)
-    .map((e) => ({
-      id: e.id,
-      name: e.title,
-      readable: e.props.disabled || false,
-      writeable: !e.props.disabled || false,
-      hidden: e.props.hidden || false,
-      required: (e.props.required && !e.props.disabled) || false,
-    }));
-  node.value.formProperties.forEach((item) => {
-    const properties = formProperties.find((f) => f.id === item.id);
-    if (properties) {
-      item.readable = properties.readable;
-      item.writeable = properties.writeable;
-      item.hidden = properties.hidden;
-      item.required = properties.required;
-    }
-  });
-});
+// watchEffect(() => {
+//   const formProperties = node.value.formProperties;
+//   node.value.formProperties = fields.value
+//     .filter((e) => e.value !== undefined)
+//     .map((e) => ({
+//       id: e.id,
+//       name: e.title,
+//       readable: e.props.disabled || false,
+//       writeable: !e.props.disabled || false,
+//       hidden: e.props.hidden || false,
+//       required: (e.props.required && !e.props.disabled) || false,
+//     }));
+//   node.value.formProperties.forEach((item) => {
+//     const properties = formProperties.find((f) => f.id === item.id);
+//     if (properties) {
+//       item.readable = properties.readable;
+//       item.writeable = properties.writeable;
+//       item.hidden = properties.hidden;
+//       item.required = properties.required;
+//     }
+//   });
+// });
 const toggleLogicalOperator = () => {
   console.log(logicalOperator.value);
   switch (logicalOperator.value) {
@@ -180,16 +105,16 @@ const estimation = async() => {
 
               <el-collapse>
                 <el-collapse-item title=" 客户属性满足" class="custom-collapse-item">
-                  <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" />
+                  <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
 
                 </el-collapse-item>
                 <el-collapse-item title=" 客户行为满足" class="custom-collapse-item">
-                  <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" />
+                  <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
 
                 </el-collapse-item>
 
                 <el-collapse-item title=" 行为序列满足" class="custom-collapse-item">
-                  <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" />
+                  <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
 
                 </el-collapse-item>
               </el-collapse>
