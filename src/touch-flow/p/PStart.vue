@@ -1,121 +1,122 @@
 <script setup lang="ts">
-import { ref, reactive, computed, provide } from 'vue'
-import { Stamp, Plus } from '@element-plus/icons-vue'
-import ConditionSetAttr from '../p/start/ConditionSetAttr.vue'
-import CustomersAttr from '../p/start/CustomersAttr.vue'
-import PolicySettingsAttr from '../p/start/PolicySettingsAttr.vue'
+import { ref, reactive, computed, provide } from "vue";
+import { Stamp, Plus } from "@element-plus/icons-vue";
+import ConditionSetAttr from "../p/start/ConditionSetAttr.vue";
+import CustomersAttr from "../p/start/CustomersAttr.vue";
+import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
 const props = defineProps<{
-  p?: any,
-}>()
+  p?: any;
+}>();
 
-const dialogVisible = ref(false)
+const dialogVisible = ref(false);
 const drawerOptions = reactive({
-  visible: false
-})
+  visible: false,
+});
 
 const comps = [
   {
     icon: {
-      type: 'comp',
-      value: Stamp
+      type: "comp",
+      value: Stamp,
     },
     title: "选择策略器",
     desc: "按客户属性行为或触发事件对客户筛选分流，并执行动作。",
-    comp: PolicySettingsAttr
+    comp: PolicySettingsAttr,
   },
   {
     icon: {
-      type: 'comp',
-      value: Stamp
+      type: "comp",
+      value: Stamp,
     },
     title: "分流器",
     desc: "按设置的比例自动对客户随机分流，并执行动作",
-    comp: ConditionSetAttr
+    comp: ConditionSetAttr,
   },
   {
     icon: {
-      type: 'comp',
-      value: Stamp
+      type: "comp",
+      value: Stamp,
     },
     title: "兜底选择器",
     desc: "按设置的比例自动对客户随机分流，并执行动作",
-    comp: ConditionSetAttr
+    comp: ConditionSetAttr,
   },
-]
+];
 
 function openCondition() {
   openDrawer({
     title: "流程类型设置",
-    comp: ConditionSetAttr
-  })
+    comp: ConditionSetAttr,
+  });
 }
 
 function openCustomer() {
   openDrawer({
     title: "受众客户设置",
-    comp: CustomersAttr
-  })
+    comp: CustomersAttr,
+  });
 }
 
 function openDrawer(comp: any) {
-  dialogVisible.value = false
+  dialogVisible.value = false;
 
-  Object.assign(drawerOptions, comp)
+  Object.assign(drawerOptions, comp);
 
-  if (!props.p.labelPosition)
-    props.p.labelPosition = "single";
+  if (!props.p.labelPosition) props.p.labelPosition = "single";
 
-  drawerOptions.visible = true
+  drawerOptions.visible = true;
 }
 
 const flowType = computed(() => {
-  if (!props.p?.labelPosition) return '-'
+  if (!props.p?.labelPosition) return "-";
   const map: { [key: string]: string } = {
-    'single': "定时型-单次",
-    'repeat': "定时型-重复",
-    'type': '触发型'
-  }
+    single: "定时型-单次",
+    repeat: "定时型-重复",
+    type: "触发型",
+  };
 
-  const s: string = props.p?.labelPosition
+  const s: string = props.p?.labelPosition;
 
-  return map[s.toLowerCase()]
-})
+  return map[s.toLowerCase()];
+});
 
 const flowTime = computed(() => {
-  const _time = props.p.time
-  if (!_time) return '-'
+  const _time = props.p.time;
+  if (!_time) return "-";
 
   if (_time instanceof Date) {
-    const s: Date = _time
+    const s: Date = _time;
 
-    return s.toLocaleString().replaceAll('/', '-')
+    return s.toLocaleString().replaceAll("/", "-");
   }
 
-  const [date1, date2] = _time
-  if (!date1 || !date2) return '-'
+  const [date1, date2] = _time;
+  if (!date1 || !date2) return "-";
 
-  const date1Text = date1.toLocaleDateString().replaceAll('/', '-')
-  const date2Text = date2.toLocaleDateString().replaceAll('/', '-')
+  const date1Text = date1.toLocaleDateString().replaceAll("/", "-");
+  const date2Text = date2.toLocaleDateString().replaceAll("/", "-");
 
-  return `${date1Text} 至 ${date2Text}`
-})
+  return `${date1Text} 至 ${date2Text}`;
+});
 
-const conditioned = computed(() => flowType.value !== '-' && flowTime.value !== '-')
+const conditioned = computed(
+  () => flowType.value !== "-" && flowTime.value !== "-"
+);
 
-let _saveFunc: Function | null = null
+let _saveFunc: Function | null = null;
 
 function handleSave() {
-  if (!_saveFunc) return
+  if (!_saveFunc) return;
 
-  _saveFunc()
+  _saveFunc();
 
-  dialogVisible.value = false
-  drawerOptions.visible = false
+  dialogVisible.value = false;
+  drawerOptions.visible = false;
 }
 
-provide('save', (regFunc: () => void) => {
-  _saveFunc = regFunc
-})
+provide("save", (regFunc: () => void) => {
+  _saveFunc = regFunc;
+});
 </script>
 
 <template>
@@ -135,8 +136,8 @@ provide('save', (regFunc: () => void) => {
           </span>
         </p>
         <span v-if="conditioned" style="opacity: .75;font-size: 14px">
-          <span>流程类型：{{ flowType }}</span><br />
-          <span>进入时间：{{ flowTime }}</span><br />
+          <span>流程类型：<span class="contentdeep">{{ flowType }}</span></span><br />
+          <span>进入时间：<span class="contentdeep">{{ flowTime }}</span></span><br />
         </span>
         <span v-else>设置流程类型、流程有效期、流程开始时间、进入限制。</span>
       </div>
@@ -179,8 +180,7 @@ provide('save', (regFunc: () => void) => {
     </teleport>
   </el-card>
 
-  <el-button :class="{ display: conditioned }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus"
-    circle />
+  <el-button :class="{ display: conditioned }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">
@@ -196,21 +196,33 @@ provide('save', (regFunc: () => void) => {
 
 .PBlock-Section {
   p {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+    color: #333;
+    overflow: hidden;
+    position: relative;
+    padding-bottom: 12px;
+
     &::before {
       content: "";
       position: absolute;
-
       left: 0;
-      bottom: 3px;
-
+      bottom: 20px;
       width: 60%;
       height: 8px;
-
-      transition: .25s;
+      transition: 0.25s;
       transform: scaleX(0) translateX(-100%);
-      background: linear-gradient(82deg,
-          rgba(64, 120, 224, 0.4) 0%,
-          rgba(64, 120, 224, 0) 100%);
+      width: 160px;
+      height: 7px;
+      background: linear-gradient(
+        82deg,
+        rgba(64, 120, 224, 0.4) 0%,
+        rgba(64, 120, 224, 0) 100%
+      );
+      border-radius: 2px 2px 2px 2px;
+      opacity: 0.6;
+      position: absolute;
     }
 
     span {
@@ -218,9 +230,8 @@ provide('save', (regFunc: () => void) => {
 
       font-size: 1.25rem;
 
-      color: #00C068 !important;
+      color: #00c068 !important;
     }
-
     position: relative;
   }
 
@@ -230,16 +241,18 @@ provide('save', (regFunc: () => void) => {
         transform: scaleX(1) translateX(0%);
       }
 
-      color: var(--el-color-primary);
+      color: #4078e0;
     }
   }
-
+  &:hover {
+    border: 1px solid #4078e0;
+  }
   width: 50%;
 }
 
 .PBlock-Section .el-icon {
-  top: .125rem;
+  top: 0.125rem;
 
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 </style>
