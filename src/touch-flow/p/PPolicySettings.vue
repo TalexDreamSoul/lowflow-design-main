@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, reactive, nextTick, provide } from 'vue'
+import { ref, reactive, provide } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import ConditionSetAttr from './start/ConditionSetAttr.vue'
 import PolicySettingsAttr from './start/PolicySettingsAttr.vue'
+import { delChild } from '../flow-utils'
 
 const props = defineProps<{
   p?: any,
@@ -70,7 +71,7 @@ provide('save', (regFunc: () => boolean) => {
   <el-card style="width: 355px" class="PBlock">
     <p class="title">
       选择策略器 {{ p.name }}
-      <el-button text type="primary">
+      <el-button @click="delChild(p)" text type="primary">
         <el-icon><Delete /></el-icon>
         删除
       </el-button>

@@ -226,7 +226,7 @@ export const refreshLines = (root: HTMLElement, genner: any) => {
   const [, , , , , jp] = genner()
   const { have, _multiple, nextLayer, quoter } = _genner(genner, root)
 
-  if (!nextLayer || !have || !remover(root, genner)) return
+  if (!nextLayer || !remover(root, genner) || !have) return
 
   if (!_multiple) {
     if (!nextLayer.className.includes('TouchFlow')) return

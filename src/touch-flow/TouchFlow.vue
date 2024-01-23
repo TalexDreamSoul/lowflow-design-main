@@ -59,8 +59,7 @@ watch(
   props.p,
   () => {
     nextTick(refreshCurves);
-  },
-  { deep: true }
+  }
 );
 
 watch(() => width.value + height.value, refreshCurves);

@@ -38,15 +38,17 @@ function saveData() {
     return false
   }
 
+  const _ = { ...sizeForm, father: props.p }
+
   if (!props.p.children) {
-    props.p.children = [{ ...sizeForm }]
+    props.p.children = [_]
   } else {
     const arr = [ ...props.p.children ]
 
     while ( arr.length ) {
       const item = arr.shift()
 
-      if (item.name === sizeForm.name) {
+      if (item.name === _.name) {
         ElMessage.warning({
           message: "策略名称重复"
         });
@@ -58,7 +60,7 @@ function saveData() {
         arr.push(...item.children)
     }
 
-    props.p.children.push({ ...sizeForm })
+    props.p.children.push(_)
   }
 
   return true

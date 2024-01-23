@@ -22,10 +22,12 @@ const flowOptions = reactive({
   },
   p: {
     type: 'start',
+    // father: {},
     children: []
   }
 })
 
+// flowOptions.p.father = flowOptions
 </script>
 
 <template>
