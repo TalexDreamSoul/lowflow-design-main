@@ -152,8 +152,7 @@ const attrs = computed(() => {
       display: flex;
       align-items: center;
       overflow: hidden;
-      min-width: 60px;
-      padding-right: 5px;
+      min-width: 35px;
     }
     .logical-operator {
       position: relative;
@@ -164,7 +163,7 @@ const attrs = computed(() => {
 
       .logical-operator__line {
         position: absolute;
-        left: calc(35% - 1px);
+        left: calc(38% - 1px);
         border-width: 1px 0 1px 1px;
         border-top-style: solid;
         border-bottom-style: solid;
