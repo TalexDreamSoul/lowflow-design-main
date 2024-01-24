@@ -15,4 +15,8 @@ import TopMenu from "~/components/TopMenu/index.vue";
 .primarystyle {
   background: linear-gradient(to top, #598ff1, #205ccb);
 }
+.el-form-item {
+  margin-right: 0;
+  margin-bottom: 12px !important;
+}
 </style>

@@ -2,6 +2,7 @@
 import { inject, ref, reactive, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import BehaviorFoldingGroup from "~/components/BehaviorFoldingGroup/index.vue";
+import { getqryMaterial } from "~/api";
 
 const labelPosition = ref("single");
 const transform = ref(true);
@@ -13,9 +14,13 @@ const origin = {
   isDelayed: false,
   selectedType: "day",
   delayedAction: "day",
+  materialtype: "sms",
+  
   num: 1,
 };
 const sizeForm = reactive<typeof origin>(origin);
+  
+const dictType = ref();
 
 function reset() {
   Object.assign(sizeForm, origin);
@@ -30,6 +35,20 @@ const props = defineProps<{
 }>();
 
 function toggleLogicalOperator() {}
+
+const getqryMaterialval = async () => {
+  let param:any={
+    beginTime: "",
+    endTime: "",
+    name: "",
+    pageNum: 10,
+    pageSize: 0,
+    status: "available",
+    type: "sms"
+}
+  let res = await getqryMaterial(param);
+  dictType.value = res.data;
+};
 
 function saveData() {
   if (!sizeForm.name) {
@@ -166,26 +185,29 @@ regSaveFunc(saveData);
             </el-icon></el-text>
         </div>
         <div class="underbg">
-          <el-form-item label="触达通道：">
+          <el-form-item label="触达通道">
             <el-col :span="12">
-              <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
-                <el-option value="month" label="月份">发送触达并打上标签</el-option>
-                <el-option value="week" label="周">小时</el-option>
-                <el-option value="day" label="天">天</el-option>
+              <el-select v-model="sizeForm.materialtype"  style="width: 100px">
+                <el-option value="sms" label="短信">手机短信</el-option>
+                <el-option value="app" label="app消息">app消息</el-option>
+                <el-option value="digital" label="数字员工">数字员工</el-option>
+                <el-option value="outbound" label="智能外呼">智能外呼</el-option>
+                <el-option value="znx" label="站内信">站内信</el-option>
               </el-select>
             </el-col>
 
           </el-form-item>
-
-          <el-form-item label="选择模版：">
-            <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
+          
+          <el-button type="primary" @click="getqryMaterialval" plain>获取模版</el-button>
+          <el-form-item label="选择模版">
+            <el-select v-model="sizeForm.type" placeholder="请选择" style="width: 100px">
               <el-option value="month" label="月份">发送触达并打上标签</el-option>
               <el-option value="week" label="周">小时</el-option>
               <el-option value="day" label="天">天</el-option>
             </el-select>&nbsp;&nbsp;&nbsp;<el-button type="primary" plain>新增短信模块版本</el-button>
           </el-form-item>
 
-          <el-form-item label="触达内容：">
+          <el-form-item label="触达内容">
             <div>定制组件位置</div>
           </el-form-item>
         </div>
@@ -359,4 +381,5 @@ regSaveFunc(saveData);
     background: #f7f8fa;
   }
 }
+
 </style>

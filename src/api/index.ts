@@ -50,3 +50,7 @@ export const dictFilterTree = () => {
 export const getmarketingTouchEstimate = (data: any) => {
     return request.post({ url: '/api/marketingTouchEstimate', data })
 }
+// 素材列表
+export const getqryMaterial = (data: any) => {
+    return request.post({ url: '/api/qryMaterial', data })
+}
