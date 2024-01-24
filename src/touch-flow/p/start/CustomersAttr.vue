@@ -8,7 +8,7 @@ import { computed, inject, Ref, ref, watchEffect, reactive } from "vue";
 import { Delete, CirclePlus, CircleClose } from "@element-plus/icons-vue";
 import { getmarketingTouchEstimate } from "~/api/index";
 
-import BehaviorFoldingGroup from "~/components/BehaviorFoldingGroup/index.vue";
+import { json } from "stream/consumers";
 
 const sizeForm = reactive({
   name: "",
@@ -39,30 +39,15 @@ const $emits = defineEmits<{
 
 const logicalOperator = ref("and");
 const num = ref(100);
-const marketingTouchNode = ref();
+const marketingTouchNode = ref({
+	"appPushCount": 0,
+	"digitalCount": 0,
+	"outboundCount": 0,
+	"smsCount": 0,
+	"total": 0,
+	"znxCount": 0
+});
 
-// watchEffect(() => {
-//   const formProperties = node.value.formProperties;
-//   node.value.formProperties = fields.value
-//     .filter((e) => e.value !== undefined)
-//     .map((e) => ({
-//       id: e.id,
-//       name: e.title,
-//       readable: e.props.disabled || false,
-//       writeable: !e.props.disabled || false,
-//       hidden: e.props.hidden || false,
-//       required: (e.props.required && !e.props.disabled) || false,
-//     }));
-//   node.value.formProperties.forEach((item) => {
-//     const properties = formProperties.find((f) => f.id === item.id);
-//     if (properties) {
-//       item.readable = properties.readable;
-//       item.writeable = properties.writeable;
-//       item.hidden = properties.hidden;
-//       item.required = properties.required;
-//     }
-//   });
-// });
 const toggleLogicalOperator = () => {
   console.log(logicalOperator.value);
   switch (logicalOperator.value) {
@@ -76,123 +61,135 @@ const toggleLogicalOperator = () => {
   // logicalOperator.value == 'and' ? 'or' : 'and'
   //  $emits('update:modelValue', filterRules.logicalOperator === 'and' ? 'or' : 'and');
 };
-const estimation = async() => {
+const estimation = async () => {
   // 请求示例
-  let data={
-	"customAttr": {
-		"conditions": [
-			{
-				"conditions": [
-					{
-						"attr": {
-							"endTime": "",
-							"field": "",
-							"fieldMultiValue": [],
-							"fieldName": "",
-							"fieldOp": "",
-							"fieldRangeValue": "",
-							"fieldType": "",
-							"fieldValue": "",
-							"startTime": ""
-						},
-						"label": {
-							"labelId": 0,
-							"labelName": "",
-							"labelValue": []
-						},
-						"type": ""
-					}
-				],
-				"logicalChar": ""
-			}
-		],
-		"logicalChar": ""
-	},
-	"customEvent": {
-		"conditions": [
-			{
-				"conditions": [
-					{
-						"action": "",
-						"conditions": {
-							"conditions": [
-								{
-									"attr": {
-										"endTime": "",
-										"field": "",
-										"fieldMultiValue": [],
-										"fieldName": "",
-										"fieldOp": "",
-										"fieldRangeValue": "",
-										"fieldType": "",
-										"fieldValue": "",
-										"startTime": ""
-									},
-									"label": {
-										"labelId": 0,
-										"labelName": "",
-										"labelValue": []
-									},
-									"type": ""
-								}
-							],
-							"logicalChar": ""
-						},
-						"endTime": "",
-						"eventCode": "",
-						"eventName": "",
-						"startTime": ""
-					}
-				],
-				"logicalChar": ""
-			}
-		],
-		"logicalChar": ""
-	},
-	"eventSequence": {
-		"conditions": [
-			{
-				"conditions": [
-					{
-						"action": "",
-						"conditions": {
-							"conditions": [
-								{
-									"attr": {
-										"endTime": "",
-										"field": "",
-										"fieldMultiValue": [],
-										"fieldName": "",
-										"fieldOp": "",
-										"fieldRangeValue": "",
-										"fieldType": "",
-										"fieldValue": "",
-										"startTime": ""
-									},
-									"label": {
-										"labelId": 0,
-										"labelName": "",
-										"labelValue": []
-									},
-									"type": ""
-								}
-							],
-							"logicalChar": ""
-						},
-						"eventCode": "",
-						"eventName": ""
-					}
-				],
-				"endTime": "",
-				"logicalChar": "",
-				"startTime": ""
-			}
-		],
-		"logicalChar": ""
-	},
-	"logicalChar": ""
-}
-  let res = await getmarketingTouchEstimate(data);
+  let data = {
+    customAttr: {
+      conditions: [
+        {
+          conditions: [
+            {
+              attr: {
+                endTime: "",
+                field: "",
+                fieldMultiValue: [],
+                fieldName: "",
+                fieldOp: "",
+                fieldRangeValue: "",
+                fieldType: "",
+                fieldValue: "",
+                startTime: "",
+              },
+              label: {
+                labelId: 0,
+                labelName: "",
+                labelValue: [],
+              },
+              type: "",
+            },
+          ],
+          logicalChar: "",
+        },
+      ],
+      logicalChar: "",
+    },
+    customEvent: {
+      conditions: [
+        {
+          conditions: [
+            {
+              action: "",
+              conditions: {
+                conditions: [
+                  {
+                    attr: {
+                      endTime: "",
+                      field: "",
+                      fieldMultiValue: [],
+                      fieldName: "",
+                      fieldOp: "",
+                      fieldRangeValue: "",
+                      fieldType: "",
+                      fieldValue: "",
+                      startTime: "",
+                    },
+                    label: {
+                      labelId: 0,
+                      labelName: "",
+                      labelValue: [],
+                    },
+                    type: "",
+                  },
+                ],
+                logicalChar: "",
+              },
+              endTime: "",
+              eventCode: "",
+              eventName: "",
+              startTime: "",
+            },
+          ],
+          logicalChar: "",
+        },
+      ],
+      logicalChar: "",
+    },
+    eventSequence: {
+      conditions: [
+        {
+          conditions: [
+            {
+              action: "",
+              conditions: {
+                conditions: [
+                  {
+                    attr: {
+                      endTime: "",
+                      field: "",
+                      fieldMultiValue: [],
+                      fieldName: "",
+                      fieldOp: "",
+                      fieldRangeValue: "",
+                      fieldType: "",
+                      fieldValue: "",
+                      startTime: "",
+                    },
+                    label: {
+                      labelId: 0,
+                      labelName: "",
+                      labelValue: [],
+                    },
+                    type: "",
+                  },
+                ],
+                logicalChar: "",
+              },
+              eventCode: "",
+              eventName: "",
+            },
+          ],
+          endTime: "",
+          logicalChar: "",
+          startTime: "",
+        },
+      ],
+      logicalChar: "",
+    },
+    logicalChar: "",
+  };
+  let res = await getmarketingTouchEstimate(JSON.stringify(data));
+  res = {
+    data: {
+      total: 1000,
+      appPushCount: 500,
+      znxCount: 120,
+      digitalCount: 800,
+      outboundCount: 200,
+      smsCount: 499,
+    },
+    message: "交易成功",
+    code: "0",
+  };
   marketingTouchNode.value = res.data;
   console.log("Mounted", res);
 };
@@ -250,7 +247,7 @@ const estimation = async() => {
           <div class="topName">
             预估受众客户总数
           </div>
-          <div v-if="num==100">400</div>
+          <div v-if="marketingTouchNode.total!=undefined">{{marketingTouchNode.total}}</div>
           <div style="color: #FF5050;" v-else>无法预估数据</div>
         </div>
         <div class="grayblock">
@@ -261,7 +258,7 @@ const estimation = async() => {
                 APP Push
               </div>
               <div>
-                {{ num?num:"-" }}
+                {{ marketingTouchNode.appPushCount!=undefined?marketingTouchNode.appPushCount:"-" }}
               </div>
             </div>
           </div>
@@ -271,7 +268,7 @@ const estimation = async() => {
                 APP内部
               </div>
               <div>
-                {{ num?num:"-" }}
+                {{ marketingTouchNode.znxCount!=undefined	?marketingTouchNode.znxCount	:"-" }}
 
               </div>
             </div>
@@ -282,8 +279,7 @@ const estimation = async() => {
                 企业微信
               </div>
               <div>
-                {{ num?num:"-" }}
-
+                {{ marketingTouchNode.digitalCount!=undefined	?marketingTouchNode.digitalCount	:"-" }}
               </div>
             </div>
           </div>
@@ -293,7 +289,7 @@ const estimation = async() => {
                 智能外呼
               </div>
               <div>
-                {{ num?num:"-" }}
+                {{ marketingTouchNode.outboundCount!=undefined?marketingTouchNode.outboundCount:"-" }}
 
               </div>
             </div>
@@ -304,7 +300,7 @@ const estimation = async() => {
                 手机短信
               </div>
               <div>
-                {{ num?num:"-" }}
+                {{ marketingTouchNode.smsCount!=undefined?marketingTouchNode.smsCount:"-" }}
 
               </div>
             </div>
