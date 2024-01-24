@@ -71,7 +71,7 @@ const attrs = computed(() => {
         </div>
         <div v-if="attrs" class="filter-option-content">
           <el-form :label-width="0" :inline="true" :model="target.conditions">
-            <el-row v-for="(item, index) in target.conditions" :key="`${item.field}-${index}`" :gutter="5" class="filter-item-rule">
+            <el-row v-for="(item, index) in target.conditions" :key="`${item.field}-${index}`"  class="filter-item-rule">
               <el-col :xs="24" :sm="7">
                 <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
                   <trigger v-model="item.field" :attrs="attrs" />
@@ -119,40 +119,19 @@ const attrs = computed(() => {
 
   border-radius: 8px;
 
-  background-color: #f7f8fa;
-}
-
-.TargetContent-TopBanner {
-  background: #edeff4;
-  border-radius: 4px 4px 0px 0px;
-  font-size: 12px;
-  font-weight: 400;
-  color: #000000;
-  padding: 0px 24px;
-}
-:deep(.el-form-item) {
-  margin-right: 0;
-  margin-bottom: 0;
-}
-.filter-wrap {
-  padding: 24px;
-  width: 50%;
-  .garyblock {
-    margin-bottom: 16px;
-  }
   .filter-container {
     //background-color: #f5f8fc;
     //border-radius: 3px;
     display: flex;
     .fontstyle {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 400;
       color: #000000;
       position: relative;
       display: flex;
       align-items: center;
       overflow: hidden;
-      min-width: 35px;
+      min-width: 55px;
     }
     .logical-operator {
       position: relative;
@@ -184,7 +163,7 @@ const attrs = computed(() => {
       .filter-item-rule {
         display: flex;
         align-items: center;
-        min-height: 48px;
+        //min-height: 48px;
       }
 
       .filter-filter-item__add {
@@ -194,6 +173,20 @@ const attrs = computed(() => {
     }
   }
 }
+
+.TargetContent-TopBanner {
+  background: #edeff4;
+  border-radius: 4px 4px 0px 0px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #000000;
+  padding: 0px 24px;
+}
+:deep(.el-form-item) {
+  margin-right: 0;
+  margin-bottom: 0;
+}
+
 .custom-switch {
   border: 1px solid #4078e0;
   color: #fff;
