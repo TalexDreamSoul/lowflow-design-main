@@ -5,6 +5,7 @@ import BehaviorFoldingGroup from "~/components/BehaviorFoldingGroup/index.vue";
 
 const labelPosition = ref("single");
 const transform = ref(true);
+const transformset = ref(true);
 const origin = {
   type: "PolicySettings",
   name: "test",
@@ -139,12 +140,12 @@ regSaveFunc(saveData);
         </div>
         <div class="underbg">
           <div class="flex-column">
-            &nbsp; <el-select v-model="sizeForm.isDelayed"  style="width: 100px">
+            &nbsp; <el-select v-model="sizeForm.isDelayed" style="width: 100px">
               <el-option :value="true" label="延迟">延迟</el-option>
               <el-option :value="false" label="不延迟">不延迟</el-option>
             </el-select>&nbsp;
-            <el-input v-model="sizeForm.num" type="number"  style="width: 100px" />&nbsp;
-            <el-select v-model="sizeForm.selectedType"  style="width: 100px">
+            <el-input v-model="sizeForm.num" type="number" style="width: 100px" />&nbsp;
+            <el-select v-model="sizeForm.selectedType" style="width: 100px">
               <el-option value="month" label="月份">分钟</el-option>
               <el-option value="week" label="周">小时</el-option>
               <el-option value="day" label="天">天</el-option>
@@ -160,29 +161,40 @@ regSaveFunc(saveData);
           </div>
         </div>
       </div>
-
-      <el-form-item label="触达通道：">
-        <el-col :span="12">
-          <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
-            <el-option value="month" label="月份">发送触达并打上标签</el-option>
-            <el-option value="week" label="周">小时</el-option>
-            <el-option value="day" label="天">天</el-option>
-          </el-select>
-        </el-col>
-
-      </el-form-item>
-
-      <el-form-item label="选择模版：">
-        <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
-          <el-option value="month" label="月份">发送触达并打上标签</el-option>
-          <el-option value="week" label="周">小时</el-option>
-          <el-option value="day" label="天">天</el-option>
-        </el-select><el-button type="primary">新增短信模块版本</el-button>
-      </el-form-item>
-
-      <el-form-item label="触达内容：">
-        <div>定制组件位置</div>
-      </el-form-item>
+      <div class="blockbg">
+        <div class="title_set">
+          触达设置
+          <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transform ? '收起' : '展开' }}
+            <el-icon class="icondown" :style="{ transform: transformset ?'rotate(-90deg)' : 'rotate(90deg)'}">
+              <DArrowRight />
+            </el-icon></el-text>
+        </div>
+        <div class="underbg">
+          <el-form-item label="触达通道：">
+            <el-col :span="12">
+              <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
+                <el-option value="month" label="月份">发送触达并打上标签</el-option>
+                <el-option value="week" label="周">小时</el-option>
+                <el-option value="day" label="天">天</el-option>
+              </el-select>
+            </el-col>
+    
+          </el-form-item>
+    
+          <el-form-item label="选择模版：">
+            <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
+              <el-option value="month" label="月份">发送触达并打上标签</el-option>
+              <el-option value="week" label="周">小时</el-option>
+              <el-option value="day" label="天">天</el-option>
+            </el-select><el-button type="primary">新增短信模块版本</el-button>
+          </el-form-item>
+    
+          <el-form-item label="触达内容：">
+            <div>定制组件位置</div>
+          </el-form-item>
+        </div>
+      </div>
+      
 
       <div class="flex-column">
         <div>
@@ -335,6 +347,7 @@ regSaveFunc(saveData);
 .blockbg {
   font-size: 14px;
   border-radius: var(--el-border-radius-base);
+  margin-top: 24px;
   .title_set {
     padding: 4px 12px;
     background: #eaeff3;
