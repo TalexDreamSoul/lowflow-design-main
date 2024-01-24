@@ -10,11 +10,7 @@ const props = defineProps<{
   <div class="TouchFlow-Header">
     <div class="TouchFlow-Header-Start">
       <span>策略流程名称：</span>
-      <el-input
-        placeholder="策略流程名称"
-        v-model="basic.flowName"
-        :style="{ width: '400px', height: '40px' }"
-      />
+      <el-input placeholder="策略流程名称" v-model="basic.flowName" :style="{ width: '400px', height: '40px' }" />
     </div>
     <div>
       <el-button round>返回</el-button>
@@ -29,15 +25,9 @@ const props = defineProps<{
       <BasicTarget :target="basic.target" />
     </el-scrollbar>
   </div>
-  <div
-    @click="basic._expand = !basic._expand"
-    :class="basic._expand ? 'baseSet baseSetpoz' : 'baseSet'"
-  >
+  <div @click="basic._expand = !basic._expand" :class="basic._expand ? 'baseSet baseSetpoz' : 'baseSet'">
     {{ basic._expand ? "收起" : "展开" }}基础设置
-    <el-icon
-      class="icondown"
-      :style="{ transform: basic._expand ? 'rotate(-90deg)' : 'rotate(90deg)' }"
-    >
+    <el-icon class="icondown" :style="{ transform: basic._expand ? 'rotate(-90deg)' : 'rotate(90deg)' }">
       <DArrowRight />
     </el-icon>
   </div>
@@ -60,7 +50,7 @@ const props = defineProps<{
 
   &-Content {
     position: relative;
-    padding: 1.5rem;
+    padding: 0 1.5rem;
     line-height: 2.5rem;
 
     background-color: var(--el-fill-color);
@@ -115,7 +105,7 @@ const props = defineProps<{
 }
 
 .TouchFlow-Addon {
- // height: calc(100% - 120px);
+  // height: calc(100% - 120px);
 }
 
 .TouchFlow-Header {
