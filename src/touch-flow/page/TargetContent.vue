@@ -118,7 +118,6 @@ const attrs = computed(() => {
                   <el-icon size="14">
                     <Delete />
                   </el-icon>
-                  删除
                 </el-text>
               </el-col>
             </el-row>
