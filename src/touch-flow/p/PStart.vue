@@ -185,7 +185,7 @@ provide("save", (regFunc: () => boolean) => {
         <component :p="p" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
-          <el-button round @click="handleSave" type="primary" class="primarystyle">保存</el-button>
+          <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
         </template>
       </el-drawer>
     </teleport>

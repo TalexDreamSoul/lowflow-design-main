@@ -131,7 +131,7 @@ onUnmounted(() => {
         <div class="rommButtonGroup">
           <el-button @click="validate" round>返回</el-button>
           <el-button @click="validate" round>保存草稿</el-button>
-          <el-button @click="converterBpmn" type="primary" round class="primarystyle">提交审核</el-button>
+          <el-button @click="converterBpmn" type="primary" round primaryStyle>提交审核</el-button>
 
         </div>
       </div>
@@ -241,9 +241,6 @@ onUnmounted(() => {
       right: 24px;
       top: 24px;
     }
-  }
-  .primarystyle {
-    background: linear-gradient(to top, #598ff1, #205ccb);
   }
   .zoombottom {
     padding: 8px 30px 8px 20px;

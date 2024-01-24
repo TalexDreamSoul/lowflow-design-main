@@ -8,13 +8,10 @@
 </template>
 
 <script lang="ts" setup>
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import TopMenu from "~/components/TopMenu/index.vue";
 </script>
-<style >
-.primarystyle {
-  background: linear-gradient(to top, #598ff1, #205ccb);
-}
+<style>
 .el-form-item {
   margin-right: 0;
   margin-bottom: 12px !important;

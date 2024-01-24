@@ -19,7 +19,7 @@ const props = defineProps<{
     <div>
       <el-button round>返回</el-button>
       <el-button round>保存草稿</el-button>
-      <el-button round type="primary" class="primarystyle">提交审核</el-button>
+      <el-button round type="primary" primaryStyle>提交审核</el-button>
     </div>
   </div>
 
@@ -41,31 +41,10 @@ const props = defineProps<{
       <DArrowRight />
     </el-icon>
   </div>
-  <div
-    @click="basic._expand = !basic._expand"
-    :class="basic._expand ? 'baseSet baseSetpoz' : 'baseSet'"
-  >
-    {{ basic._expand ? "收起" : "展开" }}基础设置
-    <el-icon
-      class="icondown"
-      :style="{ transform: basic._expand ? 'rotate(-90deg)' : 'rotate(90deg)' }"
-    >
-      <DArrowRight />
-    </el-icon>
-  </div>
 </template>
 
 <style lang="scss">
 .Basic-Block {
-  // margin: 10px 0;
-  // padding: 10px;
-  // border: 1px solid #eee;
-  // border-radius: 4px;
-  // background-color: #fff;
-  // box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  // transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  // cursor: pointer;
-
   &-Head {
     > span {
       margin-right: 0.5rem;
@@ -74,12 +53,8 @@ const props = defineProps<{
     }
 
     display: flex;
-    // padding: 0 .5rem;
-
-    // justify-content: space-between;
     align-content: center;
 
-    // font-weight: 600;
     user-select: none;
   }
 
@@ -138,9 +113,11 @@ const props = defineProps<{
   margin-bottom: 0px !important;
   top: unset;
 }
+
 .TouchFlow-Addon {
   height: calc(100% - 120px);
 }
+
 .TouchFlow-Header {
   &-Start {
     span {

@@ -39,11 +39,11 @@ export default defineConfig({
         port: 3200,
         proxy: {
             "/api": {
-            target: "http://172.30.3.6:18700",
-            changeOrigin: true,
-          },
+                target: "http://172.30.3.6:18700",
+                changeOrigin: true,
+            },
         },
-      },
+    },
     plugins: [
         vue(),
         vueJsx(),
@@ -78,7 +78,8 @@ export default defineConfig({
                 }),
             ],
             rules: [
-                ['flex-center', { display: 'flex', 'align-items': 'center', 'justify-content': 'center' }]
+                ['flex-center', { display: 'flex', 'align-items': 'center', 'justify-content': 'center' }],
+                ['primaryStyle', { background: 'linear-gradient(to top, #598ff1, #205ccb)' }]
             ],
             transformers: [
                 transformerDirectives(),
