@@ -4,71 +4,71 @@ import { ElMessage } from "element-plus";
 import BehaviorFoldingGroup from "~/components/BehaviorFoldingGroup/index.vue";
 
 const labelPosition = ref("single");
+const transform = ref(true);
 const origin = {
   type: "PolicySettings",
   name: "test",
   value1: false,
-  selectedType: "",
+  isDelayed: false,
+  selectedType: "day",
+  delayedAction: "day",
   num: 1,
-}
+};
 const sizeForm = reactive<typeof origin>(origin);
 
 function reset() {
-  Object.assign(sizeForm, origin)
+  Object.assign(sizeForm, origin);
 }
 
-onMounted(reset)
+onMounted(reset);
 
 const logicalOperator = ref("and");
 
 const props = defineProps<{
-  p: any
+  p: any;
 }>();
 
-function toggleLogicalOperator() {
-
-}
+function toggleLogicalOperator() {}
 
 function saveData() {
   if (!sizeForm.name) {
     ElMessage.warning({
-      message: "请输入策略名称"
-    })
+      message: "请输入策略名称",
+    });
 
-    return false
+    return false;
   }
 
-  const _ = { ...sizeForm, father: props.p }
+  const _ = { ...sizeForm, father: props.p };
 
   if (!props.p.children) {
-    props.p.children = [_]
+    props.p.children = [_];
   } else {
-    const arr = [ ...props.p.children ]
+    const arr = [...props.p.children];
 
-    while ( arr.length ) {
-      const item = arr.shift()
+    while (arr.length) {
+      const item = arr.shift();
 
       if (item.name === _.name) {
         ElMessage.warning({
-          message: "策略名称重复"
+          message: "策略名称重复",
         });
 
-        return false
+        return false;
       }
 
-      if ( item.children )
-        arr.push(...item.children)
+      if (item.children) arr.push(...item.children);
     }
 
-    props.p.children.push(_)
+    props.p.children.push(_);
   }
 
-  return true
+  return true;
 }
 
-type IRegSaveFunc = (regFunc: () => boolean) => void
-const regSaveFunc: IRegSaveFunc = inject('save')!
-regSaveFunc(saveData)
+type IRegSaveFunc = (regFunc: () => boolean) => void;
+const regSaveFunc: IRegSaveFunc = inject("save")!;
+regSaveFunc(saveData);
 </script>
 
 <template>
@@ -87,159 +87,126 @@ regSaveFunc(saveData)
         </el-radio-group>
       </el-form-item>
 
-      <el-collapse accordion>
+      <div title="用户属性行为分流" name="4" v-if="labelPosition === 'Repeat'">
+        <div>
+          进入该期策略的用户需要满足以下条件：
+        </div>
+        <el-form-item label="">
 
-        <el-collapse-item title="用户属性行为分流" name="4" v-if="labelPosition === 'Repeat'">
-          <div>
-            进入该期策略的用户需要满足以下条件：
-          </div>
-          <el-form-item label="">
-
-            <div class="pannel">
-              <div class="filter-container">
-                <div class="logical-operator">
-                  <div class="logical-operator__line"></div>
-                  <div class="custom-switch" :class="{ active: logicalOperator === 'and' }"
-                    @click="toggleLogicalOperator">
-                    {{ logicalOperator === 'and' ? '且' : '或' }}
-                  </div>
-                  <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
+          <div class="pannel">
+            <div class="filter-container">
+              <div class="logical-operator">
+                <div class="logical-operator__line"></div>
+                <div class="custom-switch" :class="{ active: logicalOperator === 'and' }" @click="toggleLogicalOperator">
+                  {{ logicalOperator === 'and' ? '且' : '或' }}
                 </div>
-                <div class="filter-option-content">
+                <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
+              </div>
+              <div class="filter-option-content">
 
-                  <el-collapse>
-                    <el-collapse-item title=" 客户属性满足" class="custom-collapse-item">
-                      <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
+                <el-collapse>
+                  <el-collapse-item title=" 客户属性满足" class="custom-collapse-item">
+                    <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
 
-                    </el-collapse-item>
-                    <el-collapse-item title=" 客户行为满足" class="custom-collapse-item">
-                      <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
+                  </el-collapse-item>
+                  <el-collapse-item title=" 客户行为满足" class="custom-collapse-item">
+                    <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
 
-                    </el-collapse-item>
+                  </el-collapse-item>
 
-                    <el-collapse-item title=" 行为序列满足" class="custom-collapse-item">
-                      <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
+                  <el-collapse-item title=" 行为序列满足" class="custom-collapse-item">
+                    <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
 
-                    </el-collapse-item>
-                  </el-collapse>
-                </div>
-
+                  </el-collapse-item>
+                </el-collapse>
               </div>
 
             </div>
-          </el-form-item>
-        </el-collapse-item>
 
-        <el-collapse-item title="按触发事件分流" name="5" v-if="labelPosition === 'type'">
+          </div>
+        </el-form-item>
+      </div>
+
+      <div class="blockbg">
+        <div class="title_set">
+
+          延迟设置
+          <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? '收起' : '展开' }}
+            <el-icon class="icondown" :style="{ transform: transform ?'rotate(-90deg)' : 'rotate(90deg)'}">
+              <DArrowRight />
+            </el-icon></el-text>
+
+        </div>
+        <div class="underbg">
           <div class="flex-column">
-            <div>
-              进入该器策略的客户需要满足以下条件：在&nbsp;&nbsp;
-            </div>
-            <el-input-number v-model="sizeForm.num" :min="1" :max="10" />
-            <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
+            &nbsp; <el-select v-model="sizeForm.isDelayed"  style="width: 100px">
+              <el-option :value="true" label="延迟">延迟</el-option>
+              <el-option :value="false" label="不延迟">不延迟</el-option>
+            </el-select>&nbsp;
+            <el-input v-model="sizeForm.num" type="number"  style="width: 100px" />&nbsp;
+            <el-select v-model="sizeForm.selectedType"  style="width: 100px">
               <el-option value="month" label="月份">分钟</el-option>
               <el-option value="week" label="周">小时</el-option>
               <el-option value="day" label="天">天</el-option>
-            </el-select>
-            <div>后判断客户
-              <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
-                <el-option value="month" label="月份">本人</el-option>
-                <el-option value="week" label="周">小时</el-option>
-                <el-option value="day" label="天">天</el-option>
+            </el-select>&nbsp;
+            <div>针对符合该装置策略条件的客户
+              &nbsp; <el-select v-model="sizeForm.delayedAction" placeholder="请选择" style="width: 100px">
+                <el-option value="week" label="发送触达">发送触达</el-option>
+                <el-option value="day" label="打上标签">打上标签</el-option>
+                <el-option value="day" label="不执行动作">不执行动作</el-option>
+                <el-option value="month" label="发送触达并打上标签">发送触达并打上标签</el-option>
               </el-select>
             </div>
-
           </div>
-          <div>
-            <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
-          </div>
-        </el-collapse-item>
+        </div>
+      </div>
 
-        <el-collapse-item name="1">
-          <template #title>
-            <el-icon class="header-icon">
-              <info-filled />
-            </el-icon>
-            延迟设置
+      <el-form-item label="触达通道：">
+        <el-col :span="12">
+          <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
+            <el-option value="month" label="月份">发送触达并打上标签</el-option>
+            <el-option value="week" label="周">小时</el-option>
+            <el-option value="day" label="天">天</el-option>
+          </el-select>
+        </el-col>
 
-          </template>
-          <div>
-            <div class="flex-column">
+      </el-form-item>
 
-              <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
-                <el-option value="month" label="月份">延迟</el-option>
-                <el-option value="week" label="周">小时</el-option>
-                <el-option value="day" label="天">天</el-option>
-              </el-select>
-              <el-input-number v-model="sizeForm.num" :min="1" :max="10" />
-              <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
-                <el-option value="month" label="月份">分钟</el-option>
-                <el-option value="week" label="周">小时</el-option>
-                <el-option value="day" label="天">天</el-option>
-              </el-select>
-              <div>针对符合该装置策略条件的客户
+      <el-form-item label="选择模版：">
+        <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
+          <el-option value="month" label="月份">发送触达并打上标签</el-option>
+          <el-option value="week" label="周">小时</el-option>
+          <el-option value="day" label="天">天</el-option>
+        </el-select><el-button type="primary">新增短信模块版本</el-button>
+      </el-form-item>
 
-                <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
-                  <el-option value="month" label="月份">发送触达并打上标签</el-option>
-                  <el-option value="week" label="周">小时</el-option>
-                  <el-option value="day" label="天">天</el-option>
-                </el-select>
-              </div>
-            </div>
-          </div>
-        </el-collapse-item>
-        <el-collapse-item title="触达设置" name="2">
-          <el-form-item label="触达通道：">
-            <el-col :span="12">
-              <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
-                <el-option value="month" label="月份">发送触达并打上标签</el-option>
-                <el-option value="week" label="周">小时</el-option>
-                <el-option value="day" label="天">天</el-option>
-              </el-select>
-            </el-col>
+      <el-form-item label="触达内容：">
+        <div>定制组件位置</div>
+      </el-form-item>
 
-          </el-form-item>
+      <div class="flex-column">
+        <div>
+          符合该设备策略条件的用户打上&nbsp;&nbsp;
+        </div>
+        <el-select v-model="sizeForm.selectedType" placeholder="标签名称" style="width: 100px">
+          <el-option value="month" label="月份">分钟</el-option>
+          <el-option value="week" label="周">小时</el-option>
+          <el-option value="day" label="天">天</el-option>
+        </el-select>
+        <div>
+          标签
+        </div>
+      </div>
+      <div>
+        股票触达客户
+      </div>
+      <el-form-item label="列表触达客户总数：">
+        <div>111定制组件位置</div>
+      </el-form-item>
+      <el-form-item label="策略器目标设置:">
+        <el-switch v-model="sizeForm.value1" />
+      </el-form-item>
 
-          <el-form-item label="选择模版：">
-            <el-select v-model="sizeForm.selectedType" placeholder="请选择" style="width: 100px">
-              <el-option value="month" label="月份">发送触达并打上标签</el-option>
-              <el-option value="week" label="周">小时</el-option>
-              <el-option value="day" label="天">天</el-option>
-            </el-select><el-button type="primary">新增短信模块版本</el-button>
-          </el-form-item>
-
-          <el-form-item label="触达内容：">
-            <div>定制组件位置</div>
-          </el-form-item>
-
-        </el-collapse-item>
-        <el-collapse-item title="标签设置" name="3">
-
-          <div class="flex-column">
-            <div>
-              符合该设备策略条件的用户打上&nbsp;&nbsp;
-            </div>
-            <el-select v-model="sizeForm.selectedType" placeholder="标签名称" style="width: 100px">
-              <el-option value="month" label="月份">分钟</el-option>
-              <el-option value="week" label="周">小时</el-option>
-              <el-option value="day" label="天">天</el-option>
-            </el-select>
-            <div>
-              标签
-            </div>
-          </div>
-          <div>
-            股票触达客户
-          </div>
-          <el-form-item label="列表触达客户总数：">
-            <div>111定制组件位置</div>
-          </el-form-item>
-          <el-form-item label="策略器目标设置:">
-            <el-switch v-model="sizeForm.value1" />
-          </el-form-item>
-        </el-collapse-item>
-
-      </el-collapse>
     </el-form>
   </div>
 </template>
@@ -363,6 +330,21 @@ regSaveFunc(saveData)
     justify-content: center;
     cursor: pointer;
     z-index: 1;
+  }
+}
+.blockbg {
+  font-size: 14px;
+  border-radius: var(--el-border-radius-base);
+  .title_set {
+    padding: 4px 12px;
+    background: #eaeff3;
+    border-left: 4px solid #62c943;
+    display: flex;
+    justify-content: space-between;
+  }
+  .underbg {
+    padding: 12px;
+    background: #f7f8fa;
   }
 }
 </style>

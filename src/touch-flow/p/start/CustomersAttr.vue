@@ -6,7 +6,7 @@ import { Field } from "~/components/Render/interface";
 import { FormProperty } from "~/views copy/flowDesign/index";
 import { computed, inject, Ref, ref, watchEffect, reactive } from "vue";
 import { Delete, CirclePlus, CircleClose } from "@element-plus/icons-vue";
-import { getmarketingTouchNodeStatistics } from "~/api/index";
+import { getmarketingTouchEstimate } from "~/api/index";
 
 import BehaviorFoldingGroup from "~/components/BehaviorFoldingGroup/index.vue";
 
@@ -77,9 +77,122 @@ const toggleLogicalOperator = () => {
   //  $emits('update:modelValue', filterRules.logicalOperator === 'and' ? 'or' : 'and');
 };
 const estimation = async() => {
-  let res = await getmarketingTouchNodeStatistics({
-	"id": 0
-});
+  // 请求示例
+  let data={
+	"customAttr": {
+		"conditions": [
+			{
+				"conditions": [
+					{
+						"attr": {
+							"endTime": "",
+							"field": "",
+							"fieldMultiValue": [],
+							"fieldName": "",
+							"fieldOp": "",
+							"fieldRangeValue": "",
+							"fieldType": "",
+							"fieldValue": "",
+							"startTime": ""
+						},
+						"label": {
+							"labelId": 0,
+							"labelName": "",
+							"labelValue": []
+						},
+						"type": ""
+					}
+				],
+				"logicalChar": ""
+			}
+		],
+		"logicalChar": ""
+	},
+	"customEvent": {
+		"conditions": [
+			{
+				"conditions": [
+					{
+						"action": "",
+						"conditions": {
+							"conditions": [
+								{
+									"attr": {
+										"endTime": "",
+										"field": "",
+										"fieldMultiValue": [],
+										"fieldName": "",
+										"fieldOp": "",
+										"fieldRangeValue": "",
+										"fieldType": "",
+										"fieldValue": "",
+										"startTime": ""
+									},
+									"label": {
+										"labelId": 0,
+										"labelName": "",
+										"labelValue": []
+									},
+									"type": ""
+								}
+							],
+							"logicalChar": ""
+						},
+						"endTime": "",
+						"eventCode": "",
+						"eventName": "",
+						"startTime": ""
+					}
+				],
+				"logicalChar": ""
+			}
+		],
+		"logicalChar": ""
+	},
+	"eventSequence": {
+		"conditions": [
+			{
+				"conditions": [
+					{
+						"action": "",
+						"conditions": {
+							"conditions": [
+								{
+									"attr": {
+										"endTime": "",
+										"field": "",
+										"fieldMultiValue": [],
+										"fieldName": "",
+										"fieldOp": "",
+										"fieldRangeValue": "",
+										"fieldType": "",
+										"fieldValue": "",
+										"startTime": ""
+									},
+									"label": {
+										"labelId": 0,
+										"labelName": "",
+										"labelValue": []
+									},
+									"type": ""
+								}
+							],
+							"logicalChar": ""
+						},
+						"eventCode": "",
+						"eventName": ""
+					}
+				],
+				"endTime": "",
+				"logicalChar": "",
+				"startTime": ""
+			}
+		],
+		"logicalChar": ""
+	},
+	"logicalChar": ""
+}
+  let res = await getmarketingTouchEstimate(data);
   marketingTouchNode.value = res.data;
   console.log("Mounted", res);
 };

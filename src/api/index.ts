@@ -47,6 +47,6 @@ export const dictFilterTree = () => {
     return request.post({ url: '/api/dictFilterTree.do'})
 }
 // 营销触达节点统计
-export const getmarketingTouchNodeStatistics = (data: any) => {
-    return request.post({ url: '/api/marketingTouchNodeStatistics', data })
+export const getmarketingTouchEstimate = (data: any) => {
+    return request.post({ url: '/api/marketingTouchEstimate', data })
 }

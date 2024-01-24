@@ -11,12 +11,12 @@ const props = defineProps<{
     <div class="TouchFlow-Header-Start">
       <span>策略流程名称：</span>
       <el-input placeholder="策略流程名称" v-model="basic.flowName" :style="{width: '400px',height:'40px'}" />
-      
+
     </div>
     <div>
       <el-button round>返回</el-button>
       <el-button round>保存草稿</el-button>
-      <el-button round type="primary">提交审核</el-button>
+      <el-button round type="primary" class="primarystyle">提交审核</el-button>
     </div>
   </div>
 
@@ -24,15 +24,16 @@ const props = defineProps<{
     <BasicDisturb :disturb="basic.disturb" />
     <BasicTarget :target="basic.target" />
   </div>
-      <div @click="basic._expand = !basic._expand" :class="basic._expand?'baseSet baseSetpoz':'baseSet'">
-        {{ basic._expand ? '收起' : '展开' }}基础设置
-        <el-icon class="icondown" :style="{ transform: basic._expand ?'rotate(-90deg)' : 'rotate(90deg)'}">
-          <DArrowRight />
-        </el-icon>
-      </div>
+  <div @click="basic._expand = !basic._expand" :class="basic._expand?'baseSet baseSetpoz':'baseSet'">
+    {{ basic._expand ? '收起' : '展开' }}基础设置
+    <el-icon class="icondown" :style="{ transform: basic._expand ?'rotate(-90deg)' : 'rotate(90deg)'}">
+      <DArrowRight />
+    </el-icon>
+  </div>
 </template>
 
 <style lang="scss">
+
 .Basic-Block {
   // margin: 10px 0;
   // padding: 10px;
@@ -42,6 +43,7 @@ const props = defineProps<{
   // box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   // transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   // cursor: pointer;
+
 
   &-Head {
     span {
@@ -70,7 +72,7 @@ const props = defineProps<{
     font-size: 14px;
     color: #333;
     &.disabled::before {
-     // opacity: 0.35;
+      // opacity: 0.35;
       pointer-events: unset;
     }
 
@@ -93,16 +95,15 @@ const props = defineProps<{
   }
 }
 
-
 .baseSet {
   cursor: pointer;
-    color: #4078e0;
-    font-size: 14px;
-    margin-left: 16px;
-    margin-bottom: 6px;
-    position: absolute;
-    top: 22px;
-    left: 530px;
+  color: #4078e0;
+  font-size: 14px;
+  margin-left: 16px;
+  margin-bottom: 6px;
+  position: absolute;
+  top: 22px;
+  left: 530px;
   .icondown {
     width: 100%;
     transform: rotate(90deg);

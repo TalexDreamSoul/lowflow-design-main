@@ -2,6 +2,8 @@
 @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
 
 :root {
+  --el-color-primary: #277AE7;
+
   .el-segmented {
     --el-segmented-radius: var(--el-border-radius-base);
     --el-segmented-padding: 3px;
@@ -17,13 +19,16 @@
     --el-segmented-disabled-color: var(--el-text-color-placeholder);
   }
 }
+
 @media (max-width: 1200px) {
   .el-drawer.rtl {
     width: 90% !important;
   }
+
   .el-dialog {
     width: 90% !important;
   }
+
   .el-dialog.is-fullscreen {
     width: 100% !important;
   }
@@ -31,12 +36,14 @@
 
 // 自定义抽屉样式
 .el-drawer {
+
   // 抽屉头部
   .el-drawer__header {
     margin-bottom: 0;
     padding: calc(var(--el-drawer-padding-primary) - 5px) var(--el-drawer-padding-primary) calc(var(--el-drawer-padding-primary) - 6px);
     border-bottom: 1px var(--el-border-style) var(--el-border-color);
     justify-content: space-between;
+
     // 抽屉标题
     .el-drawer__title {
       // border-left: 3px solid var(--el-color-primary);

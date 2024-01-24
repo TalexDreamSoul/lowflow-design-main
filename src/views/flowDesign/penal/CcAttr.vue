@@ -62,34 +62,7 @@ watchEffect(() => {
 
 <template>
   <segmented v-model="activeName" stretch :block="false">
-    <el-tab-pane label="设置抄送人" name="properties">
-      <el-form label-position="top" label-width="90px">
-        <el-form-item prop="users" label="抄送人">
-          <user-selection multiple placeholder="请选择人员" v-model="node.users"/>
-        </el-form-item>
-      </el-form>
-    </el-tab-pane>
-    <el-tab-pane label="表单权限" name="formPermissions">
-      <el-table :data="node.formProperties" style="width: 100%">
-        <el-table-column prop="name" label="字段"/>
-        <el-table-column prop="readable">
-          <template #header>
-            <el-checkbox v-model="allReadable" label="可读"/>
-          </template>
-          <template #default="{row}">
-            <el-checkbox v-model="row.readable" @change="row.hidden=!$event"/>
-          </template>
-        </el-table-column>
-        <el-table-column prop="hidden">
-          <template #header>
-            <el-checkbox v-model="allHidden" label="隐藏"/>
-          </template>
-          <template #default="{row}">
-            <el-checkbox v-model="row.hidden" @change="row.readable=!$event"/>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-tab-pane>
+  
   </segmented>
 </template>
 
