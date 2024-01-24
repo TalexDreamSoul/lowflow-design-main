@@ -6,11 +6,10 @@ import { Field } from "~/components/Render/interface";
 import { FormProperty } from "~/views copy/flowDesign/index";
 import { computed, inject, Ref, ref, watchEffect, reactive } from "vue";
 import { Delete, CirclePlus, CircleClose } from "@element-plus/icons-vue";
-import { getmarketingTouchNodeStatistics } from "~/api/index";
+import { getmarketingTouchEstimate } from "~/api/index";
 
-import BehaviorFoldingGroup from "~/components/BehaviorFoldingGroup/index.vue";
+import { json } from "stream/consumers";
 
-const labelPosition = ref("single");
 const sizeForm = reactive({
   name: "",
   region: "",
@@ -37,107 +36,18 @@ const $props = defineProps<ApprovalAttr>();
 const $emits = defineEmits<{
   (e: "update:node", modelValue: StartNode): void;
 }>();
-const { node } = useVModels($props, $emits);
-console.log(node.value, "StartNode");
-const { fields } = inject<{
-  fields: Ref<Field[]>;
-}>("nodeHooks")!;
+
 const logicalOperator = ref("and");
 const num = ref(100);
-const marketingTouchNode = ref();
-
-// 全部可写
-const allWriteable = computed({
-  get() {
-    return node.value.formProperties.every((e) => e.writeable);
-  },
-  set(val) {
-    node.value.formProperties.forEach((e) => (e.writeable = val));
-    if (val) {
-      allReadable.value = false;
-      allHidden.value = false;
-    } else {
-      allRequired.value = false;
-    }
-  },
+const marketingTouchNode = ref({
+	"appPushCount": 0,
+	"digitalCount": 0,
+	"outboundCount": 0,
+	"smsCount": 0,
+	"total": 0,
+	"znxCount": 0
 });
 
-function onSubmit() {
-  console.log("submit!");
-}
-// 全部必填
-const allRequired = computed({
-  get() {
-    return node.value.formProperties.every((e) => e.required);
-  },
-  set(val) {
-    node.value.formProperties.forEach((e) => (e.required = val));
-    if (val) {
-      allWriteable.value = true;
-      allReadable.value = false;
-      allHidden.value = false;
-    }
-  },
-});
-// 全部可读
-const allReadable = computed({
-  get() {
-    return node.value.formProperties.every((e) => e.readable);
-  },
-  set(val) {
-    node.value.formProperties.forEach((e) => (e.readable = val));
-    if (val) {
-      allWriteable.value = false;
-      allHidden.value = false;
-      allRequired.value = false;
-    }
-  },
-});
-// 全部隐藏
-const allHidden = computed({
-  get() {
-    return node.value.formProperties.every((e) => e.hidden);
-  },
-  set(val) {
-    node.value.formProperties.forEach((e) => (e.hidden = val));
-    if (val) {
-      allWriteable.value = false;
-      allRequired.value = false;
-      allReadable.value = false;
-    }
-  },
-});
-
-// 在子组件中定义 submitEvent 方法
-const submitEvent = () => {
-  // 在这里写入您的提交逻辑
-  console.log(node.value, "执行了提交逻辑");
-};
-
-// 暴露 submitEvent 方法给父组件使用
-defineExpose({ submitEvent });
-watchEffect(() => {
-  const formProperties = node.value.formProperties;
-  node.value.formProperties = fields.value
-    .filter((e) => e.value !== undefined)
-    .map((e) => ({
-      id: e.id,
-      name: e.title,
-      readable: e.props.disabled || false,
-      writeable: !e.props.disabled || false,
-      hidden: e.props.hidden || false,
-      required: (e.props.required && !e.props.disabled) || false,
-    }));
-  node.value.formProperties.forEach((item) => {
-    const properties = formProperties.find((f) => f.id === item.id);
-    if (properties) {
-      item.readable = properties.readable;
-      item.writeable = properties.writeable;
-      item.hidden = properties.hidden;
-      item.required = properties.required;
-    }
-  });
-});
 const toggleLogicalOperator = () => {
   console.log(logicalOperator.value);
   switch (logicalOperator.value) {
@@ -151,10 +61,135 @@ const toggleLogicalOperator = () => {
   // logicalOperator.value == 'and' ? 'or' : 'and'
   //  $emits('update:modelValue', filterRules.logicalOperator === 'and' ? 'or' : 'and');
 };
-const estimation = async() => {
-  let res = await getmarketingTouchNodeStatistics({
-	"id": 0
-});
+const estimation = async () => {
+  // 请求示例
+  let data = {
+    customAttr: {
+      conditions: [
+        {
+          conditions: [
+            {
+              attr: {
+                endTime: "",
+                field: "",
+                fieldMultiValue: [],
+                fieldName: "",
+                fieldOp: "",
+                fieldRangeValue: "",
+                fieldType: "",
+                fieldValue: "",
+                startTime: "",
+              },
+              label: {
+                labelId: 0,
+                labelName: "",
+                labelValue: [],
+              },
+              type: "",
+            },
+          ],
+          logicalChar: "",
+        },
+      ],
+      logicalChar: "",
+    },
+    customEvent: {
+      conditions: [
+        {
+          conditions: [
+            {
+              action: "",
+              conditions: {
+                conditions: [
+                  {
+                    attr: {
+                      endTime: "",
+                      field: "",
+                      fieldMultiValue: [],
+                      fieldName: "",
+                      fieldOp: "",
+                      fieldRangeValue: "",
+                      fieldType: "",
+                      fieldValue: "",
+                      startTime: "",
+                    },
+                    label: {
+                      labelId: 0,
+                      labelName: "",
+                      labelValue: [],
+                    },
+                    type: "",
+                  },
+                ],
+                logicalChar: "",
+              },
+              endTime: "",
+              eventCode: "",
+              eventName: "",
+              startTime: "",
+            },
+          ],
+          logicalChar: "",
+        },
+      ],
+      logicalChar: "",
+    },
+    eventSequence: {
+      conditions: [
+        {
+          conditions: [
+            {
+              action: "",
+              conditions: {
+                conditions: [
+                  {
+                    attr: {
+                      endTime: "",
+                      field: "",
+                      fieldMultiValue: [],
+                      fieldName: "",
+                      fieldOp: "",
+                      fieldRangeValue: "",
+                      fieldType: "",
+                      fieldValue: "",
+                      startTime: "",
+                    },
+                    label: {
+                      labelId: 0,
+                      labelName: "",
+                      labelValue: [],
+                    },
+                    type: "",
+                  },
+                ],
+                logicalChar: "",
+              },
+              eventCode: "",
+              eventName: "",
+            },
+          ],
+          endTime: "",
+          logicalChar: "",
+          startTime: "",
+        },
+      ],
+      logicalChar: "",
+    },
+    logicalChar: "",
+  };
+  let res = await getmarketingTouchEstimate(JSON.stringify(data));
+  res = {
+    data: {
+      total: 1000,
+      appPushCount: 500,
+      znxCount: 120,
+      digitalCount: 800,
+      outboundCount: 200,
+      smsCount: 499,
+    },
+    message: "交易成功",
+    code: "0",
+  };
   marketingTouchNode.value = res.data;
   console.log("Mounted", res);
 };
@@ -180,16 +215,16 @@ const estimation = async() => {
 
               <el-collapse>
                 <el-collapse-item title=" 客户属性满足" class="custom-collapse-item">
-                  <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" />
+                  <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
 
                 </el-collapse-item>
                 <el-collapse-item title=" 客户行为满足" class="custom-collapse-item">
-                  <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" />
+                  <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
 
                 </el-collapse-item>
 
                 <el-collapse-item title=" 行为序列满足" class="custom-collapse-item">
-                  <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" />
+                  <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
 
                 </el-collapse-item>
               </el-collapse>
@@ -212,7 +247,7 @@ const estimation = async() => {
           <div class="topName">
             预估受众客户总数
           </div>
-          <div v-if="num==100">400</div>
+          <div v-if="marketingTouchNode.total!=undefined">{{marketingTouchNode.total}}</div>
           <div style="color: #FF5050;" v-else>无法预估数据</div>
         </div>
         <div class="grayblock">
@@ -223,7 +258,7 @@ const estimation = async() => {
                 APP Push
               </div>
               <div>
-                {{ num?num:"-" }}
+                {{ marketingTouchNode.appPushCount!=undefined?marketingTouchNode.appPushCount:"-" }}
               </div>
             </div>
           </div>
@@ -233,7 +268,7 @@ const estimation = async() => {
                 APP内部
               </div>
               <div>
-                {{ num?num:"-" }}
+                {{ marketingTouchNode.znxCount!=undefined	?marketingTouchNode.znxCount	:"-" }}
 
               </div>
             </div>
@@ -244,8 +279,7 @@ const estimation = async() => {
                 企业微信
               </div>
               <div>
-                {{ num?num:"-" }}
-
+                {{ marketingTouchNode.digitalCount!=undefined	?marketingTouchNode.digitalCount	:"-" }}
               </div>
             </div>
           </div>
@@ -255,7 +289,7 @@ const estimation = async() => {
                 智能外呼
               </div>
               <div>
-                {{ num?num:"-" }}
+                {{ marketingTouchNode.outboundCount!=undefined?marketingTouchNode.outboundCount:"-" }}
 
               </div>
             </div>
@@ -266,7 +300,7 @@ const estimation = async() => {
                 手机短信
               </div>
               <div>
-                {{ num?num:"-" }}
+                {{ marketingTouchNode.smsCount!=undefined?marketingTouchNode.smsCount:"-" }}
 
               </div>
             </div>
