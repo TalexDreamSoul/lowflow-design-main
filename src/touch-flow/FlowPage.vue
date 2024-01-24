@@ -36,10 +36,7 @@ console.log("total flow", flowOptions);
 
 <template>
   <div class="FlowPage">
-    <el-container
-      :class="{ expand: flowOptions.basic._expand }"
-      class="FlowPage-Container"
-    >
+    <el-container :class="{ expand: flowOptions.basic._expand }" class="FlowPage-Container">
       <el-header>
         <FlowHeader :basic="flowOptions.basic" />
       </el-header>
@@ -59,7 +56,7 @@ div.el-dialog {
 
 .FlowPage-Container.expand {
   .el-header {
-    height: 500px;
+    height: auto;
   }
 }
 
@@ -73,12 +70,11 @@ div.el-dialog {
     position: sticky;
 
     height: 80px;
-
-    overflow: hidden;
+    max-height: 500px;
+    overflow: scroll;
     transition: height 0.25s;
     background-color: var(--el-fill-color-lighter);
-    box-shadow:
-      0 4px 4px 8px rgba(0, 0, 0, 0.02),
+    box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02),
       0 2px 4px rgba(0, 0, 0, 0.125);
   }
 

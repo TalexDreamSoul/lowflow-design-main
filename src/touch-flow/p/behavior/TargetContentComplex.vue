@@ -175,7 +175,7 @@ const attrs = computed(() => {
 }
 
 .TargetContent-TopBanner {
-  background: #edeff4;
+  background: #EBEFF3;
   border-radius: 4px 4px 0px 0px;
   font-size: 12px;
   font-weight: 400;

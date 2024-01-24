@@ -48,7 +48,7 @@ function addTarget() {
 
 <style lang="scss" scoped>
 :deep(div.Basic-Block-Content) {
-  background-color: unset;
+  background-color: #F7F8FA;
 
   user-select: none;
 }

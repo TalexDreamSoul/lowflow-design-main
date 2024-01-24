@@ -23,7 +23,7 @@ const props = defineProps<{
     </div>
   </div>
 
-  <div class="TouchFlow-Addon">
+  <div class="TouchFlow-Addon" v-show="basic._expand">
     <el-scrollbar>
       <BasicDisturb :disturb="basic.disturb" />
       <BasicTarget :target="basic.target" />
@@ -60,7 +60,7 @@ const props = defineProps<{
 
   &-Content {
     position: relative;
-    padding: 0.5rem 1.5rem;
+    padding: 1.5rem;
     line-height: 2.5rem;
 
     background-color: var(--el-fill-color);
@@ -115,7 +115,7 @@ const props = defineProps<{
 }
 
 .TouchFlow-Addon {
-  height: calc(100% - 120px);
+ // height: calc(100% - 120px);
 }
 
 .TouchFlow-Header {
