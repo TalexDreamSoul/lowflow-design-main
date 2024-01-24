@@ -96,17 +96,17 @@ const attrs = computed(() => {
             <el-row v-for="(item, index) in target.conditions" :key="`${item.field}-${index}`" :gutter="5" class="filter-item-rule">
               <el-col :xs="24" :sm="7">
                 <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                  <trigger v-model="item.field" :attrs="attrs" />
+                  <trigger v-model="item.field" :attrs="attrs" />&nbsp;
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="5" v-if="item.field">
                 <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                  <operator ref="operatorRef" v-model="item.operator" />
+                  <operator ref="operatorRef" v-model="item.operator" />&nbsp;
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="10" v-if="item.field">
                 <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                  <AttrRender :field="item.field" v-model="item.fieldValue" :attrs="attrs" />
+                  <AttrRender :field="item.field" v-model="item.fieldValue" :attrs="attrs" />&nbsp;
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="2" style="
