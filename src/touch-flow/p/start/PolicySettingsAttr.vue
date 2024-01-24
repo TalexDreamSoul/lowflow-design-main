@@ -3,6 +3,7 @@ import { inject, ref, reactive, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { getqryMaterial, getmarketingTouchEstimate } from "~/api";
+import BehaviorGroup from "../behavior/BehaviorGroup.vue";
 
 const labelPosition = ref("single");
 const transform = ref(true);
@@ -216,8 +217,17 @@ const estimation = async () => {
         </el-radio-group>
       </el-form-item>
 
-      <div title="用户属性行为分流" name="4" v-if="labelPosition === 'Repeat'">
-        <div>进入该期策略的用户需要满足以下条件：</div>
+      <div  class="blockbg" v-if="labelPosition === 'Repeat'">
+        <div class="title_set bg001">
+          用户属性行为分流
+          <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
+            <el-icon class="icondown" :style="{
+                transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
+              }">
+              <DArrowRight />
+            </el-icon></el-text>
+        </div>
+        <div class="titleCondition">进入该策略期的用户需要满足以下条件：</div>
         <el-form-item label="">
           <div class="pannel">
             <div class="filter-container">
@@ -229,18 +239,9 @@ const estimation = async () => {
                 <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
               </div>
               <div class="filter-option-content">
-                <el-collapse>
-                  <el-collapse-item title=" 客户属性满足" class="custom-collapse-item">
-                    <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
-                  </el-collapse-item>
-                  <el-collapse-item title=" 客户行为满足" class="custom-collapse-item">
-                    <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
-                  </el-collapse-item>
-
-                  <el-collapse-item title=" 行为序列满足" class="custom-collapse-item">
-                    <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
-                  </el-collapse-item>
-                </el-collapse>
+                <BehaviorGroup title="客户属性满足"> </BehaviorGroup>
+                <BehaviorGroup title="客户行为满足"> </BehaviorGroup>
+                <BehaviorGroup title="行为序列满足"> </BehaviorGroup>
               </div>
             </div>
           </div>
@@ -421,12 +422,16 @@ const estimation = async () => {
   align-items: flex-start !important;
   flex-direction: column !important;
 }
-
+.titleCondition {
+  color: #666;
+  font-size: 14px;
+  margin-top: 24px;
+}
 .pannel {
   width: 100%;
   min-height: 200px;
-  padding: 18px 15px;
-  background-color: #f5f8fc;
+  padding: 0 15px;
+  //background-color: #f5f8fc;
 }
 
 .underright {
@@ -484,12 +489,11 @@ const estimation = async () => {
     display: flex;
     align-items: center;
     overflow: hidden;
-    min-width: 60px;
-    padding-right: 5px;
+    min-width: 35px;
 
     .logical-operator__line {
       position: absolute;
-      left: calc(22% - 1px);
+      left: calc(35% - 1px);
       border-width: 1px 0 1px 1px;
       border-top-style: solid;
       border-bottom-style: solid;
@@ -546,6 +550,9 @@ const estimation = async () => {
     border-left: 4px solid #62c943;
     display: flex;
     justify-content: space-between;
+  }
+  .bg001{
+    border-left: 4px solid #333;
   }
   .pg2 {
     border-left: 4px solid #ffb43f;

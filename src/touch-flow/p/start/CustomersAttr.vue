@@ -324,7 +324,7 @@ const estimation = async () => {
 .pannel {
   width: 100%;
   min-height: 200px;
-  padding: 18px 15px;
+  padding: 0 15px;
 }
 .underright {
   width: 100%;
