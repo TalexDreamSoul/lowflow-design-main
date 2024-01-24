@@ -11,3 +11,8 @@
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import TopMenu from "~/components/TopMenu/index.vue";
 </script>
+<style >
+.primarystyle {
+  background: linear-gradient(to top, #598ff1, #205ccb);
+}
+</style>

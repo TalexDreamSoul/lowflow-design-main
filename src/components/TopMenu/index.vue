@@ -1,8 +1,11 @@
 <!-- TopMenu.vue -->
 <template>
   <div class="top-menu">
-    <router-link to="/">design</router-link>
+    <el-space>
+
+    <router-link to="/">designNew</router-link>
     <router-link to="/dashboard">dashboard</router-link>
+    <router-link to="/design">design</router-link>
     <div class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
       Services
       <div v-show="isDropdownVisible" class="dropdown-menu">
@@ -10,6 +13,8 @@
         <router-link to="/page">Service 2</router-link>
       </div>
     </div>
+  </el-space>
+
   </div>
 </template>
 

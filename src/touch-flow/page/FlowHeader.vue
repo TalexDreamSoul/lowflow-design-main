@@ -19,7 +19,7 @@ const props = defineProps<{
     <div>
       <el-button round>返回</el-button>
       <el-button round>保存草稿</el-button>
-      <el-button round type="primary">提交审核</el-button>
+      <el-button round type="primary" class="primarystyle">提交审核</el-button>
     </div>
   </div>
 
@@ -28,6 +28,18 @@ const props = defineProps<{
       <BasicDisturb :disturb="basic.disturb" />
       <BasicTarget :target="basic.target" />
     </el-scrollbar>
+  </div>
+  <div
+    @click="basic._expand = !basic._expand"
+    :class="basic._expand ? 'baseSet baseSetpoz' : 'baseSet'"
+  >
+    {{ basic._expand ? "收起" : "展开" }}基础设置
+    <el-icon
+      class="icondown"
+      :style="{ transform: basic._expand ? 'rotate(-90deg)' : 'rotate(90deg)' }"
+    >
+      <DArrowRight />
+    </el-icon>
   </div>
   <div
     @click="basic._expand = !basic._expand"
