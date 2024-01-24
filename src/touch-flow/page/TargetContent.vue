@@ -61,33 +61,18 @@ const attrs = computed(() => {
     <div class="filter-wrap">
       <div class="garyblock">
         <el-text>客户进入流程后，在</el-text>&nbsp;
-        <el-input
-          v-model="target.delayedTime"
-          type="number"
-          style="width: 100px"
-        />&nbsp;
+        <el-input v-model="target.delayedTime" type="number" style="width: 100px" />&nbsp;
         <el-select v-model="target.delayedUnit" style="width: 150px">
           <el-option value="month" label="月份">分钟</el-option>
           <el-option value="week" label="周">小时</el-option>
-          <el-option value="day" label="天">天</el-option> </el-select
-        >&nbsp;
+          <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
         <el-text>内完成以下转化事件，则认为完成目标</el-text>
       </div>
       <div>
         <el-select v-model="target.delayedAction" style="width: 240px">
-          <el-option-group
-            v-for="group in dict?.events"
-            :key="group.eventType"
-            :label="group.eventTypeName"
-          >
-            <el-option
-              v-for="item in group.events"
-              :key="item.id"
-              :label="item.eventName"
-              :value="item.id"
-            />
-          </el-option-group> </el-select
-        >&nbsp;
+          <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
+            <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
+          </el-option-group> </el-select>&nbsp;
         <el-text type="primary" style="cursor: pointer" @click="addCondition">
           <el-icon size="14">
             <CirclePlusFilled />
@@ -99,67 +84,37 @@ const attrs = computed(() => {
         <div class="fontstyle">并且满足</div>
         <div class="logical-operator" v-if="target.conditions?.length">
           <div class="logical-operator__line"></div>
-          <div
-            class="custom-switch"
-            :class="{ active: target.logicalOperator === 'and' }"
-            @click="
+          <div class="custom-switch" :class="{ active: target.logicalOperator === 'and' }" @click="
               target.logicalOperator =
                 target?.logicalOperator === 'and' ? 'or' : 'and'
-            "
-          >
+            ">
             {{ target?.logicalOperator === "and" ? "且" : "或" }}
           </div>
         </div>
         <div v-if="attrs" class="filter-option-content">
           <el-form :label-width="0" :inline="true" :model="target.conditions">
-            <el-row
-              v-for="(item, index) in target.conditions"
-              :key="`${item.field}-${index}`"
-              :gutter="5"
-              class="filter-item-rule"
-            >
+            <el-row v-for="(item, index) in target.conditions" :key="`${item.field}-${index}`" :gutter="5" class="filter-item-rule">
               <el-col :xs="24" :sm="7">
-                <el-form-item
-                  :prop="'conditions.' + index + '.field'"
-                  style="width: 100%"
-                >
+                <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
                   <trigger v-model="item.field" :attrs="attrs" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="5" v-if="item.field">
-                <el-form-item
-                  :prop="'conditions.' + index + '.operator'"
-                  style="width: 100%"
-                >
+                <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
                   <operator ref="operatorRef" v-model="item.operator" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="10" v-if="item.field">
-                <el-form-item
-                  :prop="'conditions.' + index + '.value'"
-                  style="width: 100%"
-                >
-                  <AttrRender
-                    :field="item.field"
-                    v-model="item.fieldValue"
-                    :attrs="attrs"
-                  />
+                <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
+                  <AttrRender :field="item.field" v-model="item.fieldValue" :attrs="attrs" />
                 </el-form-item>
               </el-col>
-              <el-col
-                :xs="24"
-                :sm="2"
-                style="
+              <el-col :xs="24" :sm="2" style="
                   display: flex;
                   align-items: center;
                   flex-direction: row-reverse;
-                "
-              >
-                <el-text
-                  type="primary"
-                  style="cursor: pointer"
-                  @click="handleDel(index)"
-                >
+                ">
+                <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
                   <el-icon size="14">
                     <Delete />
                   </el-icon>
@@ -168,15 +123,12 @@ const attrs = computed(() => {
               </el-col>
             </el-row>
 
-            <div
-              v-if="
+            <div v-if="
                 !(
                   target?.filterRules?.groups?.length |
                   target?.filterRules?.conditions?.length
                 )
-              "
-              class="filter-item-rule"
-            />
+              " class="filter-item-rule" />
           </el-form>
         </div>
       </div>
@@ -199,7 +151,7 @@ const attrs = computed(() => {
   font-size: 12px;
   font-weight: 400;
   color: #000000;
-  padding: 12px 24px 12px 24px;
+  padding: 0px 24px;
 }
 :deep(.el-form-item) {
   margin-right: 0;
