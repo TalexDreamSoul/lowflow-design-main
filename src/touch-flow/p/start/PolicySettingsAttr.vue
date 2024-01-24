@@ -2,7 +2,7 @@
 import { inject, ref, reactive, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
-import { getqryMaterial } from "~/api";
+import { getqryMaterial, getmarketingTouchEstimate } from "~/api";
 
 const labelPosition = ref("single");
 const transform = ref(true);
@@ -15,9 +15,101 @@ const origin = {
   selectedType: "day",
   delayedAction: "day",
   materialtype: "sms",
-
+  cascaderLabel: "sms",
   num: 1,
 };
+const marketingTouchNode = ref({
+  appPushCount: 0,
+  digitalCount: 0,
+  outboundCount: 0,
+  smsCount: 0,
+  total: 0,
+  znxCount: 0,
+});
+
+const options = [
+  {
+    value: 1,
+    label: "Asia",
+    children: [
+      {
+        value: 2,
+        label: "China",
+        children: [
+          { value: 3, label: "Beijing" },
+          { value: 4, label: "Shanghai" },
+          { value: 5, label: "Hangzhou" },
+        ],
+      },
+      {
+        value: 6,
+        label: "Japan",
+        children: [
+          { value: 7, label: "Tokyo" },
+          { value: 8, label: "Osaka" },
+          { value: 9, label: "Kyoto" },
+        ],
+      },
+      {
+        value: 10,
+        label: "Korea",
+        children: [
+          { value: 11, label: "Seoul" },
+          { value: 12, label: "Busan" },
+          { value: 13, label: "Taegu" },
+        ],
+      },
+    ],
+  },
+  {
+    value: 14,
+    label: "Europe",
+    children: [
+      {
+        value: 15,
+        label: "France",
+        children: [
+          { value: 16, label: "Paris" },
+          { value: 17, label: "Marseille" },
+          { value: 18, label: "Lyon" },
+        ],
+      },
+      {
+        value: 19,
+        label: "UK",
+        children: [
+          { value: 20, label: "London" },
+          { value: 21, label: "Birmingham" },
+          { value: 22, label: "Manchester" },
+        ],
+      },
+    ],
+  },
+  {
+    value: 23,
+    label: "North America",
+    children: [
+      {
+        value: 24,
+        label: "US",
+        children: [
+          { value: 25, label: "New York" },
+          { value: 26, label: "Los Angeles" },
+          { value: 27, label: "Washington" },
+        ],
+      },
+      {
+        value: 28,
+        label: "Canada",
+        children: [
+          { value: 29, label: "Toronto" },
+          { value: 30, label: "Montreal" },
+          { value: 31, label: "Ottawa" },
+        ],
+      },
+    ],
+  },
+];
 const sizeForm = reactive<typeof origin>(origin);
 
 const dictType = ref();
@@ -33,7 +125,6 @@ const logicalOperator = ref("and");
 const props = defineProps<{
   p: any;
 }>();
-
 function toggleLogicalOperator() {}
 
 const getqryMaterialval = async () => {
@@ -89,16 +180,31 @@ function saveData() {
 type IRegSaveFunc = (regFunc: () => boolean) => void;
 const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
+
+const estimation = async () => {
+  // 请求示例
+  let data = {};
+  let res = await getmarketingTouchEstimate(JSON.stringify(data));
+  res = {
+    data: {
+      total: 1000,
+      appPushCount: 500,
+      znxCount: 120,
+      digitalCount: 800,
+      outboundCount: 200,
+      smsCount: 499,
+    },
+    message: "交易成功",
+    code: "0",
+  };
+  marketingTouchNode.value = res.data;
+  console.log("Mounted", res);
+};
 </script>
 
 <template>
   <div>
-    <el-form
-      ref="form"
-      :model="sizeForm"
-      label-width="auto"
-      label-position="left"
-    >
+    <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
       <el-form-item label="选择策略器名称：">
         <el-input v-model="sizeForm.name" placeholder="填写名称" />
       </el-form-item>
@@ -117,34 +223,21 @@ regSaveFunc(saveData);
             <div class="filter-container">
               <div class="logical-operator">
                 <div class="logical-operator__line"></div>
-                <div
-                  class="custom-switch"
-                  :class="{ active: logicalOperator === 'and' }"
-                  @click="toggleLogicalOperator"
-                >
+                <div class="custom-switch" :class="{ active: logicalOperator === 'and' }" @click="toggleLogicalOperator">
                   {{ logicalOperator === "and" ? "且" : "或" }}
                 </div>
                 <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
               </div>
               <div class="filter-option-content">
                 <el-collapse>
-                  <el-collapse-item
-                    title=" 客户属性满足"
-                    class="custom-collapse-item"
-                  >
+                  <el-collapse-item title=" 客户属性满足" class="custom-collapse-item">
                     <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
                   </el-collapse-item>
-                  <el-collapse-item
-                    title=" 客户行为满足"
-                    class="custom-collapse-item"
-                  >
+                  <el-collapse-item title=" 客户行为满足" class="custom-collapse-item">
                     <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
                   </el-collapse-item>
 
-                  <el-collapse-item
-                    title=" 行为序列满足"
-                    class="custom-collapse-item"
-                  >
+                  <el-collapse-item title=" 行为序列满足" class="custom-collapse-item">
                     <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
                   </el-collapse-item>
                 </el-collapse>
@@ -157,65 +250,40 @@ regSaveFunc(saveData);
       <div class="blockbg">
         <div class="title_set">
           延迟设置
-          <el-text class="mx-1" type="primary" @click="transform = !transform"
-            >{{ transform ? "收起" : "展开" }}
-            <el-icon
-              class="icondown"
-              :style="{
+          <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
+            <el-icon class="icondown" :style="{
                 transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
-              }"
-            >
-              <DArrowRight /> </el-icon
-          ></el-text>
+              }">
+              <DArrowRight />
+            </el-icon></el-text>
         </div>
         <div class="underbg">
           &nbsp;
           <el-select v-model="sizeForm.isDelayed" style="width: 100px">
             <el-option :value="true" label="延迟">延迟</el-option>
-            <el-option :value="false" label="不延迟"
-              >不延迟</el-option
-            > </el-select
-          >&nbsp;
-          <el-input
-            v-model="sizeForm.num"
-            type="number"
-            style="width: 100px"
-          />&nbsp;
+            <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
+          <el-input v-model="sizeForm.num" type="number" style="width: 100px" />&nbsp;
           <el-select v-model="sizeForm.selectedType" style="width: 100px">
             <el-option value="month" label="月份">分钟</el-option>
             <el-option value="week" label="周">小时</el-option>
-            <el-option value="day" label="天">天</el-option> </el-select
-          >&nbsp; 针对符合该装置策略条件的客户 &nbsp;
-          <el-select
-            v-model="sizeForm.delayedAction"
-            placeholder="请选择"
-            style="width: 150px"
-          >
+            <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
+          <el-select v-model="sizeForm.delayedAction" placeholder="请选择" style="width: 150px">
             <el-option value="week" label="发送触达">发送触达</el-option>
             <el-option value="day" label="打上标签">打上标签</el-option>
             <el-option value="day" label="不执行动作">不执行动作</el-option>
-            <el-option value="month" label="发送触达并打上标签"
-              >发送触达并打上标签</el-option
-            >
+            <el-option value="month" label="发送触达并打上标签">发送触达并打上标签</el-option>
           </el-select>
         </div>
       </div>
       <div class="blockbg">
         <div class="title_set pg2">
           触达设置
-          <el-text
-            class="mx-1"
-            type="primary"
-            @click="transformset = !transformset"
-            >{{ transformset ? "收起" : "展开" }}
-            <el-icon
-              class="icondown"
-              :style="{
+          <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
+            <el-icon class="icondown" :style="{
                 transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
-              }"
-            >
-              <DArrowRight /> </el-icon
-          ></el-text>
+              }">
+              <DArrowRight />
+            </el-icon></el-text>
         </div>
         <div class="underbg">
           <el-form-item label="触达通道">
@@ -224,31 +292,18 @@ regSaveFunc(saveData);
                 <el-option value="sms" label="短信">手机短信</el-option>
                 <el-option value="app" label="app消息">app消息</el-option>
                 <el-option value="digital" label="数字员工">数字员工</el-option>
-                <el-option value="outbound" label="智能外呼"
-                  >智能外呼</el-option
-                >
+                <el-option value="outbound" label="智能外呼">智能外呼</el-option>
                 <el-option value="znx" label="站内信">站内信</el-option>
               </el-select>
             </el-col>
           </el-form-item>
 
-          <el-button type="primary" @click="getqryMaterialval" plain
-            >获取模版</el-button
-          >
+          <el-button type="primary" @click="getqryMaterialval" plain>获取模版</el-button>
           <el-form-item label="选择模版">
-            <el-select
-              v-model="sizeForm.type"
-              placeholder="请选择"
-              style="width: 100px"
-            >
-              <el-option value="month" label="月份"
-                >发送触达并打上标签</el-option
-              >
+            <el-select v-model="sizeForm.type" placeholder="请选择" style="width: 100px">
+              <el-option value="month" label="月份">发送触达并打上标签</el-option>
               <el-option value="week" label="周">小时</el-option>
-              <el-option value="day" label="天">天</el-option> </el-select
-            >&nbsp;&nbsp;&nbsp;<el-button type="primary" plain
-              >新增短信模块版本</el-button
-            >
+              <el-option value="day" label="天">天</el-option> </el-select>&nbsp;&nbsp;&nbsp;<el-button type="primary" plain>新增短信模块版本</el-button>
           </el-form-item>
 
           <el-form-item label="触达内容">
@@ -256,27 +311,106 @@ regSaveFunc(saveData);
           </el-form-item>
         </div>
       </div>
+      <div class="blockbg">
+        <div class="title_set pg3">
+          标签设置
+          <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
+            <el-icon class="icondown" :style="{
+                transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
+              }">
+              <DArrowRight />
+            </el-icon></el-text>
+        </div>
 
-      <div class="flex-column">
-        <div>符合该设备策略条件的用户打上&nbsp;&nbsp;</div>
-        <el-select
-          v-model="sizeForm.selectedType"
-          placeholder="标签名称"
-          style="width: 100px"
-        >
-          <el-option value="month" label="月份">分钟</el-option>
-          <el-option value="week" label="周">小时</el-option>
-          <el-option value="day" label="天">天</el-option>
-        </el-select>
-        <div>标签</div>
+        <div class="underbg">
+          符合该策略器条件的用户打上 &nbsp;
+          <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />
+
+        </div>
       </div>
-      <div>股票触达客户</div>
-      <el-form-item label="列表触达客户总数：">
-        <div>111定制组件位置</div>
-      </el-form-item>
-      <el-form-item label="策略器目标设置:">
-        <el-switch v-model="sizeForm.value1" />
-      </el-form-item>
+      <div class="blockbg">
+        <div class="underbg">
+          <div class="yugu_flex">
+            <div class="title">预估触达客户 &nbsp;</div>
+            <el-button @click="estimation" class="buttonyugu" round>立即预估</el-button>
+          </div>
+          <div class="flexyugu">
+            <div class="grayblockfirst">
+              <div class="topName">预估受众客户总数</div>
+              <div v-if="marketingTouchNode.total != undefined">
+                {{ marketingTouchNode.total }}
+              </div>
+              <div style="color: #ff5050" v-else>无法预估数据</div>
+            </div>
+            <div class="grayblock">
+              <div class="innerblock">
+                <div>
+                  <div class="topName">APP Push</div>
+                  <div>
+                    {{
+                      marketingTouchNode.appPushCount != undefined
+                        ? marketingTouchNode.appPushCount
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="innerblock">
+                <div>
+                  <div class="topName">APP内部</div>
+                  <div>
+                    {{
+                      marketingTouchNode.znxCount != undefined
+                        ? marketingTouchNode.znxCount
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="innerblock">
+                <div>
+                  <div class="topName">企业微信</div>
+                  <div>
+                    {{
+                      marketingTouchNode.digitalCount != undefined
+                        ? marketingTouchNode.digitalCount
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="innerblock">
+                <div>
+                  <div class="topName">智能外呼</div>
+                  <div>
+                    {{
+                      marketingTouchNode.outboundCount != undefined
+                        ? marketingTouchNode.outboundCount
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="innerblock">
+                <div>
+                  <div class="topName">手机短信</div>
+                  <div>
+                    {{
+                      marketingTouchNode.smsCount != undefined
+                        ? marketingTouchNode.smsCount
+                        : "-"
+                    }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="yugu_flex">
+            <div class="title">策略器目标设置 &nbsp;</div>
+            <el-switch v-model="sizeForm.value1" />
+          </div>
+        </div>
+      </div>
     </el-form>
   </div>
 </template>
@@ -416,10 +550,78 @@ regSaveFunc(saveData);
   .pg2 {
     border-left: 4px solid #ffb43f;
   }
+  .pg3 {
+    border-left: 4px solid #277ae7;
+  }
 
   .underbg {
     padding: 12px;
     background: #f7f8fa;
+  }
+}
+
+.yugu_flex {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  margin-bottom: 8px;
+  .title {
+    margin-left: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.9);
+  }
+  .buttonyugu {
+    background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
+    margin-left: 12px;
+    color: #ffffff;
+    height: 32px;
+  }
+}
+.flexyugu {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.grayblock {
+  //width: 120px;
+  background: #ffffff;
+  border-radius: 4px 4px 4px 4px;
+  //margin-right: 12px;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  .innerblock {
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  .innerblock:last-child {
+    /* 样式属性 */
+    border-right: none;
+  }
+
+  .topName {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.6);
+    margin-bottom: 8px;
+  }
+}
+.grayblockfirst {
+  //width: 160px;
+  /* 其他样式属性可以根据需求添加 */
+  margin-right: 12px;
+  background: #ffffff;
+  border-radius: 4px 4px 4px 4px;
+  padding: 20px;
+
+  .topName {
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.6);
+    margin-bottom: 8px;
   }
 }
 </style>
