@@ -307,7 +307,7 @@ const estimation = async () => {
           </el-form-item>
 
           <el-form-item label="触达内容">
-            <div>定制组件位置</div>
+            <div class="inputValue">定制组件位置</div>
           </el-form-item>
         </div>
       </div>
@@ -623,5 +623,14 @@ const estimation = async () => {
     color: rgba(0, 0, 0, 0.6);
     margin-bottom: 8px;
   }
+}
+.inputValue {
+  background: #fff;
+  height: 150px;
+  width: 480px;
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  padding: 12px;
+  color: #333;
 }
 </style>
