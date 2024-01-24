@@ -2,6 +2,7 @@
 import { reactive } from "vue";
 import FlowHeader from "../touch-flow/page/FlowHeader.vue";
 import TouchFlow from "./TouchFlow.vue";
+import { randomStr } from "~/utils/common";
 const props = defineProps<{
   modelValue?: boolean;
 }>();
@@ -21,18 +22,24 @@ const flowOptions = reactive({
     },
   },
   p: {
-    type: 'start',
+    id: randomStr(12),
+    type: "start",
     // father: {},
-    children: []
-  }
-})
+    children: [],
+  },
+});
+
+console.log("total flow", flowOptions);
 
 // flowOptions.p.father = flowOptions
 </script>
 
 <template>
   <div class="FlowPage">
-    <el-container :class="{ expand: flowOptions.basic._expand }" class="FlowPage-Container">
+    <el-container
+      :class="{ expand: flowOptions.basic._expand }"
+      class="FlowPage-Container"
+    >
       <el-header>
         <FlowHeader :basic="flowOptions.basic" />
       </el-header>
@@ -70,7 +77,8 @@ div.el-dialog {
     overflow: hidden;
     transition: height 0.25s;
     background-color: var(--el-fill-color-lighter);
-    box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02),
+    box-shadow:
+      0 4px 4px 8px rgba(0, 0, 0, 0.02),
       0 2px 4px rgba(0, 0, 0, 0.125);
   }
 
@@ -82,7 +90,7 @@ div.el-dialog {
     flex-direction: column;
     align-items: center;
 
-   // background-color: var(--el-fill-color);
+    // background-color: var(--el-fill-color);
   }
 
   position: absolute;
