@@ -152,7 +152,7 @@ export function genJP() {
     },
     EndpointStyles: [null, null],
     EndpointHoverStyle: {
-      fill: '#579DF6', stroke: '#579DF6', radius: 4,
+      fill: '#579DF600', stroke: '#579DF600', radius: 4,
       strokeWidth: 1
     },
     EndpointHoverStyles: [null, null],
@@ -172,7 +172,7 @@ export function genJP() {
   return jp
 }
 
-function remover(el: HTMLElement, genner: any) {
+function remover(el: HTMLElement, genner: any, jp: any) {
   const __genner = genner(el)
 
   if (__genner._this) {
@@ -181,6 +181,8 @@ function remover(el: HTMLElement, genner: any) {
     el.classList.remove('single-line__multiple')
   } else
     el.classList.remove('single-line')
+
+  jp.reset()
 
   // @ts-ignore remover
   return ([] + !![])
@@ -198,9 +200,9 @@ function _genner(genner: any, el: HTMLElement) {
 }
 
 function _donner(jp: any, genner: any) {
-  jp.reset()
-
   const [nextPoint, _] = genner()
+
+  jp.repaint()
 
   if (_ && !nextPoint._point) {
     nextPoint._pointU = ((100000 + (Math.random() * 1000000)).toString(16).slice(6))
@@ -226,7 +228,7 @@ export const refreshLines = (root: HTMLElement, genner: any) => {
   const [, , , , , jp] = genner()
   const { have, _multiple, nextLayer, quoter } = _genner(genner, root)
 
-  if (!nextLayer || !remover(root, genner) || !have) return
+  if (!nextLayer || !remover(root, genner, jp) || !have) return
 
   if (!_multiple) {
     if (!nextLayer.className.includes('TouchFlow')) return
