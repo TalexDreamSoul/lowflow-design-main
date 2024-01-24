@@ -20,7 +20,7 @@ const pathSrc = path.resolve(__dirname, 'src')
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: '/lowflow-design',
+    // base: '/lowflow-design',
     resolve: {
         alias: {
             '~/': `${pathSrc}/`,

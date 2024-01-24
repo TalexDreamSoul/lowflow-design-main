@@ -10,8 +10,11 @@ const props = defineProps<{
   <div class="TouchFlow-Header">
     <div class="TouchFlow-Header-Start">
       <span>策略流程名称：</span>
-      <el-input placeholder="策略流程名称" v-model="basic.flowName" :style="{width: '400px',height:'40px'}" />
-      
+      <el-input
+        placeholder="策略流程名称"
+        v-model="basic.flowName"
+        :style="{ width: '400px', height: '40px' }"
+      />
     </div>
     <div>
       <el-button round>返回</el-button>
@@ -21,15 +24,23 @@ const props = defineProps<{
   </div>
 
   <div class="TouchFlow-Addon">
-    <BasicDisturb :disturb="basic.disturb" />
-    <BasicTarget :target="basic.target" />
+    <el-scrollbar>
+      <BasicDisturb :disturb="basic.disturb" />
+      <BasicTarget :target="basic.target" />
+    </el-scrollbar>
   </div>
-      <div @click="basic._expand = !basic._expand" :class="basic._expand?'baseSet baseSetpoz':'baseSet'">
-        {{ basic._expand ? '收起' : '展开' }}基础设置
-        <el-icon class="icondown" :style="{ transform: basic._expand ?'rotate(-90deg)' : 'rotate(90deg)'}">
-          <DArrowRight />
-        </el-icon>
-      </div>
+  <div
+    @click="basic._expand = !basic._expand"
+    :class="basic._expand ? 'baseSet baseSetpoz' : 'baseSet'"
+  >
+    {{ basic._expand ? "收起" : "展开" }}基础设置
+    <el-icon
+      class="icondown"
+      :style="{ transform: basic._expand ? 'rotate(-90deg)' : 'rotate(90deg)' }"
+    >
+      <DArrowRight />
+    </el-icon>
+  </div>
 </template>
 
 <style lang="scss">
@@ -44,7 +55,7 @@ const props = defineProps<{
   // cursor: pointer;
 
   &-Head {
-    span {
+    > span {
       margin-right: 0.5rem;
       line-height: 30px;
       color: #666;
@@ -70,7 +81,7 @@ const props = defineProps<{
     font-size: 14px;
     color: #333;
     &.disabled::before {
-     // opacity: 0.35;
+      // opacity: 0.35;
       pointer-events: unset;
     }
 
@@ -93,16 +104,15 @@ const props = defineProps<{
   }
 }
 
-
 .baseSet {
   cursor: pointer;
-    color: #4078e0;
-    font-size: 14px;
-    margin-left: 16px;
-    margin-bottom: 6px;
-    position: absolute;
-    top: 22px;
-    left: 530px;
+  color: #4078e0;
+  font-size: 14px;
+  margin-left: 16px;
+  margin-bottom: 6px;
+  position: absolute;
+  top: 22px;
+  left: 530px;
   .icondown {
     width: 100%;
     transform: rotate(90deg);
@@ -116,6 +126,9 @@ const props = defineProps<{
   bottom: 10px !important;
   margin-bottom: 0px !important;
   top: unset;
+}
+.TouchFlow-Addon {
+  height: calc(100% - 120px);
 }
 .TouchFlow-Header {
   &-Start {
