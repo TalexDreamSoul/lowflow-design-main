@@ -1,10 +1,38 @@
 <script setup lang="ts" name="BehaviorGroup">
-import { ref } from "vue";
+import BasicTargetComplex from "../../page/BasicTargetComplex.vue";
+
+const fields = ref()
+
+import { reactive, ref } from "vue";
 const props = defineProps<{
   title: string;
 }>();
-
+const conditions = ref<object>({
+  logicalOperator: "and",
+  conditions: [],
+  groups: [],
+});
 const expand = ref(false);
+const flowOptions = reactive({
+  basic: {
+    _expand: false,
+    name: "",
+    disturb: {
+      enable: false,
+      time: [],
+      action: 0,
+    },
+    target: {
+      enable: false,
+      list: [],
+    },
+  },
+  p: {
+    type: 'start',
+    // father: {},
+    children: []
+  }
+})
 </script>
 
 <template>
@@ -25,8 +53,8 @@ const expand = ref(false);
       </span>
     </div>
     <div class="BehaviorGroup-Main">
-      {{ title }}
-      <slot />
+      <!-- {{ title }} -->
+      <BasicTargetComplex  :target="flowOptions.basic.target" />
     </div>
   </div>
 </template>
@@ -34,7 +62,7 @@ const expand = ref(false);
 <style lang="scss">
 .BehaviorGroup {
   &-Header {
-    padding: 0 0.5rem;
+    padding: 8px 18px;
     display: flex;
 
     justify-content: space-between;
@@ -85,14 +113,13 @@ const expand = ref(false);
     border: 1px solid var(--el-border-color);
   }
   .addon-icon {
-    zoom: 0.75;
+    //zoom: 0.75;
   }
   &-Main {
     padding: 0.5rem;
   }
-  margin: 0.5rem 0;
-
-  max-height: 30px;
+  margin: 0.8rem 0;
+  max-height: 48px;
 
   overflow: hidden;
   border-radius: 4px;
