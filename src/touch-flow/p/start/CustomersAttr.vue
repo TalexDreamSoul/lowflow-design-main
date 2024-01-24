@@ -1,14 +1,8 @@
 <script setup lang="ts">
-import Segmented from "~/components/Segmented";
-import { useVModels } from "@vueuse/core";
+import BehaviorGroup from "../behavior/BehaviorGroup.vue";
 import { StartNode } from "../nodes/Start/index";
-import { Field } from "~/components/Render/interface";
-import { FormProperty } from "~/views copy/flowDesign/index";
-import { computed, inject, Ref, ref, watchEffect, reactive } from "vue";
-import { Delete, CirclePlus, CircleClose } from "@element-plus/icons-vue";
+import { ref, reactive } from "vue";
 import { getmarketingTouchEstimate } from "~/api/index";
-
-import { json } from "stream/consumers";
 
 const sizeForm = reactive({
   name: "",
@@ -40,12 +34,12 @@ const $emits = defineEmits<{
 const logicalOperator = ref("and");
 const num = ref(100);
 const marketingTouchNode = ref({
-	"appPushCount": 0,
-	"digitalCount": 0,
-	"outboundCount": 0,
-	"smsCount": 0,
-	"total": 0,
-	"znxCount": 0
+  appPushCount: 0,
+  digitalCount: 0,
+  outboundCount: 0,
+  smsCount: 0,
+  total: 0,
+  znxCount: 0,
 });
 
 const toggleLogicalOperator = () => {
@@ -197,132 +191,125 @@ const estimation = async () => {
 
 <template>
   <div>
-    <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
-      <el-text tag="b">受众客户为满足以下条件的客户（触发型非必选）</el-text><br />
+    <el-form
+      ref="form"
+      :model="sizeForm"
+      label-width="auto"
+      label-position="left"
+    >
+      <el-text tag="b">受众客户为满足以下条件的客户（触发型非必选）</el-text
+      ><br />
       <el-text>若下列条件不添加，则受众客户默认为全部客户</el-text>
       <el-form-item label="">
-
         <div class="pannel">
           <div class="filter-container">
             <div class="logical-operator">
               <div class="logical-operator__line"></div>
-              <div class="custom-switch" :class="{ active: logicalOperator === 'and' }" @click="toggleLogicalOperator">
-                {{ logicalOperator === 'and' ? '且' : '或' }}
+              <div
+                class="custom-switch"
+                :class="{ active: logicalOperator === 'and' }"
+                @click="toggleLogicalOperator"
+              >
+                {{ logicalOperator === "and" ? "且" : "或" }}
               </div>
               <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
             </div>
             <div class="filter-option-content">
-
-              <el-collapse>
-                <el-collapse-item title=" 客户属性满足" class="custom-collapse-item">
-                  <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
-
-                </el-collapse-item>
-                <el-collapse-item title=" 客户行为满足" class="custom-collapse-item">
-                  <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
-
-                </el-collapse-item>
-
-                <el-collapse-item title=" 行为序列满足" class="custom-collapse-item">
-                  <!-- <BehaviorFoldingGroup v-model="node.conditions" :filter-fields="fields" /> -->
-
-                </el-collapse-item>
-              </el-collapse>
+              <BehaviorGroup title="客户属性满足"> </BehaviorGroup>
+              <BehaviorGroup title="客户行为满足"> </BehaviorGroup>
+              <BehaviorGroup title="行为序列满足"> </BehaviorGroup>
             </div>
-
           </div>
-
         </div>
       </el-form-item>
 
       <div class="yugu_flex">
-        <div class="title">
-          预估受众客户
-        </div>
-        <el-button @click="estimation" class="buttonyugu" round>立即预估</el-button>
-
+        <div class="title">预估受众客户</div>
+        <el-button @click="estimation" class="buttonyugu" round
+          >立即预估</el-button
+        >
       </div>
       <div class="flexyugu">
         <div class="grayblockfirst">
-          <div class="topName">
-            预估受众客户总数
+          <div class="topName">预估受众客户总数</div>
+          <div v-if="marketingTouchNode.total != undefined">
+            {{ marketingTouchNode.total }}
           </div>
-          <div v-if="marketingTouchNode.total!=undefined">{{marketingTouchNode.total}}</div>
-          <div style="color: #FF5050;" v-else>无法预估数据</div>
+          <div style="color: #ff5050" v-else>无法预估数据</div>
         </div>
         <div class="grayblock">
-
           <div class="innerblock">
             <div>
-              <div class="topName">
-                APP Push
-              </div>
+              <div class="topName">APP Push</div>
               <div>
-                {{ marketingTouchNode.appPushCount!=undefined?marketingTouchNode.appPushCount:"-" }}
+                {{
+                  marketingTouchNode.appPushCount != undefined
+                    ? marketingTouchNode.appPushCount
+                    : "-"
+                }}
               </div>
             </div>
           </div>
           <div class="innerblock">
             <div>
-              <div class="topName">
-                APP内部
-              </div>
+              <div class="topName">APP内部</div>
               <div>
-                {{ marketingTouchNode.znxCount!=undefined	?marketingTouchNode.znxCount	:"-" }}
-
+                {{
+                  marketingTouchNode.znxCount != undefined
+                    ? marketingTouchNode.znxCount
+                    : "-"
+                }}
               </div>
             </div>
           </div>
           <div class="innerblock">
             <div>
-              <div class="topName">
-                企业微信
-              </div>
+              <div class="topName">企业微信</div>
               <div>
-                {{ marketingTouchNode.digitalCount!=undefined	?marketingTouchNode.digitalCount	:"-" }}
+                {{
+                  marketingTouchNode.digitalCount != undefined
+                    ? marketingTouchNode.digitalCount
+                    : "-"
+                }}
               </div>
             </div>
           </div>
           <div class="innerblock">
             <div>
-              <div class="topName">
-                智能外呼
-              </div>
+              <div class="topName">智能外呼</div>
               <div>
-                {{ marketingTouchNode.outboundCount!=undefined?marketingTouchNode.outboundCount:"-" }}
-
+                {{
+                  marketingTouchNode.outboundCount != undefined
+                    ? marketingTouchNode.outboundCount
+                    : "-"
+                }}
               </div>
             </div>
           </div>
           <div class="innerblock">
             <div>
-              <div class="topName">
-                手机短信
-              </div>
+              <div class="topName">手机短信</div>
               <div>
-                {{ marketingTouchNode.smsCount!=undefined?marketingTouchNode.smsCount:"-" }}
-
+                {{
+                  marketingTouchNode.smsCount != undefined
+                    ? marketingTouchNode.smsCount
+                    : "-"
+                }}
               </div>
             </div>
           </div>
         </div>
-
       </div>
 
       <div class="yugu_flex">
-        <div class="title">
-          黑名单
-        </div>
-
+        <div class="title">黑名单</div>
       </div>
 
       <el-form-item label="过滤黑名单" label-class="custom-label">
-
         <el-select style="width: 100px">
           <el-option value="no" label="不过滤">不过滤</el-option>
           <el-option value="yes" label="过滤">过滤</el-option>
         </el-select>
-
       </el-form-item>
     </el-form>
   </div>
