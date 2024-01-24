@@ -31,7 +31,6 @@ function addTarget() {
 <template>
   <div class="Basic-Block">
     <div
-      :class="{ disabled: !target.enable }"
       class="Basic-Block-Content"
     >
       <div class="Target-Block">

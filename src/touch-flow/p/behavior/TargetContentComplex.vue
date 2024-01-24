@@ -2,9 +2,9 @@
 import { computed } from "vue";
 import { Delete } from "@element-plus/icons-vue";
 import { num2character } from "~/utils/common";
-import AttrRender from "./AttrRender.vue";
-import Operator from "./Operator.vue";
-import Trigger from "./Trigger.vue";
+import AttrRender from "../../page/AttrRender.vue";
+import Operator from "../../page/Operator.vue";
+import Trigger from "../../page/Trigger.vue";
 
 const props = defineProps<{
   target: any;

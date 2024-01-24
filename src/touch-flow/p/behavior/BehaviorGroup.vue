@@ -1,5 +1,5 @@
 <script setup lang="ts" name="BehaviorGroup">
-import BasicTargetComplex from "../../page/BasicTargetComplex.vue";
+import BasicTargetComplex from "./BasicTargetComplex.vue";
 
 const fields = ref()
 
