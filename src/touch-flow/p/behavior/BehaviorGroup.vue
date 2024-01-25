@@ -1,38 +1,10 @@
 <script setup lang="ts" name="BehaviorGroup">
-import BasicTargetComplex from "./BasicTargetComplex.vue";
-
-const fields = ref()
-
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 const props = defineProps<{
   title: string;
 }>();
-const conditions = ref<object>({
-  logicalOperator: "and",
-  conditions: [],
-  groups: [],
-});
+
 const expand = ref(false);
-const flowOptions = reactive({
-  basic: {
-    _expand: false,
-    name: "",
-    disturb: {
-      enable: false,
-      time: [],
-      action: 0,
-    },
-    target: {
-      enable: false,
-      list: [],
-    },
-  },
-  p: {
-    type: 'start',
-    // father: {},
-    children: []
-  }
-})
 </script>
 
 <template>
@@ -53,8 +25,7 @@ const flowOptions = reactive({
       </span>
     </div>
     <div class="BehaviorGroup-Main">
-      <!-- {{ title }} -->
-      <BasicTargetComplex  :target="flowOptions.basic.target" />
+      <slot />
     </div>
   </div>
 </template>

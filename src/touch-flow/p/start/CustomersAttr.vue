@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import BehaviorGroup from "../behavior/BehaviorGroup.vue";
-import { StartNode } from "../nodes/Start/index";
-import { ref, reactive } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import { getmarketingTouchEstimate } from "~/api/index";
+import CustomAttr from "../behavior/CustomAttr.vue";
+import { MarketingTouchEditDTO } from "../behavior/marketing";
 
 const sizeForm = reactive({
   name: "",
@@ -22,17 +23,30 @@ const sizeForm = reactive({
   monthday: "",
 });
 
-export interface ApprovalAttr {
-  node: StartNode;
-}
-
-const $props = defineProps<ApprovalAttr>();
-const $emits = defineEmits<{
-  (e: "update:node", modelValue: StartNode): void;
+const props = defineProps<{
+  p: MarketingTouchEditDTO;
 }>();
 
-const logicalOperator = ref("and");
-const num = ref(100);
+const { customRuleContent } = props.p;
+
+if (!customRuleContent) {
+  props.p.customRuleContent = {
+    customAttr: {
+      conditions: [],
+      logicalChar: "",
+    },
+    customEvent: {
+      conditions: [],
+      logicalChar: "",
+    },
+    eventSequence: {
+      conditions: [],
+      logicalChar: "",
+    },
+    logicalChar: "or",
+  };
+}
+
 const marketingTouchNode = ref({
   appPushCount: 0,
   digitalCount: 0,
@@ -42,19 +56,6 @@ const marketingTouchNode = ref({
   znxCount: 0,
 });
 
-const toggleLogicalOperator = () => {
-  console.log(logicalOperator.value);
-  switch (logicalOperator.value) {
-    case "and":
-      logicalOperator.value = "or";
-      break;
-    default:
-      logicalOperator.value = "and";
-      break;
-  }
-  // logicalOperator.value == 'and' ? 'or' : 'and'
-  //  $emits('update:modelValue', filterRules.logicalOperator === 'and' ? 'or' : 'and');
-};
 const estimation = async () => {
   // 请求示例
   let data = {
@@ -187,6 +188,10 @@ const estimation = async () => {
   marketingTouchNode.value = res.data;
   console.log("Mounted", res);
 };
+
+const logicalOperator = computed(
+  () => props.p.customRuleContent!.logicalOperator
+);
 </script>
 
 <template>
@@ -207,15 +212,24 @@ const estimation = async () => {
               <div class="logical-operator__line"></div>
               <div
                 class="custom-switch"
-                :class="{ active: logicalOperator === 'and' }"
-                @click="toggleLogicalOperator"
+                :class="{
+                  active: logicalOperator === 'and',
+                }"
+                @click="
+                  p.customRuleContent!.logicalOperator =
+                    logicalOperator === 'and' ? 'or' : 'and'
+                "
               >
-                {{ logicalOperator === "and" ? "且" : "或" }}
+                {{
+                  p.customRuleContent!.logicalOperator === "and" ? "且" : "或"
+                }}
               </div>
               <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
             </div>
             <div class="filter-option-content">
-              <BehaviorGroup title="客户属性满足"> </BehaviorGroup>
+              <BehaviorGroup title="客户属性满足">
+                <CustomAttr :custom="p.customRuleContent!.customAttr" />
+              </BehaviorGroup>
               <BehaviorGroup title="客户行为满足"> </BehaviorGroup>
               <BehaviorGroup title="行为序列满足"> </BehaviorGroup>
             </div>
@@ -473,3 +487,4 @@ const estimation = async () => {
   }
 }
 </style>
+../behavior/marketing
