@@ -8,7 +8,6 @@ package-job:
   only:
     - develop
   script:
-    - pnpm
-    - pnpm build:dev
+    - yarn
+    - yarn build:dev
     - cp -a ./dist /root/4paradigm/market/touch-front
-

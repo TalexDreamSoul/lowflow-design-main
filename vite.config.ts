@@ -33,6 +33,9 @@ export default defineConfig({
             },
         },
     },
+    ssr: {
+        noExternal: ['element-plus']
+    },
     server: {
         hmr: true,
         open: "/#/",
