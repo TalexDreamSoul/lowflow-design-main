@@ -182,7 +182,7 @@ provide("save", (regFunc: () => boolean) => {
     </teleport>
 
     <teleport to="body">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title"  size="45%">
+      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :p="p" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
