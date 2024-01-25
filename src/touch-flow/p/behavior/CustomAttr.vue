@@ -37,7 +37,9 @@ provide("refreshTree", refreshTree);
             :key="condition.id"
             :condition="condition"
             :dict="dict"
-          />
+          >
+          <slot :condition="condition" :dict="dict" />
+          </CustomContent>
         </LogicalLine>
       </div>
     </div>

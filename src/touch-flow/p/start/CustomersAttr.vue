@@ -207,30 +207,20 @@ function behaviorAdd() {
 
 <template>
   <div>
-    <el-form
-      ref="form"
-      :model="sizeForm"
-      label-width="auto"
-      label-position="left"
-    >
-      <el-text tag="b">受众客户为满足以下条件的客户（触发型非必选）</el-text
-      ><br />
+    <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
+      <el-text tag="b">受众客户为满足以下条件的客户（触发型非必选）</el-text><br />
       <el-text>若下列条件不添加，则受众客户默认为全部客户</el-text>
       <el-form-item label="">
         <div class="pannel">
           <div class="filter-container">
             <div class="logical-operator">
               <div class="logical-operator__line"></div>
-              <div
-                class="custom-switch"
-                :class="{
-                  active: logicalOperator === 'and',
-                }"
-                @click="
-                  p.customRuleContent!.logicalOperator =
-                    logicalOperator === 'and' ? 'or' : 'and'
-                "
-              >
+              <div class="custom-switch" :class="{
+                active: logicalOperator === 'and',
+              }" @click="
+  p.customRuleContent!.logicalOperator =
+  logicalOperator === 'and' ? 'or' : 'and'
+  ">
                 {{
                   p.customRuleContent!.logicalOperator === "and" ? "且" : "或"
                 }}
@@ -241,7 +231,9 @@ function behaviorAdd() {
               <BehaviorGroup @add="behaviorAdd" title="客户属性满足">
                 <CustomAttr :custom="p.customRuleContent!.customAttr" />
               </BehaviorGroup>
-              <BehaviorGroup title="客户行为满足"> </BehaviorGroup>
+              <BehaviorGroup title="客户行为满足">
+                <CustomAttr :custom="p.customRuleContent!.customEvent" />
+              </BehaviorGroup>
               <BehaviorGroup title="行为序列满足"> </BehaviorGroup>
             </div>
           </div>
@@ -250,9 +242,7 @@ function behaviorAdd() {
 
       <div class="yugu_flex">
         <div class="title">预估受众客户</div>
-        <el-button @click="estimation" class="buttonyugu" round
-          >立即预估</el-button
-        >
+        <el-button @click="estimation" class="buttonyugu" round>立即预估</el-button>
       </div>
       <div class="flexyugu">
         <div class="grayblockfirst">
@@ -269,8 +259,8 @@ function behaviorAdd() {
               <div>
                 {{
                   marketingTouchNode.appPushCount != undefined
-                    ? marketingTouchNode.appPushCount
-                    : "-"
+                  ? marketingTouchNode.appPushCount
+                  : "-"
                 }}
               </div>
             </div>
@@ -281,8 +271,8 @@ function behaviorAdd() {
               <div>
                 {{
                   marketingTouchNode.znxCount != undefined
-                    ? marketingTouchNode.znxCount
-                    : "-"
+                  ? marketingTouchNode.znxCount
+                  : "-"
                 }}
               </div>
             </div>
@@ -293,8 +283,8 @@ function behaviorAdd() {
               <div>
                 {{
                   marketingTouchNode.digitalCount != undefined
-                    ? marketingTouchNode.digitalCount
-                    : "-"
+                  ? marketingTouchNode.digitalCount
+                  : "-"
                 }}
               </div>
             </div>
@@ -305,8 +295,8 @@ function behaviorAdd() {
               <div>
                 {{
                   marketingTouchNode.outboundCount != undefined
-                    ? marketingTouchNode.outboundCount
-                    : "-"
+                  ? marketingTouchNode.outboundCount
+                  : "-"
                 }}
               </div>
             </div>
@@ -317,8 +307,8 @@ function behaviorAdd() {
               <div>
                 {{
                   marketingTouchNode.smsCount != undefined
-                    ? marketingTouchNode.smsCount
-                    : "-"
+                  ? marketingTouchNode.smsCount
+                  : "-"
                 }}
               </div>
             </div>
@@ -346,15 +336,18 @@ function behaviorAdd() {
   align-items: flex-start !important;
   flex-direction: column !important;
 }
+
 .pannel {
   width: 100%;
   min-height: 200px;
   //padding: 0 15px;
 }
+
 .underright {
   width: 100%;
   height: 12px;
 }
+
 .filter-filter-item__add {
   position: absolute;
   right: 12px;
@@ -364,13 +357,16 @@ function behaviorAdd() {
   margin-right: 0;
   margin-bottom: 0;
 }
+
 .el-collapse {
   border: none !important;
 }
+
 .custom-collapse-item .el-collapse-item__header {
   border-bottom: none !important;
   background-color: #f5f8fc !important;
 }
+
 .el-collapse-item {
   margin: 12px;
   border: 1px solid var(--el-border-color);
@@ -403,6 +399,7 @@ function behaviorAdd() {
       border-radius: 5px 0 0 5px;
       height: calc(100% - 22px);
     }
+
     .custom-switch {
       border: 1px solid #4078e0;
       color: #fff;
@@ -437,15 +434,18 @@ function behaviorAdd() {
     }
   }
 }
+
 .yugu_flex {
   display: flex;
   align-items: center;
   min-height: 48px;
+
   .title {
     font-size: 16px;
     font-weight: 500;
     color: rgba(0, 0, 0, 0.9);
   }
+
   .buttonyugu {
     background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
     margin-left: 12px;
@@ -453,11 +453,13 @@ function behaviorAdd() {
     height: 32px;
   }
 }
+
 .flexyugu {
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
+
 .grayblock {
   //width: 120px;
   background: #f2f4f8;
@@ -466,10 +468,12 @@ function behaviorAdd() {
   display: flex;
   align-items: center;
   min-height: 48px;
+
   .innerblock {
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     padding: 20px;
   }
+
   .innerblock:last-child {
     /* 样式属性 */
     border-right: none;
@@ -482,6 +486,7 @@ function behaviorAdd() {
     margin-bottom: 8px;
   }
 }
+
 .grayblockfirst {
   //width: 160px;
   /* 其他样式属性可以根据需求添加 */
