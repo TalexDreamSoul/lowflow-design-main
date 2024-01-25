@@ -1,377 +1,378 @@
 <script setup lang="ts">
-import { inject, ref, reactive, onMounted } from "vue";
-import { ElMessage } from "element-plus";
-import { randomStr } from "~/utils/common";
-import { getqryMaterial, getmarketingTouchEstimate } from "~/api";
-import BehaviorGroup from "../behavior/BehaviorGroup.vue";
+import {
+  computed,
+  ref,
+  inject,
+  reactive,
+  onMounted,
+} from "vue";
+import { Delete, CirclePlus, CircleClose } from "@element-plus/icons-vue";
 
-const labelPosition = ref("single");
-const transform = ref(true);
-const transformset = ref(true);
-const origin = {
-  type: "PolicySettings",
-  name: "test",
-  value1: false,
-  isDelayed: false,
-  selectedType: "day",
-  delayedAction: "day",
-  materialtype: "sms",
-  cascaderLabel: "sms",
-  do: false,
-  num: 1,
-};
-const marketingTouchNode = ref({
-  appPushCount: 0,
-  digitalCount: 0,
-  outboundCount: 0,
-  smsCount: 0,
-  total: 0,
-  znxCount: 0,
-});
+import EventGroupFilter from "~/components/EventGroup/index.vue";
+import { dictFilterTree } from "~/api";
 
-const options = [
-  {
-    value: 1,
-    label: "Asia",
-    children: [
-      {
-        value: 2,
-        label: "China",
-        children: [
-          { value: 3, label: "Beijing" },
-          { value: 4, label: "Shanghai" },
-          { value: 5, label: "Hangzhou" },
-        ],
-      },
-      {
-        value: 6,
-        label: "Japan",
-        children: [
-          { value: 7, label: "Tokyo" },
-          { value: 8, label: "Osaka" },
-          { value: 9, label: "Kyoto" },
-        ],
-      },
-      {
-        value: 10,
-        label: "Korea",
-        children: [
-          { value: 11, label: "Seoul" },
-          { value: 12, label: "Busan" },
-          { value: 13, label: "Taegu" },
-        ],
-      },
-    ],
-  },
-  {
-    value: 14,
-    label: "Europe",
-    children: [
-      {
-        value: 15,
-        label: "France",
-        children: [
-          { value: 16, label: "Paris" },
-          { value: 17, label: "Marseille" },
-          { value: 18, label: "Lyon" },
-        ],
-      },
-      {
-        value: 19,
-        label: "UK",
-        children: [
-          { value: 20, label: "London" },
-          { value: 21, label: "Birmingham" },
-          { value: 22, label: "Manchester" },
-        ],
-      },
-    ],
-  },
-  {
-    value: 23,
-    label: "North America",
-    children: [
-      {
-        value: 24,
-        label: "US",
-        children: [
-          { value: 25, label: "New York" },
-          { value: 26, label: "Los Angeles" },
-          { value: 27, label: "Washington" },
-        ],
-      },
-      {
-        value: 28,
-        label: "Canada",
-        children: [
-          { value: 29, label: "Toronto" },
-          { value: 30, label: "Montreal" },
-          { value: 31, label: "Ottawa" },
-        ],
-      },
-    ],
-  },
-];
-const sizeForm = reactive<typeof origin>(origin);
+const timeFuncs: { [func: string]: any } = {
+  single: [
+    (obj: any) => {
+      const { date1, date2 } = obj
+      if (!date1 || !date2) return
 
-const dictType = ref();
+      // 同步date1的日期和date2的时间为一个
+      const date = new Date(date1);
+      const time = new Date(date2);
 
-function reset() {
-  Object.assign(sizeForm, origin);
+      date.setHours(time.getHours());
+      date.setMinutes(time.getMinutes());
+      date.setSeconds(time.getSeconds());
+
+      return date
+    },
+    (obj: any) => {
+      if (!props.p.time) return
+
+      const date = new Date(props.p.time);
+      obj.date1 = date.toString();
+      obj.date2 = date.toString();
+    }
+  ],
+  repeat: [
+    (obj: any) => {
+      return obj.date3
+    },
+    (obj: any) => {
+      if (!props.p.time) return
+
+      obj.date3 = props.p.time;
+    }
+  ]
 }
 
-onMounted(reset);
-
-const logicalOperator = ref("and");
+const sizeForm = reactive({
+  name: "",
+  region: "",
+  time: {
+    funcs: timeFuncs
+  },
+  date1: "",
+  date2: "",
+  date3: "",
+  delivery: false,
+  type: [],
+  restrictions: "Unrestricted",
+  resourceday: "",
+  resourcetimes: "",
+  desc: "",
+  timenine: "",
+  selectedType: "month",
+  weekday: "",
+  monthday: "",
+});
+const planB = ref(false);
+const selectedType = ref()
+const input = ref()
+const fields = ref()
+const node = ref({
+  conditions: {}
+})
+const daysInMonth = computed(() => {
+  const days = [];
+  for (let i = 1; i <= 31; i++) {
+    days.push(i);
+  }
+  return days;
+});
+const daysOfWeek = computed(() => ["一", "二", "三", "四", "五", "六", "日"]);
 
 const props = defineProps<{
-  p: any;
+  p: any
 }>();
-function toggleLogicalOperator() {}
-
-const getqryMaterialval = async () => {
-  let param: any = {
-    beginTime: "",
-    endTime: "",
-    name: "",
-    pageNum: 10,
-    pageSize: 0,
-    status: "available",
-    type: "sms",
-  };
-  let res = await getqryMaterial(param);
-  dictType.value = res.data;
-};
 
 function saveData() {
-  if (!sizeForm.name) {
-    ElMessage.warning({
-      message: "请输入策略名称",
-    });
+  const lp: string = props.p.labelPosition
+  if (!lp) return false
 
-    return false;
-  }
+  const funcs = sizeForm.time.funcs
 
-  const _ = { ...sizeForm, id: randomStr(12), father: props.p };
+  const [parse] = funcs[lp.toLowerCase()]
 
-  if (!props.p.children) {
-    props.p.children = [_];
-  } else {
-    const arr = [...props.p.children];
+  props.p.time = parse(sizeForm);
 
-    while (arr.length) {
-      const item = arr.shift();
-
-      if (item.name === _.name) {
-        ElMessage.warning({
-          message: "策略名称重复",
-        });
-
-        return false;
-      }
-
-      if (item.children) arr.push(...item.children);
-    }
-
-    props.p.children.push(_);
-  }
-
-  return true;
+  return true
 }
 
-type IRegSaveFunc = (regFunc: () => boolean) => void;
-const regSaveFunc: IRegSaveFunc = inject("save")!;
-regSaveFunc(saveData);
+type IRegSaveFunc = (regFunc: () => boolean) => void
+const regSaveFunc: IRegSaveFunc = inject('save')!
+regSaveFunc(saveData)
 
-const estimation = async () => {
-  // 请求示例
-  let data = {};
-  let res = await getmarketingTouchEstimate(JSON.stringify(data));
-  res = {
-    data: {
-      total: 1000,
-      appPushCount: 500,
-      znxCount: 120,
-      digitalCount: 800,
-      outboundCount: 200,
-      smsCount: 499,
-    },
-    message: "交易成功",
-    code: "0",
-  };
-  marketingTouchNode.value = res.data;
-  console.log("Mounted", res);
+const dictFilter = ref();
+
+onMounted(() => {
+
+  // sync time
+  if (props.p.labelPosition) {
+    const [, analyze] = sizeForm.time.funcs[props.p.labelPosition!.toLowerCase()]
+
+    analyze(sizeForm)
+  }
+
+  getdictFilterTree();
+});
+/**
+ * 获取字典树
+ */
+const getdictFilterTree = async () => {
+  let res = await dictFilterTree();
+  dictFilter.value = res.data;
 };
+
+/**
+ * 添加条件条件组b
+ */
+const addGroup = () => {
+  planB.value = !planB.value;
+};
+// 使用 ref 创建一个引用
+const childRef = ref<any>(null); // 确保 ref 初始化为 null
+const childRefB = ref<any>(null); // 确保 ref 初始化为 null
+
+// 设置调用子组件方法的函数
+const callChildMethod = () => {
+  // 通过引用调用子组件的方法
+  try {
+    childRef.value?.addGroup();
+  } catch (error) {
+    console.error("Error occurred in submitDrawer:", error);
+  }
+};
+// 设置调用子组件方法的函数
+const callChildMethodB = () => {
+  // 通过引用调用子组件的方法
+  try {
+    childRefB.value?.addGroup();
+  } catch (error) {
+    console.error("Error occurred in submitDrawer:", error);
+  }
+};
+
 </script>
 
 <template>
   <div>
-    <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
-    
-      <div class="blockbg">
-        <div class="title_set">
-          延迟设置
-          <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-                transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
-              }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
-        <div class="underbg">
-          &nbsp;
-          <el-select v-model="sizeForm.isDelayed" style="width: 100px">
-            <el-option :value="true" label="延迟">延迟</el-option>
-            <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
-          <el-input v-model="sizeForm.num" type="number" style="width: 100px" />&nbsp;
-          <el-select v-model="sizeForm.selectedType" style="width: 100px">
-            <el-option value="month" label="月份">分钟</el-option>
-            <el-option value="week" label="周">小时</el-option>
-            <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
-          <el-select v-model="sizeForm.delayedAction" placeholder="请选择" style="width: 150px">
-            <el-option value="week" label="发送触达">发送触达</el-option>
-            <el-option value="day" label="打上标签">打上标签</el-option>
-            <el-option value="day" label="不执行动作">不执行动作</el-option>
-            <el-option value="month" label="发送触达并打上标签">发送触达并打上标签</el-option>
-          </el-select>
-        </div>
-      </div>
-      <div class="blockbg">
-        <div class="title_set pg2">
-          触达设置
-          <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-                transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
-              }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
-        <div class="underbg">
-          <el-form-item label="触达通道">
-            <el-col :span="12">
-              <el-select v-model="sizeForm.materialtype" style="width: 100px">
-                <el-option value="sms" label="短信">手机短信</el-option>
-                <el-option value="app" label="app消息">app消息</el-option>
-                <el-option value="digital" label="数字员工">数字员工</el-option>
-                <el-option value="outbound" label="智能外呼">智能外呼</el-option>
-                <el-option value="znx" label="站内信">站内信</el-option>
-              </el-select>
-            </el-col>
-          </el-form-item>
+    <el-form ref="form" :model="sizeForm" label-width="auto" label-position="top">
 
-          <el-button type="primary" @click="getqryMaterialval" plain>获取模版</el-button>
-          <el-form-item label="选择模版">
-            <el-select v-model="sizeForm.type" placeholder="请选择" style="width: 100px">
-              <el-option value="month" label="月份">发送触达并打上标签</el-option>
-              <el-option value="week" label="周">小时</el-option>
-              <el-option value="day" label="天">天</el-option> </el-select>&nbsp;&nbsp;&nbsp;<el-button type="primary" plain>新增短信模块版本</el-button>
-          </el-form-item>
-
-          <el-form-item label="触达内容">
-            <div class="inputValue">定制组件位置</div>
-          </el-form-item>
-        </div>
-      </div>
-      <div class="blockbg">
-        <div class="title_set pg3">
-          标签设置
-          <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-                transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
-              }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
-
-        <div class="underbg">
-          符合该策略器条件的用户打上 &nbsp;
-          <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />
-
-        </div>
-      </div>
-      <div class="blockbg">
-        <div class="underbg">
-          <div class="yugu_flex">
-            <div class="title">预估触达客户 &nbsp;</div>
-            <el-button @click="estimation" class="buttonyugu" round>立即预估</el-button>
-          </div>
-          <div class="flexyugu">
-            <div class="grayblockfirst">
-              <div class="topName">预估受众客户总数</div>
-              <div v-if="marketingTouchNode.total != undefined">
-                {{ marketingTouchNode.total }}
-              </div>
-              <div style="color: #ff5050" v-else>无法预估数据</div>
+      <el-form-item label="流程类型：" label-class="custom-label">
+        <div>
+          <div class="custom-radio-group">
+            <div class="custom-radio-button" :class="{ active: p.labelPosition === 'single' }"
+              @click="p.labelPosition = 'single'">
+              <el-icon>
+                <AlarmClock />
+              </el-icon>定时型-单次
             </div>
-            <div class="grayblock">
-              <div class="innerblock">
-                <div>
-                  <div class="topName">APP Push</div>
-                  <div>
-                    {{
-                      marketingTouchNode.appPushCount != undefined
-                        ? marketingTouchNode.appPushCount
-                        : "-"
-                    }}
-                  </div>
-                </div>
-              </div>
-              <div class="innerblock">
-                <div>
-                  <div class="topName">APP内部</div>
-                  <div>
-                    {{
-                      marketingTouchNode.znxCount != undefined
-                        ? marketingTouchNode.znxCount
-                        : "-"
-                    }}
-                  </div>
-                </div>
-              </div>
-              <div class="innerblock">
-                <div>
-                  <div class="topName">企业微信</div>
-                  <div>
-                    {{
-                      marketingTouchNode.digitalCount != undefined
-                        ? marketingTouchNode.digitalCount
-                        : "-"
-                    }}
-                  </div>
-                </div>
-              </div>
-              <div class="innerblock">
-                <div>
-                  <div class="topName">智能外呼</div>
-                  <div>
-                    {{
-                      marketingTouchNode.outboundCount != undefined
-                        ? marketingTouchNode.outboundCount
-                        : "-"
-                    }}
-                  </div>
-                </div>
-              </div>
-              <div class="innerblock">
-                <div>
-                  <div class="topName">手机短信</div>
-                  <div>
-                    {{
-                      marketingTouchNode.smsCount != undefined
-                        ? marketingTouchNode.smsCount
-                        : "-"
-                    }}
-                  </div>
-                </div>
-              </div>
+            <div class="custom-radio-button" :class="{ active: p.labelPosition === 'Repeat' }"
+              @click="p.labelPosition = 'Repeat'">
+              <el-icon>
+                <AlarmClock />
+              </el-icon>定时型-重复
+            </div>
+            <div class="custom-radio-button" :class="{ active: p.labelPosition === 'type' }"
+              @click="p.labelPosition = 'type'">
+              <el-icon>
+                <Pointer />
+              </el-icon>触发型
             </div>
           </div>
-          <div class="yugu_flex">
-            <div class="title">策略器目标设置 &nbsp;</div>
-            <el-switch v-model="sizeForm.value1" />
+        </div>
+      </el-form-item>
+      <div v-if="p.labelPosition === 'single'">
+        <!-- 单次模块内容 -->
+
+        <el-form-item label="流程开始时间（任务开始时间）：" label-class="custom-label">
+          <div class="flex-column">
+            <div>
+              客户在&nbsp;&nbsp;
+            </div>
+            <el-date-picker v-model="sizeForm.date1" type="date" label="选择日期" placeholder="选择日期"
+              style="width: 150px" />&nbsp;
+            <el-time-picker v-model="sizeForm.date2" label="选择时间" placeholder="选择时间" style="width: 80px" />
+            <div>
+              &nbsp;&nbsp;进入流程
+            </div>
+          </div>
+        </el-form-item>
+      </div>
+
+      <div v-else-if="p.labelPosition === 'Repeat'">
+        <!-- 重复模块内容 -->
+        <el-form-item label="流程有效期：" label-class="custom-label">
+          <el-col :span="12">
+            <el-date-picker v-model="sizeForm.date3" type="daterange" range-separator="至" start-placeholder="开始日期"
+              end-placeholder="结束日期" />
+          </el-col>
+
+        </el-form-item>
+
+        <el-form-item label="流程开始时间(任务开始时间):" label-class="custom-label">
+          <div class="flex-column">
+            <el-text> 客户在&nbsp;
+            </el-text>
+            <el-select v-model="sizeForm.selectedType" style="width: 100px">
+              <el-option value="month" label="月份">月</el-option>
+              <el-option value="week" label="周">周</el-option>
+              <el-option value="day" label="天">天</el-option>
+            </el-select>
+            &nbsp;
+
+            <el-select v-if="sizeForm.selectedType === 'month'" v-model="sizeForm.monthday" placeholder="选择月份的天数"
+              style="width: 150px" multiple collapse-tags>
+              <el-option v-for="day in daysInMonth" :key="day" :label="`${day}号`" :value="day"></el-option>
+            </el-select>
+            &nbsp;
+
+            <el-select v-if="sizeForm.selectedType === 'week'" v-model="sizeForm.weekday" placeholder="选择星期几"
+              style="width: 150px" multiple collapse-tags>
+              <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="day"></el-option>
+            </el-select>
+            &nbsp;
+
+            <el-time-picker v-model="sizeForm.timenine" placeholder="选择时间" style="width: 120px"></el-time-picker>
+            &nbsp;
+            <el-text>进入流程(启动任务)
+            </el-text>
+
+          </div>
+        </el-form-item>
+        <div>
+
+          <el-form-item label="进入流程限制:" label-class="custom-label">
+
+            <el-radio-group v-model="sizeForm.restrictions">
+              <!-- Unrestricted
+              Enter once
+              Entered multiple times -->
+              <el-radio label="Unrestricted">不限制</el-radio>
+              <el-radio label="once">进入一次</el-radio>
+              <el-radio label="multiple">进入多次</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <div class="flex-column" v-if="sizeForm.restrictions === 'multiple'">
+            <el-text>当前流程，同一客户</el-text>&nbsp;
+            <el-input style="width: 100px" v-model="sizeForm.resourceday" label="First Name" placeholder="First Name" />
+            <el-text>&nbsp;天内，最多进入</el-text>&nbsp;
+            <el-input style="width: 100px" v-model="sizeForm.resourcetimes" label="First Name" placeholder="First Name" />
+            <el-text> &nbsp;次
+            </el-text>
+
           </div>
         </div>
       </div>
+
+      <div v-else-if="p.labelPosition === 'type'">
+        <!-- 触发型模块内容 -->
+        <el-form-item label="流程有效期：" label-class="custom-label">
+          <el-col :span="12">
+            <el-date-picker v-model="sizeForm.date3" type="daterange" range-separator="至" start-placeholder="开始日期"
+              end-placeholder="结束日期" />
+          </el-col>
+
+        </el-form-item>
+
+        <el-form-item>
+
+          <div class="pannel">
+            <div class="toppannel">
+              触发事件组A
+            </div>
+            <div class="garyblock">
+              <el-text>在流程有效期内依次完成下列事件后</el-text>&nbsp;
+              &nbsp;
+              <el-text type="primary" style="cursor: pointer;" @click="callChildMethod()">
+                <el-icon size="14">
+                  <CirclePlusFilled />
+                </el-icon>
+                添加事件
+              </el-text>
+            </div>
+            <!-- <EventGroupFilter v-model="node.conditions" :filter-fields="fields" :dictFilter="dictFilter" ref="childRef" /> -->
+
+          </div>
+        </el-form-item>
+
+        <div class="underright" v-show="!planB" @click="addGroup">
+          <el-icon size="14">
+            <CirclePlusFilled />
+          </el-icon> 添加事件组b
+
+        </div>
+        <el-form-item v-show="planB">
+          <div class="pannel">
+
+            <div class="toppannel" style="    display: flex;
+            justify-content: space-between;">
+              触发事件组B
+
+              <el-text type="primary" style="cursor: pointer;" @click="addGroup">
+                <el-icon size="14">
+                  <Delete />
+                </el-icon>
+                删除事件
+              </el-text>
+            </div>
+            <div class="garyblock" style="    display: flex;
+            justify-content: space-between;">
+              <div>
+                <el-text>且在</el-text>&nbsp;
+                <el-input v-model="input" type="number" style="width: 100px" />&nbsp;
+                <el-select v-model="selectedType" style="width: 150px">
+                  <el-option value="month" label="月份">分钟</el-option>
+                  <el-option value="week" label="周">小时</el-option>
+                  <el-option value="day" label="天">天</el-option>
+                </el-select>&nbsp;
+                <el-text>后立即判断</el-text>
+                &nbsp;
+                <el-select v-model="selectedType" style="width: 150px">
+                  <el-option value="month" label="月份">分钟</el-option>
+                  <el-option value="week" label="周">小时</el-option>
+                  <el-option value="day" label="天">天</el-option>
+                </el-select>&nbsp;
+              </div>
+              <el-text type="primary" style="cursor: pointer;" @click="callChildMethodB()">
+                <el-icon size="14">
+                  <CirclePlusFilled />
+                </el-icon>
+                添加事件
+              </el-text>
+            </div>
+            <!-- <EventGroupFilter ref="childRefB" v-model="node.conditions" :filter-fields="fields"
+              :dictFilter="dictFilter" /> -->
+
+          </div>
+        </el-form-item>
+        <div>
+
+          <el-form-item label="进入流程限制:" label-class="custom-label">
+
+            <el-radio-group v-model="sizeForm.restrictions">
+              <!-- Unrestricted
+              Enter once
+              Entered multiple times -->
+              <el-radio label="Unrestricted">不限制</el-radio>
+              <el-radio label="once">进入一次</el-radio>
+              <el-radio label="multiple">进入多次</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <div class="flex-column" v-if="sizeForm.restrictions === 'multiple'">
+            <el-text>当前流程，同一客户</el-text>&nbsp;
+            <el-input style="width: 100px" v-model="sizeForm.resourceday" label="First Name" placeholder="First Name" />
+            <el-text>&nbsp;天内，最多进入</el-text>&nbsp;
+            <el-input style="width: 100px" v-model="sizeForm.resourcetimes" label="First Name" placeholder="First Name" />
+            <el-text> &nbsp;次
+            </el-text>
+
+          </div>
+        </div>
+      </div>
+
     </el-form>
   </div>
 </template>
@@ -382,221 +383,78 @@ const estimation = async () => {
   align-items: flex-start !important;
   flex-direction: column !important;
 }
-.titleCondition {
-  color: #666;
-  font-size: 14px;
-  margin-top: 24px;
-}
-.pannel {
-  width: 100%;
-  min-height: 200px;
-  //padding: 0 15px;
-  //background-color: #f5f8fc;
-}
-
-.underright {
-  width: 100%;
-  height: 12px;
-}
-
-.filter-filter-item__add {
-  position: absolute;
-  right: 12px;
-}
-
-.flex-column {
-  display: -webkit-inline-box !important;
-  align-items: flex-start !important;
-  flex-direction: column !important;
-}
 
 .pannel {
   width: 100%;
   min-height: 200px;
+  //padding: 18px 15px;
+  background-color: #f5f8fc;
 }
 
 .underright {
-  width: 100%;
-  height: 12px;
-}
-
-.filter-filter-item__add {
-  position: absolute;
-  right: 12px;
-}
-
-:deep(.el-form-item) {
-  margin-right: 0;
-  margin-bottom: 0;
-}
-
-.el-collapse {
-  border: none !important;
-}
-
-.custom-collapse-item .el-collapse-item__header {
-  border-bottom: none !important;
-  background-color: #f5f8fc !important;
-}
-
-.filter-container {
-  border-radius: 3px;
-  display: flex;
-
-  .logical-operator {
-    position: relative;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    min-width: 35px;
-
-    .logical-operator__line {
-      position: absolute;
-      left: calc(35% - 1px);
-      border-width: 1px 0 1px 1px;
-      border-top-style: solid;
-      border-bottom-style: solid;
-      border-left-style: solid;
-      border-left-color: #4078e0;
-      border-image: initial;
-      border-right-style: initial;
-      border-right-color: initial;
-      border-radius: 5px 0 0 5px;
-      height: calc(100% - 22px);
-    }
-  }
-
-  .filter-option-content {
-    position: relative;
-    width: 100%;
-
-    .filter-item-rule {
-      display: flex;
-      align-items: center;
-      min-height: 48px;
-    }
-
-    .filter-filter-item__add {
-      border-style: dashed;
-      width: 100%;
-    }
-  }
-
-  .custom-switch {
-    border: 1px solid #4078e0;
-    color: #fff;
-    width: 24px;
-    height: 24px;
-    background: #fff;
-    font-weight: 500;
-    color: #4078e0;
-    font-size: 14px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 1;
-  }
-}
-.blockbg {
+  background: #edeff4;
+  border-radius: 4px 4px 0px 0px;
   font-size: 14px;
-  border-radius: var(--el-border-radius-base);
-  margin-top: 24px;
-  .title_set {
-    padding: 8px 12px;
-    background: #eaeff3;
-    border-left: 4px solid #62c943;
-    display: flex;
-    justify-content: space-between;
-  }
-  .bg001{
-    border-left: 4px solid #333;
-  }
-  .pg2 {
-    border-left: 4px solid #A053CD;
-  }
-  .pg3 {
-    border-left: 4px solid #277ae7;
-  }
-
-  .underbg {
-    padding: 12px;
-    background: #f7f8fa;
-  }
-}
-
-.yugu_flex {
+  font-weight: 500;
+  color: #000000;
+  padding: 12px 24px 12px 24px;
+  cursor: pointer;
+  color: #4078e0;
   display: flex;
-  align-items: center;
-  min-height: 48px;
-  margin-bottom: 8px;
-  .title {
-    margin-left: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.9);
-  }
-  .buttonyugu {
-    background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
-    margin-left: 12px;
-    color: #ffffff;
-    height: 32px;
-  }
-}
-.flexyugu {
-  display: flex;
-  justify-content: flex-start;
   align-items: center;
   margin-bottom: 12px;
 }
 
-.grayblock {
-  //width: 120px;
-  background: #ffffff;
-  border-radius: 4px 4px 4px 4px;
-  //margin-right: 12px;
+.filter-filter-item__add {
+  position: absolute;
+  right: 12px;
+}
+
+:deep(.el-form--default.el-form--label-top .el-form-item .el-form-item__label) {
+  margin-bottom: 8px;
+  line-height: 22px;
+  font-size: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 24px;
+}
+
+.custom-radio-group {
+  display: flex;
+}
+
+.custom-radio-button {
+  cursor: pointer;
+  padding: 4px 8px;
+  margin-right: 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  border: 1px solid #e5e5e5;
+  font-size: 14px;
   display: flex;
   align-items: center;
-  min-height: 48px;
-  .innerblock {
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 20px;
-  }
-  .innerblock:last-child {
-    /* 样式属性 */
-    border-right: none;
-  }
-
-  .topName {
-    font-size: 14px;
-    font-weight: 400;
-    color: rgba(0, 0, 0, 0.6);
-    margin-bottom: 8px;
-  }
 }
-.grayblockfirst {
-  //width: 160px;
-  /* 其他样式属性可以根据需求添加 */
-  margin-right: 12px;
-  background: #ffffff;
-  border-radius: 4px 4px 4px 4px;
-  padding: 20px;
 
-  .topName {
-    font-size: 14px;
-    font-weight: 400;
-    color: rgba(0, 0, 0, 0.6);
-    margin-bottom: 8px;
-  }
+.custom-radio-button:hover {
+  background-color: #f0f0f0;
 }
-.inputValue {
-  background: #fff;
-  height: 150px;
-  width: 480px;
-  border: 1px solid #dbdbdb;
-  border-radius: 4px;
-  padding: 12px;
-  color: #333;
+
+.custom-radio-button.active {
+  background-color: #4078e0;
+  color: #fff;
+}
+
+.toppannel {
+  background: #edeff4;
+  border-radius: 4px 4px 0px 0px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #000000;
+  padding: 12px 24px 12px 24px;
+}
+
+.garyblock {
+  padding: 12px 24px 12px 24px;
 }
 </style>
