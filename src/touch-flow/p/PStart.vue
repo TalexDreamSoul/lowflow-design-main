@@ -4,6 +4,7 @@ import { Stamp, Plus } from "@element-plus/icons-vue";
 import ConditionSetAttr from "../p/start/ConditionSetAttr.vue";
 import CustomersAttr from "../p/start/CustomersAttr.vue";
 import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
+import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
 const props = defineProps<{
   p?: any;
 }>();
@@ -99,7 +100,7 @@ const _comps = [
     title: "分流器",
     desc: "按设置的比例自动对客户随机分流，并执行动作。",
     show: () => !doDiverse.value,
-    comp: ConditionSetAttr,
+    comp: DeliverySettingsAttr,
   },
   {
     icon: {
