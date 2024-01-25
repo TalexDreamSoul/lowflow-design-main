@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import TargetContent from "./TargetContent.vue";
+import TargetContent from "~/touch-flow/page/TargetContent.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
 const props = defineProps<{
   target: any;
