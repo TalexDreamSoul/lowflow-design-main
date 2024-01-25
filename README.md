@@ -1,6 +1,6 @@
 <div align="center">
     <h1>lowflow-design</h1>
-    <p>低代码流程设计器</p>
+    <p>H5活动制作系统</p>
 </div>
 
 ## 介绍

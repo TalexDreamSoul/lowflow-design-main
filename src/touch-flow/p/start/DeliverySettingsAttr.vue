@@ -206,22 +206,17 @@ const estimation = async () => {
 
 <template>
   <div>
-  分流器DEMO
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
-      <el-form-item label="选择策略器名称：">
+     <div class="deliveryDesc">
+      客户将流量分配比例随机进入任一分支，流量总和为100%。如果同一个客户多次进入该流程，每次都默认分配到同一个组内。
+     </div> 
+      <el-form-item label="分流器名称：">
         <el-input v-model="sizeForm.name" placeholder="填写名称" />
-      </el-form-item>
-      <el-form-item label="分流类型：">
-        <el-radio-group v-model="labelPosition">
-          <el-radio label="single">不分流</el-radio>
-          <el-radio label="Repeat">按属性用户行为分流</el-radio>
-          <el-radio label="type">按触发事件分流</el-radio>
-        </el-radio-group>
       </el-form-item>
 
       <div  class="blockbg" v-if="labelPosition === 'Repeat'">
         <div class="title_set bg001">
-          用户属性行为分流
+          分支流量
           <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
             <el-icon class="icondown" :style="{
                 transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
@@ -465,6 +460,15 @@ const estimation = async () => {
 </template>
 
 <style scoped lang="scss">
+.deliveryDesc{
+  font-size: 14px;
+  font-family: PingFang SC, PingFang SC;
+  font-weight: 500;
+  color: rgba(0,0,0,0.9);
+  line-height: 14px;
+  padding: 12px 2px;
+}
+
 .flex-column {
   display: -webkit-inline-box !important;
   align-items: flex-start !important;
