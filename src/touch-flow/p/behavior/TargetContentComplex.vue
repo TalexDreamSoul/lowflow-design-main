@@ -5,6 +5,7 @@ import { num2character } from "~/utils/common";
 import AttrRender from "../../page/AttrRender.vue";
 import Operator from "../../page/Operator.vue";
 import Trigger from "../../page/Trigger.vue";
+import lineSlot from "./lineSlot.vue";
 
 const props = defineProps<{
   target: any;
@@ -58,17 +59,22 @@ const attrs = computed(() => {
           筛选条件
         </el-text>
       </div>
-      <div class="filter-container">
-        <div class="fontstyle">并且满足</div>
-        <div class="logical-operator" v-if="target.conditions?.length">
-          <div class="logical-operator__line"></div>
-          <div class="custom-switch" :class="{ active: target.logicalOperator === 'and' }" @click="
-              target.logicalOperator =
-                target?.logicalOperator === 'and' ? 'or' : 'and'
-            ">
-            {{ target?.logicalOperator === "and" ? "且" : "或" }}
+      <lineSlot :conditions="target.conditions"  :logicalOperator="target.logicalOperator" logicalOperatorText="并且满足" @increment="
+      target.logicalOperator =
+        target?.logicalOperator === 'and' ? 'or' : 'and'">
+        <!-- <div class="filter-container">
+          <div class="fontstyle">并且满足</div>
+          <div class="logical-operator" v-if="target.conditions?.length">
+            <div class="logical-operator__line"></div>
+            <div class="custom-switch" :class="{ active: target.logicalOperator === 'and' }" @click="
+                target.logicalOperator =
+                  target?.logicalOperator === 'and' ? 'or' : 'and'
+              ">
+              {{ target?.logicalOperator === "and" ? "且" : "或" }}
+            </div>
           </div>
-        </div>
+        </div> -->
+
         <div v-if="attrs" class="filter-option-content">
           <el-form :label-width="0" :inline="true" :model="target.conditions">
             <el-row v-for="(item, index) in target.conditions" :key="`${item.field}-${index}`"  class="filter-item-rule">
@@ -109,7 +115,8 @@ const attrs = computed(() => {
               " class="filter-item-rule" />
           </el-form>
         </div>
-      </div>
+      </lineSlot>
+    
   </div>
 </template>
 

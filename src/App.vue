@@ -12,8 +12,5 @@ import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import TopMenu from "~/components/TopMenu/index.vue";
 </script>
 <style>
-.el-form-item {
-  margin-right: 0;
-  margin-bottom: 12px !important;
-}
+
 </style>

@@ -417,7 +417,7 @@ const logicalOperator = computed(
     .filter-item-rule {
       display: flex;
       align-items: center;
-      min-height: 48px;
+     // min-height: 48px;
     }
 
     .filter-filter-item__add {
