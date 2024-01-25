@@ -1,0 +1,14 @@
+stages:
+  - package
+
+package-job:
+  tags:
+    - market-plus-shell
+  stage: package
+  only:
+    - develop
+  script:
+    - yarn
+    - yarn build
+    - cp -a ./dist /root/4paradigm/market/touch-front
+
