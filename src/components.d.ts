@@ -34,6 +34,7 @@ declare module 'vue' {
     ElSpace: typeof import('element-plus/es')['ElSpace']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElText: typeof import('element-plus/es')['ElText']
+    ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     EventGroup: typeof import('./components/EventGroup/index.ts')['default']
     Interface: typeof import('./components/Render/interface.ts')['default']
     RoleSelection: typeof import('./components/RoleSelection/index.ts')['default']
