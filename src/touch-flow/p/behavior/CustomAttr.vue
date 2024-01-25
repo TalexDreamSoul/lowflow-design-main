@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import TargetContentComplex from "./TargetContentComplex.vue";
+import { onMounted, ref, provide } from "vue";
+import CustomContent from "./CustomContent.vue";
+import LogicalLine from "./LogicalLine.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
 const props = defineProps<{
   custom: any;
 }>();
-
-if (!props.custom.conditions.length) {
-  props.custom.conditions.push({});
-}
 
 const dict = ref<any>();
 
@@ -20,24 +17,28 @@ onMounted(async () => {
   }
 });
 
-function addTarget() {
-  let arr = (props.custom.list = props.custom.list || []);
+const refreshTree = () => {
+  [...props.custom.conditions].forEach(
+    (condition, index) =>
+      !condition.conditions.length && props.custom.conditions.splice(index, 1)
+  );
+};
 
-  arr.push({});
-}
+provide("refreshTree", refreshTree);
 </script>
 
 <template>
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
       <div v-if="dict" class="Target-Block">
-        <TargetContentComplex
-          v-for="(item, index) in custom.conditions"
-          :key="item.id"
-          :index="index"
-          :target="item"
-          :dict="dict"
-        />
+        <LogicalLine v-model="custom.LogicalLine">
+          <CustomContent
+            v-for="condition in custom.conditions"
+            :key="condition.id"
+            :condition="condition"
+            :dict="dict"
+          />
+        </LogicalLine>
       </div>
     </div>
   </div>

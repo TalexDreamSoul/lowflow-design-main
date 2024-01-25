@@ -2,6 +2,7 @@
 import { ref, reactive, computed, provide } from "vue";
 import { Stamp, Plus } from "@element-plus/icons-vue";
 import ConditionSetAttr from "../p/start/ConditionSetAttr.vue";
+import Strategist from "../p/start/Strategist.vue";
 import CustomersAttr from "../p/start/CustomersAttr.vue";
 import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
@@ -110,7 +111,7 @@ const _comps = [
     title: "兜底选择器",
     desc: "筛选未进入本节点下选择策略器的客户，并执行动作。",
     show: () => doDiverse.value,
-    comp: ConditionSetAttr,
+    comp: Strategist,
   },
 ];
 
@@ -134,17 +135,22 @@ provide("save", (regFunc: () => boolean) => {
   <el-card class="PBlock">
     <p>进入流程设置</p>
     <div class="PBlock-Content">
-
-      <div @click=openCustomer class="PBlock-Section">
+      <div @click="openCustomer" class="PBlock-Section">
         <p>
           <el-icon>
             <User />
           </el-icon>
           受众客户
         </p>
-        <span>根据客户属性、客户标签、客户行为、行为序列筛选能够进入流程的客户</span>
+        <span
+          >根据客户属性、客户标签、客户行为、行为序列筛选能够进入流程的客户</span
+        >
       </div>
-      <div @click="openCondition" :class="{ checked: conditioned }" class="PBlock-Section">
+      <div
+        @click="openCondition"
+        :class="{ checked: conditioned }"
+        class="PBlock-Section"
+      >
         <p>
           <el-icon>
             <Position />
@@ -156,18 +162,31 @@ provide("save", (regFunc: () => boolean) => {
             </el-icon>
           </span>
         </p>
-        <span v-if="conditioned" style="opacity: .75;font-size: 14px">
-          <span>流程类型：<span class="contentdeep">{{ flowType }}</span></span><br />
-          <span>进入时间：<span class="contentdeep">{{ flowTime }}</span></span><br />
+        <span v-if="conditioned" style="opacity: 0.75; font-size: 14px">
+          <span
+            >流程类型：<span class="contentdeep">{{ flowType }}</span></span
+          ><br />
+          <span
+            >进入时间：<span class="contentdeep">{{ flowTime }}</span></span
+          ><br />
         </span>
         <span v-else>设置流程类型、流程有效期、流程开始时间、进入限制。</span>
       </div>
     </div>
 
     <teleport to="body">
-      <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
+      <el-dialog
+        v-model="dialogVisible"
+        width="30%"
+        title="请选择添加类型"
+        align-center
+      >
         <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section">
+          <div
+            @click="openDrawer(item)"
+            v-for="item in comps"
+            class="PBlock-Section"
+          >
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
@@ -182,17 +201,32 @@ provide("save", (regFunc: () => boolean) => {
     </teleport>
 
     <teleport to="body">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
+      <el-drawer
+        v-model="drawerOptions.visible"
+        :title="drawerOptions.title"
+        size="55%"
+      >
         <component :p="p" :is="drawerOptions.comp" />
         <template #footer>
-          <el-button round @click="drawerOptions.visible = false">取消</el-button>
-          <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
+          <el-button round @click="drawerOptions.visible = false"
+            >取消</el-button
+          >
+          <el-button round @click="handleSave" type="primary" primaryStyle
+            >保存</el-button
+          >
         </template>
       </el-drawer>
     </teleport>
   </el-card>
 
-  <el-button :class="{ display: conditioned }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
+  <el-button
+    :class="{ display: conditioned }"
+    @click="dialogVisible = true"
+    class="start-add"
+    type="primary"
+    :icon="Plus"
+    circle
+  />
 </template>
 
 <style lang="scss">

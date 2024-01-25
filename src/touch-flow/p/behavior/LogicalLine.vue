@@ -1,54 +1,67 @@
-<script setup lang="ts" name="TargetContent">
+<script setup lang="ts" name="LogicalLine">
+import { useVModel } from "@vueuse/core";
 import { computed } from "vue";
 
 const props = defineProps<{
-  conditions?: any;
-  logicalOperator?: String;
-  logicalOperatorText?: String;
+  modelValue: string;
+  title?: string;
+  display?: boolean;
 }>();
 
-const $emits = defineEmits<{
-  (e: 'increment'): void
-}>()
+const emits = defineEmits<{
+  (e: "update:modelValue", value: string): void;
+}>();
+
+const label = computed(() => ("and" === model.value ? "且" : "或"));
+const model = useVModel(props, "modelValue", emits);
+
+function toggle() {
+  model.value = model.value === "and" ? "or" : "and";
+}
 </script>
 
 <template>
-  <div class="TargetContent">
-    <div class="filter-container">
-      <div class="fontstyle" v-if="logicalOperatorText">{{logicalOperatorText}}</div>
-      <div class="logical-operator" v-if="conditions?.length">
+  <div class="LogicalLine">
+    <div :class="{ active: +display ^ 1 }" class="LogicalLine-Filter">
+      <div class="fontstyle" v-text="title" />
+      <div class="logical-operator">
         <div class="logical-operator__line"></div>
-        <div class="custom-switch" :class="{ active: logicalOperator === 'and' }"  @click="onIncrement">
-          {{ logicalOperator === "and" ? "且" : "或" }}
-        </div>
+        <div
+          class="custom-switch"
+          :class="{ active: model === 'and' }"
+          @click="toggle"
+          v-text="label"
+        />
       </div>
-      <div class="filter-option-content">
-        <slot />
-      </div>
+    </div>
+    <div class="LogicalLine-Main">
+      <slot />
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
-.TargetContent {
+<style lang="scss" scoped>
+.LogicalLine {
+  display: flex;
   margin: 10px 0;
 
-  border-radius: 8px;
-
-  .filter-container {
-    //background-color: #f5f8fc;
-    //border-radius: 3px;
+  &-Filter {
+    &.active {
+      opacity: 1;
+    }
     display: flex;
+
+    opacity: 0;
+    transition: .25s;
     .fontstyle {
+      align-self: center;
+      margin-right: 0.5rem;
+
       font-size: 12px;
-      font-weight: 400;
       color: #000000;
       position: relative;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      min-width: 55px;
     }
+
     .logical-operator {
       position: relative;
       display: flex;
@@ -88,19 +101,10 @@ const $emits = defineEmits<{
       }
     }
   }
-}
 
-.TargetContent-TopBanner {
-  background: #ebeff3;
-  border-radius: 4px 4px 0px 0px;
-  font-size: 12px;
-  font-weight: 400;
-  color: #000000;
-  padding: 0px 24px;
-}
-:deep(.el-form-item) {
-  margin-right: 0;
-  margin-bottom: 0;
+  &-Main {
+    flex: 1;
+  }
 }
 
 .custom-switch {

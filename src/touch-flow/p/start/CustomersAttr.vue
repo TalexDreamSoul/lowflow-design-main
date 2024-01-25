@@ -192,6 +192,17 @@ const estimation = async () => {
 const logicalOperator = computed(
   () => props.p.customRuleContent!.logicalOperator
 );
+
+function behaviorAdd() {
+  let attr = props.p.customRuleContent!.customAttr!.conditions!;
+
+  const obj = {};
+
+  attr.push({
+    conditions: [obj],
+    logicalChar: "or",
+  });
+}
 </script>
 
 <template>
@@ -227,7 +238,7 @@ const logicalOperator = computed(
               <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
             </div>
             <div class="filter-option-content">
-              <BehaviorGroup title="客户属性满足">
+              <BehaviorGroup @add="behaviorAdd" title="客户属性满足">
                 <CustomAttr :custom="p.customRuleContent!.customAttr" />
               </BehaviorGroup>
               <BehaviorGroup title="客户行为满足"> </BehaviorGroup>
@@ -417,7 +428,7 @@ const logicalOperator = computed(
     .filter-item-rule {
       display: flex;
       align-items: center;
-     // min-height: 48px;
+      // min-height: 48px;
     }
 
     .filter-filter-item__add {

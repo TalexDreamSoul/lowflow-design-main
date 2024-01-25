@@ -1,7 +1,12 @@
 <script setup lang="ts" name="BehaviorGroup">
 import { ref } from "vue";
-const props = defineProps<{
+
+defineProps<{
   title: string;
+}>();
+
+const emits = defineEmits<{
+  (e: "add"): void;
 }>();
 
 const expand = ref(false);
@@ -16,7 +21,13 @@ const expand = ref(false);
       </span>
 
       <span class="addon-icon">
-        <el-button size="small" text plain type="primary">
+        <el-button
+          @click.stop="emits('add')"
+          size="small"
+          text
+          plain
+          type="primary"
+        >
           <el-icon>
             <CirclePlusFilled />
           </el-icon>
