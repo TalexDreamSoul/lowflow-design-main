@@ -10,7 +10,7 @@ const transform = ref(true);
 const transformset = ref(true);
 const origin = {
   type: "PolicySettings",
-  name: "test",
+  name: "兜底策略器",
   value1: false,
   isDelayed: false,
   selectedType: "day",

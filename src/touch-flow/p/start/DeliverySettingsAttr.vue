@@ -52,7 +52,7 @@ regSaveFunc(saveData);
 
 
 const totalRatio = computed(() => {
-  return sizeForm.branches.reduce((acc: any, branch: { ratio: any; }) => acc + branch.ratio, 0)
+  return sizeForm.branches.reduce((acc: number, branch: { ratio: number; }) => acc + branch.ratio, 0)
 })
 const addBranch = () => {
   sizeForm.branches.push({ name: "", ratio: 0 });
@@ -99,7 +99,7 @@ const checkRatio = (e: any) => {
         <div class="underbg">
           <el-row :gutter="20">
             <el-col :span="14">分支名称</el-col>
-            <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ 100 - totalRatio
+            <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ parseInt(totalRatio)
             }}%</span>）</el-col>
           </el-row>
           <el-row :gutter="20" style="    align-items: center;
