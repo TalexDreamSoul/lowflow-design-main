@@ -20,7 +20,7 @@ const disturbOptions = [
     </p>
     <!-- <el-divider></el-divider> -->
     <div :class="{ disabled: !disturb.enable }" class="Basic-Block-Content" v-if="disturb.enable">
-      <el-date-picker v-model="disturb.time" type="daterange" unlink-panels range-separator="To" start-placeholder="开始时间"
+      <el-date-picker v-model="disturb.time" type="daterange" unlink-panels range-separator="-" start-placeholder="开始时间"
         end-placeholder="结束时间" />
       为客户勿扰时间段，勿扰时间内触达则
       <el-select v-model="disturb.action"  style="width: 240px;">

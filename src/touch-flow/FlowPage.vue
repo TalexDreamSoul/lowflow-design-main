@@ -71,7 +71,7 @@ div.el-dialog {
 
     height: 80px;
     max-height: 500px;
-    overflow: scroll;
+    overflow: hidden;
     transition: height 0.25s;
     background-color: var(--el-fill-color-lighter);
     box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02),

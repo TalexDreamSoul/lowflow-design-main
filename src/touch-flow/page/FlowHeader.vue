@@ -50,7 +50,7 @@ const props = defineProps<{
 
   &-Content {
     position: relative;
-    padding: 0 1.5rem;
+    padding: 12px 1.5rem;
     line-height: 2.5rem;
 
     background-color: var(--el-fill-color);
@@ -105,7 +105,7 @@ const props = defineProps<{
 }
 
 .TouchFlow-Addon {
-  // height: calc(100% - 120px);
+  height: calc(100% - 60px);
 }
 
 .TouchFlow-Header {
