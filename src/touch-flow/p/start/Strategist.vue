@@ -162,14 +162,6 @@ function saveData() {
     while (arr.length) {
       const item = arr.shift();
 
-      if (item.name === _.name) {
-        ElMessage.warning({
-          message: "策略名称重复",
-        });
-
-        return false;
-      }
-
       if (item.children) arr.push(...item.children);
     }
 
