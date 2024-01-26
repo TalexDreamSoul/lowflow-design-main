@@ -37,8 +37,8 @@ const comps = [
 
 function openCondition() {
   openDrawer({
-    title: "流程类型设置",
-    comp: ConditionSetAttr
+    title: "选择策略器",
+    comp: PolicySettingsAttr
   })
 }
 
@@ -70,7 +70,8 @@ provide('save', (regFunc: () => boolean) => {
 <template>
   <el-card style="width: 355px" class="PBlock">
     <p class="title">
-      选择策略器 {{ p.name }}
+      <!-- 选择策略器 -->
+       {{ p.name }}
       <el-button @click="delChild(p)" text type="primary">
         <el-icon><Delete /></el-icon>
         删除
