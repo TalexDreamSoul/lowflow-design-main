@@ -1,8 +1,8 @@
-<script setup lang="ts" name="CustomContent">
+<script setup lang="ts" name="SequenceContent">
 import { computed, inject } from "vue";
 import { Delete } from "@element-plus/icons-vue";
-import BehaviorSubContent from "./BehaviorSubContent.vue";
-import LogicalLine from "./LogicalLine.vue";
+import SequenceSubContent from "./SequenceSubContent.vue";
+import LogicalLine from "../LogicalLine.vue";
 
 const props = defineProps<{
   condition: any;
@@ -20,7 +20,7 @@ const handleDel = (index: number) => {
 const conditionArr = computed(() => props.condition.conditions);
 
 function handleAdd() {
-  props.condition.conditions.push({});
+  props.condition.conditions.push();
 }
 
 function handleSubAdd(item: any) {
@@ -39,40 +39,17 @@ const attrs = computed(() => {
 
 <template>
   <div class="CustomContent">
-    <LogicalLine :display="conditionArr?.length" v-model="condition.logicalChar">
-      <div v-if="conditionArr" class="filter-option-content">
-        <el-form :label-width="0" :inline="true" :model="condition.conditions">
-          <div v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="CustomBehavior-Main">
+    <div v-if="conditionArr" class="filter-option-content">
+      <el-form :label-width="0" :inline="true" :model="condition.conditions">
+        <div v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="CustomBehavior-Main">
           <el-row class="filter-item-rule">
-            <el-col :xs="24" :sm="6">
+            <el-col :xs="24" :sm="16">
               <el-form-item :prop="'conditions.' + index + '.field'">
                 <el-date-picker v-model="condition.timeRange" type="daterange" range-separator="至"
                   start-placeholder="开始日期" end-placeholder="结束日期" />
               </el-form-item>
             </el-col>
-            &nbsp;<el-col :xs="24" :sm="6">
-              <el-form-item :prop="'conditions.' + index + '.field'">
-                <el-select v-model="condition.action">
-                  <el-option label="做过" value="=" />
-                  <el-option label="未做过" value="!=" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            &nbsp;<el-col :xs="24" :sm="6">
-              <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <el-select v-model="condition.delayedAction" style="width: 240px">
-                  <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
-                    <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
-                  </el-option-group> </el-select>&nbsp;
-                <el-text type="primary" style="cursor: pointer" @click="handleSubAdd(item)">
-                  <el-icon size="14">
-                    <CirclePlusFilled />
-                  </el-icon>
-                  筛选条件
-                </el-text>
-              </el-form-item>
-            </el-col>
-            &nbsp;
+            依次做过
             <el-col :xs="24" :sm="2" style="
                 display: flex;
                 align-items: center;
@@ -93,17 +70,26 @@ const attrs = computed(() => {
 
           </el-row>
 
-            <BehaviorSubContent :index="index" :dict="dict" :condition="item" />
-          </div>
+          <el-select v-model="condition.delayedAction" style="width: 240px">
+            <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
+              <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
+            </el-option-group> </el-select>&nbsp;
+          <el-text type="primary" style="cursor: pointer" @click="handleSubAdd(item)">
+            <el-icon size="14">
+              <CirclePlusFilled />
+            </el-icon>
+            添加筛选
+          </el-text>
+          <SequenceSubContent :index="index" :dict="dict" :condition="item" />
+        </div>
 
-          <div v-if="!(
-            condition?.filterRules?.groups?.length |
-            condition?.filterRules?.conditions?.length
-          )
-            " class="filter-item-rule" />
-        </el-form>
-      </div>
-    </LogicalLine>
+        <div v-if="!(
+          condition?.filterRules?.groups?.length |
+          condition?.filterRules?.conditions?.length
+        )
+          " class="filter-item-rule" />
+      </el-form>
+    </div>
   </div>
 </template>
 
