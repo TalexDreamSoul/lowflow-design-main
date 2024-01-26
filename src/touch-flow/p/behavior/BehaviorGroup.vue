@@ -21,13 +21,7 @@ const expand = ref(false);
       </span>
 
       <span class="addon-icon">
-        <el-button
-          @click.stop="emits('add')"
-          size="small"
-          text
-          plain
-          type="primary"
-        >
+        <el-button @click.stop="emits('add')" size="small" text plain type="primary">
           <el-icon>
             <CirclePlusFilled />
           </el-icon>
@@ -59,10 +53,12 @@ const expand = ref(false);
     .toggle-icon::before {
       transform: translateY(0.5px) rotateZ(90deg) scaleX(0);
     }
-    max-height: 1000px;
 
-    transition: 0.25s ease-in;
+    max-height: 10000px;
+
+    transition: 0.5s ease-in;
   }
+
   .toggle-icon {
     &::before {
       content: "-";
@@ -94,18 +90,17 @@ const expand = ref(false);
     color: var(--el-color-primary);
     border: 1px solid var(--el-border-color);
   }
-  .addon-icon {
-    //zoom: 0.75;
-  }
+
   &-Main {
     padding: 0.5rem;
   }
+
   margin: 0.8rem 0;
   max-height: 48px;
 
   overflow: hidden;
   border-radius: 4px;
-  transition: 0.25s ease-out;
+  transition: 0.5s ease-out;
   background-color: var(--el-fill-color-lighter);
 }
 </style>

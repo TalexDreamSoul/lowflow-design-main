@@ -54,47 +54,48 @@ const attrs = computed(() => {
 
 <template>
   <div class="BehaviorSubContent">
-     <LogicalLine :model-value="condition.logicalChar" :display="condition.conditions?.length">
-        <div v-if="attrs" class="filter-option-content">
-          <el-form :label-width="0" :inline="true" :model="condition.conditions">
-            <el-row v-for="(item, index) in condition.conditions" :key="`${item.field}-${index}`" :gutter="5"
-              class="filter-item-rule">
-              <el-col :xs="24" :sm="7">
-                <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                  <trigger v-model="item.field" :attrs="attrs" />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="5" v-if="item.field">
-                <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                  <operator ref="operatorRef" v-model="item.operator" />
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="10" v-if="item.field">
-                <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                  <AttrRender :field="item.field" v-model="item.fieldValue" :attrs="attrs" />&nbsp;
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="2" style="
+    <LogicalLine :model-value="condition.logicalChar"
+      :display="condition.conditions ? !(condition.conditions.length > 1) : !0">
+      <div v-if="attrs" class="filter-option-content">
+        <el-form :label-width="0" :inline="true" :model="condition.conditions">
+          <el-row v-for="(item, index) in condition.conditions" :key="`${item.field}-${index}`" :gutter="5"
+            class="filter-item-rule">
+            <el-col :xs="24" :sm="7">
+              <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
+                <trigger v-model="item.field" :attrs="attrs" />
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="5" v-if="item.field">
+              <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
+                <operator ref="operatorRef" v-model="item.operator" />
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="10" v-if="item.field">
+              <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
+                <AttrRender :field="item.field" v-model="item.fieldValue" :attrs="attrs" />&nbsp;
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="2" style="
                   display: flex;
                   align-items: center;
                   flex-direction: row-reverse;
                 ">
-                <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
-                  <el-icon size="14">
-                    <Delete />
-                  </el-icon>
-                </el-text>
-              </el-col>
-            </el-row>
+              <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
+                <el-icon size="14">
+                  <Delete />
+                </el-icon>
+              </el-text>
+            </el-col>
+          </el-row>
 
-            <div v-if="!(
-              condition?.filterRules?.groups?.length |
-              condition?.filterRules?.conditions?.length
-            )
-              " class="filter-item-rule" />
-          </el-form>
-        </div>
-      </LogicalLine>
+          <div v-if="!(
+            condition?.filterRules?.groups?.length |
+            condition?.filterRules?.conditions?.length
+          )
+            " class="filter-item-rule" />
+        </el-form>
+      </div>
+    </LogicalLine>
   </div>
 </template>
 

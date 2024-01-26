@@ -1,8 +1,7 @@
 <script setup lang="ts" name="SequenceContent">
 import { computed, inject } from "vue";
+import SequenceSubContent from './SequenceSubContent.vue'
 import { Delete } from "@element-plus/icons-vue";
-import SequenceSubContent from "./SequenceSubContent.vue";
-import LogicalLine from "../LogicalLine.vue";
 
 const props = defineProps<{
   condition: any;
@@ -19,12 +18,18 @@ const handleDel = (index: number) => {
 
 const conditionArr = computed(() => props.condition.conditions);
 
-function handleAdd() {
-  props.condition.conditions.push();
+function handleAdd(item: any) {
+  const arr = (item.conditions = item.conditions || []);
+  arr.push({
+    conditions: [],
+    logicalChar: 'or'
+  });
 }
 
 function handleSubAdd(item: any) {
-  const arr = (item.conditions = item.conditions || []);
+  console.log("sub add", item)
+
+  const arr = item.conditions = (item.conditions || []);
 
   arr.push({});
 }
@@ -34,6 +39,8 @@ const attrs = computed(() => {
 
   return events;
 });
+
+console.log("Sequence", props.condition)
 </script>
 
 <template>
@@ -44,7 +51,8 @@ const attrs = computed(() => {
           <el-row class="filter-item-rule">
             <el-col :xs="24" :sm="10">
               <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                <el-date-picker v-model="condition.timeRange" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />
+                <el-date-picker v-model="condition.timeRange" type="daterange" range-separator="-"
+                  start-placeholder="开始日期" end-placeholder="结束日期" />
               </el-form-item>
             </el-col>
             <span style="zoom: 0.9;font-size:12px;color:#484545;">
@@ -61,7 +69,7 @@ const attrs = computed(() => {
                 </el-icon>
               </el-text>
               &nbsp;&nbsp;&nbsp;
-              <el-text type="primary" style="cursor: pointer" @click="handleAdd">
+              <el-text type="primary" style="cursor: pointer" @click="handleAdd(item)">
                 <el-icon size="14">
                   <CirclePlus />
                 </el-icon>
@@ -69,28 +77,30 @@ const attrs = computed(() => {
             </el-col>
 
           </el-row>
-          <el-row class="filter-item-rule">
-            <el-col :xs="24" :sm="5">
-              <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                <el-select v-model="condition.delayedAction">
-                  <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
-                    <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
-                  </el-option-group> 
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :xs="24" :sm="5">
-              &nbsp;&nbsp;&nbsp;
-            <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="handleSubAdd(item)">
-              <el-icon size="14">
-                <CirclePlusFilled />
-              </el-icon>
-              添加筛选
-            </el-text>
-            </el-col>
 
-          </el-row>
-          <SequenceSubContent :index="index" :dict="dict" :condition="item" />
+          <div class="SequenceContent-Events" v-for="(event, _index) in item.conditions" :key="`${event.field}-${index}`">
+            <el-row class="filter-item-rule">
+              <el-col :xs="24" :sm="5">
+                <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
+                  <el-select v-model="condition.delayedAction">
+                    <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
+                      <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
+                    </el-option-group>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :xs="24" :sm="5">
+                &nbsp;&nbsp;&nbsp;
+                <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="handleSubAdd(event)">
+                  <el-icon size="14">
+                    <CirclePlusFilled />
+                  </el-icon>
+                  添加筛选
+                </el-text>
+              </el-col>
+            </el-row>
+            <SequenceSubContent :index="_index" :dict="dict" :condition="event" />
+          </div>
         </div>
 
         <div v-if="!(

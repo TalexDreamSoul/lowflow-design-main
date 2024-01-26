@@ -22,7 +22,7 @@ function toggle() {
 
 <template>
   <div class="LogicalLine">
-    <div :class="{ active: +display ^ 1 }" class="LogicalLine-Filter">
+    <div :class="{ active: +display! ^ 1 }" class="LogicalLine-Filter">
       <div class="fontstyle" v-text="title" />
       <div class="logical-operator">
         <div class="logical-operator__line"></div>

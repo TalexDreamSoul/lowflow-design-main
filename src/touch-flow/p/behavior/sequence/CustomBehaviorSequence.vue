@@ -1,4 +1,4 @@
-<script setup lang="ts" name="CustomBehavior">
+<script setup lang="ts" name="EventSequence">
 import { onMounted, ref, provide } from "vue";
 import SequenceContent from "./SequenceContent.vue";
 import LogicalLine from "../LogicalLine.vue";
@@ -32,14 +32,8 @@ provide("refreshTree", refreshTree);
     <div class="Basic-Block-Content">
       <div v-if="dict" class="Target-Block">
         <LogicalLine :display="!custom.conditions.length" v-model="custom.LogicalLine">
-          <SequenceContent
-            v-for="condition in custom.conditions"
-            :key="condition.id"
-            :condition="condition"
-            :dict="dict"
-          >
-          <slot :condition="condition" :dict="dict" />
-          </SequenceContent>
+          <SequenceContent v-for="condition in custom.conditions" :key="condition.id" :condition="condition"
+            :dict="dict" />
         </LogicalLine>
       </div>
     </div>

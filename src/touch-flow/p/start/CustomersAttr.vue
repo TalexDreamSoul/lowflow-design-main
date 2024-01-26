@@ -34,16 +34,39 @@ const { customRuleContent } = props.p;
 if (!customRuleContent) {
   props.p.customRuleContent = {
     customAttr: {
-      conditions: [],
-      logicalChar: "",
+      conditions: [
+        {
+          conditions: [
+            {}
+          ],
+          logicalChar: "or",
+        }
+      ],
+      logicalChar: "or",
     },
     customEvent: {
-      conditions: [],
-      logicalChar: "",
+      conditions: [
+        {
+          conditions: [
+            {}
+          ],
+          logicalChar: "or",
+        }
+      ],
+      logicalChar: "or",
     },
     eventSequence: {
-      conditions: [],
-      logicalChar: "",
+      conditions: [
+        {
+          conditions: [
+            {
+              conditions: []
+            }
+          ],
+          logicalChar: "or",
+        }
+      ],
+      logicalChar: "or",
     },
     logicalChar: "or",
   };
@@ -198,7 +221,10 @@ const logicalOperator = computed(
 function attrsAdd() {
   let attr = props.p.customRuleContent!.customAttr!.conditions!;
 
-  const obj = {};
+  const obj = {
+    conditions: [{ conditions: {} }],
+    logicalChar: "or",
+  };
 
   attr.push({
     conditions: [obj],
@@ -209,7 +235,10 @@ function attrsAdd() {
 function behaviorAdd() {
   let attr = props.p.customRuleContent!.customEvent!.conditions!;
 
-  const obj = {};
+  const obj = {
+    conditions: [{ conditions: {} }],
+    logicalChar: "or",
+  };
 
   attr.push({
     conditions: [obj],
@@ -220,7 +249,10 @@ function behaviorAdd() {
 function sequenceAdd() {
   let attr = props.p.customRuleContent!.eventSequence!.conditions!;
 
-  const obj = {};
+  const obj = {
+    conditions: [{ conditions: [{}] }],
+    logicalChar: "or",
+  };
 
   attr.push({
     conditions: [obj],
@@ -249,7 +281,6 @@ function sequenceAdd() {
                   p.customRuleContent!.logicalOperator === "and" ? "且" : "或"
                 }}
               </div>
-              <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
             </div>
             <div class="filter-option-content">
               <BehaviorGroup @add="attrsAdd" title="客户属性满足">
@@ -258,7 +289,7 @@ function sequenceAdd() {
               <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
                 <CustomBehavior :custom="p.customRuleContent!.customEvent" />
               </BehaviorGroup>
-              <BehaviorGroup @click="sequenceAdd" title="行为序列满足">
+              <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
                 <CustomBehaviorSequence :custom="p.customRuleContent!.eventSequence" />
               </BehaviorGroup>
             </div>
