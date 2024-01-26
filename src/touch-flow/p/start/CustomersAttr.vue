@@ -4,6 +4,7 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { getmarketingTouchEstimate } from "~/api/index";
 import CustomAttr from "../behavior/CustomAttr.vue";
 import CustomBehavior from "../behavior/CustomBehavior.vue";
+import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
 import { MarketingTouchEditDTO } from "../behavior/marketing";
 
 const sizeForm = reactive({
@@ -246,7 +247,9 @@ function behaviorAdd() {
               <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
                 <CustomBehavior :custom="p.customRuleContent!.customEvent" />
               </BehaviorGroup>
-              <BehaviorGroup title="行为序列满足"> </BehaviorGroup>
+              <BehaviorGroup title="行为序列满足">
+                <CustomBehaviorSequence :custom="p.customRuleContent!.eventSequence" />
+              </BehaviorGroup>
             </div>
           </div>
         </div>

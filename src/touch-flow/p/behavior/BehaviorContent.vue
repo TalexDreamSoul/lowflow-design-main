@@ -93,7 +93,7 @@ const attrs = computed(() => {
 
           </el-row>
 
-            <BehaviorSubContent :dict="dict" :condition="item" />
+            <BehaviorSubContent :index="index" :dict="dict" :condition="item" />
           </div>
 
           <div v-if="!(
