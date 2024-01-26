@@ -29,17 +29,48 @@ function handleAdd() {
 const attrs = computed(() => {
   const { attrs, labels } = props.dict;
 
+  const _attrs = attrs.map((attr: any) => {
+    return {
+      label: attr.fieldName,
+      value: attr.field,
+      ...attr
+    }
+  })
+
+  const _labels = labels.map((label: any) => {
+    const children: any = []
+    if (label.labelValue) {
+      [...label.labelValue.data].forEach(item => {
+        children.push({
+          label: item,
+          value: item,
+          ...label
+        })
+      })
+    }
+
+    return {
+      label: label.labelName,
+      children,
+      ...label
+    }
+  })
+
   return [
     {
       label: "用户属性",
-      options: attrs,
+      value: "attr",
+      children: _attrs,
     },
     {
       label: "用户标签",
-      options: labels,
+      value: "label",
+      children: _labels,
     },
   ];
 });
+
+const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([..._.children].map((__: any) => __.children?.length ? __.children : [__]))).flat(2).find((_: any) => _.field === condition.field || _.label === condition.field)
 </script>
 
 <template>
@@ -58,9 +89,10 @@ const attrs = computed(() => {
                 <operator ref="operatorRef" v-model="item.operator" />
               </el-form-item>
             </el-col>
-            &nbsp;<el-col :xs="24" :sm="6" v-if="item.field">
+            &nbsp;<el-col :xs="24" :sm="6" v-if="getCurrSelected(item)">
               <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <AttrRender :field="item.field" v-model="item.fieldValue" :attrs="attrs" />
+                <AttrRender :selected="getCurrSelected(item)" :field="item.field" v-model="item.fieldValue"
+                  :attrs="attrs" />
               </el-form-item>
             </el-col>
             &nbsp;

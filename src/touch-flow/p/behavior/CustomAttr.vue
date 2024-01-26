@@ -31,7 +31,7 @@ provide("refreshTree", refreshTree);
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
       <div v-if="dict" class="Target-Block">
-        <LogicalLine v-model="custom.LogicalLine">
+        <LogicalLine :display="!custom.conditions.length" v-model="custom.LogicalLine">
           <CustomContent
             v-for="condition in custom.conditions"
             :key="condition.id"
