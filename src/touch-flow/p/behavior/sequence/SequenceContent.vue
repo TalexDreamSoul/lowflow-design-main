@@ -24,17 +24,16 @@ function handleAdd() {
 }
 
 function handleSubAdd(item: any) {
-  const arr = (item.conditions = (item.conditions || []))
+  const arr = (item.conditions = item.conditions || []);
 
-  arr.push({})
+  arr.push({});
 }
 
 const attrs = computed(() => {
   const { events } = props.dict;
 
-  return events
+  return events;
 });
-
 </script>
 
 <template>
@@ -43,13 +42,14 @@ const attrs = computed(() => {
       <el-form :label-width="0" :inline="true" :model="condition.conditions">
         <div v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="CustomBehavior-Main">
           <el-row class="filter-item-rule">
-            <el-col :xs="24" :sm="16">
-              <el-form-item :prop="'conditions.' + index + '.field'">
-                <el-date-picker v-model="condition.timeRange" type="daterange" range-separator="至"
-                  start-placeholder="开始日期" end-placeholder="结束日期" />
+            <el-col :xs="24" :sm="10">
+              <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
+                <el-date-picker v-model="condition.timeRange" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />
               </el-form-item>
             </el-col>
-            依次做过
+            <span style="zoom: 0.9;font-size:12px;color:#484545;">
+              &nbsp;&nbsp; 依次做过
+            </span>
             <el-col :xs="24" :sm="2" style="
                 display: flex;
                 align-items: center;
@@ -69,17 +69,27 @@ const attrs = computed(() => {
             </el-col>
 
           </el-row>
+          <el-row class="filter-item-rule">
+            <el-col :xs="24" :sm="5">
+              <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
+                <el-select v-model="condition.delayedAction">
+                  <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
+                    <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
+                  </el-option-group> 
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :xs="24" :sm="5">
+              &nbsp;&nbsp;&nbsp;
+            <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="handleSubAdd(item)">
+              <el-icon size="14">
+                <CirclePlusFilled />
+              </el-icon>
+              添加筛选
+            </el-text>
+            </el-col>
 
-          <el-select v-model="condition.delayedAction" style="width: 240px">
-            <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
-              <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
-            </el-option-group> </el-select>&nbsp;
-          <el-text type="primary" style="cursor: pointer" @click="handleSubAdd(item)">
-            <el-icon size="14">
-              <CirclePlusFilled />
-            </el-icon>
-            添加筛选
-          </el-text>
+          </el-row>
           <SequenceSubContent :index="index" :dict="dict" :condition="item" />
         </div>
 
