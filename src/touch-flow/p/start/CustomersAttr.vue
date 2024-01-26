@@ -216,6 +216,17 @@ function behaviorAdd() {
     logicalChar: "or",
   });
 }
+
+function sequenceAdd() {
+  let attr = props.p.customRuleContent!.eventSequence!.conditions!;
+
+  const obj = {};
+
+  attr.push({
+    conditions: [obj],
+    logicalChar: "or",
+  });
+}
 </script>
 
 <template>
@@ -247,7 +258,7 @@ function behaviorAdd() {
               <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
                 <CustomBehavior :custom="p.customRuleContent!.customEvent" />
               </BehaviorGroup>
-              <BehaviorGroup title="行为序列满足">
+              <BehaviorGroup @click="sequenceAdd" title="行为序列满足">
                 <CustomBehaviorSequence :custom="p.customRuleContent!.eventSequence" />
               </BehaviorGroup>
             </div>
