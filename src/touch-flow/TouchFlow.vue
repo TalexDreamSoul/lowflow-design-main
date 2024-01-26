@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const comps = {
   start: PStartVue,
-  PolicySettings: PPolicySettings,
+  PolicySettings: PPolicySettings
 };
 
 const now = ref();

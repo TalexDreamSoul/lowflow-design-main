@@ -3,6 +3,7 @@ import BehaviorGroup from "../behavior/BehaviorGroup.vue";
 import { ref, reactive, computed, onMounted } from "vue";
 import { getmarketingTouchEstimate } from "~/api/index";
 import CustomAttr from "../behavior/CustomAttr.vue";
+import CustomBehavior from "../behavior/CustomBehavior.vue";
 import { MarketingTouchEditDTO } from "../behavior/marketing";
 
 const sizeForm = reactive({
@@ -193,8 +194,19 @@ const logicalOperator = computed(
   () => props.p.customRuleContent!.logicalOperator
 );
 
-function behaviorAdd() {
+function attrsAdd() {
   let attr = props.p.customRuleContent!.customAttr!.conditions!;
+
+  const obj = {};
+
+  attr.push({
+    conditions: [obj],
+    logicalChar: "or",
+  });
+}
+
+function behaviorAdd() {
+  let attr = props.p.customRuleContent!.customEvent!.conditions!;
 
   const obj = {};
 
@@ -228,11 +240,11 @@ function behaviorAdd() {
               <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
             </div>
             <div class="filter-option-content">
-              <BehaviorGroup @add="behaviorAdd" title="客户属性满足">
+              <BehaviorGroup @add="attrsAdd" title="客户属性满足">
                 <CustomAttr :custom="p.customRuleContent!.customAttr" />
               </BehaviorGroup>
-              <BehaviorGroup title="客户行为满足">
-                <CustomAttr :custom="p.customRuleContent!.customEvent" />
+              <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
+                <CustomBehavior :custom="p.customRuleContent!.customEvent" />
               </BehaviorGroup>
               <BehaviorGroup title="行为序列满足"> </BehaviorGroup>
             </div>

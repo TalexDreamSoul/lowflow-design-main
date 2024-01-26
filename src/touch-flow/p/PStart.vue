@@ -142,15 +142,9 @@ provide("save", (regFunc: () => boolean) => {
           </el-icon>
           受众客户
         </p>
-        <span
-          >根据客户属性、客户标签、客户行为、行为序列筛选能够进入流程的客户</span
-        >
+        <span>根据客户属性、客户标签、客户行为、行为序列筛选能够进入流程的客户</span>
       </div>
-      <div
-        @click="openCondition"
-        :class="{ checked: conditioned }"
-        class="PBlock-Section"
-      >
+      <div @click="openCondition" :class="{ checked: conditioned }" class="PBlock-Section">
         <p>
           <el-icon>
             <Position />
@@ -163,30 +157,17 @@ provide("save", (regFunc: () => boolean) => {
           </span>
         </p>
         <span v-if="conditioned" style="opacity: 0.75; font-size: 14px">
-          <span
-            >流程类型：<span class="contentdeep">{{ flowType }}</span></span
-          ><br />
-          <span
-            >进入时间：<span class="contentdeep">{{ flowTime }}</span></span
-          ><br />
+          <span>流程类型：<span class="contentdeep">{{ flowType }}</span></span><br />
+          <span>进入时间：<span class="contentdeep">{{ flowTime }}</span></span><br />
         </span>
         <span v-else>设置流程类型、流程有效期、流程开始时间、进入限制。</span>
       </div>
     </div>
 
     <teleport to="body">
-      <el-dialog
-        v-model="dialogVisible"
-        width="30%"
-        title="请选择添加类型"
-        align-center
-      >
+      <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div
-            @click="openDrawer(item)"
-            v-for="item in comps"
-            class="PBlock-Section"
-          >
+          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section">
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
@@ -201,32 +182,18 @@ provide("save", (regFunc: () => boolean) => {
     </teleport>
 
     <teleport to="body">
-      <el-drawer
-        v-model="drawerOptions.visible"
-        :title="drawerOptions.title"
-        size="55%"
-      >
+      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :p="p" :is="drawerOptions.comp" />
         <template #footer>
-          <el-button round @click="drawerOptions.visible = false"
-            >取消</el-button
-          >
-          <el-button round @click="handleSave" type="primary" primaryStyle
-            >保存</el-button
-          >
+          <el-button round @click="drawerOptions.visible = false">取消</el-button>
+          <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
         </template>
       </el-drawer>
     </teleport>
   </el-card>
 
-  <el-button
-    :class="{ display: conditioned }"
-    @click="dialogVisible = true"
-    class="start-add"
-    type="primary"
-    :icon="Plus"
-    circle
-  />
+  <el-button :class="{ display: conditioned }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus"
+    circle />
 </template>
 
 <style lang="scss">
@@ -261,11 +228,9 @@ provide("save", (regFunc: () => boolean) => {
       transform: scaleX(0) translateX(-100%);
       width: 160px;
       height: 7px;
-      background: linear-gradient(
-        82deg,
-        rgba(64, 120, 224, 0.4) 0%,
-        rgba(64, 120, 224, 0) 100%
-      );
+      background: linear-gradient(82deg,
+          rgba(64, 120, 224, 0.4) 0%,
+          rgba(64, 120, 224, 0) 100%);
       border-radius: 2px 2px 2px 2px;
       opacity: 0.6;
       position: absolute;
@@ -278,6 +243,7 @@ provide("save", (regFunc: () => boolean) => {
 
       color: #00c068 !important;
     }
+
     position: relative;
   }
 
@@ -290,9 +256,11 @@ provide("save", (regFunc: () => boolean) => {
       color: #4078e0;
     }
   }
+
   &:hover {
     border: 1px solid #4078e0;
   }
+
   width: 50%;
 }
 
