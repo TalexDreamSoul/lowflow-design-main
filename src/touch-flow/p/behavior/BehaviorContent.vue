@@ -24,17 +24,16 @@ function handleAdd() {
 }
 
 function handleSubAdd(item: any) {
-  const arr = (item.conditions = (item.conditions || []))
+  const arr = (item.conditions = item.conditions || []);
 
-  arr.push({})
+  arr.push({});
 }
 
 const attrs = computed(() => {
   const { events } = props.dict;
 
-  return events
+  return events;
 });
-
 </script>
 
 <template>
@@ -43,55 +42,61 @@ const attrs = computed(() => {
       <div v-if="conditionArr" class="filter-option-content">
         <el-form :label-width="0" :inline="true" :model="condition.conditions">
           <div v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="CustomBehavior-Main">
-          <el-row class="filter-item-rule">
-            <el-col :xs="24" :sm="6">
-              <el-form-item :prop="'conditions.' + index + '.field'">
-                <el-date-picker v-model="condition.timeRange" type="daterange" range-separator="至"
-                  start-placeholder="开始日期" end-placeholder="结束日期" />
-              </el-form-item>
-            </el-col>
-            &nbsp;<el-col :xs="24" :sm="6">
-              <el-form-item :prop="'conditions.' + index + '.field'">
-                <el-select v-model="condition.action">
-                  <el-option label="做过" value="=" />
-                  <el-option label="未做过" value="!=" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            &nbsp;<el-col :xs="24" :sm="6">
-              <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <el-select v-model="condition.delayedAction" style="width: 240px">
-                  <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
-                    <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
-                  </el-option-group> </el-select>&nbsp;
-                <el-text type="primary" style="cursor: pointer" @click="handleSubAdd(item)">
-                  <el-icon size="14">
-                    <CirclePlusFilled />
+            <el-row class="filter-item-rule">
+              <el-col :xs="24" :sm="6">
+                <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
+                  <el-date-picker v-model="condition.timeRange" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />
+                </el-form-item>
+              </el-col>
+              &nbsp;<el-col :xs="24" :sm="6">
+                <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
+                  <el-select v-model="condition.action">
+                    <el-option label="做过" value="=" />
+                    <el-option label="未做过" value="!=" />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              &nbsp;<el-col :xs="24" :sm="6">
+                <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
+                  <el-select v-model="condition.delayedAction">
+                    <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
+                      <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
+                    </el-option-group> </el-select>
+                </el-form-item>
+              </el-col>
+
+              &nbsp;
+              <el-col :xs="24" :sm="3" >
+
+                <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="handleSubAdd(item)">
+                  <el-icon size="12">
+                    <Plus />
                   </el-icon>
-                  筛选条件
-                </el-text>
-              </el-form-item>
-            </el-col>
-            &nbsp;
-            <el-col :xs="24" :sm="2" style="
+                  添加筛选
+                </el-text> &nbsp;
+              </el-col>
+              &nbsp;&nbsp;
+              <el-col :xs="24" :sm="1" style="
                 display: flex;
                 align-items: center;
                 flex-direction: row-reverse;
               ">
               <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
-                <el-icon size="14">
-                  <Delete />
-                </el-icon>
-              </el-text>
-              &nbsp;&nbsp;&nbsp;
-              <el-text type="primary" style="cursor: pointer" @click="handleAdd">
-                <el-icon size="14">
-                  <CirclePlus />
-                </el-icon>
-              </el-text>
-            </el-col>
+                  <el-icon size="14">
+                    <Delete />
+                  </el-icon>
+                </el-text>
+                &nbsp;&nbsp;
+                <el-text type="primary" style="cursor: pointer" @click="handleAdd">
+                  <el-icon size="14">
+                    <CirclePlus />
+                  </el-icon>
+                </el-text>
+                &nbsp;&nbsp;
 
-          </el-row>
+              </el-col>
+
+            </el-row>
 
             <BehaviorSubContent :index="index" :dict="dict" :condition="item" />
           </div>
@@ -169,7 +174,11 @@ const attrs = computed(() => {
     }
   }
 }
-
+.filter-item-rule {
+  display: flex;
+  align-items: center;
+  //min-height: 48px;
+}
 .TargetContent-TopBanner {
   background: #ebeff3;
   border-radius: 4px 4px 0px 0px;

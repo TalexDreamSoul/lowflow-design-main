@@ -50,7 +50,7 @@ const props = defineProps<{
 
   &-Content {
     position: relative;
-    padding: 12px 1.5rem;
+    padding: 12px 0;
     line-height: 2.5rem;
 
     background-color: var(--el-fill-color);

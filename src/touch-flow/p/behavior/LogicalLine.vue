@@ -43,7 +43,7 @@ function toggle() {
 <style lang="scss" scoped>
 .LogicalLine {
   display: flex;
-  margin: 10px 0;
+  //margin: 10px 0;
 
   &-Filter {
     &.active {
@@ -55,7 +55,7 @@ function toggle() {
     transition: .25s;
     .fontstyle {
       align-self: center;
-      margin-right: 0.5rem;
+      //margin-right: 0.5rem;
 
       font-size: 12px;
       color: #000000;
