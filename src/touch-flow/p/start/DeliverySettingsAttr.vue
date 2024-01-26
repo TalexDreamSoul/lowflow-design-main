@@ -99,7 +99,8 @@ const checkRatio = (e: any) => {
         <div class="underbg">
           <el-row :gutter="20">
             <el-col :span="14">分支名称</el-col>
-            <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ 100 - totalRatio }}%</span>）</el-col>
+            <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ 100 - totalRatio
+            }}%</span>）</el-col>
           </el-row>
           <el-row :gutter="20" style="    align-items: center;
           margin-top: 16px;" v-for="(branch, index) in sizeForm.branches" :key="index">
@@ -119,7 +120,7 @@ const checkRatio = (e: any) => {
             </el-col>
           </el-row>
 
-          <el-row  :gutter="20" style="    align-items: center;
+          <el-row :gutter="20" style="    align-items: center;
           margin-top: 16px;padding: 0 12px;">
             <el-text type="primary" style="cursor: pointer;" @click="addBranch">
               <el-icon size="14">
@@ -161,6 +162,7 @@ const checkRatio = (e: any) => {
   font-size: 14px;
   border-radius: var(--el-border-radius-base);
   margin-top: 24px;
+
   .title_set {
     padding: 8px 12px;
     background: #eaeff3;
@@ -168,12 +170,15 @@ const checkRatio = (e: any) => {
     display: flex;
     justify-content: space-between;
   }
+
   .bg001 {
     border-left: 4px solid #333;
   }
+
   .pg2 {
     border-left: 4px solid #a053cd;
   }
+
   .pg3 {
     border-left: 4px solid #277ae7;
   }
@@ -194,10 +199,12 @@ const checkRatio = (e: any) => {
   display: flex;
   align-items: center;
   min-height: 48px;
+
   .innerblock {
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     padding: 20px;
   }
+
   .innerblock:last-child {
     /* 样式属性 */
     border-right: none;
@@ -209,5 +216,4 @@ const checkRatio = (e: any) => {
     color: rgba(0, 0, 0, 0.6);
     margin-bottom: 8px;
   }
-}
-</style>
+}</style>

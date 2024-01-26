@@ -1,6 +1,6 @@
-<script setup lang="ts">
+<script setup lang="ts" name="CustomBehavior">
 import { onMounted, ref, provide } from "vue";
-import CustomContent from "./CustomContent.vue";
+import BehaviorContent from "./BehaviorContent.vue";
 import LogicalLine from "./LogicalLine.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
 const props = defineProps<{
@@ -32,14 +32,14 @@ provide("refreshTree", refreshTree);
     <div class="Basic-Block-Content">
       <div v-if="dict" class="Target-Block">
         <LogicalLine :display="!custom.conditions.length" v-model="custom.LogicalLine">
-          <CustomContent
+          <BehaviorContent
             v-for="condition in custom.conditions"
             :key="condition.id"
             :condition="condition"
             :dict="dict"
           >
           <slot :condition="condition" :dict="dict" />
-          </CustomContent>
+          </BehaviorContent>
         </LogicalLine>
       </div>
     </div>

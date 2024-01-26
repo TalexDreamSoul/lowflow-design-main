@@ -1,11 +1,8 @@
 <script setup lang="ts" name="CustomContent">
 import { computed, inject } from "vue";
 import { Delete } from "@element-plus/icons-vue";
-import AttrRender from "../../page/AttrRender.vue";
-import Operator from "../../page/Operator.vue";
-import Trigger from "../../page/Trigger.vue";
+import BehaviorSubContent from "./BehaviorSubContent.vue";
 import LogicalLine from "./LogicalLine.vue";
-// import CustomBlock from "./CustomBlock.vue";
 
 const props = defineProps<{
   condition: any;
@@ -26,51 +23,18 @@ function handleAdd() {
   props.condition.conditions.push({});
 }
 
+function handleSubAdd(item: any) {
+  const arr = (item.conditions = (item.conditions || []))
+
+  arr.push({})
+}
+
 const attrs = computed(() => {
-  const { attrs, labels } = props.dict;
+  const { events } = props.dict;
 
-  const _attrs = attrs.map((attr: any) => {
-    return {
-      label: attr.fieldName,
-      value: attr.field,
-      ...attr
-    }
-  })
-
-  const _labels = labels.map((label: any) => {
-    const children: any = []
-    if (label.labelValue) {
-      [...label.labelValue.data].forEach(item => {
-        children.push({
-          label: item,
-          value: item,
-          ...label
-        })
-      })
-    }
-
-    return {
-      label: label.labelName,
-      children,
-      ...label
-    }
-  })
-
-  return [
-    {
-      label: "用户属性",
-      value: "attr",
-      children: _attrs,
-    },
-    {
-      label: "用户标签",
-      value: "label",
-      children: _labels,
-    },
-  ];
+  return events
 });
 
-const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([..._.children].map((__: any) => __.children?.length ? __.children : [__]))).flat(2).find((_: any) => _.field === condition.field || _.label === condition.field)
 </script>
 
 <template>
@@ -78,21 +42,34 @@ const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([.
     <LogicalLine :display="conditionArr?.length" v-model="condition.logicalChar">
       <div v-if="conditionArr" class="filter-option-content">
         <el-form :label-width="0" :inline="true" :model="condition.conditions">
-          <el-row v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="filter-item-rule">
+          <div v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="CustomBehavior-Main">
+          <el-row class="filter-item-rule">
             <el-col :xs="24" :sm="6">
               <el-form-item :prop="'conditions.' + index + '.field'">
-                <trigger multiple v-model="item.field" :attrs="attrs" placeholder="客户属性/标签" />
+                <el-date-picker v-model="condition.timeRange" type="daterange" range-separator="至"
+                  start-placeholder="开始日期" end-placeholder="结束日期" />
               </el-form-item>
             </el-col>
-            &nbsp;<el-col :xs="24" :sm="6" v-if="item.field">
-              <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                <operator ref="operatorRef" v-model="item.operator" />
+            &nbsp;<el-col :xs="24" :sm="6">
+              <el-form-item :prop="'conditions.' + index + '.field'">
+                <el-select v-model="condition.action">
+                  <el-option label="做过" value="=" />
+                  <el-option label="未做过" value="!=" />
+                </el-select>
               </el-form-item>
             </el-col>
-            &nbsp;<el-col :xs="24" :sm="6" v-if="getCurrSelected(item)">
+            &nbsp;<el-col :xs="24" :sm="6">
               <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <AttrRender :selected="getCurrSelected(item)" :field="item.field" v-model="item.fieldValue"
-                  :attrs="attrs" />
+                <el-select v-model="condition.delayedAction" style="width: 240px">
+                  <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
+                    <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
+                  </el-option-group> </el-select>&nbsp;
+                <el-text type="primary" style="cursor: pointer" @click="handleSubAdd(item)">
+                  <el-icon size="14">
+                    <CirclePlusFilled />
+                  </el-icon>
+                  筛选条件
+                </el-text>
               </el-form-item>
             </el-col>
             &nbsp;
@@ -113,7 +90,11 @@ const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([.
                 </el-icon>
               </el-text>
             </el-col>
+
           </el-row>
+
+            <BehaviorSubContent :dict="dict" :condition="item" />
+          </div>
 
           <div v-if="!(
             condition?.filterRules?.groups?.length |
