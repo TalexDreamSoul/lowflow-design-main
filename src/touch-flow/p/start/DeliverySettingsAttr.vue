@@ -4,21 +4,19 @@ import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { getqryMaterial, getmarketingTouchEstimate } from "~/api";
 
-const transformset = ref(true);
 const origin = {
   name: "DeliverySettings",
   branchName: "test",
+  type: "Delivery",
   num: 1,
+  branches:[
+  { name: "branch1", ratio: 50 },
+  { name: "branch2", ratio: 50 },
+]
 };
-const marketingTouchNode = ref({
-  appPushCount: 0,
-  digitalCount: 0,
-  outboundCount: 0,
-  smsCount: 0,
-  total: 0,
-  znxCount: 0,
-});
 
+
+const errortxt = ref("");
 const sizeForm = reactive<typeof origin>(origin);
 
 function reset() {
@@ -34,7 +32,7 @@ const props = defineProps<{
 function saveData() {
   if (!sizeForm.name) {
     ElMessage.warning({
-      message: "请输入策略名称",
+      message: "请输入分流器名称",
     });
 
     return false;
@@ -42,27 +40,8 @@ function saveData() {
 
   const _ = { ...sizeForm, id: randomStr(12), father: props.p };
 
-  if (!props.p.children) {
-    props.p.children = [_];
-  } else {
-    const arr = [...props.p.children];
+  props.p.children.push(_);
 
-    while (arr.length) {
-      const item = arr.shift();
-
-      if (item.name === _.name) {
-        ElMessage.warning({
-          message: "策略名称重复",
-        });
-
-        return false;
-      }
-
-      if (item.children) arr.push(...item.children);
-    }
-
-    props.p.children.push(_);
-  }
 
   return true;
 }
@@ -73,37 +52,34 @@ regSaveFunc(saveData);
 
 
 const totalRatio = computed(() => {
-  return branches.value.reduce((acc, branch) => acc + branch.ratio, 0)
+  return sizeForm.branches.reduce((acc: any, branch: { ratio: any; }) => acc + branch.ratio, 0)
 })
-const branches = ref([
-  { name: "branch1", ratio: 50 },
-  { name: "branch2", ratio: 50 },
-]);
 const addBranch = () => {
-  branches.value.push({ name: "", ratio: 0 });
+  sizeForm.branches.push({ name: "", ratio: 0 });
 };
 
 const deleteBranch = (index: number) => {
-  branches.value.splice(index, 1);
+  sizeForm.branches.splice(index, 1);
 };
 
 const checkRatio = (e: any) => {
   const ratio = Number(e.target.value);
   if (ratio < 0 || ratio > 100) {
-    alert("流量配比必须在0到100之间");
-    e.target.value = branches.value[e.target.dataset.index].ratio;
+    errortxt.value="流量配比必须在0到100之间";
+    e.target.value = sizeForm.branches[e.target.dataset.index].ratio;
   } else {
-    branches.value[e.target.dataset.index].ratio = ratio;
-    const totalRatio = branches.value.reduce(
-      (acc, branch) => acc + branch.ratio,
+    sizeForm.branches[e.target.dataset.index].ratio = ratio;
+    const totalRatio = sizeForm.branches.reduce(
+      (acc: any, branch: { ratio: any; }) => acc + branch.ratio,
       0
     );
     if (totalRatio > 100) {
-      alert("所有分支的流量配比总和不能超过100");
-      e.target.value = branches.value[e.target.dataset.index].ratio;
+      errortxt.value="所有分支的流量配比总和不能超过100";
+      e.target.value = sizeForm.branches[e.target.dataset.index].ratio;
     }
   }
 };
+
 </script>
 
 <template>
@@ -126,7 +102,7 @@ const checkRatio = (e: any) => {
             <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ 100 - totalRatio }}%</span>）</el-col>
           </el-row>
           <el-row :gutter="20" style="    align-items: center;
-          margin-top: 16px;" v-for="(branch, index) in branches" :key="index">
+          margin-top: 16px;" v-for="(branch, index) in sizeForm.branches" :key="index">
             <el-col :span="14">
               <el-input v-model="branch.name" />
             </el-col>
@@ -150,6 +126,9 @@ const checkRatio = (e: any) => {
                 <CirclePlusFilled />
               </el-icon>
               添加分支
+            </el-text>
+            <el-text type="primary" style="cursor: pointer;" @click="addBranch">
+              {{ errortxt }}
             </el-text>
           </el-row>
         </div>

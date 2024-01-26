@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import PStartVue from "./p/PStart.vue";
 import PPolicySettings from "./p/PPolicySettings.vue";
+import Branch from "./p/Branch.vue";
 import { useWindowSize } from "@vueuse/core";
 import { ref, watch, nextTick } from "vue";
 import { refreshLines, genJP } from "./line-creator";
@@ -8,10 +9,11 @@ import { refreshLines, genJP } from "./line-creator";
 const props = defineProps<{
   p: any;
 }>();
-
+// 配置画布节点
 const comps = {
   start: PStartVue,
   PolicySettings: PPolicySettings,
+  Delivery: Branch,
 };
 
 const now = ref();
