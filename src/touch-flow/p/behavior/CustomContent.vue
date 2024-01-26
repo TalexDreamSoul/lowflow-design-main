@@ -80,7 +80,7 @@ const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([.
         <el-form :label-width="0" :inline="true" :model="condition.conditions">
           <el-row v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="filter-item-rule">
             <el-col :xs="24" :sm="6">
-              <el-form-item :prop="'conditions.' + index + '.field'">
+              <el-form-item :prop="'conditions.' + index + '.field'"  style="width: 100%">
                 <trigger multiple v-model="item.field" :attrs="attrs" placeholder="客户属性/标签" />
               </el-form-item>
             </el-col>
