@@ -4,7 +4,9 @@ import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { getqryMaterial, getmarketingTouchEstimate } from "~/api";
 import BehaviorGroup from "../behavior/BehaviorGroup.vue";
-
+import CustomAttr from "../behavior/CustomAttr.vue";
+import CustomBehavior from "../behavior/CustomBehavior.vue";
+import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
 const labelPosition = ref("single");
 const transform = ref(true);
 const transformset = ref(true);
@@ -202,6 +204,48 @@ const estimation = async () => {
   marketingTouchNode.value = res.data;
   console.log("Mounted", res);
 };
+
+function attrsAdd() {
+  let attr = props.p.customRuleContent!.customAttr!.conditions!;
+
+  const obj = {
+    conditions: [{ conditions: {} }],
+    logicalChar: "or",
+  };
+
+  attr.push({
+    conditions: [obj],
+    logicalChar: "or",
+  });
+}
+
+function behaviorAdd() {
+  let attr = props.p.customRuleContent!.customEvent!.conditions!;
+
+  const obj = {
+    conditions: [{ conditions: {} }],
+    logicalChar: "or",
+  };
+
+  attr.push({
+    conditions: [obj],
+    logicalChar: "or",
+  });
+}
+
+function sequenceAdd() {
+  let attr = props.p.customRuleContent!.eventSequence!.conditions!;
+
+  const obj = {
+    conditions: [{ conditions: [{}] }],
+    logicalChar: "or",
+  };
+
+  attr.push({
+    conditions: [obj],
+    logicalChar: "or",
+  });
+}
 </script>
 
 <template>
@@ -239,10 +283,17 @@ const estimation = async () => {
                 </div>
                 <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
               </div>
+            
               <div class="filter-option-content">
-                <BehaviorGroup title="客户属性满足"> </BehaviorGroup>
-                <BehaviorGroup title="客户行为满足"> </BehaviorGroup>
-                <BehaviorGroup title="行为序列满足"> </BehaviorGroup>
+                <BehaviorGroup @add="attrsAdd" title="客户属性满足">
+                  <CustomAttr :custom="p.customRuleContent!.customAttr" />
+                </BehaviorGroup>
+                <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
+                  <CustomBehavior :custom="p.customRuleContent!.customEvent" />
+                </BehaviorGroup>
+                <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
+                  <CustomBehaviorSequence :custom="p.customRuleContent!.eventSequence" />
+                </BehaviorGroup>
               </div>
             </div>
           </div>
