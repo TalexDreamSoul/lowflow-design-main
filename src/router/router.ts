@@ -4,7 +4,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 export const routes: RouterOptions['routes'] = [
   {
     path: '/',
-    redirect: '/designNew',
+    // redirect: '/designNew',
+    component: () => import('../views/dashboard/index.vue'),
   },
   {
     path: '/pinia',
@@ -12,10 +13,6 @@ export const routes: RouterOptions['routes'] = [
     meta: {
       hideTopMenu: true,
     },
-  },
-  {
-    path: '/design',
-    component: () => import('../views/design/index.vue'),
   },
   {
     path: '/dashboard',
@@ -33,6 +30,10 @@ export const routes: RouterOptions['routes'] = [
     },
   },
 
+  {
+    path: '/design',
+    component: () => import('../views/design/index.vue'),
+  },
   {
     path: '/designNew',
     component: () => import('../touch-flow/FlowPage.vue'),
