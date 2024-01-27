@@ -147,7 +147,7 @@ watch(() => width.value + height.value, refreshCurves);
     transform: translate(-50%, -50%);
 
     width: 2px;
-    height: 110px;
+    height: 120px;
 
     background-color: var(--el-color-primary);
   }
@@ -177,6 +177,7 @@ div.PBlock {
 
         right: 20px;
       }
+
       display: flex;
 
       gap: 2rem;
@@ -206,6 +207,7 @@ div.PBlock {
 
     span {
       color: #999;
+
       .contentdeep {
         font-size: 14px;
         line-height: 17px;
@@ -216,12 +218,9 @@ div.PBlock {
 
     padding: 16px;
     width: 280px;
-    background: linear-gradient(
-        180deg,
-        #f2f4f8 0%,
-        rgba(242, 244, 248, 0.4) 100%
-      )
-      rgba(255, 255, 255, 0.4);
+    background: linear-gradient(180deg,
+      #f2f4f8 0%,
+      rgba(242, 244, 248, 0.4) 100%) rgba(255, 255, 255, 0.4);
     border-radius: 8px 8px 8px 8px;
     opacity: 1;
   }

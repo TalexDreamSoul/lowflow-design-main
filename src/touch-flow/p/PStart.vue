@@ -80,8 +80,26 @@ const doDiverse = computed(() => {
 
   if (!children?.length) return false;
 
-  return [...children].find((child) => "PolicySettings" === child?.type);
+  return [...children].find((child) => "PolicySettings" === child?.type) ?? true
 });
+
+const haveDiverse = computed(() => {
+  if (!doDiverse.value) return false;
+
+  const { children } = props.p;
+
+  if (!children?.length) return false;
+
+  return [...children].find((child) => "Delivery" === child?.type);
+})
+
+const haveReveal = computed(() => {
+  const { children } = props.p;
+
+  if (!children?.length) return false;
+
+  return [...children].find((child) => "PolicySettings" === child?.type && child?.reveal) ?? false
+})
 
 const _comps = [
   {
@@ -109,6 +127,7 @@ const _comps = [
       value: Stamp,
     },
     title: "兜底选择器",
+    disabled: haveReveal,
     desc: "筛选未进入本节点下选择策略器的客户，并执行动作。",
     show: () => doDiverse.value,
     comp: Strategist,
@@ -167,7 +186,8 @@ provide("save", (regFunc: () => boolean) => {
     <teleport to="body">
       <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section">
+          <div @click="openDrawer(item)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
+            class="PBlock-Section">
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
@@ -192,8 +212,8 @@ provide("save", (regFunc: () => boolean) => {
     </teleport>
   </el-card>
 
-  <el-button :class="{ display: conditioned }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus"
-    circle />
+  <el-button :class="{ display: conditioned && !haveDiverse }" @click="dialogVisible = true" class="start-add"
+    type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">
@@ -208,6 +228,12 @@ provide("save", (regFunc: () => boolean) => {
 }
 
 .PBlock-Section {
+  &.disabled {
+    opacity: .5;
+    border: 1px solid var(--el-border-color);
+    pointer-events: none;
+  }
+
   p {
     font-size: 16px;
     font-weight: 500;

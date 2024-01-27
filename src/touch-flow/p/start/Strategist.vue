@@ -10,6 +10,7 @@ const transform = ref(true);
 const transformset = ref(true);
 const origin = {
   type: "PolicySettings",
+  reveal: true,
   name: "兜底策略器",
   value1: false,
   isDelayed: false,
@@ -122,12 +123,9 @@ function reset() {
 
 onMounted(reset);
 
-const logicalOperator = ref("and");
-
 const props = defineProps<{
   p: any;
 }>();
-function toggleLogicalOperator() {}
 
 const getqryMaterialval = async () => {
   let param: any = {
@@ -144,13 +142,6 @@ const getqryMaterialval = async () => {
 };
 
 function saveData() {
-  if (!sizeForm.name) {
-    ElMessage.warning({
-      message: "请输入策略名称",
-    });
-
-    return false;
-  }
 
   const _ = { ...sizeForm, id: randomStr(12), father: props.p };
 
@@ -199,14 +190,13 @@ const estimation = async () => {
 <template>
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
-    
       <div class="blockbg">
         <div class="title_set">
           延迟设置
           <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
             <el-icon class="icondown" :style="{
-                transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
-              }">
+              transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
+            }">
               <DArrowRight />
             </el-icon></el-text>
         </div>
@@ -233,8 +223,8 @@ const estimation = async () => {
           触达设置
           <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
             <el-icon class="icondown" :style="{
-                transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
-              }">
+              transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
+            }">
               <DArrowRight />
             </el-icon></el-text>
         </div>
@@ -256,7 +246,8 @@ const estimation = async () => {
             <el-select v-model="sizeForm.type" placeholder="请选择" style="width: 100px">
               <el-option value="month" label="月份">发送触达并打上标签</el-option>
               <el-option value="week" label="周">小时</el-option>
-              <el-option value="day" label="天">天</el-option> </el-select>&nbsp;&nbsp;&nbsp;<el-button type="primary" plain>新增短信模块版本</el-button>
+              <el-option value="day" label="天">天</el-option> </el-select>&nbsp;&nbsp;&nbsp;<el-button type="primary"
+              plain>新增短信模块版本</el-button>
           </el-form-item>
 
           <el-form-item label="触达内容">
@@ -269,8 +260,8 @@ const estimation = async () => {
           标签设置
           <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
             <el-icon class="icondown" :style="{
-                transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
-              }">
+              transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
+            }">
               <DArrowRight />
             </el-icon></el-text>
         </div>
@@ -302,8 +293,8 @@ const estimation = async () => {
                   <div>
                     {{
                       marketingTouchNode.appPushCount != undefined
-                        ? marketingTouchNode.appPushCount
-                        : "-"
+                      ? marketingTouchNode.appPushCount
+                      : "-"
                     }}
                   </div>
                 </div>
@@ -314,8 +305,8 @@ const estimation = async () => {
                   <div>
                     {{
                       marketingTouchNode.znxCount != undefined
-                        ? marketingTouchNode.znxCount
-                        : "-"
+                      ? marketingTouchNode.znxCount
+                      : "-"
                     }}
                   </div>
                 </div>
@@ -326,8 +317,8 @@ const estimation = async () => {
                   <div>
                     {{
                       marketingTouchNode.digitalCount != undefined
-                        ? marketingTouchNode.digitalCount
-                        : "-"
+                      ? marketingTouchNode.digitalCount
+                      : "-"
                     }}
                   </div>
                 </div>
@@ -338,8 +329,8 @@ const estimation = async () => {
                   <div>
                     {{
                       marketingTouchNode.outboundCount != undefined
-                        ? marketingTouchNode.outboundCount
-                        : "-"
+                      ? marketingTouchNode.outboundCount
+                      : "-"
                     }}
                   </div>
                 </div>
@@ -350,8 +341,8 @@ const estimation = async () => {
                   <div>
                     {{
                       marketingTouchNode.smsCount != undefined
-                        ? marketingTouchNode.smsCount
-                        : "-"
+                      ? marketingTouchNode.smsCount
+                      : "-"
                     }}
                   </div>
                 </div>
@@ -374,11 +365,13 @@ const estimation = async () => {
   align-items: flex-start !important;
   flex-direction: column !important;
 }
+
 .titleCondition {
   color: #666;
   font-size: 14px;
   margin-top: 24px;
 }
+
 .pannel {
   width: 100%;
   min-height: 200px;
@@ -491,10 +484,12 @@ const estimation = async () => {
     z-index: 1;
   }
 }
+
 .blockbg {
   font-size: 14px;
   border-radius: var(--el-border-radius-base);
   margin-top: 24px;
+
   .title_set {
     padding: 8px 12px;
     background: #eaeff3;
@@ -502,12 +497,15 @@ const estimation = async () => {
     display: flex;
     justify-content: space-between;
   }
-  .bg001{
+
+  .bg001 {
     border-left: 4px solid #333;
   }
+
   .pg2 {
     border-left: 4px solid #A053CD;
   }
+
   .pg3 {
     border-left: 4px solid #277ae7;
   }
@@ -523,12 +521,14 @@ const estimation = async () => {
   align-items: center;
   min-height: 48px;
   margin-bottom: 8px;
+
   .title {
     margin-left: 8px;
     font-size: 14px;
     font-weight: 500;
     color: rgba(0, 0, 0, 0.9);
   }
+
   .buttonyugu {
     background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
     margin-left: 12px;
@@ -536,6 +536,7 @@ const estimation = async () => {
     height: 32px;
   }
 }
+
 .flexyugu {
   display: flex;
   justify-content: flex-start;
@@ -551,10 +552,12 @@ const estimation = async () => {
   display: flex;
   align-items: center;
   min-height: 48px;
+
   .innerblock {
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     padding: 20px;
   }
+
   .innerblock:last-child {
     /* 样式属性 */
     border-right: none;
@@ -567,6 +570,7 @@ const estimation = async () => {
     margin-bottom: 8px;
   }
 }
+
 .grayblockfirst {
   //width: 160px;
   /* 其他样式属性可以根据需求添加 */
@@ -582,6 +586,7 @@ const estimation = async () => {
     margin-bottom: 8px;
   }
 }
+
 .inputValue {
   background: #fff;
   height: 150px;
