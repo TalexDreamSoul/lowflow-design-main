@@ -2,8 +2,9 @@
 import PStartVue from "./p/PStart.vue";
 import PPolicySettings from "./p/PPolicySettings.vue";
 import Branch from "./p/Branch.vue";
+import SubBranch from './p/SubBranch.vue'
 import { useWindowSize } from "@vueuse/core";
-import { ref, watch, nextTick } from "vue";
+import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
 import { refreshLines, genJP } from "./line-creator";
 
 const props = defineProps<{
@@ -14,9 +15,39 @@ const comps = {
   start: PStartVue,
   PolicySettings: PPolicySettings,
   Delivery: Branch,
+  SubBranch,
 };
 
 const now = ref();
+const nextLayer = ref();
+
+let _next;
+
+onBeforeUnmount(() => {
+  _next!?.remove()
+})
+
+onMounted(() => {
+  now.value._refreshCurves = refreshCurves
+
+  const nextLayerDom = nextLayer.value
+
+  if (!nextLayerDom) return
+
+  _next = nextLayerDom
+
+  nextTick(() => {
+    const layerParent = nextLayerDom.parentElement;
+    if (!layerParent.classList.contains("TouchFlow-Layer")) return
+
+    const lpp = layerParent.parentElement
+
+    layerParent.removeChild(nextLayerDom);
+    lpp.appendChild(nextLayerDom);
+
+    nextTick(refreshCurves)
+  })
+})
 
 const { width, height } = useWindowSize();
 
@@ -74,7 +105,7 @@ watch(() => width.value + height.value, refreshCurves);
     </div>
   </div>
   <template v-if="p.children">
-    <div class="TouchFlow-Layer">
+    <div ref="nextLayer" class="TouchFlow-Layer">
       <TouchFlow v-for="child in p.children" :p="child" />
     </div>
   </template>
@@ -86,6 +117,14 @@ watch(() => width.value + height.value, refreshCurves);
 }
 
 .TouchFlow-Layer {
+  &+& {
+    margin-bottom: 40px;
+
+    .fake-point {
+      top: -352%;
+    }
+  }
+
   position: relative;
   display: flex;
 

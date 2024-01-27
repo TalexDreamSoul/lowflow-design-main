@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="SubBranch">
 import { ref, reactive, provide } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import ConditionSetAttr from './start/ConditionSetAttr.vue'
@@ -70,20 +70,15 @@ provide('save', (regFunc: () => boolean) => {
 
 <template>
   <el-card style="width: 355px" class="PBlock">
+  子分流器 demo
     <p class="title">
       <!-- 选择策略器 -->
       {{ p.name }}
-      <el-button @click="delChild(p)" text type="primary">
-        <el-icon>
-          <Delete />
-        </el-icon>
-        删除
-      </el-button>
     </p>
     <div class="PBlock-Content theme">
       <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">
         <div>
-          包含{{ p.branches.length }}个分支
+        BRANCH
         </div>
       </div>
     </div>

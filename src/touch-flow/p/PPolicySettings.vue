@@ -71,9 +71,11 @@ provide('save', (regFunc: () => boolean) => {
   <el-card style="width: 355px" class="PBlock">
     <p class="title">
       <!-- 选择策略器 -->
-       {{ p.name }}
+      {{ p.name }}
       <el-button @click="delChild(p)" text type="primary">
-        <el-icon><Delete /></el-icon>
+        <el-icon>
+          <Delete />
+        </el-icon>
         删除
       </el-button>
     </p>
@@ -85,17 +87,17 @@ provide('save', (regFunc: () => boolean) => {
         <span>不分流</span>
       </div>
       <div style="--theme-color: #7DC757" @click="openCondition" class="PBlock-Section">
-          <p>
-            延迟设置
-          </p>
-          <span>立即针对符合该策略器条件的客户发送触达</span>
-        </div>
-        <div style="--theme-color: #FFB858" @click="openCondition" class="PBlock-Section">
-          <p>
-            APP推送
-          </p>
-          <span>积极分子标题：参加活动赢好礼</span>
-        </div>
+        <p>
+          延迟设置
+        </p>
+        <span>立即针对符合该策略器条件的客户发送触达</span>
+      </div>
+      <div style="--theme-color: #FFB858" @click="openCondition" class="PBlock-Section">
+        <p>
+          APP推送
+        </p>
+        <span>积极分子标题：参加活动赢好礼</span>
+      </div>
     </div>
 
     <teleport to="body">

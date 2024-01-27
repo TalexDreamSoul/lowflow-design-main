@@ -9,10 +9,10 @@ const origin = {
   branchName: "test",
   type: "Delivery",
   num: 1,
-  branches:[
-  { name: "branch1", ratio: 50 },
-  { name: "branch2", ratio: 50 },
-]
+  branches: [
+    { name: "branch1", ratio: 50 },
+    { name: "branch2", ratio: 50 },
+  ]
 };
 
 
@@ -38,10 +38,18 @@ function saveData() {
     return false;
   }
 
-  const _ = { ...sizeForm, id: randomStr(12), father: props.p };
+  const _: any = { ...sizeForm, id: randomStr(12), father: props.p, children: [] };
+
+  const _p = {
+    type: "SubBranch",
+    name: "子分流器",
+    father: _
+  }
+
+  _.children.push(_p)
+  _.children.push(_p)
 
   props.p.children.push(_);
-
 
   return true;
 }
@@ -65,7 +73,7 @@ const deleteBranch = (index: number) => {
 const checkRatio = (e: any) => {
   const ratio = Number(e.target.value);
   if (ratio < 0 || ratio > 100) {
-    errortxt.value="流量配比必须在0到100之间";
+    errortxt.value = "流量配比必须在0到100之间";
     e.target.value = sizeForm.branches[e.target.dataset.index].ratio;
   } else {
     sizeForm.branches[e.target.dataset.index].ratio = ratio;
@@ -74,7 +82,7 @@ const checkRatio = (e: any) => {
       0
     );
     if (totalRatio > 100) {
-      errortxt.value="所有分支的流量配比总和不能超过100";
+      errortxt.value = "所有分支的流量配比总和不能超过100";
       e.target.value = sizeForm.branches[e.target.dataset.index].ratio;
     }
   }
@@ -216,4 +224,5 @@ const checkRatio = (e: any) => {
     color: rgba(0, 0, 0, 0.6);
     margin-bottom: 8px;
   }
-}</style>
+}
+</style>

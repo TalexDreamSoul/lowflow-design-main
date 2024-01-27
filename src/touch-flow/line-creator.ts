@@ -191,10 +191,19 @@ function remover(el: HTMLElement, genner: any, jp: any) {
 function _genner(genner: any, el: HTMLElement) {
   const [, , p] = genner()
 
+  let _el = el
+
+  while (_el) {
+    const _ = _el.parentElement!
+
+    if (_?.classList.contains('el-scrollbar__view')) break;
+    else _el = _
+  }
+
   return {
     have: (p?.children?.length ?? 0),
     _multiple: (p?.children instanceof Array && p?.children.length > 1),
-    nextLayer: (el.parentElement?.nextElementSibling),
+    nextLayer: (_el?.nextElementSibling),
     quoter: (el.parentElement?.nextElementSibling)?.className.includes('TouchFlow')
   }
 }
