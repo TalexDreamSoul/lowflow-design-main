@@ -1,21 +1,82 @@
 <!-- TopMenu.vue -->
 <template>
   <div class="top-menu">
-<div>
-  di v
-</div>
-    <el-space style="height: 100%;">
-      <router-link to="/">designNew</router-link>
-      <router-link to="/dashboard">dashboard</router-link>
-      <router-link to="/design">design</router-link>
-      <div class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
-        Services
-        <div v-show="isDropdownVisible" class="dropdown-menu">
-          <router-link to="/pinia">Service 1</router-link>
-          <router-link to="/page">Service 2</router-link>
+    <div style="align-items: center;
+    gap: 0px 8px;
+    height: 100%;
+    display: flex;">
+      <div>
+        <div style="    display: flex;">
+          <el-image class="iconBase">
+          </el-image>
+          <div>
+
+            中关村银行活动管理系统
+            <br />
+            <span style="font-size: 9px;">
+              zhpongguancun bank
+            </span>
+          </div>
         </div>
       </div>
-    </el-space>
+      <div style="flex:1;padding: 0px 24px 0 10%;">
+        <div class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
+          数据看板
+          <div v-show="isDropdownVisible" class="dropdown-menu">
+            <router-link to="/pinia">Service 1</router-link>
+            <router-link to="/page">Service 2</router-link>
+          </div>
+        </div>
+        <div class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
+          营销制作
+          <div v-show="isDropdownVisible" class="dropdown-menu">
+            <router-link to="/pinia">Service 1</router-link>
+            <router-link to="/page">Service 2</router-link>
+          </div>
+        </div>
+        <div class="dropdown" @click="targetPage('designNew')" @mouseover="showDropdown" @mouseleave="hideDropdown">
+          营销触达
+          <div v-show="isDropdownVisible" class="dropdown-menu">
+            <router-link to="/designNew">流程画布</router-link>
+            <router-link to="/page">Service 2</router-link>
+          </div>
+        </div>
+        <div class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
+          素材中心
+          <div v-show="isDropdownVisible" class="dropdown-menu">
+            <router-link to="/pinia">Service 1</router-link>
+            <router-link to="/page">Service 2</router-link>
+          </div>
+        </div>
+        <div class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
+          客户中心
+          <div v-show="isDropdownVisible" class="dropdown-menu">
+            <router-link to="/pinia">Service 1</router-link>
+            <router-link to="/page">Service 2</router-link>
+          </div>
+        </div>
+        <div class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
+          配置中心
+          <div v-show="isDropdownVisible" class="dropdown-menu">
+            <router-link to="/pinia">Service 1</router-link>
+            <router-link to="/page">Service 2</router-link>
+          </div>
+        </div>
+        <div class="dropdown" @click="targetPage('dashboard')" @mouseleave="hideDropdown">
+          素材权益管理
+        </div>
+        <div class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
+          审核中心
+          <div v-show="isDropdownVisible" class="dropdown-menu">
+            <router-link to="/pinia">Service 1</router-link>
+            <router-link to="/page">Service 2</router-link>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 24px">
+       你好，lvlv
+      </div>
+    </div>
 
   </div>
 </template>
@@ -33,6 +94,10 @@ export default {
     },
     hideDropdown() {
       this.isDropdownVisible = false;
+    },
+
+    targetPage(page) {
+      this.$router.push(page)
     },
   },
 };

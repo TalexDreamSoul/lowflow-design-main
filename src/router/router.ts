@@ -37,7 +37,9 @@ export const routes: RouterOptions['routes'] = [
   {
     path: '/designNew',
     component: () => import('../touch-flow/FlowPage.vue'),
-
+    meta: {
+      hideTopMenu: true,
+    },
   }
   // 添加需要隐藏 TopMenu 的页面，并设置 meta.hideTopMenu 为 true
 ]
