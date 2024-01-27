@@ -129,6 +129,15 @@ const logicalOperator = ref("and");
 const props = defineProps<{
   p: any;
 }>();
+
+if (!props.p.customRuleContent) {
+  props.p.customRuleContent = {
+    customAttr: {},
+    customEvent: {},
+    eventSequence: {},
+  }
+}
+
 function toggleLogicalOperator() { }
 
 const getqryMaterialval = async () => {
@@ -206,7 +215,7 @@ const estimation = async () => {
 };
 
 function attrsAdd() {
-  let attr = props.p.customRuleContent!.customAttr!.conditions!;
+  let attr = props.p.customRuleContent!.customAttr!.conditions! = (props.p.customRuleContent!.customAttr!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -220,7 +229,7 @@ function attrsAdd() {
 }
 
 function behaviorAdd() {
-  let attr = props.p.customRuleContent!.customEvent!.conditions!;
+  let attr = props.p.customRuleContent!.customEvent!.conditions! = (props.p.customRuleContent!.customEvent!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -234,7 +243,7 @@ function behaviorAdd() {
 }
 
 function sequenceAdd() {
-  let attr = props.p.customRuleContent!.eventSequence!.conditions!;
+  let attr = props.p.customRuleContent!.eventSequence!.conditions! = (props.p.customRuleContent!.eventSequence!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: [{}] }],
@@ -751,4 +760,5 @@ function sequenceAdd() {
   border-radius: 4px;
   padding: 12px;
   color: #333;
-}</style>
+}
+</style>
