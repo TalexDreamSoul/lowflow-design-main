@@ -11,7 +11,7 @@ const props = defineProps<{
   p: any;
 }>();
 // 配置画布节点
-const comps = {
+const comps: any = {
   start: PStartVue,
   PolicySettings: PPolicySettings,
   Delivery: Branch,
@@ -246,13 +246,6 @@ div.PBlock {
 
     span {
       color: #999;
-
-      .contentdeep {
-        font-size: 14px;
-        line-height: 17px;
-        font-size: var(--el-text-font-size);
-        color: #333;
-      }
     }
 
     padding: 16px;

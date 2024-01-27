@@ -1,16 +1,19 @@
 <template>
   <el-config-provider :button="{ autoInsertSpace: true }" :locale="zhCn">
-    <!-- 根据 $hideTopMenu 判断是否展示 TopMenu -->
-    <TopMenu v-if="!$hideTopMenu" />
+    <TopMenu v-if="!meta.hideTopMenu" />
 
     <router-view></router-view>
   </el-config-provider>
 </template>
 
 <script lang="ts" setup>
+// @ts-ignore sure exist
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import TopMenu from "~/components/TopMenu/index.vue";
-</script>
-<style>
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
-</style>
+const route = useRoute()
+
+const meta = computed(() => route.meta)
+</script>

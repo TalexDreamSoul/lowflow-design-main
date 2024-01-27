@@ -6,12 +6,13 @@ import Strategist from "../p/start/Strategist.vue";
 import CustomersAttr from "../p/start/CustomersAttr.vue";
 import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
+
 const props = defineProps<{
   p?: any;
 }>();
 
 const dialogVisible = ref(false);
-const drawerOptions = reactive({
+const drawerOptions = reactive<any>({
   visible: false,
 });
 
@@ -176,8 +177,8 @@ provide("save", (regFunc: () => boolean) => {
           </span>
         </p>
         <span v-if="conditioned" style="opacity: 0.75; font-size: 14px">
-          <span>流程类型：<span class="contentdeep">{{ flowType }}</span></span><br />
-          <span>进入时间：<span class="contentdeep">{{ flowTime }}</span></span><br />
+          <span>流程类型：<span contentPrimary>{{ flowType }}</span></span><br />
+          <span>进入时间：<span contentPrimary>{{ flowTime }}</span></span><br />
         </span>
         <span v-else>设置流程类型、流程有效期、流程开始时间、进入限制。</span>
       </div>
@@ -192,7 +193,7 @@ provide("save", (regFunc: () => boolean) => {
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
               </el-icon>
-              <img v-else :src="item.icon.value" />
+              <img v-else :src="item.icon.value as any" />
               {{ item.title }}
             </p>
             <span v-text="item.desc" />
@@ -288,6 +289,8 @@ provide("save", (regFunc: () => boolean) => {
   }
 
   width: 50%;
+
+  border: 1px solid transparent;
 }
 
 .PBlock-Section .el-icon {

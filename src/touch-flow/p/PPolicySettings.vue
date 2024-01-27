@@ -10,7 +10,7 @@ const props = defineProps<{
 }>()
 
 const dialogVisible = ref(false)
-const drawerOptions = reactive({
+const drawerOptions = reactive<any>({
   visible: false
 })
 
@@ -108,7 +108,7 @@ provide('save', (regFunc: () => boolean) => {
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
               </el-icon>
-              <img v-else :src="item.icon.value" />
+              <img v-else :src="item.icon.value as any" />
               {{ item.title }}
             </p>
             <span v-text="item.desc" />

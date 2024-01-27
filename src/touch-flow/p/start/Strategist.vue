@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { inject, ref, reactive, onMounted } from "vue";
-import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { getqryMaterial, getmarketingTouchEstimate } from "~/api";
-import BehaviorGroup from "../behavior/BehaviorGroup.vue";
 
-const labelPosition = ref("single");
 const transform = ref(true);
 const transformset = ref(true);
 const origin = {

@@ -82,7 +82,8 @@ export default defineConfig({
             ],
             rules: [
                 ['flex-center', { display: 'flex', 'align-items': 'center', 'justify-content': 'center' }],
-                ['primaryStyle', { background: 'linear-gradient(to top, #598ff1, #205ccb)' }]
+                ['primaryStyle', { background: 'linear-gradient(to top, #598ff1, #205ccb)' }],
+                ['contentPrimary', { color: '#333' }]
             ],
             transformers: [
                 transformerDirectives(),

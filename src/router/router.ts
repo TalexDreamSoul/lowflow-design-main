@@ -4,7 +4,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 export const routes: RouterOptions['routes'] = [
   {
     path: '/',
-    // redirect: '/designNew',
     component: () => import('../views/dashboard/index.vue'),
   },
   {
