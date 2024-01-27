@@ -23,7 +23,7 @@ function toggle() {
 <template>
   <div class="LogicalLine">
     <div :class="{ active: +display! ^ 1 }" class="LogicalLine-Filter">
-      <div class="fontstyle" v-text="title" />
+      <div class="fontstyle" mr-2 v-text="title" />
       <div class="logical-operator">
         <div class="logical-operator__line"></div>
         <div
@@ -105,6 +105,8 @@ function toggle() {
   &-Main {
     flex: 1;
   }
+
+  user-select: none;
 }
 
 .custom-switch {

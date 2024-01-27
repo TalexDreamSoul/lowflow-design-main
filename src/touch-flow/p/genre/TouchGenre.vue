@@ -1,10 +1,10 @@
-<script setup lang="ts" name="SequenceSubContent">
+<script setup lang="ts" name="TouchGenre">
 import { computed } from "vue";
 import { Delete } from "@element-plus/icons-vue";
-import LogicalLine from "../LogicalLine.vue";
-import AttrRender from "../../../page/AttrRender.vue";
-import Operator from "../../../page/Operator.vue";
-import Trigger from "../../../page/Trigger.vue";
+import LogicalLine from "../behavior/LogicalLine.vue";
+import AttrRender from "../../page/AttrRender.vue";
+import Operator from "../../page/Operator.vue";
+import Trigger from "../../page/Trigger.vue";
 
 const props = defineProps<{
   condition: any;
@@ -53,8 +53,8 @@ const attrs = computed(() => {
 </script>
 
 <template>
-  <div class="BehaviorSubContent">
-    <LogicalLine v-model="condition.logicalChar"
+  <div class="TouchGenre">
+    <LogicalLine title="并且满足" v-model="condition.logicalChar"
       :display="condition.conditions ? !(condition.conditions.length > 1) : !0">
       <div v-if="attrs" class="filter-option-content">
         <el-form :label-width="0" :inline="true" :model="condition.conditions">
@@ -100,7 +100,7 @@ const attrs = computed(() => {
 </template>
 
 <style scoped lang="scss">
-.BehaviorSubContent {
+.TouchGenre {
   margin: 10px 0;
 
   border-radius: 8px;
