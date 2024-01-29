@@ -114,6 +114,7 @@ export default {
   top: 0;
   left: 0;
   color: #333;
+  padding: 12px;
 }
 .dropdown {
   position: relative;

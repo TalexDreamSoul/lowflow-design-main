@@ -187,9 +187,11 @@ const action = (row: User, type: string) => {
             }" />
         </el-form-item>
         <el-form-item>
+          
           <el-select v-model="formInline.executeType" clearable style="width:200px">
-            <el-option label="策略流程类型" value="shanghai" />
-            <el-option label="Zone two" value="beijing" />
+            <el-option label="定时-单次" value="immediately" />
+            <el-option label="定时-重复" value="delayed" />
+            <el-option label="触发型" value="trigger" />
           </el-select>
         </el-form-item>
         <el-form-item>
