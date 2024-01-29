@@ -21,15 +21,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
   }
 
-// 在创建应用程序实例时添加全局属性
-app.config.globalProperties.$hideTopMenu = false;
-// 在导航守卫中检查是否需要隐藏 TopMenu
-router.beforeEach((to, from, next) => {
-  // 如果页面需要隐藏 TopMenu，则设置 hideTopMenu 标记
-  app.config.globalProperties.$hideTopMenu = to.meta.hideTopMenu || false;
 
-  next();
-});
 app.use(createPinia())
 
 app.use(router);
