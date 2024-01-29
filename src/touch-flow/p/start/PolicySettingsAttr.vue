@@ -2,14 +2,17 @@
 import { inject, ref, reactive, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
-import { getqryMaterial, getmarketingTouchEstimate } from "~/api";
+import { getQryMaterial, getmarketingTouchEstimate } from "~/api";
 import BehaviorGroup from "../behavior/BehaviorGroup.vue";
 import CustomAttr from "../behavior/CustomAttr.vue";
 import CustomBehavior from "../behavior/CustomBehavior.vue";
 import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
+import TouchSettingContents from '../touch/TouchSettingContents.vue'
+
 const labelPosition = ref("single");
 const transform = ref(true);
 const transformset = ref(true);
+
 const origin = {
   type: "PolicySettings",
   name: "test",
@@ -17,11 +20,24 @@ const origin = {
   isDelayed: false,
   selectedType: "day",
   delayedAction: "day",
-  materialtype: "sms",
   cascaderLabel: "sms",
   do: false,
   num: 1,
+  touch: {
+    type: ""
+  },
+  material: {
+    type: "",
+    beginTime: "",
+    endTime: "",
+    name: "",
+    pageNum: 10,
+    pageSize: -1,
+    status: "available",
+    templates: []
+  }
 };
+
 const marketingTouchNode = ref({
   appPushCount: 0,
   digitalCount: 0,
@@ -114,9 +130,8 @@ const options = [
     ],
   },
 ];
-const sizeForm = reactive<typeof origin>(origin);
 
-const dictType = ref();
+const sizeForm = reactive<typeof origin>(origin);
 
 function reset() {
   Object.assign(sizeForm, origin);
@@ -140,19 +155,17 @@ if (!props.p.customRuleContent) {
 
 function toggleLogicalOperator() { }
 
-const getqryMaterialval = async () => {
-  let param: any = {
-    beginTime: "",
-    endTime: "",
-    name: "",
-    pageNum: 10,
-    pageSize: 0,
-    status: "available",
-    type: "sms",
-  };
-  let res = await getqryMaterial(param);
-  dictType.value = res.data;
-};
+async function refreshMaterialTemplate() {
+  sizeForm.touch.type = ""
+
+  const { material } = sizeForm
+
+  let res = await getQryMaterial(material);
+
+  if (res.data?.records) {
+    sizeForm.material.templates = res.data.records;
+  }
+}
 
 function saveData() {
   if (!sizeForm.name) {
@@ -271,7 +284,7 @@ function sequenceAdd() {
         </el-radio-group>
       </el-form-item>
 
-      <div class="blockbg" v-if="labelPosition === 'Repeat'">
+      <div class="BlockBackground" v-if="labelPosition === 'Repeat'">
         <div class="title_set bg001">
           用户属性行为分流
           <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
@@ -308,7 +321,7 @@ function sequenceAdd() {
           </div>
         </el-form-item>
       </div>
-      <div class="blockbg" v-if="labelPosition === 'type'">
+      <div class="BlockBackground" v-if="labelPosition === 'type'">
         <div class="title_set bg001">
           触发事件分流
           <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
@@ -355,7 +368,7 @@ function sequenceAdd() {
           </div>
         </el-form-item>
       </div>
-      <div class="blockbg">
+      <div class="BlockBackground">
         <div class="title_set">
           延迟设置
           <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
@@ -365,7 +378,7 @@ function sequenceAdd() {
               <DArrowRight />
             </el-icon></el-text>
         </div>
-        <div class="underbg">
+        <div class="BlockBackground-Under">
           &nbsp;
           <el-select v-model="sizeForm.isDelayed" style="width: 100px">
             <el-option :value="true" label="延迟">延迟</el-option>
@@ -383,7 +396,8 @@ function sequenceAdd() {
           </el-select>
         </div>
       </div>
-      <div class="blockbg">
+
+      <div class="BlockBackground">
         <div class="title_set pg2">
           触达设置
           <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
@@ -393,34 +407,29 @@ function sequenceAdd() {
               <DArrowRight />
             </el-icon></el-text>
         </div>
-        <div class="underbg">
+        <div class="BlockBackground-Under">
           <el-form-item label="触达通道">
-            <el-col :span="12">
-              <el-select v-model="sizeForm.materialtype" style="width: 100px">
-                <el-option value="sms" label="短信">手机短信</el-option>
-                <el-option value="app" label="app消息">app消息</el-option>
-                <el-option value="digital" label="数字员工">数字员工</el-option>
-                <el-option value="outbound" label="智能外呼">智能外呼</el-option>
-                <el-option value="znx" label="站内信">站内信</el-option>
-              </el-select>
-            </el-col>
+            <el-select @change="refreshMaterialTemplate" v-model="sizeForm.material.type" style="width: 120px">
+              <el-option value="sms" label="短信">手机短信</el-option>
+              <el-option value="appPush" label="app消息">app消息</el-option>
+              <el-option value="digital" label="数字员工">数字员工</el-option>
+              <el-option value="outbound" label="智能外呼">智能外呼</el-option>
+              <el-option value="znx" label="站内信">站内信</el-option>
+            </el-select>
           </el-form-item>
-
-          <el-button type="primary" @click="getqryMaterialval" plain>获取模版</el-button>
           <el-form-item label="选择模版">
-            <el-select v-model="sizeForm.type" placeholder="请选择" style="width: 100px">
-              <el-option value="month" label="月份">发送触达并打上标签</el-option>
-              <el-option value="week" label="周">小时</el-option>
-              <el-option value="day" label="天">天</el-option> </el-select>&nbsp;&nbsp;&nbsp;<el-button type="primary"
-              plain>新增短信模块版本</el-button>
+            <el-select v-model="sizeForm.touch.type" placeholder="请选择模板" style="width: 120px">
+              <el-option v-for="item in (sizeForm.material.templates ?? []) as any" :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+            <el-button ml-1rem type="primary" plain>新增短信模块版本</el-button>
           </el-form-item>
-
           <el-form-item label="触达内容">
-            <div class="inputValue">定制组件位置</div>
+            <TouchSettingContents v-model="sizeForm.touch" />
           </el-form-item>
         </div>
       </div>
-      <div class="blockbg">
+      <div class="BlockBackground">
         <div class="title_set pg3">
           标签设置
           <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
@@ -431,14 +440,14 @@ function sequenceAdd() {
             </el-icon></el-text>
         </div>
 
-        <div class="underbg">
+        <div class="BlockBackground-Under">
           符合该策略器条件的用户打上 &nbsp;
           <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />
 
         </div>
       </div>
-      <div class="blockbg">
-        <div class="underbg">
+      <div class="BlockBackground">
+        <div class="BlockBackground-Under">
           <div class="yugu_flex">
             <div class="title">预估触达客户 &nbsp;</div>
             <el-button @click="estimation" class="buttonyugu" round>立即预估</el-button>
@@ -650,7 +659,7 @@ function sequenceAdd() {
   }
 }
 
-.blockbg {
+.BlockBackground {
   font-size: 14px;
   border-radius: var(--el-border-radius-base);
   margin-top: 24px;
@@ -675,7 +684,7 @@ function sequenceAdd() {
     border-left: 4px solid #277ae7;
   }
 
-  .underbg {
+  .BlockBackground-Under {
     padding: 12px;
     background: #f7f8fa;
   }

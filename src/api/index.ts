@@ -51,8 +51,8 @@ export const getmarketingTouchEstimate = (data: any) => {
     return request.post({ url: '/api/marketingTouchEstimate', data })
 }
 // 素材列表
-export const getqryMaterial = (data: any) => {
-    return request.post({ url: '/api/qryMaterial', data })
+export const getQryMaterial = (data: any) => {
+    return request.post({ url: '/api/qryMaterial.do', data })
 }
 
 // 营销触达列表

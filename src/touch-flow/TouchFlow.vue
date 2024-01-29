@@ -121,7 +121,7 @@ watch(() => width.value + height.value, refreshCurves);
     margin-bottom: 40px;
 
     .fake-point {
-      top: -352%;
+      top: -300%;
     }
   }
 
@@ -166,7 +166,7 @@ watch(() => width.value + height.value, refreshCurves);
   width: 32px;
   height: 32px;
 
-  top: -52%;
+  top: -30%;
   left: 30%;
 
   transform: translate(-50%, -50%);
