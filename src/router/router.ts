@@ -46,7 +46,6 @@ export const routes: RouterOptions["routes"] = [
   },
   {
     path: "/configuration",
-    component: () => import("../pages/configuration/index.vue"),
     redirect: "/configuration/event",
     children: [
       {
@@ -54,8 +53,8 @@ export const routes: RouterOptions["routes"] = [
         component: () => import("../pages/configuration/event.vue"),
       },
       {
-        path: "attribute",
-        component: () => import("../pages/configuration/attribute.vue"),
+        path: "attr",
+        component: () => import("../pages/configuration/attr.vue"),
       },
     ],
   },

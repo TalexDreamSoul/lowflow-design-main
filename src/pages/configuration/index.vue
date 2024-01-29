@@ -20,8 +20,19 @@
 }
 .header {
   height: 40px;
+  line-height: 40px;
+  text-align: center;
+}
+.route {
+  text-decoration: none;
+  color: rgba(0, 0, 0, .8);
+  margin-right: 24px;
+}
+.route.router-link-active {
+  color: #277AE7;
 }
 .centent {
+  flex: 1;
   background-color: #f8f9fa;
 }
 </style>
