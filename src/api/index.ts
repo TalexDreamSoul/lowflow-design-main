@@ -54,3 +54,12 @@ export const getmarketingTouchEstimate = (data: any) => {
 export const getqryMaterial = (data: any) => {
     return request.post({ url: '/api/qryMaterial', data })
 }
+
+// 营销触达列表
+export const getqryMarketingTouch = (data: any) => {
+    return request.post({ url: '/api/qryMarketingTouch', data })
+}
+// 删除营销触达
+export const deleteMarketingTouch = (data: any) => {
+    return request.post({ url: '/api/deleteMarketingTouch', data })
+}

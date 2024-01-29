@@ -38,7 +38,7 @@
           营销触达
           <div v-show="isDropdownVisible" class="dropdown-menu">
             <router-link to="/designNew">流程画布</router-link>
-            <router-link to="/page">Service 2</router-link>
+            <router-link to="/strategyProcessList">策略流程列表</router-link>
           </div>
         </div>
         <div class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
