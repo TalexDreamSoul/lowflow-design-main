@@ -8,16 +8,13 @@ const props = defineProps<{
   modelValue: AttrType;
   field: string;
   attrs: any;
+  selected?: string;
 }>();
 const emits = defineEmits<{
   (e: "update:modelValue", value: AttrType): void;
 }>();
 
-const type = computed(
-  () =>
-    props.attrs.filter((attr: any) => attr.field === props.field)?.[0]
-      ?.fieldType ?? "none"
-);
+const type = computed(() => props.selected ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)(props.selected) : (props.attrs.filter((attr: any) => attr.field === props.field)?.[0]?.fieldType ?? "none"));
 const model = useVModel(props, "modelValue", emits);
 </script>
 

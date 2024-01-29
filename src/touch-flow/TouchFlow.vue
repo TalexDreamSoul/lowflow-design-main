@@ -1,20 +1,53 @@
 <script setup lang="ts">
 import PStartVue from "./p/PStart.vue";
 import PPolicySettings from "./p/PPolicySettings.vue";
+import Branch from "./p/Branch.vue";
+import SubBranch from './p/SubBranch.vue'
 import { useWindowSize } from "@vueuse/core";
-import { ref, watch, nextTick } from "vue";
+import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
 import { refreshLines, genJP } from "./line-creator";
 
 const props = defineProps<{
   p: any;
 }>();
-
-const comps = {
+// 配置画布节点
+const comps: any = {
   start: PStartVue,
   PolicySettings: PPolicySettings,
+  Delivery: Branch,
+  SubBranch,
 };
 
 const now = ref();
+const nextLayer = ref();
+
+let _next;
+
+onBeforeUnmount(() => {
+  _next!?.remove()
+})
+
+onMounted(() => {
+  now.value._refreshCurves = refreshCurves
+
+  const nextLayerDom = nextLayer.value
+
+  if (!nextLayerDom) return
+
+  _next = nextLayerDom
+
+  nextTick(() => {
+    const layerParent = nextLayerDom.parentElement;
+    if (!layerParent.classList.contains("TouchFlow-Layer")) return
+
+    const lpp = layerParent.parentElement
+
+    layerParent.removeChild(nextLayerDom);
+    lpp.appendChild(nextLayerDom);
+
+    nextTick(refreshCurves)
+  })
+})
 
 const { width, height } = useWindowSize();
 
@@ -72,7 +105,7 @@ watch(() => width.value + height.value, refreshCurves);
     </div>
   </div>
   <template v-if="p.children">
-    <div class="TouchFlow-Layer">
+    <div ref="nextLayer" class="TouchFlow-Layer">
       <TouchFlow v-for="child in p.children" :p="child" />
     </div>
   </template>
@@ -84,6 +117,14 @@ watch(() => width.value + height.value, refreshCurves);
 }
 
 .TouchFlow-Layer {
+  &+& {
+    margin-bottom: 40px;
+
+    .fake-point {
+      top: -352%;
+    }
+  }
+
   position: relative;
   display: flex;
 
@@ -145,7 +186,7 @@ watch(() => width.value + height.value, refreshCurves);
     transform: translate(-50%, -50%);
 
     width: 2px;
-    height: 110px;
+    height: 120px;
 
     background-color: var(--el-color-primary);
   }
@@ -175,6 +216,7 @@ div.PBlock {
 
         right: 20px;
       }
+
       display: flex;
 
       gap: 2rem;
@@ -204,22 +246,13 @@ div.PBlock {
 
     span {
       color: #999;
-      .contentdeep {
-        font-size: 14px;
-        line-height: 17px;
-        font-size: var(--el-text-font-size);
-        color: #333;
-      }
     }
 
     padding: 16px;
     width: 280px;
-    background: linear-gradient(
-        180deg,
-        #f2f4f8 0%,
-        rgba(242, 244, 248, 0.4) 100%
-      )
-      rgba(255, 255, 255, 0.4);
+    background: linear-gradient(180deg,
+      #f2f4f8 0%,
+      rgba(242, 244, 248, 0.4) 100%) rgba(255, 255, 255, 0.4);
     border-radius: 8px 8px 8px 8px;
     opacity: 1;
   }

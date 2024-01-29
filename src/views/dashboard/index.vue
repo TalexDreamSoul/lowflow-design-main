@@ -7,6 +7,7 @@
 <style lang="scss">
 .dashboard-container {
   margin: 20px;
+  margin-top: 64px;
   background-color: #fff;
   padding: 20px;
 }

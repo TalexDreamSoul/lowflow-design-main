@@ -1,38 +1,15 @@
 <script setup lang="ts" name="BehaviorGroup">
-import BasicTargetComplex from "./BasicTargetComplex.vue";
+import { ref } from "vue";
 
-const fields = ref()
-
-import { reactive, ref } from "vue";
-const props = defineProps<{
+defineProps<{
   title: string;
 }>();
-const conditions = ref<object>({
-  logicalOperator: "and",
-  conditions: [],
-  groups: [],
-});
+
+const emits = defineEmits<{
+  (e: "add"): void;
+}>();
+
 const expand = ref(false);
-const flowOptions = reactive({
-  basic: {
-    _expand: false,
-    name: "",
-    disturb: {
-      enable: false,
-      time: [],
-      action: 0,
-    },
-    target: {
-      enable: false,
-      list: [],
-    },
-  },
-  p: {
-    type: 'start',
-    // father: {},
-    children: []
-  }
-})
 </script>
 
 <template>
@@ -44,7 +21,7 @@ const flowOptions = reactive({
       </span>
 
       <span class="addon-icon">
-        <el-button size="small" text plain type="primary">
+        <el-button @click.stop="emits('add')" size="small" text plain type="primary">
           <el-icon>
             <CirclePlusFilled />
           </el-icon>
@@ -53,8 +30,7 @@ const flowOptions = reactive({
       </span>
     </div>
     <div class="BehaviorGroup-Main">
-      <!-- {{ title }} -->
-      <BasicTargetComplex  :target="flowOptions.basic.target" />
+      <slot />
     </div>
   </div>
 </template>
@@ -77,10 +53,12 @@ const flowOptions = reactive({
     .toggle-icon::before {
       transform: translateY(0.5px) rotateZ(90deg) scaleX(0);
     }
-    max-height: 1000px;
 
-    transition: 0.25s ease-in;
+    max-height: 10000px;
+
+    transition: 0.5s ease-in;
   }
+
   .toggle-icon {
     &::before {
       content: "-";
@@ -112,18 +90,17 @@ const flowOptions = reactive({
     color: var(--el-color-primary);
     border: 1px solid var(--el-border-color);
   }
-  .addon-icon {
-    //zoom: 0.75;
-  }
+
   &-Main {
     padding: 0.5rem;
   }
+
   margin: 0.8rem 0;
   max-height: 48px;
 
   overflow: hidden;
   border-radius: 4px;
-  transition: 0.25s ease-out;
+  transition: 0.5s ease-out;
   background-color: var(--el-fill-color-lighter);
 }
 </style>

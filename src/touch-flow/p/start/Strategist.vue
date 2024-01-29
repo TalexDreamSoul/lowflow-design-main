@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import { inject, ref, reactive, onMounted } from "vue";
-import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { getqryMaterial, getmarketingTouchEstimate } from "~/api";
-import BehaviorGroup from "../behavior/BehaviorGroup.vue";
-import CustomAttr from "../behavior/CustomAttr.vue";
-import CustomBehavior from "../behavior/CustomBehavior.vue";
-import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
-const labelPosition = ref("single");
+
 const transform = ref(true);
 const transformset = ref(true);
 const origin = {
   type: "PolicySettings",
-  name: "test",
+  reveal: true,
+  name: "兜底策略器",
   value1: false,
   isDelayed: false,
   selectedType: "day",
@@ -124,21 +120,9 @@ function reset() {
 
 onMounted(reset);
 
-const logicalOperator = ref("and");
-
 const props = defineProps<{
   p: any;
 }>();
-
-if (!props.p.customRuleContent) {
-  props.p.customRuleContent = {
-    customAttr: {},
-    customEvent: {},
-    eventSequence: {},
-  }
-}
-
-function toggleLogicalOperator() { }
 
 const getqryMaterialval = async () => {
   let param: any = {
@@ -155,13 +139,6 @@ const getqryMaterialval = async () => {
 };
 
 function saveData() {
-  if (!sizeForm.name) {
-    ElMessage.warning({
-      message: "请输入策略名称",
-    });
-
-    return false;
-  }
 
   const _ = { ...sizeForm, id: randomStr(12), father: props.p };
 
@@ -172,14 +149,6 @@ function saveData() {
 
     while (arr.length) {
       const item = arr.shift();
-
-      if (item.name === _.name) {
-        ElMessage.warning({
-          message: "策略名称重复",
-        });
-
-        return false;
-      }
 
       if (item.children) arr.push(...item.children);
     }
@@ -213,148 +182,11 @@ const estimation = async () => {
   marketingTouchNode.value = res.data;
   console.log("Mounted", res);
 };
-
-function attrsAdd() {
-  let attr = props.p.customRuleContent!.customAttr!.conditions! = (props.p.customRuleContent!.customAttr!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "or",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "or",
-  });
-}
-
-function behaviorAdd() {
-  let attr = props.p.customRuleContent!.customEvent!.conditions! = (props.p.customRuleContent!.customEvent!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "or",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "or",
-  });
-}
-
-function sequenceAdd() {
-  let attr = props.p.customRuleContent!.eventSequence!.conditions! = (props.p.customRuleContent!.eventSequence!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: [{}] }],
-    logicalChar: "or",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "or",
-  });
-}
 </script>
 
 <template>
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
-      <el-form-item label="选择策略器名称：">
-        <el-input v-model="sizeForm.name" placeholder="填写名称" />
-      </el-form-item>
-      <el-form-item label="分流类型：">
-        <el-radio-group v-model="labelPosition">
-          <el-radio label="single">不分流</el-radio>
-          <el-radio label="Repeat">按属性用户行为分流</el-radio>
-          <el-radio label="type">按触发事件分流</el-radio>
-        </el-radio-group>
-      </el-form-item>
-
-      <div class="blockbg" v-if="labelPosition === 'Repeat'">
-        <div class="title_set bg001">
-          用户属性行为分流
-          <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
-        <div class="titleCondition">进入该策略期的用户需要满足以下条件：</div>
-        <el-form-item label="">
-          <div class="pannel">
-            <div class="filter-container">
-              <div class="logical-operator">
-                <div class="logical-operator__line"></div>
-                <div class="custom-switch" :class="{ active: logicalOperator === 'and' }" @click="toggleLogicalOperator">
-                  {{ logicalOperator === "and" ? "且" : "或" }}
-                </div>
-                <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
-              </div>
-
-              <div class="filter-option-content">
-                <BehaviorGroup @add="attrsAdd" title="客户属性满足">
-                  <CustomAttr :custom="p.customRuleContent!.customAttr" />
-                </BehaviorGroup>
-                <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-                  <CustomBehavior :custom="p.customRuleContent!.customEvent" />
-                </BehaviorGroup>
-                <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-                  <CustomBehaviorSequence :custom="p.customRuleContent!.eventSequence" />
-                </BehaviorGroup>
-              </div>
-            </div>
-          </div>
-        </el-form-item>
-      </div>
-      <div class="blockbg" v-if="labelPosition === 'type'">
-        <div class="title_set bg001">
-          触发事件分流
-          <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
-        <div class="flex-column titleCondition">
-          <div>
-            进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;
-          </div>
-          <el-input v-model="sizeForm.num" type="number" style="width: 100px" />&nbsp;
-          <el-select v-model="sizeForm.selectedType" style="width: 100px">
-            <el-option value="month" label="月份">分钟</el-option>
-            <el-option value="week" label="周">小时</el-option>
-            <el-option value="day" label="天">天</el-option>
-          </el-select>&nbsp;
-          <div>后判断客户
-            <el-select v-model="sizeForm.do" style="width: 100px">
-              <el-option :value="true" label="做过">做过</el-option>
-              <el-option :value="false" label="没做过">没做过</el-option>
-            </el-select>
-          </div>
-
-        </div>
-        <el-form-item label="">
-          <div class="pannel">
-            <div class="filter-container">
-              <div class="logical-operator">
-                <div class="logical-operator__line"></div>
-                <div class="custom-switch" :class="{ active: logicalOperator === 'and' }" @click="toggleLogicalOperator">
-                  {{ logicalOperator === "and" ? "且" : "或" }}
-                </div>
-                <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
-              </div>
-              <div class="filter-option-content">
-                <BehaviorGroup title="客户属性满足"> </BehaviorGroup>
-                <BehaviorGroup title="客户行为满足"> </BehaviorGroup>
-                <BehaviorGroup title="行为序列满足"> </BehaviorGroup>
-              </div>
-            </div>
-          </div>
-        </el-form-item>
-      </div>
       <div class="blockbg">
         <div class="title_set">
           延迟设置

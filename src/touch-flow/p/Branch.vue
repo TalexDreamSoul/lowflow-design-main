@@ -3,6 +3,7 @@ import { ref, reactive, provide } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import ConditionSetAttr from './start/ConditionSetAttr.vue'
 import PolicySettingsAttr from './start/PolicySettingsAttr.vue'
+import DeliverySettingsAttr from './start/DeliverySettingsAttr.vue'
 import { delChild } from '../flow-utils'
 
 const props = defineProps<{
@@ -20,8 +21,8 @@ const comps = [
       type: 'comp',
       value: Stamp
     },
-    title: "选择策略器",
-    desc: "按客户属性行为或触发事件对客户筛选分流，并执行动作。",
+    title: "分流器",
+    desc: "按设置的比例自动客户对随机分流，并执行动作。",
     comp: PolicySettingsAttr
   },
   {
@@ -37,8 +38,8 @@ const comps = [
 
 function openCondition() {
   openDrawer({
-    title: "选择策略器",
-    comp: PolicySettingsAttr
+    title: "分流器",
+    comp: DeliverySettingsAttr
   })
 }
 
@@ -81,27 +82,14 @@ provide('save', (regFunc: () => boolean) => {
     </p>
     <div class="PBlock-Content theme">
       <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">
-        <p>
-          客户属性行为分流
-        </p>
-        <span>不分流</span>
-      </div>
-      <div style="--theme-color: #7DC757" @click="openCondition" class="PBlock-Section">
-        <p>
-          延迟设置
-        </p>
-        <span>立即针对符合该策略器条件的客户发送触达</span>
-      </div>
-      <div style="--theme-color: #FFB858" @click="openCondition" class="PBlock-Section">
-        <p>
-          APP推送
-        </p>
-        <span>积极分子标题：参加活动赢好礼</span>
+        <div>
+          包含{{ p.branches.length }}个分支
+        </div>
       </div>
     </div>
 
     <teleport to="body">
-      <el-dialog v-model="dialogVisible" width="55%" title="请选择添加类型" align-center>
+      <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section">
             <p>

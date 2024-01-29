@@ -20,7 +20,7 @@ const addCondition = () => {
   getConditions().push({
     field: null,
     operator: "equal",
-    value: null,
+    fieldValue: null,
   });
 };
 
@@ -85,23 +85,24 @@ const attrs = computed(() => {
         <div class="logical-operator" v-if="target.conditions?.length">
           <div class="logical-operator__line"></div>
           <div class="custom-switch" :class="{ active: target.logicalOperator === 'and' }" @click="
-              target.logicalOperator =
-                target?.logicalOperator === 'and' ? 'or' : 'and'
+            target.logicalOperator =
+            target?.logicalOperator === 'and' ? 'or' : 'and'
             ">
             {{ target?.logicalOperator === "and" ? "且" : "或" }}
           </div>
         </div>
         <div v-if="attrs" class="filter-option-content">
           <el-form :label-width="0" :inline="true" :model="target.conditions">
-            <el-row v-for="(item, index) in target.conditions" :key="`${item.field}-${index}`" :gutter="5" class="filter-item-rule">
+            <el-row v-for="(item, index) in target.conditions" :key="`${item.field}-${index}`" :gutter="5"
+              class="filter-item-rule">
               <el-col :xs="24" :sm="7">
                 <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                  <trigger v-model="item.field" :attrs="attrs" />&nbsp;
+                  <trigger v-model="item.field" :attrs="attrs" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="5" v-if="item.field">
                 <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                  <operator ref="operatorRef" v-model="item.operator" />&nbsp;
+                  <operator ref="operatorRef" v-model="item.operator" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="10" v-if="item.field">
@@ -122,11 +123,10 @@ const attrs = computed(() => {
               </el-col>
             </el-row>
 
-            <div v-if="
-                !(
-                  target?.filterRules?.groups?.length |
-                  target?.filterRules?.conditions?.length
-                )
+            <div v-if="!(
+              target?.filterRules?.groups?.length |
+              target?.filterRules?.conditions?.length
+            )
               " class="filter-item-rule" />
           </el-form>
         </div>
@@ -152,20 +152,25 @@ const attrs = computed(() => {
   color: #000000;
   padding: 0px 24px;
 }
+
 :deep(.el-form-item) {
   margin-right: 0;
   margin-bottom: 0;
 }
+
 .filter-wrap {
   padding: 24px;
   width: 50%;
+
   .garyblock {
     margin-bottom: 16px;
   }
+
   .filter-container {
     //background-color: #f5f8fc;
     //border-radius: 3px;
     display: flex;
+
     .fontstyle {
       font-size: 14px;
       font-weight: 400;
@@ -177,6 +182,7 @@ const attrs = computed(() => {
       min-width: 60px;
       padding-right: 5px;
     }
+
     .logical-operator {
       position: relative;
       display: flex;
@@ -217,6 +223,7 @@ const attrs = computed(() => {
     }
   }
 }
+
 .custom-switch {
   border: 1px solid #4078e0;
   color: #fff;

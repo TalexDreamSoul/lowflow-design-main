@@ -2,15 +2,17 @@
 import { ref, reactive, computed, provide } from "vue";
 import { Stamp, Plus } from "@element-plus/icons-vue";
 import ConditionSetAttr from "../p/start/ConditionSetAttr.vue";
+import Strategist from "../p/start/Strategist.vue";
 import CustomersAttr from "../p/start/CustomersAttr.vue";
 import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
+
 const props = defineProps<{
   p?: any;
 }>();
 
 const dialogVisible = ref(false);
-const drawerOptions = reactive({
+const drawerOptions = reactive<any>({
   visible: false,
 });
 
@@ -79,8 +81,26 @@ const doDiverse = computed(() => {
 
   if (!children?.length) return false;
 
-  return [...children].find((child) => "PolicySettings" === child?.type);
+  return [...children].find((child) => "PolicySettings" === child?.type) ?? true
 });
+
+const haveDiverse = computed(() => {
+  if (!doDiverse.value) return false;
+
+  const { children } = props.p;
+
+  if (!children?.length) return false;
+
+  return [...children].find((child) => "Delivery" === child?.type);
+})
+
+const haveReveal = computed(() => {
+  const { children } = props.p;
+
+  if (!children?.length) return false;
+
+  return [...children].find((child) => "PolicySettings" === child?.type && child?.reveal) ?? false
+})
 
 const _comps = [
   {
@@ -98,7 +118,7 @@ const _comps = [
       value: Stamp,
     },
     title: "分流器",
-    desc: "按设置的比例自动对客户随机分流，并执行动作。",
+    desc: "按设置的比例自动客户对随机分流，并执行动作。",
     show: () => !doDiverse.value,
     comp: DeliverySettingsAttr,
   },
@@ -108,9 +128,10 @@ const _comps = [
       value: Stamp,
     },
     title: "兜底选择器",
+    disabled: haveReveal,
     desc: "筛选未进入本节点下选择策略器的客户，并执行动作。",
     show: () => doDiverse.value,
-    comp: ConditionSetAttr,
+    comp: Strategist,
   },
 ];
 
@@ -134,8 +155,7 @@ provide("save", (regFunc: () => boolean) => {
   <el-card class="PBlock">
     <p>进入流程设置</p>
     <div class="PBlock-Content">
-
-      <div @click=openCustomer class="PBlock-Section">
+      <div @click="openCustomer" class="PBlock-Section">
         <p>
           <el-icon>
             <User />
@@ -156,9 +176,9 @@ provide("save", (regFunc: () => boolean) => {
             </el-icon>
           </span>
         </p>
-        <span v-if="conditioned" style="opacity: .75;font-size: 14px">
-          <span>流程类型：<span class="contentdeep">{{ flowType }}</span></span><br />
-          <span>进入时间：<span class="contentdeep">{{ flowTime }}</span></span><br />
+        <span v-if="conditioned" style="opacity: 0.75; font-size: 14px">
+          <span>流程类型：<span contentPrimary>{{ flowType }}</span></span><br />
+          <span>进入时间：<span contentPrimary>{{ flowTime }}</span></span><br />
         </span>
         <span v-else>设置流程类型、流程有效期、流程开始时间、进入限制。</span>
       </div>
@@ -167,12 +187,13 @@ provide("save", (regFunc: () => boolean) => {
     <teleport to="body">
       <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section">
+          <div @click="openDrawer(item)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
+            class="PBlock-Section">
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
               </el-icon>
-              <img v-else :src="item.icon.value" />
+              <img v-else :src="item.icon.value as any" />
               {{ item.title }}
             </p>
             <span v-text="item.desc" />
@@ -182,7 +203,7 @@ provide("save", (regFunc: () => boolean) => {
     </teleport>
 
     <teleport to="body">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title"  size="45%">
+      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :p="p" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
@@ -192,7 +213,8 @@ provide("save", (regFunc: () => boolean) => {
     </teleport>
   </el-card>
 
-  <el-button :class="{ display: conditioned }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
+  <el-button :class="{ display: conditioned && !haveDiverse }" @click="dialogVisible = true" class="start-add"
+    type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">
@@ -207,6 +229,12 @@ provide("save", (regFunc: () => boolean) => {
 }
 
 .PBlock-Section {
+  &.disabled {
+    opacity: .5;
+    border: 1px solid var(--el-border-color);
+    pointer-events: none;
+  }
+
   p {
     font-size: 16px;
     font-weight: 500;
@@ -227,11 +255,9 @@ provide("save", (regFunc: () => boolean) => {
       transform: scaleX(0) translateX(-100%);
       width: 160px;
       height: 7px;
-      background: linear-gradient(
-        82deg,
-        rgba(64, 120, 224, 0.4) 0%,
-        rgba(64, 120, 224, 0) 100%
-      );
+      background: linear-gradient(82deg,
+          rgba(64, 120, 224, 0.4) 0%,
+          rgba(64, 120, 224, 0) 100%);
       border-radius: 2px 2px 2px 2px;
       opacity: 0.6;
       position: absolute;
@@ -244,6 +270,7 @@ provide("save", (regFunc: () => boolean) => {
 
       color: #00c068 !important;
     }
+
     position: relative;
   }
 
@@ -256,10 +283,14 @@ provide("save", (regFunc: () => boolean) => {
       color: #4078e0;
     }
   }
+
   &:hover {
     border: 1px solid #4078e0;
   }
+
   width: 50%;
+
+  border: 1px solid transparent;
 }
 
 .PBlock-Section .el-icon {

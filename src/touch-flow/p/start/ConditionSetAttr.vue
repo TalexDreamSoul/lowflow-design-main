@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="ConditionSetAttr">
 import {
   computed,
   ref,
@@ -6,11 +6,12 @@ import {
   reactive,
   onMounted,
 } from "vue";
-import { Delete, CirclePlus, CircleClose } from "@element-plus/icons-vue";
+import { Delete } from "@element-plus/icons-vue";
 
-import EventGroupFilter from "~/components/EventGroup/index.vue";
-import { dictFilterTree } from "~/api";
+import { dictFilterTree as getDictFilterTree } from "~/api/index";
+import TouchBlockGenre from "~/touch-flow/p/genre/TouchBlockGenre.vue";
 
+const dict = ref<any>();
 const timeFuncs: { [func: string]: any } = {
   single: [
     (obj: any) => {
@@ -70,10 +71,6 @@ const sizeForm = reactive({
 const planB = ref(false);
 const selectedType = ref()
 const input = ref()
-const fields = ref()
-const node = ref({
-  conditions: {}
-})
 const daysInMonth = computed(() => {
   const days = [];
   for (let i = 1; i <= 31; i++) {
@@ -84,7 +81,8 @@ const daysInMonth = computed(() => {
 const daysOfWeek = computed(() => ["一", "二", "三", "四", "五", "六", "日"]);
 
 const props = defineProps<{
-  p: any
+  p: any,
+  dict: any
 }>();
 
 function saveData() {
@@ -104,9 +102,33 @@ type IRegSaveFunc = (regFunc: () => boolean) => void
 const regSaveFunc: IRegSaveFunc = inject('save')!
 regSaveFunc(saveData)
 
-const dictFilter = ref();
+onMounted(async () => {
 
-onMounted(() => {
+  if (!props.p.triggerRuleContent) {
+    props.p.triggerRuleContent = {
+      "eventA": {
+        "customEvent": {
+          "conditions": [{
+            "conditions": [{}],
+            "logicalChar": "or"
+          }],
+          "logicalChar": "or"
+        },
+        "logicalChar": "or"
+      },
+      "eventB": {
+        "customEvent": {
+          "conditions": [{
+            "conditions": [{}],
+            "logicalChar": "or"
+          }],
+          "logicalChar": "or"
+        },
+        "logicalChar": "or"
+      }
+    }
+  }
+
 
   // sync time
   if (props.p.labelPosition) {
@@ -115,51 +137,32 @@ onMounted(() => {
     analyze(sizeForm)
   }
 
-  getdictFilterTree();
+  const res = await getDictFilterTree();
+
+  if (res.data) {
+    dict.value = res.data;
+  }
+
 });
-/**
- * 获取字典树
- */
-const getdictFilterTree = async () => {
-  let res = await dictFilterTree();
-  dictFilter.value = res.data;
-};
 
-/**
- * 添加条件条件组b
- */
-const addGroup = () => {
-  planB.value = !planB.value;
-};
-// 使用 ref 创建一个引用
-const childRef = ref<any>(null); // 确保 ref 初始化为 null
-const childRefB = ref<any>(null); // 确保 ref 初始化为 null
+function addEventA() {
+  props.p.triggerRuleContent.eventA.customEvent.conditions.push({
+    conditions: [{}],
+    logicalChar: "or"
+  });
+}
 
-// 设置调用子组件方法的函数
-const callChildMethod = () => {
-  // 通过引用调用子组件的方法
-  try {
-    childRef.value?.addGroup();
-  } catch (error) {
-    console.error("Error occurred in submitDrawer:", error);
-  }
-};
-// 设置调用子组件方法的函数
-const callChildMethodB = () => {
-  // 通过引用调用子组件的方法
-  try {
-    childRefB.value?.addGroup();
-  } catch (error) {
-    console.error("Error occurred in submitDrawer:", error);
-  }
-};
-
+function addEventB() {
+  props.p.triggerRuleContent.eventB.customEvent.conditions.push({
+    conditions: [{}],
+    logicalChar: "or"
+  });
+}
 </script>
 
 <template>
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="top">
-
       <el-form-item label="流程类型：" label-class="custom-label">
         <div>
           <div class="custom-radio-group">
@@ -286,19 +289,22 @@ const callChildMethodB = () => {
             <div class="garyblock">
               <el-text>在流程有效期内依次完成下列事件后</el-text>&nbsp;
               &nbsp;
-              <el-text type="primary" style="cursor: pointer;" @click="callChildMethod()">
+              <el-text type="primary" style="cursor: pointer;" @click="addEventA">
                 <el-icon size="14">
                   <CirclePlusFilled />
                 </el-icon>
                 添加事件
               </el-text>
+
             </div>
-            <!-- <EventGroupFilter v-model="node.conditions" :filter-fields="fields" :dictFilter="dictFilter" ref="childRef" /> -->
+
+            <!-- props.p.triggerRuleContent.eventA.customEvent.conditions -->
+            <TouchBlockGenre :condition="p.triggerRuleContent.eventA.customEvent" :dict="dict" />
 
           </div>
         </el-form-item>
 
-        <div class="underright" v-show="!planB" @click="addGroup">
+        <div class="underright" v-show="!planB" @click="planB = !planB">
           <el-icon size="14">
             <CirclePlusFilled />
           </el-icon> 添加事件组b
@@ -311,7 +317,7 @@ const callChildMethodB = () => {
             justify-content: space-between;">
               触发事件组B
 
-              <el-text type="primary" style="cursor: pointer;" @click="addGroup">
+              <el-text type="primary" style="cursor: pointer;" @click="planB = !planB">
                 <el-icon size="14">
                   <Delete />
                 </el-icon>
@@ -331,21 +337,19 @@ const callChildMethodB = () => {
                 <el-text>后立即判断</el-text>
                 &nbsp;
                 <el-select v-model="selectedType" style="width: 150px">
-                  <el-option value="month" label="月份">分钟</el-option>
-                  <el-option value="week" label="周">小时</el-option>
-                  <el-option value="day" label="天">天</el-option>
+                  <el-option value="=" label="月份">做过</el-option>
+                  <el-option value="!=" label="周">未做过</el-option>
                 </el-select>&nbsp;
               </div>
-              <el-text type="primary" style="cursor: pointer;" @click="callChildMethodB()">
+              <el-text type="primary" style="cursor: pointer;" @click="addEventB">
                 <el-icon size="14">
                   <CirclePlusFilled />
                 </el-icon>
                 添加事件
               </el-text>
             </div>
-            <!-- <EventGroupFilter ref="childRefB" v-model="node.conditions" :filter-fields="fields"
-              :dictFilter="dictFilter" /> -->
 
+            <TouchBlockGenre :condition="p.triggerRuleContent.eventB.customEvent" :dict="dict" />
           </div>
         </el-form-item>
         <div>
