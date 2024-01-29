@@ -43,9 +43,6 @@ export const routes: RouterOptions['routes'] = [
   {
     path: '/strategyProcessList',
     component: () => import('../touch-flow/strategyProcessList/strategyProcessList.vue'),
-    meta: {
-      hideTopMenu: true,
-    },
   }
 
   // 添加需要隐藏 TopMenu 的页面，并设置 meta.hideTopMenu 为 true
