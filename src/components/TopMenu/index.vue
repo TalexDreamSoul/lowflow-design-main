@@ -6,6 +6,7 @@
     <router-link to="/">designNew</router-link>
     <router-link to="/dashboard">dashboard</router-link>
     <router-link to="/design">design</router-link>
+    <router-link to="/configuration">配置中心</router-link>
     <div class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
       Services
       <div v-show="isDropdownVisible" class="dropdown-menu">
@@ -38,16 +39,12 @@ export default {
 
 <style scoped>
 .top-menu {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
   background-color: #333;
   color: #fff;
   padding: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 .dropdown {
   position: relative;
   display: inline-block;
