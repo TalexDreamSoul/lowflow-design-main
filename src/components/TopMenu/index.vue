@@ -58,8 +58,8 @@
         <div class="dropdown" @mouseover="showDropdown" @mouseleave="hideDropdown">
           配置中心
           <div v-show="isDropdownVisible" class="dropdown-menu">
-            <router-link to="/pinia">Service 1</router-link>
-            <router-link to="/page">Service 2</router-link>
+            <router-link to="/configuration/event">事件管理</router-link>
+            <router-link to="/configuration/attr">属性管理</router-link>
           </div>
         </div>
         <div class="dropdown" @click="targetPage('dashboard')" @mouseleave="hideDropdown">
@@ -116,7 +116,6 @@ export default {
   left: 0;
   color: #fff;
 }
-
 .dropdown {
   position: relative;
   display: inline-block;

@@ -1,8 +1,11 @@
 <template>
   <el-config-provider :button="{ autoInsertSpace: true }" :locale="zhCn">
-    <TopMenu v-if="!meta.hideTopMenu" />
-
-    <router-view></router-view>
+    <div class="common-layout">
+      <TopMenu v-if="!meta.hideTopMenu" />
+      <div class="content">
+        <router-view></router-view>
+      </div>
+    </div>
   </el-config-provider>
 </template>
 
@@ -17,3 +20,21 @@ const route = useRoute()
 
 const meta = computed(() => route.meta)
 </script>
+<style>
+html, body, #app {
+  height: 100%;
+}
+.el-form-item {
+  margin-right: 0;
+  margin-bottom: 12px !important;
+}
+.common-layout {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.content {
+  flex: 1;
+}
+</style>

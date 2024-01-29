@@ -176,10 +176,34 @@ const handleCurrentChange = (val: number) => {
     </div>
 
     <div class="tableCard">
-      <div>
-        <div class="showCount">
+      <div class="countCard">
+        <div class="showCount allcount">
           <div class="topcount">40</div>
           <div class="undercount">全部</div>
+        </div>
+        <div class="showCount">
+          <div class="topcount">24</div>
+          <div class="undercount">运行中</div>
+        </div>
+        <div class="showCount">
+          <div class="topcount">12</div>
+          <div class="undercount">暂停中</div>
+        </div>
+        <div class="showCount">
+          <div class="topcount">0</div>
+          <div class="undercount">待审批</div>
+        </div>
+        <div class="showCount">
+          <div class="topcount">2</div>
+          <div class="undercount">已结束</div>
+        </div>
+        <div class="showCount">
+          <div class="topcount">2</div>
+          <div class="undercount">草稿</div>
+        </div>
+        <div class="showCount">
+          <div class="topcount">2</div>
+          <div class="undercount">审核不通过</div>
         </div>
       </div>
       <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;">
@@ -294,22 +318,44 @@ const handleCurrentChange = (val: number) => {
   background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
   transition: 0.25s;
 }
+.countCard {
+  display: flex;
+  justify-content: flex-start;
+}
 .showCount {
   width: 100px;
   height: 50px;
-  background: #4078e0;
+  margin-right: 16px;
+
+  background: linear-gradient(
+    180deg,
+    #f2f4f8 0%,
+    rgba(242, 244, 248, 0.4) 100%
+  );
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
   padding: 24px;
+
+  color: rgba(0, 0, 0, 0.9);
   .topcount {
-    color: #ffffff;
     font-size: 32px;
+    font-weight: 800;
   }
   .undercount {
     font-weight: 400;
-    color: #ffffff;
     font-size: 14px;
+    color: #7F8080;
+  }
+}
+
+.allcount {
+  background: #4078e0;
+  color: #ffffff;
+  .undercount {
+    font-weight: 400;
+    font-size: 14px;
+    color: #BED1F4;
   }
 }
 </style>

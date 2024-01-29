@@ -1,53 +1,65 @@
-import type { RouterOptions } from 'vue-router'
-import { createRouter, createWebHistory } from 'vue-router'
+import type { RouterOptions } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 
-export const routes: RouterOptions['routes'] = [
+export const routes: RouterOptions["routes"] = [
   {
-    path: '/',
-    component: () => import('../views/dashboard/index.vue'),
+    path: "/",
+    component: () => import("../views/dashboard/index.vue"),
   },
   {
-    path: '/pinia',
-    component: () => import('../views/Pinia/PiniaExample.vue'),
+    path: "/pinia",
+    component: () => import("../views/Pinia/PiniaExample.vue"),
     meta: {
       hideTopMenu: true,
     },
   },
   {
-    path: '/dashboard',
-    component: () => import('../views/dashboard/index.vue'),
-    meta: {
-      hideTopMenu: true,
-    },
-  },
-
-  {
-    path: '/page',
-    component: () => import('../views/pagenull/index.vue'),
+    path: "/dashboard",
+    component: () => import("../views/dashboard/index.vue"),
     meta: {
       hideTopMenu: true,
     },
   },
 
   {
-    path: '/design',
-    component: () => import('../views/design/index.vue'),
-  },
-  {
-    path: '/designNew',
-    component: () => import('../touch-flow/FlowPage.vue'),
+    path: "/page",
+    component: () => import("../views/pagenull/index.vue"),
     meta: {
       hideTopMenu: true,
     },
   },
   {
-    path: '/strategyProcessList',
-    component: () => import('../touch-flow/strategyProcessList/strategyProcessList.vue'),
-  }
-
+    path: "/design",
+    component: () => import("../views/design/index.vue"),
+  },
+  {
+    path: "/designNew",
+    component: () => import("../touch-flow/FlowPage.vue"),
+    meta: {
+      hideTopMenu: true,
+    },
+  },
+  {
+    path: "/strategyProcessList",
+    component: () =>
+      import("../touch-flow/strategyProcessList/strategyProcessList.vue"),
+  },
+  {
+    path: "/configuration",
+    redirect: "/configuration/event",
+    children: [
+      {
+        path: "event",
+        component: () => import("../pages/configuration/event.vue"),
+      },
+      {
+        path: "attr",
+        component: () => import("../pages/configuration/attr.vue"),
+      },
+    ],
+  },
   // 添加需要隐藏 TopMenu 的页面，并设置 meta.hideTopMenu 为 true
-]
-
+];
 
 const router = createRouter({
   history: createWebHistory(),
