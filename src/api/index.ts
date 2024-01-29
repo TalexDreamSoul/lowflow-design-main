@@ -48,18 +48,23 @@ export const dictFilterTree = () => {
 }
 // 营销触达节点统计
 export const getmarketingTouchEstimate = (data: any) => {
-    return request.post({ url: '/api/marketingTouchEstimate', data })
+    return request.post({ url: '/api/marketingTouchEstimate.do', data })
 }
 // 素材列表
-export const getQryMaterial = (data: any) => {
+export const getqryMaterial = (data: any) => {
     return request.post({ url: '/api/qryMaterial.do', data })
 }
 
 // 营销触达列表
 export const getqryMarketingTouch = (data: any) => {
-    return request.post({ url: '/api/qryMarketingTouch', data })
+    return request.post({ url: '/api/qryMarketingTouch.do', data })
 }
 // 删除营销触达
 export const deleteMarketingTouch = (data: any) => {
-    return request.post({ url: '/api/deleteMarketingTouch', data })
+    return request.post({ url: '/api/deleteMarketingTouch.do', data })
+}
+
+// 营销触达节点统计
+export const getmarketingTouchNodeStatistics = (data: any) => {
+    return request.post({ url: '/api/marketingTouchNodeStatistics.do', data })
 }

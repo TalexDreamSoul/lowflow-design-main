@@ -10,8 +10,7 @@
           <el-image class="iconBase">
           </el-image>
           <div>
-
-            中关村银行活动管理系统
+            H5活动制作系统
             <br />
             <span style="font-size: 9px;">
               zhpongguancun bank
@@ -74,7 +73,7 @@
         </div>
       </div>
       <div style="padding:0 24px">
-       你好，lvlv
+        你好，lvlv
       </div>
     </div>
 
@@ -97,7 +96,7 @@ export default {
     },
 
     targetPage(page) {
-      this.$router.push(page)
+      this.$router.push(page);
     },
   },
 };
@@ -107,14 +106,14 @@ export default {
 .top-menu {
   width: 100%;
   height: 64px;
-  background: linear-gradient(180deg, #2b2b2b 0%, #383838 100%);
+  background: #ffffff;
   box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.02);
   border-radius: 0px 0px 0px 0px;
   opacity: 1;
   position: sticky;
   top: 0;
   left: 0;
-  color: #fff;
+  color: #333;
 }
 .dropdown {
   position: relative;
