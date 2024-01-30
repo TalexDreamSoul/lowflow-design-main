@@ -65,6 +65,8 @@ export const deleteMarketingTouch = (data: any) => {
 }
 
 // 营销触达节点统计
-export const getmarketingTouchNodeStatistics = (data: any) => {
-    return request.post({ url: '/api/marketingTouchNodeStatistics.do', data })
+export const getqryTouchStatusCount = () => {
+    return request.post({ url: '/api/qryTouchStatusCount.do'})
 }
+
+

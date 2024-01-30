@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { ElTag } from 'element-plus'
-import { getqryMarketingTouch, deleteMarketingTouch, getmarketingTouchNodeStatistics } from '~/api/index'
+import { getqryMarketingTouch, deleteMarketingTouch, getqryTouchStatusCount } from '~/api/index'
 import { ref, unref, reactive, onMounted, watch } from 'vue'
 
 const ids = ref<string[]>([])
@@ -127,20 +127,14 @@ const fetchDataApi = async () => {
   tableData.value = res.data.records
   total.value = res.data.total
 };
-const StatisticsList = ref({
-  "customRuleContent": "",
-  "estimateCount": 0,
-  "targetCount": "",
-  "touchCount": "",
-  "triggerCount": 0,
-  "triggerRuleContent": ""
-})
+const StatisticsList = ref()
+const totalCount = ref()
 
 const getmarketingTouchNode = async () => {
-  const res = await getmarketingTouchNodeStatistics({
-    "id": 0
-  })
+  const res = await getqryTouchStatusCount()
   StatisticsList.value = res
+totalCount.value = StatisticsList.value.reduce((accumulator: any, currentValue: { count: any }) => accumulator + currentValue.count, 0);
+console.log(totalCount); // 输出总和
   console.log(`output->res`, res)
 }
 const fetchDelApi = async () => {
@@ -180,14 +174,13 @@ const action = (row: User, type: string) => {
       <el-form :inline="true" class="demo-form-inline">
 
         <el-form-item label="创建时间：">
-          <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期"
-            end-placeholder="结束日期" :size="size" @change="(val) => {
+          <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="(val) => {
               formInline.beginTime = val[0];
               formInline.endTime = val[1];
             }" />
         </el-form-item>
         <el-form-item>
-          
+
           <el-select v-model="formInline.executeType" clearable style="width:200px">
             <el-option label="定时-单次" value="immediately" />
             <el-option label="定时-重复" value="delayed" />
@@ -206,36 +199,15 @@ const action = (row: User, type: string) => {
     <div class="tableCard">
       <div class="countCard">
         <div class="showCount allcount">
-          <div class="topcount">{{StatisticsList.estimateCount}}</div>
+          <div class="topcount">{{totalCount||'--'}}</div>
           <div class="undercount">全部</div>
         </div>
-        <div class="showCount">
-          <div class="topcount">24</div>
-          <div class="undercount">运行中</div>
-        </div>
-        <div class="showCount">
-          <div class="topcount">12</div>
-          <div class="undercount">暂停中</div>
-        </div>
-        <div class="showCount">
-          <div class="topcount">0</div>
-          <div class="undercount">待审批</div>
-        </div>
-        <div class="showCount">
-          <div class="topcount">2</div>
-          <div class="undercount">已结束</div>
-        </div>
-        <div class="showCount">
-          <div class="topcount">2</div>
-          <div class="undercount">草稿</div>
-        </div>
-        <div class="showCount">
-          <div class="topcount">2</div>
-          <div class="undercount">审核不通过</div>
+        <div class="showCount" v-for="item in StatisticsList">
+          <div class="topcount">{{item.count||'--'}}</div>
+          <div class="undercount"> {{ statusLabels[item.status].Text }}</div>
         </div>
       </div>
-      <el-table :data="tableData"
-        style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;">
+      <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;">
         <el-table-column label="策略流程ID" width="180">
           <template #default="scope">
             {{ scope.row.id }}
@@ -298,9 +270,7 @@ const action = (row: User, type: string) => {
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]"
-        :small="small" :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper"
-        :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
 
     </div>
 
@@ -308,9 +278,11 @@ const action = (row: User, type: string) => {
 </template>
 <style lang="scss" scoped>
 .warp {
-  background: linear-gradient(to bottom,
-      #eeeff6,
-      rgba(56, 128, 228, 0.1098039216));
+  background: linear-gradient(
+    to bottom,
+    #eeeff6,
+    rgba(56, 128, 228, 0.1098039216)
+  );
   padding: 24px 40px;
   height: 90vh;
 }
@@ -356,9 +328,11 @@ const action = (row: User, type: string) => {
   height: 50px;
   margin-right: 16px;
 
-  background: linear-gradient(180deg,
-      #f2f4f8 0%,
-      rgba(242, 244, 248, 0.4) 100%);
+  background: linear-gradient(
+    180deg,
+    #f2f4f8 0%,
+    rgba(242, 244, 248, 0.4) 100%
+  );
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
