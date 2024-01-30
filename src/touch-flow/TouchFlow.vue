@@ -9,8 +9,8 @@ import { refreshLines, genJP } from "./line-creator";
 import { createTemplatePopover } from '../utils/touch-templates'
 
 // createTemplatePopover('新建企微模版', 'digital')
-// createTemplatePopover('新建企微模版', 'digital')
-createTemplatePopover('新建短信模版', 'sms')
+createTemplatePopover('新建站内信模版', 'znx')
+// createTemplatePopover('新建短信模版', 'sms')
 // createTemplatePopover('新建APP Push模版', 'app')
 // createTemplatePopover('新建外呼模版', 'outbound')
 
