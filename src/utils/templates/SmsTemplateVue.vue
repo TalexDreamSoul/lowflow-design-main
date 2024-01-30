@@ -6,6 +6,7 @@ import { reactive } from 'vue'
 const origin = {
   id: "",
   name: "",
+  sceneCode: "app",
   status: "",
   type: "znx",
   carouselId: "",
@@ -62,20 +63,11 @@ defineExpose({ saveData })
     <el-form-item label="模板名称">
       <el-input v-model="origin.name"></el-input>
     </el-form-item>
-    <el-form-item label="模板ID">
-      <el-input v-model="origin.id"></el-input>
+    <el-form-item label="场景码">
+      <el-input v-model="origin.sceneCode" placeholder="请输入"></el-input>
     </el-form-item>
-    <el-form-item label="轮播图ID">
-      <el-input v-model="origin.carouselId"></el-input>
-    </el-form-item>
-    <el-form-item label="列表标题">
+    <el-form-item label="短信内容">
       <TouchSettingContents variables="titleVariables" content="listTitle" v-model="origin" buttonTitle="输入变量" />
-    </el-form-item>
-    <el-form-item label="站内信标题">
-      <TouchSettingContents variables="znxTitleVariables" content="znxTitle" v-model="origin" buttonTitle="输入变量" />
-    </el-form-item>
-    <el-form-item label="站内信简介">
-      <TouchSettingContents variables="znxContentVariables" content="znxContent" v-model="origin" buttonTitle="输入变量" />
     </el-form-item>
   </el-form>
 </template>
