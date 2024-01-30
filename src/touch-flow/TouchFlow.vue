@@ -8,7 +8,11 @@ import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
 import { refreshLines, genJP } from "./line-creator";
 import { createTemplatePopover } from '../utils/touch-templates'
 
-createTemplatePopover('新建企微模版', 'digital')
+// createTemplatePopover('新建企微模版', 'digital')
+// createTemplatePopover('新建企微模版', 'digital')
+// createTemplatePopover('新建企微模版', 'digital')
+// createTemplatePopover('新建企微模版', 'digital')
+createTemplatePopover('新建外呼模版', 'outbound')
 
 const props = defineProps<{
   p: any;
