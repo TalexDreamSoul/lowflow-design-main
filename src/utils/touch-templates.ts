@@ -3,10 +3,17 @@ import BaseTemplateVue from './templates/BaseTemplate.vue'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 import ZnxTemplateVue from './templates/ZnxTemplate.vue'
-
+import SmsTemplateVue from './templates/SmsTemplateVue.vue'
+import AppTemplateVue from './templates/AppTemplateVue.vue'
+import DigitalTemplateVue from './templates/DigitalTemplateVue.vue'
+import OutboundTemplateVue from './templates/OutboundTemplateVue.vue'
+// * 素材类型：sms 短信，app app消息，digital 数字员工，outbound 智能外呼，znx 站内信
 const templates = {
   znx: ZnxTemplateVue,
-  // sms: SmsTemplateVue,
+  sms: SmsTemplateVue,
+  app: AppTemplateVue,
+  digital: DigitalTemplateVue,
+  outbound: OutboundTemplateVue,
 }
 
 function _createApp(comp: Component, props: any) {
