@@ -258,15 +258,23 @@ const action = (row: User, type: string) => {
 
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
-            <el-button type="primary" @click="action(scope.row, 'edit')">
-              edit
-            </el-button>
-            <el-button type="success" @click="action(scope.row, 'detail')">
-              detail
-            </el-button>
-            <el-button type="danger" @click="delData(scope.row)">
-              del
-            </el-button>
+            <el-space wrap>
+              <!-- 
+  "draft": { Text: "草稿", type: 'info', }, 草稿
+  "approvalPending": { Text: "待审批", type: 'success' }, 审批中
+  "approvalSuccess": { Text: "审批成功", type: 'info', }, 运行中
+  "approvalRefuse": { Text: "审批拒绝", type: 'warning', }, 审批不通过
+  "waitStart": { Text: "等待启动", type: 'warning', },运行中
+  "running": { Text: "发送中", type: '', },运行中
+  "suspend": { Text: "暂停", type: 'warning', },暂停
+  "done": { Text: "已结束", type: 'info', }结束 -->
+              <el-link type="primary" @click="action(scope.row, 'edit')" v-if="scope.row.status=='suspend'">开始</el-link>
+              <el-link type="primary" v-if="scope.row.status=='waitStart'||scope.row.status=='running'||scope.row.status=='approvalSuccess'">暂停</el-link>
+              <el-link type="primary" v-if="scope.row.status=='draft'||scope.row.status=='approvalRefuse'||scope.row.status=='suspend'||scope.row.status=='done'" @click="delData(scope.row)">删除</el-link>
+              <el-link type="primary">复制</el-link>
+              <el-link type="primary" v-if="scope.row.status=='approvalRefuse'||scope.row.status=='draft'">编辑</el-link>
+              <el-link type="primary" @click="action(scope.row, 'detail')">查看详情</el-link>
+            </el-space>
           </template>
         </el-table-column>
       </el-table>
