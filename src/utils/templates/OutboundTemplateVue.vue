@@ -86,14 +86,14 @@ const tableData = [
       </el-select>
     </el-form-item>
     <el-form-item label="设置变量值">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #EDEFF4;--el-table-header-bg-color: #EDEFF4;--el-table-tr-bg-color: #F7F8FB;--el-table-header-text-color:#333;">
         <el-table-column prop="id" label="序号" />
         <el-table-column prop="variableFilled" label="待填变量">
         </el-table-column>
 
         <el-table-column prop="variable" label="变量值">
           <!-- 获取的下拉选项 -->
-          <el-select v-model="origin.template" placeholder="请选择" style="width: 50%;">
+          <el-select v-model="origin.template" placeholder="请选择" style="width: 100px;">
             <el-option label="外呼系统的话术模版" value="sendMessage" />
             <el-option label="外呼系统的话术模版2" value="addfriends" />
           </el-select>
@@ -108,3 +108,8 @@ const tableData = [
     </el-form-item>
   </el-form>
 </template>
+<style scoped>
+.el-table th.el-table__cell {
+  background-color: #dbdbdb !important;
+}
+</style>
