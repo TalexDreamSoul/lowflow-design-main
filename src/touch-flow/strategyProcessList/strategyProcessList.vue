@@ -1,119 +1,104 @@
-<script setup lang="tsx">
-import { ElTag } from 'element-plus'
-import { getqryMarketingTouch, deleteMarketingTouch, getqryTouchStatusCount } from '~/api/index'
-import { ref, unref, reactive, onMounted, watch } from 'vue'
-
-const ids = ref<string[]>([])
-
+<script setup lang="ts">
+import { ElTag } from "element-plus";
+import { ref, unref, reactive, onMounted, watch } from "vue";
+import {
+  getqryMarketingTouch,
+  deleteMarketingTouch,
+  getqryTouchStatusCount,
+  getupdateMarketingTouch,
+  getstartMarketingTouch,
+  getpauseMarketingTouch,
+} from "~/api/index";
+import { useRouter, useRoute } from 'vue-router';
 const formInline = reactive({
-  touchName: '',
-  executeType: '',
-  beginTime: '',
-  endTime: '',
-  status: '',
-
-})
+  touchName: "",
+  executeType: "",
+  beginTime: "",
+  endTime: "",
+  status: "",
+});
 
 const time = ref(null);
-import { id } from 'element-plus/es/locale'
-
-import { Timer } from '@element-plus/icons-vue'
-
-interface User {
-  touchName: string,
-  executeType: string,
-  beginTime: string,
-  endTime: string,
-  status: string,
-}
-
-const handleEdit = (index: number, row: User) => {
-  console.log(index, row)
-}
-const handleDelete = (index: number, row: User) => {
-  console.log(index, row)
-}
-
+const router = useRouter();
 
 const statusLabels = {
-  "draft": { Text: "草稿", type: 'info', },
-  "approvalPending": { Text: "待审批", type: 'success' },
-  "approvalSuccess": { Text: "审批成功", type: 'info', },
-  "approvalRefuse": { Text: "审批拒绝", type: 'warning', },
-  "waitStart": { Text: "等待启动", type: 'warning', },
-  "running": { Text: "发送中", type: '', },
-  "suspend": { Text: "暂停", type: 'warning', },
-  "done": { Text: "已结束", type: 'info', }
-}
+  draft: { Text: "草稿", type: "info" },
+  approvalPending: { Text: "待审批", type: "success" },
+  approvalSuccess: { Text: "审批成功", type: "info" },
+  approvalRefuse: { Text: "审批拒绝", type: "warning" },
+  waitStart: { Text: "等待启动", type: "warning" },
+  running: { Text: "发送中", type: "" },
+  suspend: { Text: "暂停", type: "warning" },
+  done: { Text: "已结束", type: "info" },
+};
 const typeMap = {
-  "immediately": "定时-单次",
-  "delayed": "定时-重复",
-  "trigger": "触发型",
-}
+  immediately: "定时-单次",
+  delayed: "定时-重复",
+  trigger: "触发型",
+};
 let tableData = ref([
   {
-    id: 'id',
-    startTime: '2016-05-03',
-    endTime: '2016-05-03',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-    status: 'approvalPending',
-    executeType: 'immediately',
-    total: '20%',
-    totalCount: '19508313 / 10220792 / 1627356',
-    founder: 'lvlvlv',
-  }, {
-    id: 'id',
-    startTime: '2016-05-03',
-    endTime: '2016-05-03',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-    status: 'approvalPending',
-    executeType: 'immediately',
-    total: '20%',
-    totalCount: '19508313 / 10220792 / 1627356',
-    founder: 'lvlvlv',
-  }, {
-    id: 'id',
-    startTime: '2016-05-03',
-    endTime: '2016-05-03',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-    status: 'approvalSuccess',
-    executeType: 'immediately',
-    total: '20%',
-    totalCount: '19508313 / 10220792 / 1627356',
-    founder: 'lvlvlv',
-  }, {
-    id: 'id',
-    startTime: '2016-05-03',
-    endTime: '2016-05-03',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
-    status: 'waitStart',
-    executeType: 'immediately',
-    total: '20%',
-    totalCount: '19508313 / 10220792 / 1627356',
-    founder: 'lvlvlv',
+    id: "id",
+    startTime: "2016-05-03",
+    endTime: "2016-05-03",
+    name: "Tom",
+    address: "No. 189, Grove St, Los Angeles",
+    status: "approvalPending",
+    executeType: "immediately",
+    total: "20%",
+    totalCount: "19508313 / 10220792 / 1627356",
+    founder: "lvlvlv",
   },
-])
-const currentPage = ref(1)
-const pageSize = ref(10)
-const small = ref(false)
-const background = ref(false)
-const disabled = ref(false)
-const total = ref(110)
+  {
+    id: "id",
+    startTime: "2016-05-03",
+    endTime: "2016-05-03",
+    name: "Tom",
+    address: "No. 189, Grove St, Los Angeles",
+    status: "approvalPending",
+    executeType: "immediately",
+    total: "20%",
+    totalCount: "19508313 / 10220792 / 1627356",
+    founder: "lvlvlv",
+  },
+  {
+    id: "id",
+    startTime: "2016-05-03",
+    endTime: "2016-05-03",
+    name: "Tom",
+    address: "No. 189, Grove St, Los Angeles",
+    status: "approvalSuccess",
+    executeType: "immediately",
+    total: "20%",
+    totalCount: "19508313 / 10220792 / 1627356",
+    founder: "lvlvlv",
+  },
+  {
+    id: "id",
+    startTime: "2016-05-03",
+    endTime: "2016-05-03",
+    name: "Tom",
+    address: "No. 189, Grove St, Los Angeles",
+    status: "waitStart",
+    executeType: "immediately",
+    total: "20%",
+    totalCount: "19508313 / 10220792 / 1627356",
+    founder: "lvlvlv",
+  },
+]);
+const currentPage = ref(1);
+const pageSize = ref(10);
+const small = ref(false);
+const background = ref(false);
+const disabled = ref(false);
+const total = ref(110);
 
-const handleSizeChange = (val: number) => {
-  console.log(`${val} items per page`)
-}
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`)
-}
+const StatisticsList = ref();
+const totalCount = ref();
 
 onMounted(async () => {
-  getmarketingTouchNode()
-  fetchDataApi()
+  getmarketingTouchNode();
+  fetchDataApi();
 });
 watch([currentPage, pageSize], () => {
   fetchDataApi();
@@ -122,49 +107,56 @@ const fetchDataApi = async () => {
   const res = await getqryMarketingTouch({
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
-    ...formInline
-  })
-  tableData.value = res.data.records
-  total.value = res.data.total
+    ...formInline,
+  });
+  tableData.value = res.data.records;
+  total.value = res.data.total;
 };
-const StatisticsList = ref()
-const totalCount = ref()
-
 const getmarketingTouchNode = async () => {
-  const res = await getqryTouchStatusCount()
-  StatisticsList.value = res
-totalCount.value = StatisticsList.value.reduce((accumulator: any, currentValue: { count: any }) => accumulator + currentValue.count, 0);
-console.log(totalCount); // 输出总和
-  console.log(`output->res`, res)
-}
-const fetchDelApi = async () => {
-  const res = await delTableListApi(ids)
-  return !!res
-}
+  const res = await getqryTouchStatusCount();
+  StatisticsList.value = res;
+  totalCount.value = StatisticsList.value.reduce(
+    (accumulator: any, currentValue: { count: any }) =>
+      accumulator + currentValue.count,
+    0
+  );
+  console.log(totalCount); // 输出总和
+  console.log(`output->res`, res);
+};
 
 const setSearchParams = () => {
-  console.log(`output->`, formInline)
-  fetchDataApi()
-}
-
-
-
-const currentRow = ref<User | null>(null)
-const actionType = ref('')
-const AddAction = () => {
-}
-
-const delLoading = ref(false)
+  console.log(`output->`, formInline);
+  fetchDataApi();
+};
 
 const delData = async (row: any) => {
-  delLoading.value = true
-  await deleteMarketingTouch({ id: row.id }).finally(() => {
-    delLoading.value = false
-  })
-}
-const action = (row: User, type: string) => {
+  await deleteMarketingTouch({ id: row.id }).finally(() => {});
+};
+const startData = async (row: any) => {
+  await getstartMarketingTouch({ id: row.id }).finally(() => {});
+};
 
+const pauseData = async (row: any) => {
+  await getpauseMarketingTouch({ id: row.id }).finally(() => {});
+};
+
+const updateData = async (row: any) => {
+  await getpauseMarketingTouch({ id: row.id }).finally(() => {});
+};
+const detailsData = async (row: any) => {
+  await getpauseMarketingTouch({ id: row.id }).finally(() => {});
+};
+const addAction = () => {
+  console.log(`output->tiaozhuan`,'designNew')
+  router.push('designNew');
+};
+const handleSizeChange = (val: any) => {
+  console.log(`${val} items per page`)
 }
+const handleCurrentChange = (val: number) => {
+  console.log(`current page: ${val}`)
+}
+
 </script>
 
 <template>
@@ -193,7 +185,9 @@ const action = (row: User, type: string) => {
 
       </el-form>
       <div>
-        <el-button type="primary" @click="AddAction" class="add" round>新建策略流程</el-button>
+        <router-link to="/designNew">
+          <el-button type="primary" class="add" round>新建策略流程</el-button>
+        </router-link>
       </div>
     </div>
     <div class="tableCard">
@@ -258,15 +252,23 @@ const action = (row: User, type: string) => {
 
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
-            <el-button type="primary" @click="action(scope.row, 'edit')">
-              edit
-            </el-button>
-            <el-button type="success" @click="action(scope.row, 'detail')">
-              detail
-            </el-button>
-            <el-button type="danger" @click="delData(scope.row)">
-              del
-            </el-button>
+            <el-space wrap>
+              <!-- 
+              "draft": { Text: "草稿", type: 'info', }, 草稿
+              "approvalPending": { Text: "待审批", type: 'success' }, 审批中
+              "approvalSuccess": { Text: "审批成功", type: 'info', }, 运行中
+              "approvalRefuse": { Text: "审批拒绝", type: 'warning', }, 审批不通过
+              "waitStart": { Text: "等待启动", type: 'warning', },运行中
+              "running": { Text: "发送中", type: '', },运行中
+              "suspend": { Text: "暂停", type: 'warning', },暂停
+              "done": { Text: "已结束", type: 'info', }结束 -->
+              <el-link type="primary" v-if="scope.row.status=='suspend'" @click="startData(scope.row)">开始</el-link>
+              <el-link type="primary" v-if="scope.row.status=='waitStart'||scope.row.status=='running'||scope.row.status=='approvalSuccess'" @click="pauseData(scope.row)">暂停</el-link>
+              <el-link type="primary" v-if="scope.row.status=='draft'||scope.row.status=='approvalRefuse'||scope.row.status=='suspend'||scope.row.status=='done'" @click="delData(scope.row)">删除</el-link>
+              <el-link type="primary">复制</el-link>
+              <el-link type="primary" v-if="scope.row.status=='approvalRefuse'||scope.row.status=='draft'" @click="updateData(scope.row)">编辑</el-link>
+              <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+            </el-space>
           </template>
         </el-table-column>
       </el-table>

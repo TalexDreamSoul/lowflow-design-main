@@ -29,10 +29,6 @@ export const routes: RouterOptions["routes"] = [
     },
   },
   {
-    path: "/design",
-    component: () => import("../views/design/index.vue"),
-  },
-  {
     path: "/designNew",
     component: () => import("../touch-flow/FlowPage.vue"),
     meta: {
