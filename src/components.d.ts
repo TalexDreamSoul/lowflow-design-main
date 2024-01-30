@@ -33,6 +33,7 @@ declare module 'vue' {
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
+    ElTable: typeof import('element-plus/es')['ElTable']
     ElText: typeof import('element-plus/es')['ElText']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']

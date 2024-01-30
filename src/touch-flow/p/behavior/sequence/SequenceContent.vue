@@ -27,20 +27,10 @@ function handleAdd(item: any) {
 }
 
 function handleSubAdd(item: any) {
-  console.log("sub add", item)
-
   const arr = item.conditions = (item.conditions || []);
 
   arr.push({});
 }
-
-const attrs = computed(() => {
-  const { events } = props.dict;
-
-  return events;
-});
-
-console.log("Sequence", props.condition)
 </script>
 
 <template>

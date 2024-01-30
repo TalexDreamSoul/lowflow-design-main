@@ -102,6 +102,20 @@ const haveReveal = computed(() => {
   return [...children].find((child) => "PolicySettings" === child?.type && child?.reveal) ?? false
 })
 
+const customerConditioned = computed(() => {
+  const { customAttr, customEvent } = (props.p?.customRuleContent ?? {})
+
+  const _obj = {
+    customAttr: customAttr?.conditions?.length ?? 0,
+    customEvent: customEvent?.conditions?.length ?? 0,
+  }
+
+  return {
+    display: _obj.customAttr && _obj.customEvent,
+    ..._obj
+  }
+})
+
 const _comps = [
   {
     icon: {
@@ -163,14 +177,23 @@ function handleClick(e: Event) {
   <el-card class="PBlock">
     <p>进入流程设置</p>
     <div class="PBlock-Content">
-      <div @click="openCustomer" class="PBlock-Section">
+      <div @click="openCustomer" :class="{ checked: customerConditioned.display }" class="PBlock-Section">
         <p>
           <el-icon>
             <User />
           </el-icon>
           受众客户
+          <span v-if="customerConditioned.display">
+            <el-icon>
+              <CircleCheckFilled />
+            </el-icon>
+          </span>
         </p>
-        <span>根据客户属性、客户标签、客户行为、行为序列筛选能够进入流程的客户</span>
+        <span v-if="customerConditioned.display">
+          <span>客户属性满足：<span contentPrimary>{{ customerConditioned.customAttr }}条</span></span><br />
+          <span>客户行为满足：<span contentPrimary>{{ customerConditioned.customEvent }}条</span></span><br />
+        </span>
+        <span v-else>根据客户属性、客户标签、客户行为、行为序列筛选能够进入流程的客户</span>
       </div>
       <div @click="openCondition" :class="{ checked: conditioned }" class="PBlock-Section">
         <p>
@@ -221,8 +244,8 @@ function handleClick(e: Event) {
     </teleport>
   </el-card>
 
-  <el-button :class="{ display: conditioned && !haveDiverse }" @click="dialogVisible = true" class="start-add"
-    type="primary" :icon="Plus" circle />
+  <el-button :class="{ display: conditioned && customerConditioned.display && !haveDiverse }"
+    @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">

@@ -6,6 +6,9 @@ import SubBranch from './p/SubBranch.vue'
 import { useWindowSize } from "@vueuse/core";
 import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
 import { refreshLines, genJP } from "./line-creator";
+import { createTemplatePopover } from '../utils/touch-templates'
+
+createTemplatePopover('demo', 'znx')
 
 const props = defineProps<{
   p: any;

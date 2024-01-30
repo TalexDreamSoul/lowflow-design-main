@@ -16,3 +16,31 @@ export function delChild(child: { father: any, children: any[], [key: string]: a
 export interface IFlowUtils {
   delChild: (child: any) => boolean
 }
+
+export function validateSingleCondition(condition: object) {
+  const res = JSON.stringify(condition)?.length > 5
+
+  if (!res) {
+    console.log(condition, 'none')
+  }
+  return res
+}
+
+export function validateConditions(conditions: Array<any>): boolean {
+  return [...conditions].filter((condition: any) => {
+    if (condition.conditions) {
+      return !validateObjConditions(condition)
+    }
+    return !validateSingleCondition(condition)
+  })?.length === 0
+}
+
+export function validateObjConditions(obj: any) {
+  return validateConditions(obj?.conditions)
+}
+
+export function validateCustomerAttributes(customRuleContent: any) {
+  const { customAttr, customEvent, eventSequence } = customRuleContent
+
+  return validateObjConditions(customAttr) && validateObjConditions(customEvent) && validateObjConditions(eventSequence)
+}

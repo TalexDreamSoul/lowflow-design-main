@@ -5,6 +5,7 @@ import { createFloatingPanel } from './floating-panel'
 
 const props = defineProps<{
   modelValue?: any,
+  buttonTitle?: string
 }>()
 const emits = defineEmits(['update:modelValue'])
 
@@ -85,7 +86,7 @@ function handleClick(e: Event) {
       <el-icon color="#326DD7">
         <Plus />
       </el-icon>
-      &nbsp;&nbsp;&nbsp;插入端口
+      &nbsp;&nbsp;&nbsp;{{ buttonTitle ?? "插入端口" }}
     </el-button>
   </div>
 </template>
