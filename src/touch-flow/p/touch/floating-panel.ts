@@ -11,7 +11,7 @@ export function createFloatingPanel(reference: HTMLElement, render: any) {
   const targetClasses = ['TouchLabel', 'TouchSettingsContent', 'TouchFloating']
 
   function handleClick(e: Event) {
-    const res = e.composedPath().find((el: any) => targetClasses.some((c) => el.className && el.className.indexOf(c) !== -1))
+    const res = e.composedPath().find((el: any) => targetClasses.some((c) => el?.className?.indexOf?.(c) !== -1))
 
     if (!res) {
       dispose()
@@ -25,7 +25,10 @@ export function createFloatingPanel(reference: HTMLElement, render: any) {
 
   Object.assign(wrapper.style, {
     zIndex: '10000',
-    position: 'absolute'
+    position: 'absolute',
+    transition: '.15s',
+    opacity: '0',
+    transform: 'translateY(10%)'
   })
 
   const dispose = () => {
@@ -62,6 +65,13 @@ export function createFloatingPanel(reference: HTMLElement, render: any) {
   // console.log(floatingStyles, wrapper)
 
   app.mount(wrapper)
+
+  setTimeout(() => {
+    Object.assign(wrapper.style, {
+      opacity: '1',
+      transform: 'translateY(0%)'
+    })
+  }, 100)
 
   return dispose
 }

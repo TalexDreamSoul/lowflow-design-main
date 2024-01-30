@@ -2,7 +2,8 @@ import { toRefs } from "vue"
 import { dictFilterTree } from '~/api/index'
 
 export async function getDictAnalyzedTree() {
-  const { data: res } = await dictFilterTree()
+  const dict = await dictFilterTree()
+  const { data: res } = dict
 
   const { attrs, labels } = res
 
@@ -33,7 +34,7 @@ export async function getDictAnalyzedTree() {
     }
   })
 
-  return [
+  return [[
     {
       label: "用户属性",
       value: "attr",
@@ -44,7 +45,7 @@ export async function getDictAnalyzedTree() {
       value: "label",
       children: _labels,
     },
-  ]
+  ], dict]
 }
 
 export function _delChild(parent: any, child: any) {

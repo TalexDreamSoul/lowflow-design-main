@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { ElTreeSelect } from 'element-plus'
 import { createReusableTemplate } from '@vueuse/core'
 
 const [DefineForTree, ForTree] = createReusableTemplate<any>()
@@ -24,15 +23,21 @@ watch(() => model.value, () => {
 
 <template>
   <DefineSingleNode v-slot="{ node }">
-    <div>
-      123 {{ node }}
+    <div @click="model = node.value">
+      <span class="option">{{ node.label }}</span>
     </div>
   </DefineSingleNode>
 
   <DefineForTree v-slot="{ node }">
-    <div v-if="node.children" v-for="child in node.children" :key="child.id" :node="child">
-      CHILD: {{ child }}
-    </div>
+    <template v-if="node.children">
+      <p class="title">
+        {{ node.label }}
+      </p>
+      <div v-for="child in node.children" :key="child.id" :node="child">
+
+        <ForTree :node="child" />
+      </div>
+    </template>
 
     <ForSingleNode :node="node" v-else />
 
@@ -40,17 +45,80 @@ watch(() => model.value, () => {
 
   <div class="TouchSelectable">
     <el-scrollbar>
-      <ForTree :node="data" />
+      <div v-for="node in data">
+        <!-- <p class="title">
+          {{ node.label }}
+        </p> -->
+        <ForTree :node="node" />
+      </div>
     </el-scrollbar>
   </div>
 </template>
 
-<style lang="scss">
-.TouchSelectable {
-  width: 400px;
-  height: 100px;
+<style lang="scss" scoped>
+.title {
+  margin: 8px 0;
+  font-weight: 600;
 
-  border-radius: 8px;
-  background-color: #fff;
+  &~div .title {
+    opacity: .85;
+    text-indent: 8px;
+
+
+  }
+
+  &~div span.option {
+    display: block;
+
+    text-indent: 12px;
+  }
+}
+
+.option {
+  &::before {
+    z-index: -1;
+    content: "";
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 0;
+    height: 100%;
+
+    opacity: .5;
+    transition: .25s;
+    border-radius: 0 4px 4px 0;
+    border-left: 2px solid #409DFE00;
+    background-color: #ffffff00;
+  }
+
+  &:hover {
+    &::before {
+      width: 100%;
+
+      background-color: #ffffff;
+      border-left: 2px solid #409DFE;
+    }
+
+    color: #409DFE
+  }
+
+  position: relative;
+  padding: 4px 5px;
+
+  display: block;
+
+  cursor: pointer;
+  text-indent: 8px;
+}
+
+.TouchSelectable {
+
+
+  position: relative;
+
+  width: 100%;
+  height: 100%;
 }
 </style>

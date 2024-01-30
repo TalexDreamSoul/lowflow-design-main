@@ -31,7 +31,7 @@ onMounted(() => {
     <div class="BaseTemplate-Header">
       <p class="BaseTemplate-Title" v-text="title" />
 
-      <el-icon @click="close" style="font-size: 20px">
+      <el-icon @click="close as any" style="cursor: pointer;font-size: 20px">
         <Close />
       </el-icon>
     </div>
