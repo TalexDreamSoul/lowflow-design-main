@@ -70,3 +70,18 @@ export const getqryTouchStatusCount = () => {
 }
 
 
+// 营销触达暂停
+export const getpauseMarketingTouch = (data: any) => {
+    return request.post({ url: '/api/pauseMarketingTouch.do', data })
+}
+
+
+// 营销触达开始
+export const getstartMarketingTouch = (data: any) => {
+    return request.post({ url: '/api/pauseMarketingTouch.do', data })
+}
+
+// 删除营销触达
+export const getupdateMarketingTouch = (data: any) => {
+    return request.post({ url: '/api/updateMarketingTouch.do', data })
+}
