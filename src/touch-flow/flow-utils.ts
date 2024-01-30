@@ -1,4 +1,51 @@
 import { toRefs } from "vue"
+import { dictFilterTree } from '~/api/index'
+
+export async function getDictAnalyzedTree() {
+  const { data: res } = await dictFilterTree()
+
+  const { attrs, labels } = res
+
+  const _attrs = attrs.map((attr: any) => {
+    return {
+      label: attr.fieldName,
+      value: attr.field,
+      ...attr
+    }
+  })
+
+  const _labels = labels.map((label: any) => {
+    const children: any = []
+    if (label.labelValue) {
+      [...label.labelValue.data].forEach(item => {
+        children.push({
+          label: item,
+          value: item,
+          ...label
+        })
+      })
+    }
+
+    return {
+      label: label.labelName,
+      children,
+      ...label
+    }
+  })
+
+  return [
+    {
+      label: "用户属性",
+      value: "attr",
+      children: _attrs,
+    },
+    {
+      label: "用户标签",
+      value: "label",
+      children: _labels,
+    },
+  ]
+}
 
 export function _delChild(parent: any, child: any) {
 

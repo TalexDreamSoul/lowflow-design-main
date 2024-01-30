@@ -5,7 +5,8 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import ZnxTemplateVue from './templates/ZnxTemplate.vue'
 
 const templates = {
-  znx: ZnxTemplateVue
+  znx: ZnxTemplateVue,
+  // sms: SmsTemplateVue,
 }
 
 function _createApp(comp: Component, props: any) {

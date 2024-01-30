@@ -43,7 +43,6 @@ export function createFloatingPanel(reference: HTMLElement, render: any) {
   wrapper.className = 'TouchFloating'
 
   computePosition(reference, wrapper).then(({ x, y }) => {
-    console.log({ x, y }, "r")
     wrapper.style.left = `${x}px`
     wrapper.style.top = `${y}px`
   })

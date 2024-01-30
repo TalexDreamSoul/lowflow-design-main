@@ -24,7 +24,9 @@ const origin = {
   do: false,
   num: 1,
   touch: {
-    type: ""
+    type: "",
+    content: "",
+    variables: []
   },
   material: {
     type: "",
@@ -425,7 +427,7 @@ function sequenceAdd() {
             <el-button ml-1rem type="primary" plain>新增短信模块版本</el-button>
           </el-form-item>
           <el-form-item label="触达内容">
-            <TouchSettingContents v-model="sizeForm.touch" />
+            <TouchSettingContents content="content" variables="variables" v-model="sizeForm.touch" />
           </el-form-item>
         </div>
       </div>
