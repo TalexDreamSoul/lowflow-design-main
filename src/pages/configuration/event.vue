@@ -32,7 +32,7 @@
                   checkStringEqual(scope.row.status, ConfigStatus.Available) ? '可用' : '已下线' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="220">
+          <el-table-column label="操作">
             <template #default="scope">
               <el-button @click="handleSetStatus(scope.row)" link type="primary" class="action-btn">{{ checkStringEqual(scope.row.status,
                 ConfigStatus.Available) ? '下线' : '上线' }}</el-button>
@@ -74,7 +74,7 @@
               placeholder="请输入" />
           </el-form-item>
         </el-form>
-        <div class="attr">
+        <div class="attr-content">
           <div class="title">
             <div class="text">关联属性</div>
             <el-button v-if="!checkStringEqual(drawerType, DrawerType.Detail)" round type="primary" @click="onCreateEventAttr(DrawerType.Create)">新建事件属性</el-button>
@@ -463,7 +463,7 @@ const handleAttrDelete = (index: number) => {
       text-align: right;
     }
 
-    .attr {
+    .attr-content {
       margin-top: 24px;
 
       .title {

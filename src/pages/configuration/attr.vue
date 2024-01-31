@@ -26,7 +26,7 @@
                   checkStringEqual(scope.row.status, ConfigStatus.Available) ? '可用' : '已下线' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="168">
+          <el-table-column label="操作">
             <template #default="scope">
               <el-button class="action-btn" @click="handleSetStatus(scope.row)" link type="primary">{{
                 checkStringEqual(scope.row.status,
