@@ -2,14 +2,14 @@
   <div class="event">
     <div class="title">事件列表</div>
     <div class="search">
-      <el-form :inline="true" :model="params">
+      <el-form :inline="true" :model="pageParams">
         <el-form-item>
-          <el-select size='large' v-model="params.eventType" placeholder="类别" clearable>
+          <el-select size='large' v-model="pageParams.eventType" placeholder="类别" clearable>
             <el-option v-for="item of EVENT_TYPE" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-input size='large' v-model="params.eventName" placeholder="事件名称" clearable :suffix-icon="Search" />
+          <el-input size='large' v-model="pageParams.eventName" placeholder="事件名称" clearable :suffix-icon="Search" />
         </el-form-item>
       </el-form>
       <el-button class="pd-button" round type="primary" @click="handleDrawer(DrawerType.Create)">新建事件</el-button>
@@ -17,37 +17,40 @@
     <div class="content">
       <el-watermark content="11111" :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="eventCode" label="事件编码" width="328" />
-          <el-table-column prop="eventName" label="事件名称" width="404" />
-          <el-table-column prop="describe" label="事件说明" width="385" />
-          <el-table-column prop="eventType" label="类别" width="267">
+          <el-table-column prop="eventCode" label="事件编码" width="246" />
+          <el-table-column prop="eventName" label="事件名称" width="303" />
+          <el-table-column prop="describe" label="事件说明" width="289" />
+          <el-table-column prop="eventType" label="类别" width="200">
             <template #default="scope">
               {{ EVENT_TYPE.find(v => checkStringEqual(v.value, scope.row.eventType))?.label }}
             </template>
           </el-table-column>
-          <el-table-column prop="status" label="状态" width="216">
+          <el-table-column prop="status" label="状态" width="162">
             <template #default="scope">
               <el-tag v-if="!!scope.row.status"
-                :type="checkStringEqual(scope.row.status, Status.Available) ? '' : 'info'">{{
-                  checkStringEqual(scope.row.status, Status.Available) ? '可用' : '已下线' }}</el-tag>
+                :type="checkStringEqual(scope.row.status, ConfigStatus.Available) ? '' : 'info'">{{
+                  checkStringEqual(scope.row.status, ConfigStatus.Available) ? '可用' : '已下线' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="240">
+          <el-table-column label="操作" width="220">
             <template #default="scope">
-              <el-button link type="primary">下线</el-button>
-              <el-button @click="handleDrawer(DrawerType.Edit, scope.row)" link type="primary">编辑</el-button>
-              <el-button link type="primary">查看详情</el-button>
+              <el-button @click="handleSetStatus(scope.row)" link type="primary" class="action-btn">{{ checkStringEqual(scope.row.status,
+                ConfigStatus.Available) ? '下线' : '上线' }}</el-button>
+              <el-button @click="handleDrawer(DrawerType.Edit, scope.row)" link type="primary" class="action-btn">编辑</el-button>
+              <el-button link type="primary" class="action-btn" @click="handleDelete(scope.row)">删除</el-button>
+              <el-button @click="handleDrawer(DrawerType.Detail, scope.row)" link type="primary" class="action-btn">查看详情</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-watermark>
       <el-pagination background layout="prev, pager, next, sizes, jumper" :total='total' :page-sizes="[10]"
-        v-model:current-page="params.pageNum" />
+        v-model:current-page="pageParams.pageNum" />
     </div>
-    <el-drawer :size='946' v-model="drawer" :with-header="false" class="event-drawer">
+    <el-drawer :destroy-on-close="true" :close-on-click-modal="false" :size='946' v-model="drawer" :with-header="false"
+      class="event-drawer">
       <div class="event-drawer-header">{{ DrawerTitleMap[drawerType] }}</div>
       <div class="event-drawer-content">
-        <el-form ref="formRef" :hide-required-asterisk="true" label-position='top' :model="formValues" class="form">
+        <el-form :disabled="checkStringEqual(drawerType, DrawerType.Detail)" ref="formRef" :hide-required-asterisk="true" label-position='top' :model="formValues" class="form">
           <el-form-item :rules="[
             { required: true, message: '请输入事件编码' },
             { pattern: /^[a-zA-Z0-9_]{1,18}$/, message: '仅支持数字、字母、下划线，不超过18个字符' },
@@ -74,14 +77,14 @@
         <div class="attr">
           <div class="title">
             <div class="text">关联属性</div>
-            <el-button round type="primary" @click="onCreateEventAttr(DrawerType.Create)">新建事件属性</el-button>
+            <el-button v-if="!checkStringEqual(drawerType, DrawerType.Detail)" round type="primary" @click="onCreateEventAttr(DrawerType.Create)">新建事件属性</el-button>
           </div>
           <el-watermark content="11111" :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
             <el-table :data="formValues.attrTableData" style="width: 100%">
-              <el-table-column prop="fieldCode" label="属性编码" width="109" />
+              <el-table-column prop="field" label="属性编码" width="109" />
               <el-table-column prop="fieldName" label="属性名称" width="200" />
               <el-table-column prop="describe" label="属性说明" width="360" />
-              <el-table-column prop="fieldType" label="数据类别" width="124">
+              <el-table-column prop="fieldType" label="数据类别">
                 <template #default="scope">
                   {{ ATTR_FIELD_TYPE.find(v => checkStringEqual(v.value, scope.row.fieldType))?.label }}
                 </template>
@@ -89,8 +92,8 @@
               <el-table-column v-if="drawerType !== DrawerType.Detail" label="操作" width="105">
                 <template #default="scope">
                   <el-button link type="primary"
-                    @click="onCreateEventAttr(DrawerType.Edit, scope.row, scope.$index)">编辑</el-button>
-                  <el-button link type="primary" @click="handleAttrDelete(scope.$index)">删除</el-button>
+                    @click="onCreateEventAttr(DrawerType.Edit, scope.row, scope.$index)" class="action-btn">编辑</el-button>
+                  <el-button link type="primary" @click="handleAttrDelete(scope.$index)" class="action-btn">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -98,23 +101,23 @@
         </div>
       </div>
       <div class="event-drawer-footer">
-        <el-button v-if="drawerType === DrawerType.Detail" class="pd-button" round>返回</el-button>
-        <el-button v-if="drawerType !== DrawerType.Detail" class="pd-button" round>取消</el-button>
+        <el-button v-if="drawerType === DrawerType.Detail" class="pd-button" @click="drawer = false" round>返回</el-button>
+        <el-button v-if="drawerType !== DrawerType.Detail" class="pd-button" @click="drawer = false" round>取消</el-button>
         <el-button v-if="drawerType !== DrawerType.Detail" class="pd-button" @click.prevent="onSubmit(formRef)" round
           type="primary">保存</el-button>
       </div>
     </el-drawer>
     <el-dialog class="attr-modal" destroy-on-close :close-on-click-modal="false" v-model="dialogFormVisible"
       :title='ModalTitleMap[modalType]'>
-      <el-form ref="attrFormRef" :hide-required-asterisk="true" label-position='top' class="form" :model="attrFormValues">
+      <el-form :disabled="checkStringEqual(modalType, DrawerType.Detail)" ref="attrFormRef" :hide-required-asterisk="true" label-position='top' class="form" :model="attrFormValues">
         <el-form-item :rules="[
           { required: true, message: '请输入属性编码' },
           { pattern: /^[a-zA-Z0-9_]{1,18}$/, message: '仅支持数字、字母、下划线，不超过18个字符' },
-        ]" label="属性编码" prop="fieldCode">
-          <el-input size='large' v-model="attrFormValues.fieldCode" placeholder="请输入" clearable />
+        ]" label="属性编码" prop="field">
+          <el-input size='large' v-model="attrFormValues.field" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item :rules="[
-          { pattern: /^[u4E00-u9FA5A-Za-z0-9_]{1,18}$/, message: '仅支持数字、汉字、字母、下划线，不超过18个字符' },
+          { pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/, message: '仅支持数字、汉字、字母、下划线，不超过18个字符' },
         ]" label="属性名称" prop="fieldName">
           <el-input size='large' v-model="attrFormValues.fieldName" placeholder="请输入" clearable />
         </el-form-item>
@@ -132,11 +135,11 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button v-if="drawerType === DrawerType.Detail" class="pd-button" round
+          <el-button v-if="modalType === DrawerType.Detail" class="pd-button" round
             @click="dialogFormVisible = false">返回</el-button>
-          <el-button v-if="drawerType !== DrawerType.Detail" class="pd-button" round
+          <el-button v-if="modalType !== DrawerType.Detail" class="pd-button" round
             @click="dialogFormVisible = false">取消</el-button>
-          <el-button v-if="drawerType !== DrawerType.Detail" class="pd-button" @click.prevent="onSubmitAttr(attrFormRef)"
+          <el-button v-if="modalType !== DrawerType.Detail" class="pd-button" @click.prevent="onSubmitAttr(attrFormRef)"
             round type="primary">保存</el-button>
         </span>
       </template>
@@ -145,7 +148,7 @@
 </template>
 <script lang="ts" setup>
 import { reactive, ref, watch, onMounted } from 'vue';
-import { EVENT_TYPE, ATTR_FIELD_TYPE } from '~/constants';
+import { EVENT_TYPE, ATTR_FIELD_TYPE, ConfigStatus } from '~/constants';
 import API from '~/api/configuration';
 import { checkStringEqual, debounce } from '~/utils/common';
 import { Search } from '@element-plus/icons-vue';
@@ -156,11 +159,6 @@ enum DrawerType {
   Create = 'create',
   Detail = 'detail',
   Edit = 'edit'
-};
-
-enum Status {
-  Available = 'available',
-  Offline = 'offline'
 };
 
 const DrawerTitleMap: any = {
@@ -175,7 +173,7 @@ const ModalTitleMap: any = {
   [DrawerType.Edit]: '编辑属性',
 };
 
-const params = reactive({
+const pageParams = reactive({
   eventName: '',
   eventType: '',
   pageNum: 1
@@ -191,7 +189,7 @@ const defaultFormValues = {
 const formValues: any = reactive({ ...defaultFormValues });
 
 const defaultAttrFormValues = {
-  fieldCode: '',
+  field: '',
   fieldName: '',
   describe: '',
   fieldType: '',
@@ -209,12 +207,12 @@ const dialogFormVisible = ref(false);
 const modalType = ref<any>(DrawerType.Create);
 const editAttrIndex = ref(0);
 
-watch(params, debounce(() => {
-  getData(params);
+watch(pageParams, debounce(() => {
+  getData(pageParams);
 }, 200));
 
 onMounted(() => {
-  getData(params)
+  getData(pageParams)
 });
 
 const getData = async (params: any) => {
@@ -232,12 +230,40 @@ const getData = async (params: any) => {
   }
 }
 
+const handleSetStatus = async (values: any) => {
+  let res = await API.updateEventDict({
+    ...values,
+    status: ConfigStatus.Available === values.status ? ConfigStatus.Offline : ConfigStatus.Available
+  });
+  if (checkStringEqual(res?.code, 0)) {
+    getData(pageParams);
+  }
+}
+
+const handleDelete = (values: any) => {
+  ElMessageBox.alert(
+    '删除后将无法恢复',
+    '确认删除',
+    {
+      showCancelButton: true,
+      roundButton: true,
+      cancelButtonClass: 'pd-button',
+      confirmButtonClass: 'pd-button',
+      customClass: 'delete-modal'
+    }
+  ).then(async () => {
+    let res = await API.deleteEventDict({ id: values.id });
+    if (checkStringEqual(res?.code, 0)) {
+      getData(pageParams);
+    }
+  })
+}
+
 const handleDrawer = (type: string, values?: any) => {
   if (type === DrawerType.Create) {
     Object.assign(formValues, defaultFormValues);
   } else {
     let { eventAttr, ...params } = values;
-    console.log(eventAttr);
     Object.assign(formValues, { ...params, attrTableData: eventAttr?.attrs || [] });
   }
   drawerType.value = type;
@@ -249,14 +275,16 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   try {
     await formEl.validate();
     let { attrTableData, ...params } = formValues;
-    console.log(JSON.stringify(formValues));
-    // let res
-    // if (checkStringEqual(drawerType.value, DrawerType.Create)) {
-
-    // } else {
-
-    // }
-    dialogFormVisible.value = false;
+    let res = await API[checkStringEqual(drawerType.value, DrawerType.Create) ? 'addEventDict' : 'updateEventDict']({
+      ...params,
+      eventAttr: {
+        attrs: attrTableData
+      }
+    });
+    if (checkStringEqual(res?.code, 0)) {
+      getData(pageParams);
+      drawer.value = false;
+    }
   } catch (error) {
     console.error(error);
   }
@@ -306,7 +334,6 @@ const handleAttrDelete = (index: number) => {
     arr.splice(index, 1);
     formValues.attrTableData = [...arr];
   })
-
 }
 </script>
 
@@ -372,10 +399,6 @@ const handleAttrDelete = (index: number) => {
 
         .el-button.is-link {
           padding: 0;
-        }
-
-        .el-button__text--expand {
-          letter-spacing: 0;
         }
       }
     }
@@ -452,7 +475,7 @@ const handleAttrDelete = (index: number) => {
         .text {
           font-size: 14px;
           font-weight: 400;
-          line-height: 16px;
+          line-height: 32px;
         }
       }
 
@@ -463,6 +486,16 @@ const handleAttrDelete = (index: number) => {
           background-color: rgba(242, 244, 248, 1);
         }
       }
+    }
+  }
+
+  .action-btn {
+    span {
+      letter-spacing: 0;
+      line-height: 17px;
+    }
+    &:not(:first-child) {
+      margin-left: 6px;
     }
   }
 

@@ -79,3 +79,11 @@ export const ATTR_FIELD_TYPE = [
     value: "boolean",
   },
 ];
+
+/**
+ * 配置中心状态常量
+ */
+export enum ConfigStatus {
+  Available = 'available',
+  Offline = 'offline'
+};
