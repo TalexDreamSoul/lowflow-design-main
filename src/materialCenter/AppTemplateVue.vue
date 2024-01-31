@@ -35,7 +35,6 @@ let tableData = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
-const background = ref(false);
 const disabled = ref(false);
 const total = ref(110);
 
@@ -43,7 +42,6 @@ const StatisticsList = ref();
 const totalCount = ref();
 
 onMounted(async () => {
-  getmarketingTouchNode();
   fetchDataApi();
 });
 watch([currentPage, pageSize, formInline], () => {
@@ -60,17 +58,6 @@ const fetchDataApi = async () => {
   total.value = res.data.total;
   console.log(`output->tabledata`, tableData.value);
 };
-const getmarketingTouchNode = async () => {
-  const res = await getqryTouchStatusCount();
-  StatisticsList.value = res;
-  totalCount.value = StatisticsList.value.reduce(
-    (accumulator: any, currentValue: { count: any }) =>
-      accumulator + currentValue.count,
-    0
-  );
-  console.log(totalCount); // 输出总和
-  console.log(`output->res`, res);
-};
 
 const setSearchParams = () => {
   console.log(`output->`, formInline);
@@ -78,19 +65,26 @@ const setSearchParams = () => {
 };
 
 const delData = async (row: any) => {
-  await setDeleteMaterial({
+  let res = await setDeleteMaterial({
     id: row.id,
     status: row.status,
     type: formInline.type,
-  }).finally(() => {});
+  });
+
+  if (res?.code == 0) {
+    fetchDataApi();
+  }
 };
 // 上线素材
 const startData = async (row: any) => {
-  await setOnlineMaterial({
+  let res = await setOnlineMaterial({
     id: row.id,
     status: row.status,
     type: formInline.type,
-  }).finally(() => {});
+  });
+  if (res?.code == 0) {
+    fetchDataApi();
+  }
   console.log(`output->上线素材`);
 };
 
@@ -99,11 +93,15 @@ const pauseData = async (row: any) => {
 };
 
 const unlineData = async (row: any) => {
-  await setOfflineMaterial({
+  let res = await setOfflineMaterial({
     id: row.id,
     status: row.status,
     type: formInline.type,
-  }).finally(() => {});
+  });
+
+  if (res?.code == 0) {
+    fetchDataApi();
+  }
 };
 const detailsData = async (row: any) => {
   let res = await getMaterialDetail({
@@ -154,7 +152,7 @@ const handleCurrentChange = (val: number) => {
     </div>
     <div class="tableCard">
 
-      <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;">
+      <el-table :data="tableData" >
         <el-table-column label="模版ID" width="180">
           <template #default="scope">
             {{ scope.row.id }}
@@ -165,9 +163,19 @@ const handleCurrentChange = (val: number) => {
             {{ scope.row.name }}
           </template>
         </el-table-column>
-        <el-table-column label="短信内容" width="180">
+       
+        <el-table-column label="列表标题" width="180">
           <template #default="scope">
-            {{ scope.row.content }}
+            <el-popover effect="light" trigger="hover" placement="top" width="auto">
+              <template #default>
+                {{ scope.row.content }}
+              </template>
+              <template #reference>
+                <div class="popover-reference">
+                  {{ scope.row.content.title }}
+                </div>
+              </template>
+            </el-popover>
           </template>
         </el-table-column>
         <el-table-column label="状态" width="180">
@@ -214,113 +222,14 @@ const handleCurrentChange = (val: number) => {
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" background layout="prev, pager, next, sizes, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
 
     </div>
 
   </div>
 </template>
-<style lang="scss" scoped>
-.warp {
-  background: linear-gradient(
-    to bottom,
-    #eeeff6,
-    rgba(56, 128, 228, 0.1098039216)
-  );
-  padding: 24px 40px;
-  height: 90vh;
-}
+<style lang="scss">
+@import './material.scss';
 
-.tableCard {
-  background: #ffffff;
-  box-shadow: 0px 20px 50px 0px rgba(0, 0, 0, 0.02);
-  border-radius: 8px 8px 8px 8px;
-  opacity: 1;
-  padding: 24px 24px 80px 24px;
-}
-
-.pagination {
-  margin-top: 24px;
-  float: right;
-}
-
-.pageTitle {
-  font-size: 20px;
-  font-weight: 500;
-  color: #000000;
-  margin-bottom: 12px;
-}
-
-.topSearch {
-  display: flex;
-  justify-content: space-between;
-}
-
-.add {
-  pointer-events: none;
-  background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
-  transition: 0.25s;
-}
-
-.countCard {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.showCount {
-  width: 100px;
-  height: 50px;
-  margin-right: 16px;
-
-  background: linear-gradient(
-    180deg,
-    #f2f4f8 0%,
-    rgba(242, 244, 248, 0.4) 100%
-  );
-  border-radius: 8px 8px 8px 8px;
-  opacity: 1;
-  margin-bottom: 24px;
-  padding: 24px;
-
-  color: rgba(0, 0, 0, 0.9);
-
-  .topcount {
-    font-size: 32px;
-    font-weight: 800;
-  }
-
-  .undercount {
-    font-weight: 400;
-    font-size: 14px;
-    color: #7f8080;
-  }
-}
-
-.allcount {
-  color: #ffffff;
-
-  background: linear-gradient(180deg, #2258bb 0%, #4078e0 100%);
-
-  .undercount {
-    font-weight: 400;
-    font-size: 14px;
-    color: #bed1f4;
-  }
-}
-
-.tagStatus {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  vertical-align: middle;
-  height: 24px;
-  padding: 0 9px;
-  font-size: 12px;
-  line-height: 1;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 4px;
-  box-sizing: border-box;
-  white-space: nowrap;
-}
+/* 组件的样式 */
 </style>
