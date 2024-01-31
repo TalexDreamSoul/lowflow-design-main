@@ -20,10 +20,6 @@ function saveData() {
   }
 }
 
-onMounted(() => {
-  console.log()
-})
-
 </script>
 
 <template>
@@ -41,7 +37,7 @@ onMounted(() => {
     </div>
 
     <div class="BaseTemplate-Footer">
-      <el-button @click="close" round>取消</el-button>
+      <el-button @click="(close as any)" round>取消</el-button>
       <el-button @click="saveData" round class="primaryStyle">保存</el-button>
     </div>
   </div>

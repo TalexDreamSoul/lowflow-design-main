@@ -202,7 +202,7 @@ function handleClick(e: Event) {
   z-index: 100;
   padding: .5rem;
 
-  width: 240px;
+  width: 160px;
   height: 300px;
 
   overflow: hidden;

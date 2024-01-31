@@ -63,8 +63,6 @@ watch(() => model.value, () => {
   &~div .title {
     opacity: .85;
     text-indent: 8px;
-
-
   }
 
   &~div span.option {
@@ -83,22 +81,40 @@ watch(() => model.value, () => {
     left: 0;
     top: 0;
 
-    width: 0;
+    width: 100%;
     height: 100%;
 
-    opacity: .5;
-    transition: .25s;
+    transition: .125s;
+    transform: translateX(-100%);
     border-radius: 0 4px 4px 0;
-    border-left: 2px solid #409DFE00;
-    background-color: #ffffff00;
+    background-color: #ffffff;
+  }
+
+  &::after {
+    z-index: -1;
+    content: "";
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 2px;
+    height: 100%;
+
+    transition: .125s;
+    transform: translateX(-100%) scale(0);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 0 4px 0 #409DFE;
+    background-color: #409DFE;
   }
 
   &:hover {
     &::before {
-      width: 100%;
+      transform: translateX(0);
+    }
 
-      background-color: #ffffff;
-      border-left: 2px solid #409DFE;
+    &::after {
+      transform: translateX(0) scale(1);
     }
 
     color: #409DFE
