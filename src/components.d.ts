@@ -56,6 +56,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
+    ElWatermark: typeof import('element-plus/es')['ElWatermark']
     EventGroup: typeof import('./components/EventGroup/index.ts')['default']
     Interface: typeof import('./components/Render/interface.ts')['default']
     RoleSelection: typeof import('./components/RoleSelection/index.ts')['default']

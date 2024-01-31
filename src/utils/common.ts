@@ -9,3 +9,30 @@ export function randomStr(length: number = 6): string {
 
   return (100000 + Math.random() * 1000000).toString(16).slice(length) + (length == 6 ? '' : randomStr(length - 6))
 }
+
+const isNil = (v: unknown): boolean => {
+  return v === undefined || v === null;
+};
+
+export const checkStringEqual = (v1: string | number, v2: string | number, ...rest: (string | number)[]): boolean => {
+  if (rest?.length > 0) {
+    const list = [`${v2}`, ...rest.map(item => `${item}`)];
+    return list.includes(`${v1}`);
+  }
+  if (isNil(v1) || isNil(v2)) {
+    return false;
+  }
+  return `${v1}` === `${v2}`;
+};
+
+export const debounce = (fun: any, wait = 3000) => {
+  let timerId: any = null;
+
+  return (...rest: any) => {
+    let args = rest;
+    if (timerId) clearTimeout(timerId);
+    timerId = setTimeout(() => {
+      fun(...args);
+    }, wait);
+  };
+};
