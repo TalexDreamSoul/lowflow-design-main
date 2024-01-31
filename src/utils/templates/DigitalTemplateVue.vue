@@ -5,6 +5,7 @@ import { reactive, ref } from "vue";
 import { Delete, Download, Plus, ZoomIn } from "@element-plus/icons-vue";
 
 import type { UploadFile } from "element-plus";
+import MicroEnterpriseDrag from "./MicroEnterpriseDrag.vue";
 
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
@@ -76,6 +77,25 @@ const handlePictureCardPreview = (file: UploadFile) => {
 const handleDownload = (file: UploadFile) => {
   console.log(file);
 };
+
+const list = ref([
+  {
+    id: "1",
+    name: "模板1",
+  },
+  {
+    id: "2",
+    name: "模板2",
+  },
+  {
+    id: "3",
+    name: "模板3",
+  },
+  {
+    id: "4",
+    name: "模板4",
+  }
+])
 </script>
 
 <template>
@@ -98,7 +118,10 @@ const handleDownload = (file: UploadFile) => {
       <TouchSettingContents variables="titleVariables" content="listTitle" v-model="origin" buttonTitle="输入变量" />
     </el-form-item>
 
-    <el-upload action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15" :auto-upload="false" class="upload-demo button-groupupload">
+    <MicroEnterpriseDrag v-model="list" />
+
+    <el-upload action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15" :auto-upload="false"
+      class="upload-demo button-groupupload">
       <el-text type="primary" style="cursor: pointer;" @click="addPic">
         <el-icon size="14">
           <CirclePlusFilled />
@@ -126,6 +149,7 @@ const handleDownload = (file: UploadFile) => {
   margin: 12px 0;
   cursor: pointer;
 }
+
 .button-groupupload {
   padding-top: 10px;
   padding-left: 10px;
