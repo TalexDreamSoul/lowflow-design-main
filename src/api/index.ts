@@ -85,3 +85,28 @@ export const getstartMarketingTouch = (data: any) => {
 export const getupdateMarketingTouch = (data: any) => {
     return request.post({ url: '/api/updateMarketingTouch.do', data })
 }
+
+// 素材列表
+export const getqryMaterial = (data: any) => {
+    return request.post({ url: '/api/qryMaterial.do', data })
+}
+
+// 上线素材
+export const setOnlineMaterial = (data: any) => {
+    return request.post({ url: '/api/onlineMaterial.do', data })
+}
+
+// 下线素材
+export const setOfflineMaterial = (data: any) => {
+    return request.post({ url: '/api/offlineMaterial.do', data })
+}
+
+// 删除素材
+export const setDeleteMaterial = (data: any) => {
+    return request.post({ url: '/api/deleteMaterial.do', data })
+}
+
+// 素材详情
+export const getMaterialDetail = (data: any) => {
+    return request.post({ url: '/api/materialDetail.do', data })
+}

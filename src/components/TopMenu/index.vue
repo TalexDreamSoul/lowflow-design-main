@@ -43,8 +43,11 @@
         <div class="dropdown">
           素材中心
           <div class="dropdown-menu">
-            <router-link to="/pinia">Service 1</router-link>
-            <router-link to="/page">Service 2</router-link>
+            <router-link to="/materialCenter/SmsTemplateVue">短信模版</router-link>
+            <router-link to="/materialCenter/OutboundTemplateVue">外呼模版</router-link>
+            <router-link to="/materialCenter/AppTemplateVue">APP Push模版</router-link>
+            <router-link to="/materialCenter/DigitalTemplateVue">企微模版</router-link>
+            <router-link to="/materialCenter/ZnxTemplateVue">站内信模版</router-link>
           </div>
         </div>
         <div class="dropdown">
