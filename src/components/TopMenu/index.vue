@@ -120,12 +120,14 @@ function targetPage(page: any) {
     }
 
     display: block;
-    padding: .5rem;
+    padding: .5rem 1rem;
 
-    width: 80px;
+    color: #000;
+    width: 100px;
     height: 32px;
     line-height: 32px;
-    text-align: center;
+    text-align: left;
+    text-decoration: unset;
   }
 
   position: absolute;
