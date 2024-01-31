@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { inject, ref, reactive, onMounted } from "vue";
 import { randomStr } from "~/utils/common";
-import { getqryMaterial, getmarketingTouchEstimate } from "~/api";
+import { getQryMaterial, getmarketingTouchEstimate } from "~/api";
 
 const transform = ref(true);
 const transformset = ref(true);
@@ -134,7 +134,7 @@ const getqryMaterialval = async () => {
     status: "available",
     type: "sms",
   };
-  let res = await getqryMaterial(param);
+  let res = await getQryMaterial(param);
   dictType.value = res.data;
 };
 

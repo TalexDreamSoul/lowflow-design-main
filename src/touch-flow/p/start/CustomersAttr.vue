@@ -1,76 +1,58 @@
 <script setup lang="ts">
+import { ElMessage } from "element-plus";
 import BehaviorGroup from "../behavior/BehaviorGroup.vue";
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, inject } from "vue";
 import { getmarketingTouchEstimate } from "~/api/index";
 import CustomAttr from "../behavior/CustomAttr.vue";
 import CustomBehavior from "../behavior/CustomBehavior.vue";
 import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
-import { MarketingTouchEditDTO } from "../behavior/marketing";
+import { MarketingTouchEditDTO, CustomSearchDTO } from "../behavior/marketing";
+import { validateCustomerAttributes } from './../../flow-utils'
 
-const sizeForm = reactive({
-  name: "",
-  region: "",
-  date1: "",
-  date2: "",
-  date3: "",
-  delivery: false,
-  type: [],
-  restrictions: "",
-  resourceday: "",
-  resourcetimes: "",
-  desc: "",
-  timenine: "",
-  selectedType: "",
-  weekday: "",
-  monthday: "",
+const customRuleContent = reactive<CustomSearchDTO>({
+  customAttr: {
+    conditions: [
+      {
+        conditions: [
+          {}
+        ],
+        logicalChar: "or",
+      }
+    ],
+    logicalChar: "or",
+  },
+  customEvent: {
+    conditions: [
+      {
+        conditions: [
+          {}
+        ],
+        logicalChar: "or",
+      }
+    ],
+    logicalChar: "or",
+  },
+  eventSequence: {
+    conditions: [
+      {
+        conditions: [
+          {
+            conditions: []
+          }
+        ],
+        logicalChar: "or",
+      }
+    ],
+    logicalChar: "or",
+  },
+  logicalChar: "or",
 });
 
 const props = defineProps<{
   p: MarketingTouchEditDTO;
 }>();
 
-const { customRuleContent } = props.p;
-
-if (!customRuleContent) {
-  props.p.customRuleContent = {
-    customAttr: {
-      conditions: [
-        {
-          conditions: [
-            {}
-          ],
-          logicalChar: "or",
-        }
-      ],
-      logicalChar: "or",
-    },
-    customEvent: {
-      conditions: [
-        {
-          conditions: [
-            {}
-          ],
-          logicalChar: "or",
-        }
-      ],
-      logicalChar: "or",
-    },
-    eventSequence: {
-      conditions: [
-        {
-          conditions: [
-            {
-              conditions: []
-            }
-          ],
-          logicalChar: "or",
-        }
-      ],
-      logicalChar: "or",
-    },
-    logicalChar: "or",
-  };
-}
+Object.assign(customRuleContent, props.p.customRuleContent)
 
 const marketingTouchNode = ref({
   appPushCount: 0,
@@ -215,11 +197,11 @@ const estimation = async () => {
 };
 
 const logicalOperator = computed(
-  () => props.p.customRuleContent!.logicalOperator
+  () => customRuleContent.logicalOperator
 );
 
 function attrsAdd() {
-  let attr = props.p.customRuleContent!.customAttr!.conditions!;
+  let attr = customRuleContent.customAttr!.conditions!;
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -233,7 +215,7 @@ function attrsAdd() {
 }
 
 function behaviorAdd() {
-  let attr = props.p.customRuleContent!.customEvent!.conditions!;
+  let attr = customRuleContent.customEvent!.conditions!;
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -247,7 +229,7 @@ function behaviorAdd() {
 }
 
 function sequenceAdd() {
-  let attr = props.p.customRuleContent!.eventSequence!.conditions!;
+  let attr = customRuleContent.eventSequence!.conditions!;
 
   const obj = {
     conditions: [{ conditions: [{}] }],
@@ -259,11 +241,24 @@ function sequenceAdd() {
     logicalChar: "or",
   });
 }
+
+function saveData(): boolean {
+
+  Object.assign(props.p, {
+    customRuleContent
+  })
+
+  return true;
+}
+
+type IRegSaveFunc = (regFunc: () => boolean) => void;
+const regSaveFunc: IRegSaveFunc = inject("save")!;
+regSaveFunc(saveData);
 </script>
 
 <template>
   <div>
-    <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
+    <el-form ref="form" :model="customRuleContent" label-width="auto" label-position="left">
       <el-text tag="b">受众客户为满足以下条件的客户（触发型非必选）</el-text><br />
       <el-text>若下列条件不添加，则受众客户默认为全部客户</el-text>
       <el-form-item label="">
@@ -274,23 +269,23 @@ function sequenceAdd() {
               <div class="custom-switch" :class="{
                 active: logicalOperator === 'and',
               }" @click="
-  p.customRuleContent!.logicalOperator =
+  customRuleContent!.logicalOperator =
   logicalOperator === 'and' ? 'or' : 'and'
   ">
                 {{
-                  p.customRuleContent!.logicalOperator === "and" ? "且" : "或"
+                  customRuleContent.logicalOperator === "and" ? "且" : "或"
                 }}
               </div>
             </div>
             <div class="filter-option-content">
               <BehaviorGroup @add="attrsAdd" title="客户属性满足">
-                <CustomAttr :custom="p.customRuleContent!.customAttr" />
+                <CustomAttr :custom="customRuleContent.customAttr" />
               </BehaviorGroup>
               <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-                <CustomBehavior :custom="p.customRuleContent!.customEvent" />
+                <CustomBehavior :custom="customRuleContent.customEvent" />
               </BehaviorGroup>
               <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-                <CustomBehaviorSequence :custom="p.customRuleContent!.eventSequence" />
+                <CustomBehaviorSequence :custom="customRuleContent.eventSequence" />
               </BehaviorGroup>
             </div>
           </div>

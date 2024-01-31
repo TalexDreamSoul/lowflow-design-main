@@ -45,6 +45,16 @@ const timeFuncs: { [func: string]: any } = {
 
       obj.date3 = props.p.time;
     }
+  ],
+  type: [
+    (obj: any) => {
+      return obj.date3
+    },
+    (obj: any) => {
+      if (!props.p.time) return
+
+      obj.date3 = props.p.time;
+    }
   ]
 }
 

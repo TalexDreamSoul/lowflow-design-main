@@ -6,6 +6,13 @@ import SubBranch from './p/SubBranch.vue'
 import { useWindowSize } from "@vueuse/core";
 import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
 import { refreshLines, genJP } from "./line-creator";
+import { createTemplatePopover } from '../utils/touch-templates'
+
+createTemplatePopover('新建企微模版', 'digital')
+// createTemplatePopover('新建站内信模版', 'znx')
+// createTemplatePopover('新建短信模版', 'sms')
+// createTemplatePopover('新建APP Push模版', 'app')
+// createTemplatePopover('新建外呼模版', 'outbound')
 
 const props = defineProps<{
   p: any;
@@ -121,7 +128,7 @@ watch(() => width.value + height.value, refreshCurves);
     margin-bottom: 40px;
 
     .fake-point {
-      top: -352%;
+      top: -300%;
     }
   }
 
@@ -166,7 +173,7 @@ watch(() => width.value + height.value, refreshCurves);
   width: 32px;
   height: 32px;
 
-  top: -52%;
+  top: -30%;
   left: 30%;
 
   transform: translate(-50%, -50%);

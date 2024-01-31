@@ -48,18 +48,40 @@ export const dictFilterTree = () => {
 }
 // 营销触达节点统计
 export const getmarketingTouchEstimate = (data: any) => {
-    return request.post({ url: '/api/marketingTouchEstimate', data })
+    return request.post({ url: '/api/marketingTouchEstimate.do', data })
 }
 // 素材列表
-export const getqryMaterial = (data: any) => {
-    return request.post({ url: '/api/qryMaterial', data })
+export const getQryMaterial = (data: any) => {
+    return request.post({ url: '/api/qryMaterial.do', data })
 }
 
 // 营销触达列表
 export const getqryMarketingTouch = (data: any) => {
-    return request.post({ url: '/api/qryMarketingTouch', data })
+    return request.post({ url: '/api/qryMarketingTouch.do', data })
 }
 // 删除营销触达
 export const deleteMarketingTouch = (data: any) => {
-    return request.post({ url: '/api/deleteMarketingTouch', data })
+    return request.post({ url: '/api/deleteMarketingTouch.do', data })
+}
+
+// 营销触达节点统计
+export const getqryTouchStatusCount = () => {
+    return request.post({ url: '/api/qryTouchStatusCount.do'})
+}
+
+
+// 营销触达暂停
+export const getpauseMarketingTouch = (data: any) => {
+    return request.post({ url: '/api/pauseMarketingTouch.do', data })
+}
+
+
+// 营销触达开始
+export const getstartMarketingTouch = (data: any) => {
+    return request.post({ url: '/api/pauseMarketingTouch.do', data })
+}
+
+// 删除营销触达
+export const getupdateMarketingTouch = (data: any) => {
+    return request.post({ url: '/api/updateMarketingTouch.do', data })
 }
