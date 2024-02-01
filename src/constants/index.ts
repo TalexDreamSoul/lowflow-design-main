@@ -29,7 +29,7 @@ export const NO_RESET_WHITE_LIST = ["Redirect", "Login", "NoFind", "Root"];
 export const DEFAULT_FILTER_COLUMN = ["expand", "selection"];
 
 /**
- * 表格默认过滤列设置字段
+ * 事件类型
  */
 export const EVENT_TYPE = [
   {
@@ -57,3 +57,33 @@ export const EVENT_TYPE = [
     value: "customize",
   },
 ];
+
+/**
+ * 属性数据类型
+ */
+export const ATTR_FIELD_TYPE = [
+  {
+    label: "文本型",
+    value: "text",
+  },
+  {
+    label: "数字型",
+    value: "num",
+  },
+  {
+    label: "日期型",
+    value: "date",
+  },
+  {
+    label: "布尔型",
+    value: "boolean",
+  },
+];
+
+/**
+ * 配置中心状态常量
+ */
+export enum ConfigStatus {
+  Available = 'available',
+  Offline = 'offline'
+};

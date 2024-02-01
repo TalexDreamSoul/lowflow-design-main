@@ -40,6 +40,7 @@ export const routes: RouterOptions["routes"] = [
     component: () =>
       import("../touch-flow/strategyProcessList/strategyProcessList.vue"),
   },
+
   {
     path: "/configuration",
     redirect: "/configuration/event",
@@ -51,6 +52,34 @@ export const routes: RouterOptions["routes"] = [
       {
         path: "attr",
         component: () => import("../pages/configuration/attr.vue"),
+      },
+    ],
+  },
+  // * 素材类型：sms 短信，app app消息，digital 数字员工，outbound 智能外呼，znx 站内信
+ 
+  {
+    path: "/materialCenter",
+    redirect: "/materialCenter/SmsTemplateVue",
+    children: [
+      {
+        path: "SmsTemplateVue",
+        component: () => import("../materialCenter/SmsTemplateVue.vue"),
+      },
+      {
+        path: "ZnxTemplateVue",
+        component: () => import("../materialCenter/ZnxTemplateVue.vue"),
+      },
+      {
+        path: "AppTemplateVue",
+        component: () => import("../materialCenter/AppTemplateVue.vue"),
+      },
+      {
+        path: "DigitalTemplateVue",
+        component: () => import("../materialCenter/DigitalTemplateVue.vue"),
+      },
+      {
+        path: "OutboundTemplateVue",
+        component: () => import("../materialCenter/OutboundTemplateVue.vue"),
       },
     ],
   },

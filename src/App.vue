@@ -29,6 +29,7 @@ html, body, #app {
   margin-bottom: 12px !important;
 }
 .common-layout {
+  min-width: 1440px;
   height: 100%;
   overflow: hidden;
   display: flex;
