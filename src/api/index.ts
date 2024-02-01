@@ -110,3 +110,8 @@ export const setDeleteMaterial = (data: any) => {
 export const getMaterialDetail = (data: any) => {
     return request.post({ url: '/api/materialDetail.do', data })
 }
+
+// 修改素材状态
+export const setUpdateMaterialStatus = (data: any) => {
+    return request.post({ url: '/api/updateMaterialStatus.do', data })
+}
