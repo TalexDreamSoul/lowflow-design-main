@@ -181,6 +181,6 @@ const handleCurrentChange = (val: number) => {
 </template>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "./material.scss";
 </style>
