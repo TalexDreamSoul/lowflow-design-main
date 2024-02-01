@@ -24,6 +24,9 @@ const meta = computed(() => route.meta)
 html, body, #app {
   height: 100%;
 }
+div {
+  box-sizing: border-box;
+}
 .el-form-item {
   margin-right: 0;
   margin-bottom: 12px !important;
@@ -37,5 +40,6 @@ html, body, #app {
 }
 .content {
   flex: 1;
+  overflow: hidden;
 }
 </style>
