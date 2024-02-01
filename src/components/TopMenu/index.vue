@@ -36,8 +36,12 @@
             <CaretBottom />
           </el-icon></div>
       </template>
-      <el-menu-item class="pd-menu-item" index="/pinia">Service</el-menu-item>
-      <el-menu-item class="pd-menu-item" index="/page">Service</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/SmsTemplateVue">短信模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/OutboundTemplateVue">外呼模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/AppTemplateVue">APP Push模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/DigitalTemplateVue">企微模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/ZnxTemplateVue">站内信模版</el-menu-item>
+
     </el-sub-menu>
     <el-sub-menu index="5">
       <template #title>
@@ -84,7 +88,6 @@ const router = useRouter()
 const activeIndex = ref('2')
 
 const handleSelect = (key: string) => {
-  console.log(key);
   router.push(key);
 }
 </script>

@@ -11,56 +11,45 @@ const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
 
-const origin = {
+ const origin ={
   id: "",
   name: "",
   status: "",
-  type: "znx",
-  sendtype: "sendMessage",
-  carouselId: "",
-  listTitle: "",
-  moduleId: "",
-  titleVariables: [
+  type: "digital",
+
+  digitalTemplateDetails: [
     {
-      defaultValue: "",
-      field: "",
-      fieldName: "",
-      fieldValue: "",
-    },
-  ],
-  znxContent: "",
-  znxContentVariables: [
-    {
-      defaultValue: "",
-      field: "",
-      fieldName: "",
-      fieldValue: "",
-    },
-  ],
-  znxTitle: "",
-  znxTitleVariables: [
-    {
-      defaultValue: "",
-      field: "",
-      fieldName: "",
-      fieldValue: "",
-    },
-  ],
-};
+      content: "",
+      imgUrl: "",
+      type: "",
+      variables: [
+        {
+          field: "",
+          fieldName: "",
+          labelId: 0,
+          labelName: "",
+          labelValue: [],
+          type: "",
+          variables: [
+            {
+              compareValue: "",
+              defaultValue: "",
+              fieldOp: "",
+              fieldValue: ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+
+}
 
 const data = reactive<typeof origin>(origin);
 
-const props = defineProps<{
-  modelValue?: boolean;
-}>();
-const emits = defineEmits<{
-  (e: "update:modelValue", value: boolean): void;
-}>();
-
-const model = useVModel(props, "modelValue", emits);
 
 function saveData() {
-  console.log("save", model, origin);
+  console.log("save", data, origin);
 }
 
 defineExpose({ saveData });
@@ -99,12 +88,12 @@ const list = ref([
 </script>
 
 <template>
-  <el-form label-position="top" :model="origin">
+  <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input v-model="origin.name" style="width: 50%;"></el-input>
+      <el-input v-model="data.name" style="width: 50%;"></el-input>
     </el-form-item>
     <el-form-item label="企微触达方式">
-      <el-select v-model="origin.sendtype" style="width: 50%;">
+      <el-select v-model="data.sendtype" style="width: 50%;">
         <!--
            sendMessage 发送消息
            addfriends 添加好友
@@ -115,7 +104,7 @@ const list = ref([
     </el-form-item>
 
     <el-form-item label="消息内容">
-      <TouchSettingContents variables="titleVariables" content="listTitle" v-model="origin" buttonTitle="输入变量" />
+      <TouchSettingContents variables="titleVariables" content="listTitle" v-model="data" buttonTitle="输入变量" />
     </el-form-item>
 
     <MicroEnterpriseDrag v-model="list" />

@@ -1,6 +1,8 @@
 <script setup lang="ts" name="BaseTemplate">
+import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue'
 import { Close } from '@element-plus/icons-vue'
+import { addMaterial } from '~/api/index'
 
 const props = defineProps<{
   title: string,
@@ -10,13 +12,23 @@ const props = defineProps<{
 
 const compRef = ref()
 
-function saveData() {
+async function saveData() {
   const { saveData: save } = compRef.value
 
   const res = save()
 
-  if (res) {
+  const _res = await addMaterial(res)
+
+  if (_res.data) {
     props.close()
+
+    ElMessage.success({
+      message: _res.message
+    })
+  } else {
+    ElMessage.error({
+      message: _res.message
+    })
   }
 }
 
@@ -38,7 +50,7 @@ function saveData() {
 
     <div class="BaseTemplate-Footer">
       <el-button @click="(close as any)" round>取消</el-button>
-      <el-button @click="saveData" round class="primaryStyle">保存</el-button>
+      <el-button @click="saveData" round class="primaryStyle">新建</el-button>
     </div>
   </div>
 </template>

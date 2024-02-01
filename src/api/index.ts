@@ -44,7 +44,7 @@ import { DepartmentListResponse, DepartmentUserParams, DepartmentUserResponse } 
 
 // 分割线api/营销触达
 export const dictFilterTree = () => {
-    return request.post({ url: '/api/dictFilterTree.do'})
+    return request.post({ url: '/api/dictFilterTree.do' })
 }
 // 营销触达节点统计
 export const getmarketingTouchEstimate = (data: any) => {
@@ -66,7 +66,7 @@ export const deleteMarketingTouch = (data: any) => {
 
 // 营销触达节点统计
 export const getqryTouchStatusCount = () => {
-    return request.post({ url: '/api/qryTouchStatusCount.do'})
+    return request.post({ url: '/api/qryTouchStatusCount.do' })
 }
 
 
@@ -84,4 +84,41 @@ export const getstartMarketingTouch = (data: any) => {
 // 删除营销触达
 export const getupdateMarketingTouch = (data: any) => {
     return request.post({ url: '/api/updateMarketingTouch.do', data })
+}
+
+// 素材列表
+export const getqryMaterial = (data: any) => {
+    return request.post({ url: '/api/qryMaterial.do', data })
+}
+
+// 上线素材
+export const setOnlineMaterial = (data: any) => {
+    return request.post({ url: '/api/onlineMaterial.do', data })
+}
+
+// 下线素材
+export const setOfflineMaterial = (data: any) => {
+    return request.post({ url: '/api/offlineMaterial.do', data })
+}
+
+// 删除素材
+export const setDeleteMaterial = (data: any) => {
+    return request.post({ url: '/api/deleteMaterial.do', data })
+}
+
+// 素材详情
+export const getMaterialDetail = (data: any) => {
+    return request.post({ url: '/api/materialDetail.do', data })
+}
+
+// 修改素材状态
+export const setUpdateMaterialStatus = (data: any) => {
+    return request.post({ url: '/api/updateMaterialStatus.do', data })
+}
+
+export const addMaterial = (data: any) => {
+    return request.post({
+        url: '/api/addMaterial.do',
+        data
+    })
 }

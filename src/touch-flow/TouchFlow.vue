@@ -8,8 +8,8 @@ import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
 import { refreshLines, genJP } from "./line-creator";
 import { createTemplatePopover } from '../utils/touch-templates'
 
-createTemplatePopover('新建企微模版', 'digital')
-// createTemplatePopover('新建站内信模版', 'znx')
+// createTemplatePopover('新建企微模版', 'digital')
+createTemplatePopover('新建站内信模版', 'znx')
 // createTemplatePopover('新建短信模版', 'sms')
 // createTemplatePopover('新建APP Push模版', 'app')
 // createTemplatePopover('新建外呼模版', 'outbound')
@@ -129,6 +129,18 @@ watch(() => width.value + height.value, refreshCurves);
 
     .fake-point {
       top: -300%;
+    }
+
+    .single-line {
+      &::before {
+        bottom: -380px;
+
+        height: 260px;
+      }
+
+      &::after {
+        bottom: -250px;
+      }
     }
   }
 
