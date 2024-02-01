@@ -72,8 +72,8 @@ defineExpose({ saveData })
     <el-form-item label="模板名称">
       <el-input v-model="data.name"></el-input>
     </el-form-item>
-    <el-form-item label="模板ID">
-      <el-input v-model="data.id"></el-input>
+    <el-form-item label="模块ID">
+      <el-input v-model="data.moduleId"></el-input>
     </el-form-item>
     <el-form-item label="轮播图ID">
       <el-input v-model="data.carouselId"></el-input>

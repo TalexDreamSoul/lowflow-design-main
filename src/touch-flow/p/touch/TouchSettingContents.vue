@@ -1,12 +1,70 @@
 <script setup lang="ts">
 import { useVModel } from '@vueuse/core'
-import { ref, h, reactive } from 'vue'
+import { ref, h, watch } from 'vue'
 import { createFloatingPanel } from './floating-panel'
 import { getDictAnalyzedTree } from '../../flow-utils'
 import TouchSelectWrapper from './TouchSelectable.vue'
 import Operator from '~/components/BehaviorFoldingGroup/Operator.vue'
-import AttrRender from '~/touch-flow/page/AttrRender.vue'
 import { randomStr } from '~/utils/common'
+
+/**
+ * VariableTemplateDTO
+ */
+export type VariableTemplateDTO = {
+  /**
+   * 字段
+   */
+  field?: string;
+  /**
+   * 字段名
+   */
+  fieldName?: string;
+  /**
+   * 标签id
+   */
+  labelId?: number;
+  /**
+   * 标签名
+   */
+  labelName?: string;
+  /**
+   * 标签值
+   */
+  labelValue?: { [key: string]: any }[];
+  /**
+   * 类型 1：基础属性 2：客户标签
+   */
+  type?: string;
+  /**
+   * 变量值
+   */
+  variables?: VariableDTO[];
+  [property: string]: any;
+}
+
+/**
+ * VariableDTO
+ */
+export type VariableDTO = {
+  /**
+   * 比较值
+   */
+  compareValue?: string;
+  /**
+   * 默认值
+   */
+  defaultValue?: string;
+  /**
+   * 关系
+   */
+  fieldOp?: string;
+  /**
+   * 设置值
+   */
+  fieldValue?: string;
+  [property: string]: any;
+}
+
 
 const props = defineProps<{
   modelValue?: any,
@@ -18,7 +76,9 @@ const emits = defineEmits(['update:modelValue'])
 
 const _content = ref<string>()
 const contentRef = ref<HTMLElement>()
+const variableMap = new Map<string, VariableTemplateDTO>()
 const model = useVModel(props, 'modelValue', emits)
+const dialogVariable = ref<VariableTemplateDTO>()
 
 const dictTree = ref()
 const attrs = ref()
@@ -33,21 +93,23 @@ const attrs = ref()
 const settingSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L21.5 6.5V17.5L12 23L2.5 17.5V6.5L12 1ZM12 3.311L4.5 7.65311V16.3469L12 20.689L19.5 16.3469V7.65311L12 3.311ZM12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12C16 14.2091 14.2091 16 12 16ZM12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"></path></svg>`
 
 function addLabel() {
-  const first = dictTree.value[0].children[0]
+  // const first = dictTree.value[0].children[0]
 
-  const id = randomStr(6)
+  const id = randomStr(6).replaceAll('.', '')
 
-  insertNode(`<button unselectable="on" data-id="${id}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">${first.label}</span>&nbsp;${settingSvg}</button>`)
+  variableMap.set(id, {
+    field: id,
+    variables: []
+  })
+
+// ${first.label}
+
+  /* const el =  */insertNode(`<button unselectable="on" data-id="${id}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">请选择</span>&nbsp;${settingSvg}</button>`)
+
+  // console.log('insert', el)
 }
 
-const variableOptions = reactive({
-  modal: false,
-  operator: '=',
-  attribute: '',
-  value: '',
-  conditions: [],
-  placeholder: ''
-})
+const variableModal = ref(false)
 
 function insertNode(htmlX: string) {
   const dom = contentRef.value
@@ -80,6 +142,7 @@ function insertNode(htmlX: string) {
       sel.removeAllRanges();
       sel.addRange(range);
     }
+
   }
 
 }
@@ -99,10 +162,30 @@ function handleClick(e: Event) {
 
   const target = e.target as Element
   if (target.tagName === 'svg') {
+    const parent: any = target.parentElement
+    const { id } = parent!.dataset
 
-    variableOptions.modal = true
+    const condition = parent._condition
+    if (condition) {
+      const _val = parent._value
 
-    return
+      const variable = variableMap.get(id!)!
+
+      Object.assign(variable, {
+        index: id,
+        field: condition.field,
+        fieldName: condition.fieldName,
+        labelId: condition.id,
+        labelName: condition.labelName,
+        labelValue: condition.labelValue?.data ? _val : undefined,
+        type: condition.labelValue?.data ? '2' : '1',
+      })
+
+      variableModal.value = true
+      dialogVariable.value = variable
+
+      return
+    }
   }
 
 
@@ -121,6 +204,8 @@ function handleClick(e: Event) {
 
               const valueDom = e.querySelector('.value')
 
+              valueDom.parentElement._condition = condition
+              valueDom.parentElement._value = val
               valueDom.setAttribute('value', val)
               valueDom.innerText = condition.label
 
@@ -134,16 +219,28 @@ function handleClick(e: Event) {
 }
 
 function handleBlur() {
+  console.log('calc content')
   const contentDom = contentRef.value
 
   let content = ''
 
-  contentDom?.childNodes.forEach(node => {
-    console.dir(node)
+  contentDom?.childNodes.forEach((node: ChildNode) => {
+    if (node.nodeName === 'BUTTON') {
+      const id = (node as HTMLElement).dataset.id
+      content += `$$${id}$$`
+    } else content += node.nodeValue
   })
 
   model.value[props.content] = content
 }
+
+function variableDone() {
+  variableModal.value = false
+
+  model.value[props.variables] = [ ...variableMap.values() ]
+}
+
+watch(() => _content.value, handleBlur)
 </script>
 
 <template>
@@ -160,33 +257,31 @@ function handleBlur() {
     </el-button>
   </div>
 
-  <el-dialog append-to-body align-center v-model="variableOptions.modal" title="设置赋值">
+  <el-dialog append-to-body align-center v-model="variableModal" title="设置赋值">
     <template #footer>
-      <el-button round @click="variableOptions.modal = false">取消</el-button>
-      <el-button round class="primaryStyle" type="primary" @click="variableOptions.modal = false">确定</el-button>
+      <el-button round @click="variableModal = false">取消</el-button>
+      <el-button round class="primaryStyle" type="primary" @click="variableDone">确定</el-button>
     </template>
 
-    <div class="TouchFloatingContent">
-      <Operator v-model="variableOptions.operator" />
-      <Operator v-model="variableOptions.attribute" />
+    <div v-for="item in dialogVariable?.variables" class="TouchFloatingContent">
+      <Operator v-model="item.fieldOp as string" />
+      <Operator v-model="item.compareValue as string" />
       <div class="ContentSingleLine">
         <span>赋值为</span>
-        <el-input v-model="variableOptions.value" />
+        <el-input v-model="item.fieldValue" />
       </div>
     </div>
 
-    <el-text type="primary" style="cursor: pointer">
+    <el-text @click="dialogVariable?.variables?.push({ fieldOp: '', compareValue: '', fieldValue: '' })" type="primary"
+      style="cursor: pointer">
       <el-icon size="14">
         <CirclePlusFilled />
       </el-icon>
       筛选条件
     </el-text>
 
-    <AttrRender v-for="item in (variableOptions.conditions as any)" :key="item.field" :field="item.field"
-      v-model="item.fieldValue" :attrs="attrs" />&nbsp;
-
     <div style="margin-top: 1rem" class="ContentSingleLine">
-      该属性空值或无法匹配时显示 <el-input style="width: 30%" placeholder="属性值" v-model="variableOptions.placeholder" />
+      该属性空值或无法匹配时显示 <el-input style="width: 30%" placeholder="属性值" v-model="dialogVariable!.defaultValue" />
     </div>
   </el-dialog>
 </template>
@@ -272,6 +367,10 @@ function handleBlur() {
     font-size: 12px;
     border-radius: 15px;
     background-color: #EDEFF4;
+  }
+
+  &:active, &:focus, &:hover, &:focus-within {
+    --el-input-border-color: var(--el-color-primary)
   }
 
   position: relative;

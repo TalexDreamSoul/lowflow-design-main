@@ -88,7 +88,7 @@ export const getupdateMarketingTouch = (data: any) => {
 
 export const addMaterial = (data: any) => {
     return request.post({
-        url: '/api/addMaterial',
+        url: '/api/addMaterial.do',
         data
     })
 }

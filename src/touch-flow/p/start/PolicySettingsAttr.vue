@@ -270,6 +270,14 @@ function sequenceAdd() {
     logicalChar: "or",
   });
 }
+
+const platformOptions: any = {
+  'sms': "短信",
+  'appPush': "app消息",
+  'digital': "数字员工",
+  'outbound': "智能外呼",
+  'znx': "站内信",
+}
 </script>
 
 <template>
@@ -424,7 +432,7 @@ function sequenceAdd() {
               <el-option v-for="item in (sizeForm.material.templates ?? []) as any" :value="item.id"
                 :label="item.name"></el-option>
             </el-select>
-            <el-button ml-1rem type="primary" plain>新增短信模块版本</el-button>
+            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>新增{{ platformOptions[sizeForm.material.type] }}模块版本</el-button>
           </el-form-item>
           <el-form-item label="触达内容">
             <TouchSettingContents content="content" variables="variables" v-model="sizeForm.touch" />

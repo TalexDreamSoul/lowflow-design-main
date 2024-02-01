@@ -1,4 +1,5 @@
 <script setup lang="ts" name="BaseTemplate">
+import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue'
 import { Close } from '@element-plus/icons-vue'
 import { addMaterial } from '~/api/index'
@@ -18,10 +19,16 @@ async function saveData() {
 
   const _res = await addMaterial(res)
 
-  console.log(_res)
-
-  if (_res) {
+  if (_res.data) {
     props.close()
+
+    ElMessage.success({
+      message: _res.message
+    })
+  } else {
+    ElMessage.error({
+      message: _res.message
+    })
   }
 }
 
