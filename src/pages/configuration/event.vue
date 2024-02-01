@@ -337,7 +337,7 @@ const handleAttrDelete = (index: number) => {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .event {
   height: 100%;
   box-sizing: border-box;

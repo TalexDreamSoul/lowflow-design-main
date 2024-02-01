@@ -113,7 +113,7 @@ export const getMaterialDetail = (data: any) => {
 
 // 修改素材状态
 export const setUpdateMaterialStatus = (data: any) => {
-    return request.post({ url: '/api/updateMaterialStatusUsingPOST.do', data })
+    return request.post({ url: '/api/updateMaterialStatus.do', data })
 }
 
 export const addMaterial = (data: any) => {

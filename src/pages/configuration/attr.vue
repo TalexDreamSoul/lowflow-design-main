@@ -179,7 +179,7 @@ const onSubmitAttr = async (formEl: FormInstance | undefined) => {
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .attr {
   height: 100%;
   box-sizing: border-box;
