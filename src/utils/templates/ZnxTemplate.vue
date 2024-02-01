@@ -1,9 +1,9 @@
 <script setup lang="ts" name="ZnxTemplate">
 import TouchSettingContents from '~/touch-flow/p/touch/TouchSettingContents.vue';
-import { useVModel } from '@vueuse/core'
 import { reactive } from 'vue'
 
-const origin = {
+const origin =
+{
   id: "",
   name: "",
   status: "",
