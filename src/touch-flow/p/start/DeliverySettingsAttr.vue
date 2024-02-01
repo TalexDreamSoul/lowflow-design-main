@@ -2,19 +2,36 @@
 import { inject, ref, reactive, onMounted, computed } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
-import { getqryMaterial, getmarketingTouchEstimate } from "~/api";
 
 const origin = {
   name: "DeliverySettings",
   branchName: "test",
   type: "Delivery",
   num: 1,
+  id: "",
   branches: [
     { name: "branch1", ratio: 50 },
     { name: "branch2", ratio: 50 },
   ]
 };
 
+const props = defineProps<{
+  p: any;
+}>();
+
+// transform children 2 branches
+const { children } = props.p
+
+!(children.length && (() => {
+  origin.branches = []
+
+  children.forEach((child: any) => {
+    origin.branches.push({
+      name: child.name,
+      ratio: child.ratio,
+    });
+  });
+})())
 
 const errortxt = ref("");
 const sizeForm = reactive<typeof origin>(origin);
@@ -22,12 +39,9 @@ const sizeForm = reactive<typeof origin>(origin);
 function reset() {
   Object.assign(sizeForm, origin);
 }
-
 onMounted(reset);
 
-const props = defineProps<{
-  p: any;
-}>();
+const totalRatio = computed(() => sizeForm.branches.reduce((acc: number, curVal) => acc + +curVal.ratio, 0))
 
 function saveData() {
   if (!sizeForm.name) {
@@ -38,18 +52,54 @@ function saveData() {
     return false;
   }
 
-  const _: any = { ...sizeForm, id: randomStr(12), father: props.p, children: [] };
+  // validate branch ratio summary
+  if (totalRatio.value !== 100) {
+    ElMessage.warning({
+      message: "流量配比必须为100",
+    });
 
-  const _p = {
-    type: "SubBranch",
-    name: "子分流器",
-    father: _
+    return false;
   }
 
-  _.children.push(_p)
-  _.children.push(_p)
+  if (sizeForm.branches.filter(branch => (branch.ratio === 0 || branch.name.length < 1)).length) {
+    ElMessage.warning({
+      message: "不能存在未命名或配比为0%的流量",
+    });
 
-  props.p.children.push(_);
+    return false;
+  }
+
+  const _: any = { id: randomStr(12) , father: props.p, children: [] };
+  Object.assign(_, sizeForm)
+
+  // transform branch prop 2 children prop
+  sizeForm.branches.forEach((branch) => {
+    const child = {
+      type: "SubBranch",
+      name: branch.name,
+      ratio: branch.ratio,
+      father: _
+    }
+
+    _.children.push(child)
+  });
+
+  if (sizeForm.id === _.id && sizeForm.id.length) {
+    // 说明是修改
+    const index = props.p.father.children.indexOf(props.p)
+
+    if (index === -1) {
+      throw new Error("index not found");
+    }
+
+    console.log('REPLACE', props.p)
+
+    // replace
+    props.p.father.children.splice(index, 1, _);
+
+  }
+
+  else props.p.children.push(_);
 
   return true;
 }
@@ -58,10 +108,6 @@ type IRegSaveFunc = (regFunc: () => boolean) => void;
 const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
-
-const totalRatio = computed(() => {
-  return sizeForm.branches.reduce((acc: number, branch: { ratio: number; }) => acc + branch.ratio, 0)
-})
 const addBranch = () => {
   sizeForm.branches.push({ name: "", ratio: 0 });
 };
@@ -69,25 +115,6 @@ const addBranch = () => {
 const deleteBranch = (index: number) => {
   sizeForm.branches.splice(index, 1);
 };
-
-const checkRatio = (e: any) => {
-  const ratio = Number(e.target.value);
-  if (ratio < 0 || ratio > 100) {
-    errortxt.value = "流量配比必须在0到100之间";
-    e.target.value = sizeForm.branches[e.target.dataset.index].ratio;
-  } else {
-    sizeForm.branches[e.target.dataset.index].ratio = ratio;
-    const totalRatio = sizeForm.branches.reduce(
-      (acc: any, branch: { ratio: any; }) => acc + branch.ratio,
-      0
-    );
-    if (totalRatio > 100) {
-      errortxt.value = "所有分支的流量配比总和不能超过100";
-      e.target.value = sizeForm.branches[e.target.dataset.index].ratio;
-    }
-  }
-};
-
 </script>
 
 <template>
@@ -107,7 +134,7 @@ const checkRatio = (e: any) => {
         <div class="underbg">
           <el-row :gutter="20">
             <el-col :span="14">分支名称</el-col>
-            <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ parseInt(totalRatio)
+            <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ 100 - +totalRatio
             }}%</span>）</el-col>
           </el-row>
           <el-row :gutter="20" style="    align-items: center;
@@ -116,7 +143,8 @@ const checkRatio = (e: any) => {
               <el-input v-model="branch.name" />
             </el-col>
             <el-col :span="7">
-              <el-input type="number" placeholder="百分比" v-model="branch.ratio" @input="checkRatio" />
+              <el-input-number :min="0" :max="100 - +totalRatio + branch.ratio" placeholder="百分比"
+                v-model="branch.ratio" />
             </el-col>
             <el-col :span="3">
               <el-text type="primary" style="cursor: pointer;" @click="deleteBranch(index)">

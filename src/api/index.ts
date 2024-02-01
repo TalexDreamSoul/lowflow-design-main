@@ -44,7 +44,7 @@ import { DepartmentListResponse, DepartmentUserParams, DepartmentUserResponse } 
 
 // 分割线api/营销触达
 export const dictFilterTree = () => {
-    return request.post({ url: '/api/dictFilterTree.do'})
+    return request.post({ url: '/api/dictFilterTree.do' })
 }
 // 营销触达节点统计
 export const getmarketingTouchEstimate = (data: any) => {
@@ -66,7 +66,7 @@ export const deleteMarketingTouch = (data: any) => {
 
 // 营销触达节点统计
 export const getqryTouchStatusCount = () => {
-    return request.post({ url: '/api/qryTouchStatusCount.do'})
+    return request.post({ url: '/api/qryTouchStatusCount.do' })
 }
 
 
@@ -84,4 +84,11 @@ export const getstartMarketingTouch = (data: any) => {
 // 删除营销触达
 export const getupdateMarketingTouch = (data: any) => {
     return request.post({ url: '/api/updateMarketingTouch.do', data })
+}
+
+export const addMaterial = (data: any) => {
+    return request.post({
+        url: '/api/addMaterial',
+        data
+    })
 }

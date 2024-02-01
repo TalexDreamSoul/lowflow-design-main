@@ -6,6 +6,7 @@ import { getDictAnalyzedTree } from '../../flow-utils'
 import TouchSelectWrapper from './TouchSelectable.vue'
 import Operator from '~/components/BehaviorFoldingGroup/Operator.vue'
 import AttrRender from '~/touch-flow/page/AttrRender.vue'
+import { randomStr } from '~/utils/common'
 
 const props = defineProps<{
   modelValue?: any,
@@ -15,7 +16,8 @@ const props = defineProps<{
 }>()
 const emits = defineEmits(['update:modelValue'])
 
-const content = ref<HTMLElement>()
+const _content = ref<string>()
+const contentRef = ref<HTMLElement>()
 const model = useVModel(props, 'modelValue', emits)
 
 const dictTree = ref()
@@ -33,7 +35,9 @@ const settingSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
 function addLabel() {
   const first = dictTree.value[0].children[0]
 
-  insertNode(`<button unselectable="on" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">${first.label}</span>&nbsp;${settingSvg}</button>`)
+  const id = randomStr(6)
+
+  insertNode(`<button unselectable="on" data-id="${id}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">${first.label}</span>&nbsp;${settingSvg}</button>`)
 }
 
 const variableOptions = reactive({
@@ -46,7 +50,7 @@ const variableOptions = reactive({
 })
 
 function insertNode(htmlX: string) {
-  const dom = content.value
+  const dom = contentRef.value
   if (!dom) return
 
   dom.focus();
@@ -128,12 +132,24 @@ function handleClick(e: Event) {
     }
   })
 }
+
+function handleBlur() {
+  const contentDom = contentRef.value
+
+  let content = ''
+
+  contentDom?.childNodes.forEach(node => {
+    console.dir(node)
+  })
+
+  model.value[props.content] = content
+}
 </script>
 
 <template>
-  <div class="TouchSettingsContentWrapper">
-    <div @click="handleClick" ref="content" class="TouchSettingsContent" contenteditable="true">
-      {{ model }}
+  <div @blur="handleBlur" tabindex="1" class="TouchSettingsContentWrapper">
+    <div @click="handleClick" ref="contentRef" class="TouchSettingsContent" contenteditable="true">
+      {{ _content }}
     </div>
 
     <el-button @click="addLabel">
