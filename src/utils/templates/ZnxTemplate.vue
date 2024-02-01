@@ -3,7 +3,9 @@ import TouchSettingContents from '~/touch-flow/p/touch/TouchSettingContents.vue'
 import { useVModel } from '@vueuse/core'
 import { reactive } from 'vue'
 
-const origin = {
+
+const origin = 
+{
   id: "",
   name: "",
   status: "",
@@ -41,41 +43,32 @@ const origin = {
 
 const data = reactive<typeof origin>(origin)
 
-const props = defineProps<{
-  modelValue?: boolean,
-}>()
-const emits = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void,
-}>()
-
-const model = useVModel(props, 'modelValue', emits)
-
 function saveData() {
-  console.log('save', model, origin)
+  console.log('save',  data)
 }
 
 defineExpose({ saveData })
 </script>
 
 <template>
-  <el-form label-position="top" :model="origin">
+  <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input v-model="origin.name"></el-input>
+      <el-input v-model="data.name"></el-input>
     </el-form-item>
     <el-form-item label="模板ID">
-      <el-input v-model="origin.id"></el-input>
+      <el-input v-model="data.id"></el-input>
     </el-form-item>
     <el-form-item label="轮播图ID">
-      <el-input v-model="origin.carouselId"></el-input>
+      <el-input v-model="data.carouselId"></el-input>
     </el-form-item>
     <el-form-item label="列表标题">
-      <TouchSettingContents variables="titleVariables" content="listTitle" v-model="origin" buttonTitle="输入变量" />
+      <TouchSettingContents variables="titleVariables" content="listTitle" v-model="data" buttonTitle="输入变量" />
     </el-form-item>
     <el-form-item label="站内信标题">
-      <TouchSettingContents variables="znxTitleVariables" content="znxTitle" v-model="origin" buttonTitle="输入变量" />
+      <TouchSettingContents variables="znxTitleVariables" content="znxTitle" v-model="data" buttonTitle="输入变量" />
     </el-form-item>
     <el-form-item label="站内信简介">
-      <TouchSettingContents variables="znxContentVariables" content="znxContent" v-model="origin" buttonTitle="输入变量" />
+      <TouchSettingContents variables="znxContentVariables" content="znxContent" v-model="data" buttonTitle="输入变量" />
     </el-form-item>
   </el-form>
 </template>
