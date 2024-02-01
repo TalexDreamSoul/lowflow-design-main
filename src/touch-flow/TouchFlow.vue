@@ -130,6 +130,18 @@ watch(() => width.value + height.value, refreshCurves);
     .fake-point {
       top: -300%;
     }
+
+    .single-line {
+      &::before {
+        bottom: -380px;
+
+        height: 260px;
+      }
+
+      &::after {
+        bottom: -250px;
+      }
+    }
   }
 
   position: relative;

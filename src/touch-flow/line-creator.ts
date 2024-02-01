@@ -118,7 +118,7 @@ export function genJP() {
     Anchors: ["Bottom", "Top"],
     ConnectionsDetachable: false,
     ConnectionOverlays: [
-      ["Arrow", {  //箭头参数设置
+      ["Arrow", {
         location: 1,
         visible: true,
         width: 11,
@@ -132,7 +132,7 @@ export function genJP() {
       ["Label", {
         location: 0.1,
         id: "label",
-        cssClass: "aLabel", //hover时label的样式名
+        cssClass: "aLabel",
         events: {
           tap: function () {
           }
@@ -157,7 +157,7 @@ export function genJP() {
     },
     EndpointHoverStyles: [null, null],
     HoverPaintStyle: { stroke: '#579DF6', strokeWidth: 3 },
-    LabelStyle: { color: "black" }, //标签的默认样式，用css写法。
+    LabelStyle: { color: "black" },
     LogEnabled: false,
     Overlays: [],
     MaxConnections: 10,
@@ -252,8 +252,12 @@ export const refreshLines = (root: HTMLElement, genner: any) => {
     const nextPoint = flow.querySelector('.fake-point')!
 
     if (flows.length % 2 !== 0 && (index + 1) === (flows.length + 1) / 2) {
+      // !nextLayer.className.includes('TouchFlow') &&
       if (!nextLayer.className.includes('TouchFlow')) return
-      quoter && root.classList.add('single-line')
+
+      if (!quoter && !nextPoint.parentElement.className.includes('TouchFlow')) return
+
+      root.classList.add('single-line')
     }
 
     else drawPath(root, nextPoint as HTMLElement, genner)
