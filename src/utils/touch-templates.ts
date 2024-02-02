@@ -1,4 +1,4 @@
-import { createApp, Component } from 'vue'
+import { createApp, Component, Ref } from 'vue'
 import BaseTemplateVue from './templates/BaseTemplate.vue'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
@@ -26,7 +26,7 @@ function _createApp(comp: Component, props: any) {
   return app
 }
 
-export function createTemplatePopover(title: string, template: keyof typeof templates) {
+export function createTemplatePopover(title: string, template: keyof typeof templates, data?: Ref<any>) {
   const comp = templates[template]
   if (!comp) throw new Error(`Template ${template} not found!`)
 
@@ -50,7 +50,9 @@ export function createTemplatePopover(title: string, template: keyof typeof temp
 
   const dom = document.createElement('div')
   const app = _createApp(BaseTemplateVue, {
-    title, comp, close: resolve
+    title, comp, close: resolve, data, success: (val: any) => {
+      Object.assign(data?.value, val)
+    }
   })
 
   function handleScroll(e: Event) {

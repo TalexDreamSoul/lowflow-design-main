@@ -3,11 +3,14 @@ import { ElMessage } from 'element-plus'
 import { ref, onMounted } from 'vue'
 import { Close } from '@element-plus/icons-vue'
 import { addMaterial } from '~/api/index'
+import { useVModel } from '@vueuse/core'
 
 const props = defineProps<{
   title: string,
   comp: any,
-  close: Function
+  close: Function,
+  data: any,
+  success: Function
 }>()
 
 const compRef = ref()
@@ -17,10 +20,20 @@ async function saveData() {
 
   const res = save()
 
-  const _res = await addMaterial(res)
+  let _res: any
+
+  // 判断是不是修改
+  if (props.data?.value?.id) {
+    const { id } = props.data.value
+
+    // TODO edit
+    
+  } else _res = await addMaterial(res)
 
   if (_res.data) {
     props.close()
+
+    props.success(res)
 
     ElMessage.success({
       message: _res.message
@@ -45,7 +58,7 @@ async function saveData() {
     </div>
 
     <div class="BaseTemplate-Content">
-      <component ref="compRef" :is="comp" />
+      <component :data="data" ref="compRef" :is="comp" />
     </div>
 
     <div class="BaseTemplate-Footer">

@@ -1,7 +1,11 @@
 <script setup lang="ts" name="ZnxTemplate">
 import TouchSettingContents from "~/touch-flow/p/touch/TouchSettingContents.vue";
 import { useVModel } from "@vueuse/core";
-import { reactive } from "vue";
+import { reactive, watchEffect } from "vue";
+
+const props = defineProps<{
+  data: any
+}>()
 
 const origin ={
   id: "",
@@ -32,7 +36,11 @@ const origin ={
 
 const data = reactive<typeof origin>(origin);
 
+watchEffect(() => {
+  const _data = props.data.value
 
+  Object.assign(data, _data)
+})
 
 function saveData() {
   console.log("save", data, origin);
