@@ -93,14 +93,24 @@ const background = ref(false);
 const disabled = ref(false);
 const total = ref(110);
 
-const StatisticsList = ref();
+const StatisticsList = ref({
+  suspend: 0,
+  running: 0,
+  total: 0,
+  waitStart: 0,
+  draft: 0,
+  approvalPending: 0,
+  approvalSuccess: 0,
+  approvalRefuse: 0,
+  done: 0,
+});
 const totalCount = ref();
 
 onMounted(async () => {
   getmarketingTouchNode();
   fetchDataApi();
 });
-watch([currentPage, pageSize,formInline], () => {
+watch([currentPage, pageSize, formInline], () => {
   fetchDataApi();
 });
 const fetchDataApi = async () => {
@@ -114,15 +124,8 @@ const fetchDataApi = async () => {
 };
 const getmarketingTouchNode = async () => {
   const res = await getqryTouchStatusCount();
-  StatisticsList.value = res;
-  if (StatisticsList.value != undefined) {
-    totalCount.value = StatisticsList.value.reduce(
-      (accumulator: any, currentValue: { count: any }) =>
-        accumulator + currentValue.count,
-      0
-    );
-    console.log(totalCount); // 输出总和
-  }
+  StatisticsList.value = res.data;
+  console.log(StatisticsList, "res");
 };
 
 const setSearchParams = () => {
@@ -146,10 +149,6 @@ const updateData = async (row: any) => {
 };
 const detailsData = async (row: any) => {
   await getpauseMarketingTouch({ id: row.id }).finally(() => {});
-};
-const addAction = () => {
-  console.log(`output->tiaozhuan`, "designNew");
-  router.push("designNew");
 };
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);
@@ -192,32 +191,55 @@ const handleCurrentChange = (val: number) => {
     </div>
     <div class="tableCard">
       <div class="countCard">
+
+        <!-- approvalPending
+          approvalRefuse
+          approvalSuccess
+          done
+          draft
+          running
+          suspend
+          total
+          waitStart -->
+
         <div class="showCount allcount">
-          <div class="topcount">{{totalCount||'--'}}</div>
+          <div class="topcount">{{ StatisticsList.total !== undefined ? StatisticsList.total : '--' }}
+           </div>
           <div class="undercount">全部</div>
         </div>
         <div class="showCount">
-          <div class="topcount">{{StatisticsList?.running||'--'}}</div>
+          <div class="topcount">
+            {{ StatisticsList.running !== undefined ? StatisticsList.running : '--' }}
+          </div>
           <div class="undercount">运行中</div>
         </div>
         <div class="showCount">
-          <div class="topcount">{{StatisticsList?.suspend||'--'}}</div>
+          <div class="topcount">
+            {{ StatisticsList.suspend !== undefined ? StatisticsList.suspend : '--' }}
+          </div>
           <div class="undercount">暂停中</div>
         </div>
         <div class="showCount">
-          <div class="topcount">{{StatisticsList?.approvalPending||'--'}}</div>
+          <div class="topcount">
+            {{ StatisticsList.approvalPending !== undefined ? StatisticsList.approvalPending : '--' }}
+          </div>
           <div class="undercount">待审批</div>
         </div>
         <div class="showCount">
-          <div class="topcount">{{StatisticsList?.done||'--'}}</div>
+          <div class="topcount">
+            {{ StatisticsList.done !== undefined ? StatisticsList.done : '--' }}</div>
           <div class="undercount">已结束</div>
         </div>
         <div class="showCount">
-          <div class="topcount">{{StatisticsList?.draft||'--'}}</div>
+          <div class="topcount">
+            {{ StatisticsList.draft !== undefined ? StatisticsList.draft : '--' }}
+            </div>
           <div class="undercount">草稿</div>
         </div>
         <div class="showCount">
-          <div class="topcount">{{StatisticsList?.approvalRefuse||'--'}}</div>
+          <div class="topcount">
+            {{ StatisticsList.approvalRefuse !== undefined ? StatisticsList.approvalRefuse : '--' }}
+          </div>
           <div class="undercount">审核不通过</div>
         </div>
       </div>
@@ -255,9 +277,12 @@ const handleCurrentChange = (val: number) => {
 
         <el-table-column label=" 累计进入 / 累计触发 / 累计目标完成" width="180">
           <template #default="scope">
-            {{ scope.row.estimateCount }}/
+            <!-- targetCount 完成目标数量
+            touchCount 触达数量
+            triggerCount 触发数量 -->
+            {{ scope.row.touchCount }}/
             {{ scope.row.triggerCount }}/
-            {{ scope.row.enterCount }}/
+            {{ scope.row.targetCount }}
 
           </template>
         </el-table-column>
