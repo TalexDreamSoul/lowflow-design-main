@@ -7,7 +7,7 @@ import { QuestionFilled } from '@element-plus/icons-vue';
 <template>
   <div class="MenuPersonal">
     <span class="divider">
-      <el-icon>
+      <el-icon :size="16">
         <QuestionFilled />
       </el-icon>
       帮助
@@ -34,7 +34,7 @@ import { QuestionFilled } from '@element-plus/icons-vue';
 
   .divider {
     padding-right: 1rem;
-
+    font-size: 16px;
     border-right: 2px solid #E6E6E6;
   }
 

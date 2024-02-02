@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { ElTag } from "element-plus";
 import { ref, unref, reactive, onMounted, watch } from "vue";
 import dayjs from "dayjs";
 import {
   getqryMaterial,
   setDeleteMaterial,
-  getMaterialDetail,
-  getupdateMarketingTouch,
-  setOnlineMaterial,
-  setOfflineMaterial,
+  setUpdateMaterialStatus,
 } from "~/api/index";
 import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
-
+import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import CustomEventComponent from "./CustomEventComponent.vue";
+
 const formInline = reactive({
   name: "",
   // type	素材类型：sms 短信，appPush app消息，digital 数字员工，outbound 智能外呼，znx 站内信
@@ -22,7 +19,6 @@ const formInline = reactive({
   endTime: "",
   status: "",
 });
-
 const tableData = ref([]); // 表格数据
 const total = ref(100); // 总数
 const currentPage = ref(1);
@@ -30,44 +26,19 @@ const pageSize = ref(10);
 const small = ref(false);
 const background = ref(false);
 const disabled = ref(false);
-const handleSetStatus = () => {
-  // 处理状态设置的逻辑
-};
-
-const handleDelete = () => {
-  // 处理删除事件的逻辑
-};
-
-const handleDrawer = (type: any) => {
-  // 处理抽屉相关逻辑
-};
-
-const onSubmit = () => {
-  // 提交表单的逻辑
-};
-
-const onCreateEventAttr = () => {
-  // 创建事件属性的逻辑
-};
-
-const handleAttrDelete = () => {
-  // 处理属性删除的逻辑
-};
-
 const time = ref(null);
 const router = useRouter();
+const StatisticsList = ref();
+const totalCount = ref();
 const statusLabels = {
-  available: { Text: "可用", type: "info" },
-  offline: { Text: "下线", type: "success" },
+  available: { Text: "可用", type: "success" },
+  offline: { Text: "下线", type: "info" },
 };
 const typeMap = {
   immediately: "定时-单次",
   delayed: "定时-重复",
   trigger: "触发型",
 };
-
-const StatisticsList = ref();
-const totalCount = ref();
 
 onMounted(async () => {
   fetchDataApi();
@@ -93,54 +64,43 @@ const setSearchParams = () => {
 };
 
 const delData = async (row: any) => {
-  let res = await setDeleteMaterial({
-    id: row.id,
-    status: row.status,
-    type: formInline.type,
+  ElMessageBox.alert("删除后将无法恢复", "确认删除", {
+    showCancelButton: true,
+    roundButton: true,
+    cancelButtonClass: "pd-button",
+    confirmButtonClass: "pd-button",
+    customClass: "delete-modal",
+  }).then(async () => {
+    let res = await setDeleteMaterial({
+      id: row.id,
+      status: row.status,
+      type: formInline.type,
+    });
+    if (res?.code == 0) {
+      fetchDataApi();
+      ElMessage.success(res.message);
+    }
   });
-
-  if (res?.code == 0) {
-    fetchDataApi();
-  }
 };
 // 上线素材
-const startData = async (row: any) => {
-  let res = await setOnlineMaterial({
+const updateMaterialStatusData = async (row: any, status: String) => {
+  let res = await setUpdateMaterialStatus({
     id: row.id,
-    status: row.status,
+    status: status,
     type: formInline.type,
   });
   if (res?.code == 0) {
-    fetchDataApi();
-  }
-  console.log(`output->上线素材`);
-};
-
-const pauseData = async (row: any) => {
-  await setOfflineMaterial({ id: row.id }).finally(() => {});
-};
-
-const unlineData = async (row: any) => {
-  let res = await setOfflineMaterial({
-    id: row.id,
-    status: row.status,
-    type: formInline.type,
-  });
-
-  if (res?.code == 0) {
+    ElMessage.success(res.message);
     fetchDataApi();
   }
 };
+
 const detailsData = async (row: any) => {
   let res = await getMaterialDetail({
     id: row.id,
     status: row.status,
     type: formInline.type,
   });
-};
-const addAction = () => {
-  console.log(`output->tiaozhuan`, "designNew");
-  router.push("designNew");
 };
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);
@@ -152,7 +112,7 @@ const handleCurrentChange = (val: number) => {
 
 <template>
   <div>
-    <CustomEventComponent :title="'短信模版列表'" :tableData="tableData" :total="total" @handleSetStatus="handleSetStatus" @handleDelete="handleDelete" @handleDrawer="handleDrawer">
+    <CustomEventComponent :title="'短信模版列表'" :tableData="tableData" :total="total">
       <template #search>
         <div class="search">
           <el-form :inline="true">
@@ -182,46 +142,36 @@ const handleCurrentChange = (val: number) => {
       </template>
       <template #table="{ tableData }">
 
-      <el-table :data="tableData">
-        <el-table-column label="模版ID" width="180" prop="id"/>
-        <el-table-column label="模版名称" width="180" prop="name"/>
-        <el-table-column label="短信内容" width="180" >
-          <template #default="scope">
-            <el-popover effect="light" trigger="hover" placement="top" width="auto">
-              <template #default>
-                {{ scope.row.content }}
-              </template>
-              <template #reference>
-                <div class="popover-reference">
-                  {{ scope.row.content }}
-                </div>
-              </template>
-            </el-popover>
-          </template>
-        </el-table-column>
-        <el-table-column label="状态" width="180">
-          <template #default="scope">
-            <el-tag class="mx-1" :type="statusLabels[scope.row.status].type" effect="light">
-              {{ statusLabels[scope.row.status].Text }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="更新时间" width="280"  prop="updatedTime"/>
-        <el-table-column label="创建时间" width="180"   prop="createTime" />
-        <el-table-column label="创建人" width="180" prop="createBy" />
-        <el-table-column label="正在使用" width="180" prop="totalCount" />
-        <el-table-column label="操作" width="280" fixed="right">
-          <template #default="scope">
-            <el-space wrap>
-              <el-link type="primary" v-if="scope.row.status=='offline'" @click="startData(scope.row)">上线</el-link>
-              <el-link type="primary" v-if="scope.row.status!=='offline'" @click="unlineData(scope.row)">下线</el-link>
-              <el-link type="primary" @click="pauseData(scope.row)">编辑</el-link>
-              <el-link type="primary" @click="delData(scope.row)">删除</el-link>
-              <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
-            </el-space>
-          </template>
-        </el-table-column>
-      </el-table>
+        <el-table :data="tableData">
+          <el-table-column label="模版ID" prop="id" />
+          <el-table-column label="模版名称" prop="name" />
+          <el-table-column label="状态">
+            <template #default="scope">
+              <el-tag class="mx-1" :type="statusLabels[scope.row.status].type?statusLabels[scope.row.status].type:'info'" effect="light">
+                {{ statusLabels[scope.row.status].Text }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="更新时间" width="180" prop="updatedTime" />
+          <el-table-column label="创建时间" width="180" prop="createTime" />
+          <el-table-column label="创建人" prop="createBy" />
+          <el-table-column label="正在使用" prop="usedCount">
+            <template #default="scope">
+              <span :style="scope.row.usedCount > 0 ? 'color: #00C068' : 'color: #333'">{{scope.row.usedCount}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="280" fixed="right">
+            <template #default="scope">
+              <el-space wrap>
+                <el-link type="primary" v-if="scope.row.status=='offline'" @click="updateMaterialStatusData(scope.row,'available')">上线</el-link>
+                <el-link type="primary" v-if="scope.row.status!=='offline'" @click="updateMaterialStatusData(scope.row,'offline')">下线</el-link>
+                <el-link type="primary" @click="pauseData(scope.row)">编辑</el-link>
+                <el-link type="primary" @click="delData(scope.row)">删除</el-link>
+                <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+              </el-space>
+            </template>
+          </el-table-column>
+        </el-table>
       </template>
       <template #pagination>
         <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
@@ -231,8 +181,6 @@ const handleCurrentChange = (val: number) => {
 </template>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "./material.scss";
-
-/* 组件的样式 */
 </style>

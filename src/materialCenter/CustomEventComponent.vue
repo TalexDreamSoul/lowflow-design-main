@@ -4,7 +4,7 @@
     <div class="title">{{ title }}</div>
     <slot name="search"></slot>
     <div class="content">
-      <el-watermark content="11111" :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
+      <el-watermark content="用户名+时间" :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
         <slot name="table" :tableData="tableData"></slot>
       </el-watermark>
       <slot name="pagination"></slot>
@@ -19,7 +19,6 @@ const props = defineProps({
   title: String,
   tableData: Array,
 });
-
 // ... 其他逻辑
 </script>
 
@@ -27,7 +26,6 @@ const props = defineProps({
 
 <style lang="scss">
 .event {
-  height: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

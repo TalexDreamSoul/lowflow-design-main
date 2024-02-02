@@ -1,5 +1,5 @@
 <template>
-  <div class="event">
+  <div class="event list-layout">
     <div class="title">事件列表</div>
     <div class="search">
       <el-form :inline="true" :model="pageParams">
@@ -34,11 +34,14 @@
           </el-table-column>
           <el-table-column label="操作">
             <template #default="scope">
-              <el-button @click="handleSetStatus(scope.row)" link type="primary" class="action-btn">{{ checkStringEqual(scope.row.status,
-                ConfigStatus.Available) ? '下线' : '上线' }}</el-button>
-              <el-button @click="handleDrawer(DrawerType.Edit, scope.row)" link type="primary" class="action-btn">编辑</el-button>
+              <el-button @click="handleSetStatus(scope.row)" link type="primary" class="action-btn">{{
+                checkStringEqual(scope.row.status,
+                  ConfigStatus.Available) ? '下线' : '上线' }}</el-button>
+              <el-button @click="handleDrawer(DrawerType.Edit, scope.row)" link type="primary"
+                class="action-btn">编辑</el-button>
               <el-button link type="primary" class="action-btn" @click="handleDelete(scope.row)">删除</el-button>
-              <el-button @click="handleDrawer(DrawerType.Detail, scope.row)" link type="primary" class="action-btn">查看详情</el-button>
+              <el-button @click="handleDrawer(DrawerType.Detail, scope.row)" link type="primary"
+                class="action-btn">查看详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -50,7 +53,8 @@
       class="event-drawer">
       <div class="event-drawer-header">{{ DrawerTitleMap[drawerType] }}</div>
       <div class="event-drawer-content">
-        <el-form :disabled="checkStringEqual(drawerType, DrawerType.Detail)" ref="formRef" :hide-required-asterisk="true" label-position='top' :model="formValues" class="form">
+        <el-form :disabled="checkStringEqual(drawerType, DrawerType.Detail)" ref="formRef" :hide-required-asterisk="true"
+          label-position='top' :model="formValues" class="form">
           <el-form-item :rules="[
             { required: true, message: '请输入事件编码' },
             { pattern: /^[a-zA-Z0-9_]{1,18}$/, message: '仅支持数字、字母、下划线，不超过18个字符' },
@@ -58,11 +62,14 @@
             <el-input size='large' v-model="formValues.eventCode" placeholder="请输入" clearable />
           </el-form-item>
           <el-form-item :rules="[
+            { required: true, message: '请输入事件名称' },
             { pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/, message: '仅支持数字、汉字、字母、下划线，不超过18个字符' },
           ]" label="事件名称" prop="eventName">
             <el-input size='large' v-model="formValues.eventName" placeholder="请输入" clearable />
           </el-form-item>
-          <el-form-item label="事件类别" prop="eventType">
+          <el-form-item :rules="[
+            { required: true, message: '请选择事件类别' },
+          ]" label="事件类别" prop="eventType">
             <el-select size='large' v-model="formValues.eventType" placeholder="请选择" clearable>
               <el-option v-for="item of EVENT_TYPE" :label="item.label" :value="item.value" />
             </el-select>
@@ -77,7 +84,8 @@
         <div class="attr-content">
           <div class="title">
             <div class="text">关联属性</div>
-            <el-button v-if="!checkStringEqual(drawerType, DrawerType.Detail)" round type="primary" @click="onCreateEventAttr(DrawerType.Create)">新建事件属性</el-button>
+            <el-button v-if="!checkStringEqual(drawerType, DrawerType.Detail)" round type="primary"
+              @click="onCreateEventAttr(DrawerType.Create)">新建事件属性</el-button>
           </div>
           <el-watermark content="11111" :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
             <el-table :data="formValues.attrTableData" style="width: 100%">
@@ -91,8 +99,8 @@
               </el-table-column>
               <el-table-column v-if="drawerType !== DrawerType.Detail" label="操作" width="105">
                 <template #default="scope">
-                  <el-button link type="primary"
-                    @click="onCreateEventAttr(DrawerType.Edit, scope.row, scope.$index)" class="action-btn">编辑</el-button>
+                  <el-button link type="primary" @click="onCreateEventAttr(DrawerType.Edit, scope.row, scope.$index)"
+                    class="action-btn">编辑</el-button>
                   <el-button link type="primary" @click="handleAttrDelete(scope.$index)" class="action-btn">删除</el-button>
                 </template>
               </el-table-column>
@@ -109,7 +117,8 @@
     </el-drawer>
     <el-dialog class="attr-modal" destroy-on-close :close-on-click-modal="false" v-model="dialogFormVisible"
       :title='ModalTitleMap[modalType]'>
-      <el-form :disabled="checkStringEqual(modalType, DrawerType.Detail)" ref="attrFormRef" :hide-required-asterisk="true" label-position='top' class="form" :model="attrFormValues">
+      <el-form :disabled="checkStringEqual(modalType, DrawerType.Detail)" ref="attrFormRef" :hide-required-asterisk="true"
+        label-position='top' class="form" :model="attrFormValues">
         <el-form-item :rules="[
           { required: true, message: '请输入属性编码' },
           { pattern: /^[a-zA-Z0-9_]{1,18}$/, message: '仅支持数字、字母、下划线，不超过18个字符' },
@@ -117,11 +126,14 @@
           <el-input size='large' v-model="attrFormValues.field" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item :rules="[
+          { required: true, message: '请输入属性名称' },
           { pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/, message: '仅支持数字、汉字、字母、下划线，不超过18个字符' },
         ]" label="属性名称" prop="fieldName">
           <el-input size='large' v-model="attrFormValues.fieldName" placeholder="请输入" clearable />
         </el-form-item>
-        <el-form-item label="数据类别" prop="fieldType">
+        <el-form-item :rules="[
+          { required: true, message: '请选择数据类别' },
+        ]" label="数据类别" prop="fieldType">
           <el-select size='large' v-model="attrFormValues.fieldType" placeholder="请选择" clearable>
             <el-option v-for="item of ATTR_FIELD_TYPE" :label="item.label" :value="item.value" />
           </el-select>
@@ -337,101 +349,8 @@ const handleAttrDelete = (index: number) => {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" src="~/styles/list-layout.scss">
 .event {
-  height: 100%;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  padding: 24px 40px;
-  background-color: #f8f9fa;
-  overflow-y: auto;
-
-  >.title {
-    font-size: 24px;
-    line-height: 24px;
-    font-weight: 500;
-    color: rgba($color: #000000, $alpha: 1.0);
-    margin-bottom: 24px;
-  }
-
-  .search {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    .el {
-      &-select {
-        width: 278px;
-      }
-
-      &-form-item {
-        margin-bottom: 16px !important;
-      }
-
-      &-input {
-        width: 280px;
-      }
-    }
-  }
-
-  .content {
-    flex: 1;
-    background-color: white;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .el {
-    &-pagination {
-      justify-content: flex-end;
-      margin: 20px 40px;
-    }
-
-    &-table {
-      border-radius: 8px;
-      overflow: hidden;
-
-      .cell {
-        padding: 0;
-
-        .el-button.is-link {
-          padding: 0;
-        }
-      }
-    }
-
-    &-table__header th {
-      padding: 19.5px 16px;
-      font-size: 14px;
-      color: rgba($color: #000000, $alpha: 0.9);
-      font-weight: 500;
-      box-sizing: border-box;
-
-      .cell {
-        line-height: 16px;
-      }
-    }
-
-    &-table__body td {
-      padding: 12.5px 16px;
-      color: #000000;
-
-      .cell {
-        line-height: 22px;
-      }
-    }
-  }
-
-  .el-tag.el-tag--info {
-    border-color: rgba(144, 160, 184, 0.20);
-    background-color: rgba(242, 244, 248, 1);
-    color: #90A0B8;
-    line-height: 22px;
-  }
-
   .event-drawer {
     .el-drawer__body {
       padding: 0;
@@ -489,16 +408,6 @@ const handleAttrDelete = (index: number) => {
     }
   }
 
-  .action-btn {
-    span {
-      letter-spacing: 0;
-      line-height: 17px;
-    }
-    &:not(:first-child) {
-      margin-left: 6px;
-    }
-  }
-
   .attr-modal {
     border-radius: 8px;
 
@@ -517,41 +426,6 @@ const handleAttrDelete = (index: number) => {
     .el-dialog__body {
       padding-top: 14px;
     }
-  }
-
-  .form .el-form-item {
-    .el-form-item__label {
-      color: rgba(0, 0, 0, 0.9);
-    }
-
-    &:not(:last-child) {
-      width: 50%;
-    }
-  }
-}
-
-.pd-button {
-  height: 40px;
-  padding: 12px 24px;
-
-  &.el-button--primary {
-    background: linear-gradient(180deg, #205CCB 0%, #598FF1 100%);
-  }
-}
-
-.delete-modal {
-  border-radius: 8px;
-
-  .el-message-box__title {
-    font-size: 20px;
-    font-weight: 500;
-    color: #000000;
-    line-height: 24px;
-  }
-
-  .el-message-box__close {
-    font-size: 24px !important;
-    color: #90A0B8 !important;
   }
 }
 </style>
