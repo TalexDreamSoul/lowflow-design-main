@@ -84,6 +84,38 @@ export const ATTR_FIELD_TYPE = [
  * 配置中心状态常量
  */
 export enum ConfigStatus {
-  Available = 'available',
-  Offline = 'offline'
-};
+  Available = "available",
+  Offline = "offline",
+}
+
+/**
+ * 人员性别
+ */
+export const PEOPLE_SEX = [
+  {
+    label: "男",
+    value: "man",
+  },
+  {
+    label: "女",
+    value: "woman",
+  },
+];
+
+/**
+ * 人员来源
+ */
+export const PEOPLE_SOURCE = [
+  {
+    label: "手动添加",
+    value: "manual",
+  },
+  {
+    label: "活动收集",
+    value: "H5",
+  },
+  {
+    label: "第三方导入",
+    value: "third",
+  },
+];

@@ -55,6 +55,20 @@ export const routes: RouterOptions["routes"] = [
       },
     ],
   },
+  {
+    path: "/customer",
+    redirect: "/customer/list",
+    children: [
+      {
+        path: "list",
+        component: () => import("../pages/customer/list.vue"),
+      },
+      {
+        path: "attr",
+        component: () => import("../pages/configuration/attr.vue"),
+      },
+    ],
+  },
   // * 素材类型：sms 短信，app app消息，digital 数字员工，outbound 智能外呼，znx 站内信
  
   {

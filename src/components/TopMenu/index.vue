@@ -49,8 +49,9 @@
             <CaretBottom />
           </el-icon></div>
       </template>
-      <el-menu-item class="pd-menu-item" index="/pinia">Service</el-menu-item>
-      <el-menu-item class="pd-menu-item" index="/page">Service</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/customer/list">客户列表</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/page">客户标签</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/page">黑名单管理</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="6">
       <template #title>
@@ -85,7 +86,7 @@ import HeaderIcon from '~/assets/header-icon.png';
 import { CaretBottom } from '@element-plus/icons-vue';
 
 const router = useRouter()
-const activeIndex = ref('2')
+const activeIndex = ref(router.currentRoute.value.path);
 
 const handleSelect = (key: string) => {
   router.push(key);
