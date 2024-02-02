@@ -3,7 +3,7 @@ import TouchSettingContents from "~/touch-flow/p/touch/TouchSettingContents.vue"
 import { useVModel } from "@vueuse/core";
 import { reactive } from "vue";
 
-const origin ={
+const origin = {
   id: "",
   name: "",
   status: "",
@@ -23,19 +23,30 @@ const origin ={
           compareValue: "",
           defaultValue: "",
           fieldOp: "",
-          fieldValue: ""
-        }
-      ]
-    }
-  ]
-}
+          fieldValue: "",
+        },
+      ],
+    },
+  ],
+};
 
 const data = reactive<typeof origin>(origin);
 
-
-
 function saveData() {
-  console.log("save", data, origin);
+  const { id, name, outboundCode, variables } = data;
+  const outboundTemplate = {
+    outboundCode,
+    variables,
+    type: "outbound",
+  };
+
+  return {
+    id,
+    name,
+    type: data.type,
+    status: "available",
+    outboundTemplate,
+  };
 }
 
 defineExpose({ saveData });

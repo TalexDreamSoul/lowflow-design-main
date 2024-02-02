@@ -55,8 +55,27 @@ const origin ={
 const data = reactive<typeof origin>(origin);
 
 
+
 function saveData() {
-  console.log("save", data, origin);
+  const { id, name, content,contentVariables,jumpAppType,pageLink,sceneCode,title,titleVariables } = data;
+  const appPushTemplate = {
+    content,
+    contentVariables,
+    jumpAppType,
+    pageLink,
+    sceneCode,
+    title,
+    titleVariables,
+    type: "appPush",
+  };
+
+  return {
+    id,
+    name,
+    type: data.type,
+    status: "available",
+    appPushTemplate,
+  };
 }
 
 defineExpose({ saveData });
