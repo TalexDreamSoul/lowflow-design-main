@@ -36,56 +36,7 @@ const typeMap = {
   delayed: "定时-重复",
   trigger: "触发型",
 };
-let tableData = ref([
-  {
-    id: "id",
-    startTime: "2016-05-03",
-    endTime: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-    status: "approvalPending",
-    executeType: "immediately",
-    total: "20%",
-    totalCount: "19508313 / 10220792 / 1627356",
-    founder: "lvlvlv",
-  },
-  {
-    id: "id",
-    startTime: "2016-05-03",
-    endTime: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-    status: "approvalPending",
-    executeType: "immediately",
-    total: "20%",
-    totalCount: "19508313 / 10220792 / 1627356",
-    founder: "lvlvlv",
-  },
-  {
-    id: "id",
-    startTime: "2016-05-03",
-    endTime: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-    status: "approvalSuccess",
-    executeType: "immediately",
-    total: "20%",
-    totalCount: "19508313 / 10220792 / 1627356",
-    founder: "lvlvlv",
-  },
-  {
-    id: "id",
-    startTime: "2016-05-03",
-    endTime: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-    status: "waitStart",
-    executeType: "immediately",
-    total: "20%",
-    totalCount: "19508313 / 10220792 / 1627356",
-    founder: "lvlvlv",
-  },
-]);
+let tableData = ref();
 const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
@@ -275,7 +226,7 @@ const handleCurrentChange = (val: number) => {
           </template>
         </el-table-column>
 
-        <el-table-column label=" 累计进入 / 累计触发 / 累计目标完成" width="180">
+        <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="180">
           <template #default="scope">
             <!-- targetCount 完成目标数量
             touchCount 触达数量

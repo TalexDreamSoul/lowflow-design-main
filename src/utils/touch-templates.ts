@@ -26,7 +26,7 @@ function _createApp(comp: Component, props: any) {
   return app
 }
 
-export function createTemplatePopover(title: string, template: keyof typeof templates, data?: Ref<any>) {
+export function createTemplatePopover(title: string, template: keyof typeof templates, data?: Ref<any>, type?: String) {
   const comp = templates[template]
   if (!comp) throw new Error(`Template ${template} not found!`)
 
@@ -50,7 +50,7 @@ export function createTemplatePopover(title: string, template: keyof typeof temp
 
   const dom = document.createElement('div')
   const app = _createApp(BaseTemplateVue, {
-    title, comp, close: resolve, data, success: (val: any) => {
+    title, comp, close: resolve, data,type, success: (val: any) => {
       Object.assign(data?.value, val)
     }
   })
