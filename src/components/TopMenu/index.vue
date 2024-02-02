@@ -1,155 +1,175 @@
 <!-- TopMenu.vue -->
 <template>
-  <div class="top-menu">
-    <div style="align-items: center;
-    gap: 0px 8px;
-    height: 100%;
-    display: flex;">
-      <div>
-        <div style="    display: flex;">
-          <el-image class="iconBase">
-          </el-image>
-          <div>
-            H5活动制作系统
-            <br />
-            <span style="font-size: 9px;">
-              zhpongguancun bank
-            </span>
-          </div>
-        </div>
-      </div>
-      <div style="flex:1;padding: 0px 24px 0 10%;">
-        <div class="dropdown">
-          数据看板
-          <div class="dropdown-menu">
-            <router-link to="/pinia">Service 1</router-link>
-            <router-link to="/page">Service 2</router-link>
-          </div>
-        </div>
-        <div class="dropdown">
-          营销制作
-          <div class="dropdown-menu">
-            <router-link to="/pinia">Service 1</router-link>
-            <router-link to="/page">Service 2</router-link>
-          </div>
-        </div>
-        <div class="dropdown" @click="targetPage('designNew')">
-          营销触达
-          <div class="dropdown-menu">
-            <router-link to="/designNew">流程画布</router-link>
-            <router-link to="/strategyProcessList">策略流程列表</router-link>
-          </div>
-        </div>
-        <div class="dropdown">
-          素材中心
-          <div class="dropdown-menu">
-            <router-link to="/materialCenter/SmsTemplateVue">短信模版</router-link>
-            <router-link to="/materialCenter/OutboundTemplateVue">外呼模版</router-link>
-            <router-link to="/materialCenter/AppTemplateVue">APP Push模版</router-link>
-            <router-link to="/materialCenter/DigitalTemplateVue">企微模版</router-link>
-            <router-link to="/materialCenter/ZnxTemplateVue">站内信模版</router-link>
-          </div>
-        </div>
-        <div class="dropdown">
-          客户中心
-          <div class="dropdown-menu">
-            <router-link to="/pinia">Service 1</router-link>
-            <router-link to="/page">Service 2</router-link>
-          </div>
-        </div>
-        <div class="dropdown">
-          配置中心
-          <div class="dropdown-menu">
-            <router-link to="/configuration/event">事件管理</router-link>
-            <router-link to="/configuration/attr">属性管理</router-link>
-          </div>
-        </div>
-        <div class="dropdown" @click="targetPage('dashboard')" @mouseleave="hideDropdown">
-          素材权益管理
-        </div>
-        <div class="dropdown">
-          审核中心
-          <div class="dropdown-menu">
-            <router-link to="/pinia">Service 1</router-link>
-            <router-link to="/page">Service 2</router-link>
-          </div>
-        </div>
-      </div>
-      <div style="position: relative;padding:0 24px">
-        <MenuPersonal />
-      </div>
-    </div>
+  <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :ellipsis="false" :popper-offset="0" @select="handleSelect">
+    <img style="width: 169px; height: 39px; margin: 0 26px 0 17px;" :src="HeaderIcon" alt="" />
+    <el-sub-menu index="1">
+      <template #title>
+        <div class="title">数据看板 <el-icon :size="12">
+            <CaretBottom />
+          </el-icon></div>
+      </template>
+      <el-menu-item class="pd-menu-item" index="/pinia">Service</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/page">Service</el-menu-item>
+    </el-sub-menu>
+    <el-sub-menu index="2">
+      <template #title>
+        <div class="title">营销制作 <el-icon :size="12">
+            <CaretBottom />
+          </el-icon></div>
+      </template>
+      <el-menu-item class="pd-menu-item" index="/pinia">Service</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/page">Service</el-menu-item>
+    </el-sub-menu>
+    <el-sub-menu index="3">
+      <template #title>
+        <div class="title">营销触达 <el-icon :size="12">
+            <CaretBottom />
+          </el-icon></div>
+      </template>
 
-  </div>
+      <el-menu-item class="pd-menu-item" index="/designNew">流程画布</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/strategyProcessList">策略流程列表</el-menu-item>
+    </el-sub-menu>
+    <el-sub-menu index="4">
+      <template #title>
+        <div class="title">素材中心 <el-icon :size="12">
+            <CaretBottom />
+          </el-icon></div>
+      </template>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/SmsTemplateVue">短信模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/OutboundTemplateVue">外呼模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/AppTemplateVue">APP Push模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/DigitalTemplateVue">企微模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/ZnxTemplateVue">站内信模版</el-menu-item>
+
+    </el-sub-menu>
+    <el-sub-menu index="5">
+      <template #title>
+        <div class="title">客户中心 <el-icon :size="12">
+            <CaretBottom />
+          </el-icon></div>
+      </template>
+      <el-menu-item class="pd-menu-item" index="/pinia">Service</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/page">Service</el-menu-item>
+    </el-sub-menu>
+    <el-sub-menu index="6">
+      <template #title>
+        <div class="title">配置中心 <el-icon :size="12">
+            <CaretBottom />
+          </el-icon></div>
+      </template>
+      <el-menu-item class="pd-menu-item" index="/configuration/event">事件管理</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/configuration/attr">属性管理</el-menu-item>
+    </el-sub-menu>
+    <el-menu-item index="/dashboard">
+      <div class="title">素材权益管理</div>
+    </el-menu-item>
+    <el-sub-menu index="7">
+      <template #title>
+        <div class="title">审核中心 <el-icon :size="12">
+            <CaretBottom />
+          </el-icon></div>
+      </template>
+      <el-menu-item class="pd-menu-item" index="/pinia">Service</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/page">Service</el-menu-item>
+    </el-sub-menu>
+    <MenuPersonal />
+  </el-menu>
 </template>
 
 <script lang="ts" setup>
-import MenuPersonal from './MenuPersonal.vue'
-import { useRouter } from 'vue-router'
+import { ref } from "vue";
+import MenuPersonal from "./MenuPersonal.vue";
+import { useRouter } from "vue-router";
+import HeaderIcon from "~/assets/header-icon.png";
+import { CaretBottom } from "@element-plus/icons-vue";
 
-const router = useRouter()
+const router = useRouter();
+const activeIndex = ref("2");
 
-function targetPage(page: any) {
-  router.push(page);
-}
+const handleSelect = (key: string) => {
+  router.push(key);
+};
 </script>
 
-<style scoped>
-.top-menu {
-  width: 100%;
+<style lang="scss" scoped>
+.el-menu-demo {
+  align-items: center;
   height: 64px;
-  background: #ffffff;
-  box-shadow: 0px 20px 40px 0px rgba(0, 0, 0, 0.02);
-  border-radius: 0px 0px 0px 0px;
-  opacity: 1;
-  position: sticky;
-  top: 0;
-  left: 0;
-  color: #333;
-  padding: 12px;
-}
 
-.dropdown {
-  position: relative;
-  display: inline-block;
-  margin-right: 20px;
-  cursor: pointer;
-}
-
-.dropdown-menu {
-  a {
-    &:hover {
-      background-color: #F4F5F8;
-    }
-
-    display: block;
-    padding: .5rem 1rem;
-
-    color: #000;
-    width: 100px;
-    height: 32px;
-    line-height: 32px;
-    text-align: left;
-    text-decoration: unset;
+  &.el-menu {
+    border-bottom: none;
   }
 
-  position: absolute;
-  display: block;
-  top: 100%;
-  left: 0;
-  background-color: #fff;
-  color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  .el-sub-menu {
+    height: 100%;
 
-  opacity: 0;
-  transition: .25s;
-  pointer-events: none;
-  transform: translateY(-10%) scaleY(0.85);
+    &:hover,
+    &.is-opened,
+    .el-sub-menu__title:hover {
+      background-color: rgba(144, 160, 184, 0.1);
+    }
+
+    &.is-active .el-sub-menu__title {
+      background-color: rgba(56, 120, 244, 0.1);
+
+      .title,
+      .el-icon {
+        color: rgba(64, 120, 224, 1);
+      }
+    }
+
+    .title {
+      font-weight: 500;
+      font-size: 16px;
+      color: rgba(0, 0, 0, 0.6);
+
+      .el-icon {
+        color: rgba(144, 160, 184, 1);
+      }
+    }
+  }
+
+  .el-sub-menu__icon-arrow {
+    display: none;
+  }
+
+  &:not(.el-menu--collapse) .el-sub-menu__title,
+  > .el-menu-item {
+    padding: 0 15px;
+  }
+
+  > .el-menu-item {
+    .title {
+      font-weight: 500;
+      font-size: 16px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    &.is-active {
+      background-color: rgba(56, 120, 244, 0.1);
+
+      .title {
+        color: rgba(64, 120, 224, 1);
+      }
+    }
+  }
+
+  .el-icon {
+    width: auto;
+  }
+
+  .MenuPersonal {
+    margin-left: auto;
+  }
 }
 
-.dropdown:hover .dropdown-menu {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0) scaleY(1);
+.pd-menu-item {
+  color: rgba(0, 0, 0, 0.9);
+
+  &.el-menu-item:not(.is-disabled):hover {
+    color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(144, 160, 184, 0.1);
+  }
 }
 </style>

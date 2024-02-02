@@ -1,0 +1,146 @@
+.list-layout {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 40px;
+  background-color: #f8f9fa;
+  overflow-y: auto;
+
+  >.title {
+    font-size: 24px;
+    line-height: 24px;
+    font-weight: 500;
+    color: rgba($color: #000000, $alpha: 1.0);
+    margin-bottom: 24px;
+  }
+
+  .search {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .el {
+      &-select {
+        width: 278px;
+      }
+
+      &-form-item {
+        margin-bottom: 16px !important;
+      }
+
+      &-input {
+        width: 280px;
+      }
+    }
+  }
+
+  .content {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: auto;
+  }
+
+  .el {
+    &-pagination {
+      justify-content: flex-end;
+      margin: 20px 40px;
+    }
+
+    &-table {
+      border-radius: 8px;
+      overflow: hidden;
+
+      .cell {
+        padding: 0;
+
+        .el-button.is-link {
+          padding: 0;
+        }
+      }
+    }
+
+    &-table__header th {
+      padding: 19.5px 16px;
+      font-size: 14px;
+      color: rgba($color: #000000, $alpha: 0.9);
+      font-weight: 500;
+      box-sizing: border-box;
+
+      .cell {
+        line-height: 16px;
+      }
+    }
+
+    &-table__body td {
+      padding: 12.5px 16px;
+      color: #000000;
+
+      .cell {
+        line-height: 22px;
+      }
+    }
+  }
+
+  .el-tag.el-tag--info {
+    border-color: rgba(144, 160, 184, 0.20);
+    background-color: rgba(242, 244, 248, 1);
+    color: #90A0B8;
+    line-height: 22px;
+  }
+
+  .action-btn {
+    span {
+      letter-spacing: 0;
+      line-height: 17px;
+    }
+
+    &:not(:first-child) {
+      margin-left: 6px;
+    }
+
+    &.el-button.is-link:hover,
+    &.el-button.is-link:focus {
+      color: #4078E0;
+    }
+  }
+
+  .form .el-form-item {
+    .el-form-item__label {
+      color: rgba(0, 0, 0, 0.9);
+    }
+
+    &:not(:last-child) {
+      width: 50%;
+    }
+  }
+}
+
+.pd-button {
+  height: 40px;
+  padding: 12px 24px;
+
+  &.el-button--primary {
+    background: linear-gradient(180deg, #205CCB 0%, #598FF1 100%);
+  }
+}
+
+.delete-modal {
+  border-radius: 8px;
+
+  .el-message-box__title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #000000;
+    line-height: 24px;
+  }
+
+  .el-message-box__close {
+    font-size: 24px !important;
+    color: #90A0B8 !important;
+  }
+}

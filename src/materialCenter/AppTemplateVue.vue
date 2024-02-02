@@ -228,7 +228,7 @@ const handleCurrentChange = (val: number) => {
 
   </div>
 </template>
-<style lang="scss">
+<style lang="scss" scoped>
 @import './material.scss';
 
 /* 组件的样式 */
