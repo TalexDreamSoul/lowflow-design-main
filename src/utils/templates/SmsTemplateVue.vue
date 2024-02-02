@@ -28,26 +28,39 @@ const origin = {
           compareValue: "",
           defaultValue: "",
           fieldOp: "",
-          fieldValue: ""
-        }
-      ]
-    }
-  ]
-}
-
-const data = reactive<typeof origin>(origin)
+          fieldValue: "",
+        },
+      ],
+    },
+  ],
+};
 
 watchEffect(() => {
   const _data = props.data.value
 
   Object.assign(data, _data)
 })
+const data = reactive<typeof origin>(origin);
 
 function saveData() {
-  console.log('save', data, origin)
+  const { id, name, content, sceneCode, variables } = data;
+  const smsTemplate = {
+    content,
+    sceneCode,
+    variables,
+    type: "sms",
+  };
+
+  return {
+    id,
+    name,
+    type: data.type,
+    status: "available",
+     smsTemplate,
+  };
 }
 
-defineExpose({ saveData })
+defineExpose({ saveData });
 </script>
 
 <template>

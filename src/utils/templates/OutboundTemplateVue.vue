@@ -7,7 +7,7 @@ const props = defineProps<{
   data: any
 }>()
 
-const origin ={
+const origin = {
   id: "",
   name: "",
   status: "",
@@ -27,12 +27,12 @@ const origin ={
           compareValue: "",
           defaultValue: "",
           fieldOp: "",
-          fieldValue: ""
-        }
-      ]
-    }
-  ]
-}
+          fieldValue: "",
+        },
+      ],
+    },
+  ],
+};
 
 const data = reactive<typeof origin>(origin);
 
@@ -43,7 +43,20 @@ watchEffect(() => {
 })
 
 function saveData() {
-  console.log("save", data, origin);
+  const { id, name, outboundCode, variables } = data;
+  const outboundTemplate = {
+    outboundCode,
+    variables,
+    type: "outbound",
+  };
+
+  return {
+    id,
+    name,
+    type: data.type,
+    status: "available",
+    outboundTemplate,
+  };
 }
 
 defineExpose({ saveData });

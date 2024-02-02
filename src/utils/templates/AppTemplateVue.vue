@@ -65,8 +65,27 @@ watchEffect(() => {
   Object.assign(data, _data)
 })
 
+
 function saveData() {
-  return {}
+  const { id, name, content,contentVariables,jumpAppType,pageLink,sceneCode,title,titleVariables } = data;
+  const appPushTemplate = {
+    content,
+    contentVariables,
+    jumpAppType,
+    pageLink,
+    sceneCode,
+    title,
+    titleVariables,
+    type: "appPush",
+  };
+
+  return {
+    id,
+    name,
+    type: data.type,
+    status: "available",
+    appPushTemplate,
+  };
 }
 
 defineExpose({ saveData });

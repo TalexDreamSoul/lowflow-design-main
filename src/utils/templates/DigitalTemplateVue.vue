@@ -55,7 +55,19 @@ watchEffect(() => {
 })
 
 function saveData() {
-  console.log("save", data, origin);
+  const { id, name, digitalTemplateDetails } = data;
+  const digitalTemplate = {
+    digitalTemplateDetails,
+    type: "digital",
+  };
+
+  return {
+    id,
+    name,
+    type: data.type,
+    status: "available",
+    digitalTemplate,
+  };
 }
 
 defineExpose({ saveData });
