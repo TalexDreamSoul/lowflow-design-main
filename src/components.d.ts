@@ -7,11 +7,20 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    BehaviorFoldingGroup: typeof import('./components/BehaviorFoldingGroup/index.ts')['default']
-    Condition: typeof import('./components/Condition/index.ts')['default']
+    ElButton: typeof import('element-plus/es')['ElButton']
+    ElCard: typeof import('element-plus/es')['ElCard']
+    ElCascader: typeof import('element-plus/es')['ElCascader']
+    ElCol: typeof import('element-plus/es')['ElCol']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
+    ElContainer: typeof import('element-plus/es')['ElContainer']
+    ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElDrawer: typeof import('element-plus/es')['ElDrawer']
+    ElForm: typeof import('element-plus/es')['ElForm']
+    ElFormItem: typeof import('element-plus/es')['ElFormItem']
+    ElHeader: typeof import('element-plus/es')['ElHeader']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
     ElImage: typeof import('element-plus/es')['ElImage']
-<<<<<<< Updated upstream
     ElInput: typeof import('element-plus/es')['ElInput']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
     ElMain: typeof import('element-plus/es')['ElMain']
@@ -35,15 +44,7 @@ declare module 'vue' {
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     ElWatermark: typeof import('element-plus/es')['ElWatermark']
-=======
->>>>>>> Stashed changes
-    EventGroup: typeof import('./components/EventGroup/index.ts')['default']
-    Interface: typeof import('./components/Render/interface.ts')['default']
-    RoleSelection: typeof import('./components/RoleSelection/index.ts')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Segmented: typeof import('./components/Segmented/index.ts')['default']
-    SingleGroup: typeof import('./components/singleGroup/index.ts')['default']
-    UserSelection: typeof import('./components/UserSelection/index.ts')['default']
   }
 }

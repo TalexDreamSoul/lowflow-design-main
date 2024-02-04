@@ -160,14 +160,14 @@ onMounted(async () => {
 function addEventA() {
   props.p.triggerRuleContent.eventA.customEvent.conditions.push({
     conditions: [{}],
-    logicalChar: "or"
+    logicalChar: "或"
   });
 }
 
 function addEventB() {
   props.p.triggerRuleContent.eventB.customEvent.conditions.push({
     conditions: [{}],
-    logicalChar: "or"
+    logicalChar: "或"
   });
 }
 </script>

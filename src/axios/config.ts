@@ -35,7 +35,7 @@ const defaultResponseInterceptors = (response: AxiosResponse) => {
   } else {
     ElMessage.error(response?.data?.message)
     if (response?.data?.code === 401) {
-    
+
     }
   }
 }
