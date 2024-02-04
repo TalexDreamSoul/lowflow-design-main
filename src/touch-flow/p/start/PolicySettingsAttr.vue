@@ -141,7 +141,7 @@ function reset() {
 
 onMounted(reset);
 
-const logicalOperator = ref("and");
+const logicalOperator = ref("且");
 
 const props = defineProps<{
   p: any;
@@ -234,12 +234,12 @@ function attrsAdd() {
 
   const obj = {
     conditions: [{ conditions: {} }],
-    logicalChar: "or",
+    logicalChar: "或",
   };
 
   attr.push({
     conditions: [obj],
-    logicalChar: "or",
+    logicalChar: "或",
   });
 }
 
@@ -248,12 +248,12 @@ function behaviorAdd() {
 
   const obj = {
     conditions: [{ conditions: {} }],
-    logicalChar: "or",
+    logicalChar: "或",
   };
 
   attr.push({
     conditions: [obj],
-    logicalChar: "or",
+    logicalChar: "或",
   });
 }
 
@@ -262,12 +262,12 @@ function sequenceAdd() {
 
   const obj = {
     conditions: [{ conditions: [{}] }],
-    logicalChar: "or",
+    logicalChar: "或",
   };
 
   attr.push({
     conditions: [obj],
-    logicalChar: "or",
+    logicalChar: "或",
   });
 }
 
@@ -313,7 +313,6 @@ const platformOptions: any = {
                 <div class="custom-switch" :class="{ active: logicalOperator === '且' }" @click="toggleLogicalOperator">
                   {{ logicalOperator === "且" ? "且" : "或" }}
                 </div>
-                <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
               </div>
 
               <div class="filter-option-content">
@@ -365,9 +364,8 @@ const platformOptions: any = {
               <div class="logical-operator">
                 <div class="logical-operator__line"></div>
                 <div class="custom-switch" :class="{ active: logicalOperator === 'and' }" @click="toggleLogicalOperator">
-                  {{ logicalOperator === "and" ? "且" : "或" }}
+                  {{ logicalOperator === "且" ? "且" : "或" }}
                 </div>
-                <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
               </div>
               <div class="filter-option-content">
                 <BehaviorGroup title="客户属性满足"> </BehaviorGroup>

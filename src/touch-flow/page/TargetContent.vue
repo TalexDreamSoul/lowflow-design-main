@@ -88,7 +88,7 @@ const attrs = computed(() => {
             target.logicalOperator =
             target?.logicalOperator === '且' ? '或' : '且'
             ">
-            {{ target?.logicalOperator === "and" ? "且" : "或" }}
+            {{ target?.logicalOperator === "且" ? "且" : "或" }}
           </div>
         </div>
         <div v-if="attrs" class="filter-option-content">

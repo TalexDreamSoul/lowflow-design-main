@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 // @ts-ignore sure exist
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
-import TopMenu from "~/components/TopMenu/index.vue";
+import TopMenu from "~/views/TopMenu/index.vue";
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
