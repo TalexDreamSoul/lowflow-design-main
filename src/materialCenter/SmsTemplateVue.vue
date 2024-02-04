@@ -10,6 +10,7 @@ import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import CustomEventComponent from "./CustomEventComponent.vue";
+import { createTemplatePopover } from '../utils/touch-templates'
 
 const formInline = reactive({
   name: "",
@@ -27,18 +28,11 @@ const small = ref(false);
 const background = ref(false);
 const disabled = ref(false);
 const time = ref(null);
-const router = useRouter();
-const StatisticsList = ref();
-const totalCount = ref();
 const statusLabels = {
   available: { Text: "可用", type: "success" },
   offline: { Text: "下线", type: "info" },
 };
-const typeMap = {
-  immediately: "定时-单次",
-  delayed: "定时-重复",
-  trigger: "触发型",
-};
+const value = ref()
 
 onMounted(async () => {
   fetchDataApi();
@@ -57,12 +51,6 @@ const fetchDataApi = async () => {
   total.value = res.data.total;
   console.log(`output->tabledata`, tableData.value);
 };
-
-const setSearchParams = () => {
-  console.log(`output->`, formInline);
-  fetchDataApi();
-};
-
 const delData = async (row: any) => {
   ElMessageBox.alert("删除后将无法恢复", "确认删除", {
     showCancelButton: true,
@@ -96,10 +84,28 @@ const updateMaterialStatusData = async (row: any, status: String) => {
 };
 
 const detailsData = async (row: any) => {
-  let res = await getMaterialDetail({
-    id: row.id,
-    status: row.status,
-    type: formInline.type,
+  value.value=row
+// createTemplatePopover('新建企微模版', 'digital')
+// createTemplatePopover('新建站内信模版', 'znx', value)
+createTemplatePopover('短信模版详情', 'sms', value,'details')
+// createTemplatePopover('新建APP Push模版', 'app')
+// createTemplatePopover('新建外呼模版', 'outbound')
+};
+
+const addData = async () => {
+  value.value=''
+createTemplatePopover('新建短信模版', 'sms',value)
+};
+const updateData = async (row: any) => {
+  ElMessageBox.alert(`当前有${row.usedCount}个策略流程正在使用该模版（流程LC1、LC5、LC22正在使用），确认后该修改内容会更新至正在使用的流程中`, "确认编辑", {
+    showCancelButton: true,
+    roundButton: true,
+    cancelButtonClass: "pd-button",
+    confirmButtonClass: "pd-button",
+    customClass: "delete-modal",
+  }).then(async () => {
+    value.value=row
+    createTemplatePopover('编辑短信模版', 'sms', value,'update')
   });
 };
 const handleSizeChange = (val: any) => {
@@ -134,9 +140,7 @@ const handleCurrentChange = (val: number) => {
 
           </el-form>
           <div>
-            <router-link to="/designNew">
-              <el-button type="primary" class="add" round>新建短信模版</el-button>
-            </router-link>
+              <el-button type="primary" class="add" @click="addData()" round>新建短信模版</el-button>
           </div>
         </div>
       </template>
@@ -165,7 +169,7 @@ const handleCurrentChange = (val: number) => {
               <el-space wrap>
                 <el-link type="primary" v-if="scope.row.status=='offline'" @click="updateMaterialStatusData(scope.row,'available')">上线</el-link>
                 <el-link type="primary" v-if="scope.row.status!=='offline'" @click="updateMaterialStatusData(scope.row,'offline')">下线</el-link>
-                <el-link type="primary" @click="pauseData(scope.row)">编辑</el-link>
+                <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
                 <el-link type="primary" @click="delData(scope.row)">删除</el-link>
                 <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
               </el-space>
