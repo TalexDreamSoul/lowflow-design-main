@@ -9,7 +9,7 @@ import {
   getstartMarketingTouch,
   getpauseMarketingTouch,
 } from "~/api/index";
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter, useRoute } from "vue-router";
 const formInline = reactive({
   touchName: "",
   executeType: "",
@@ -36,56 +36,7 @@ const typeMap = {
   delayed: "定时-重复",
   trigger: "触发型",
 };
-let tableData = ref([
-  {
-    id: "id",
-    startTime: "2016-05-03",
-    endTime: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-    status: "approvalPending",
-    executeType: "immediately",
-    total: "20%",
-    totalCount: "19508313 / 10220792 / 1627356",
-    founder: "lvlvlv",
-  },
-  {
-    id: "id",
-    startTime: "2016-05-03",
-    endTime: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-    status: "approvalPending",
-    executeType: "immediately",
-    total: "20%",
-    totalCount: "19508313 / 10220792 / 1627356",
-    founder: "lvlvlv",
-  },
-  {
-    id: "id",
-    startTime: "2016-05-03",
-    endTime: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-    status: "approvalSuccess",
-    executeType: "immediately",
-    total: "20%",
-    totalCount: "19508313 / 10220792 / 1627356",
-    founder: "lvlvlv",
-  },
-  {
-    id: "id",
-    startTime: "2016-05-03",
-    endTime: "2016-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles",
-    status: "waitStart",
-    executeType: "immediately",
-    total: "20%",
-    totalCount: "19508313 / 10220792 / 1627356",
-    founder: "lvlvlv",
-  },
-]);
+let tableData = ref();
 const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
@@ -93,14 +44,24 @@ const background = ref(false);
 const disabled = ref(false);
 const total = ref(110);
 
-const StatisticsList = ref();
+const StatisticsList = ref({
+  suspend: 0,
+  running: 0,
+  total: 0,
+  waitStart: 0,
+  draft: 0,
+  approvalPending: 0,
+  approvalSuccess: 0,
+  approvalRefuse: 0,
+  done: 0,
+});
 const totalCount = ref();
 
 onMounted(async () => {
   getmarketingTouchNode();
   fetchDataApi();
 });
-watch([currentPage, pageSize], () => {
+watch([currentPage, pageSize, formInline], () => {
   fetchDataApi();
 });
 const fetchDataApi = async () => {
@@ -114,14 +75,8 @@ const fetchDataApi = async () => {
 };
 const getmarketingTouchNode = async () => {
   const res = await getqryTouchStatusCount();
-  StatisticsList.value = res;
-  totalCount.value = StatisticsList.value.reduce(
-    (accumulator: any, currentValue: { count: any }) =>
-      accumulator + currentValue.count,
-    0
-  );
-  console.log(totalCount); // 输出总和
-  console.log(`output->res`, res);
+  StatisticsList.value = res.data;
+  console.log(StatisticsList, "res");
 };
 
 const setSearchParams = () => {
@@ -146,17 +101,12 @@ const updateData = async (row: any) => {
 const detailsData = async (row: any) => {
   await getpauseMarketingTouch({ id: row.id }).finally(() => {});
 };
-const addAction = () => {
-  console.log(`output->tiaozhuan`,'designNew')
-  router.push('designNew');
-};
 const handleSizeChange = (val: any) => {
-  console.log(`${val} items per page`)
-}
+  console.log(`${val} items per page`);
+};
 const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`)
-}
-
+  console.log(`current page: ${val}`);
+};
 </script>
 
 <template>
@@ -192,65 +142,105 @@ const handleCurrentChange = (val: number) => {
     </div>
     <div class="tableCard">
       <div class="countCard">
+
+        <!-- approvalPending
+          approvalRefuse
+          approvalSuccess
+          done
+          draft
+          running
+          suspend
+          total
+          waitStart -->
+
         <div class="showCount allcount">
-          <div class="topcount">{{totalCount||'--'}}</div>
+          <div class="topcount">{{ StatisticsList.total !== undefined ? StatisticsList.total : '--' }}
+           </div>
           <div class="undercount">全部</div>
         </div>
-        <div class="showCount" v-for="item in StatisticsList">
-          <div class="topcount">{{item.count||'--'}}</div>
-          <div class="undercount"> {{ statusLabels[item.status].Text }}</div>
+        <div class="showCount">
+          <div class="topcount">
+            {{ StatisticsList.running !== undefined ? StatisticsList.running : '--' }}
+          </div>
+          <div class="undercount">运行中</div>
+        </div>
+        <div class="showCount">
+          <div class="topcount">
+            {{ StatisticsList.suspend !== undefined ? StatisticsList.suspend : '--' }}
+          </div>
+          <div class="undercount">暂停中</div>
+        </div>
+        <div class="showCount">
+          <div class="topcount">
+            {{ StatisticsList.approvalPending !== undefined ? StatisticsList.approvalPending : '--' }}
+          </div>
+          <div class="undercount">待审批</div>
+        </div>
+        <div class="showCount">
+          <div class="topcount">
+            {{ StatisticsList.done !== undefined ? StatisticsList.done : '--' }}</div>
+          <div class="undercount">已结束</div>
+        </div>
+        <div class="showCount">
+          <div class="topcount">
+            {{ StatisticsList.draft !== undefined ? StatisticsList.draft : '--' }}
+            </div>
+          <div class="undercount">草稿</div>
+        </div>
+        <div class="showCount">
+          <div class="topcount">
+            {{ StatisticsList.approvalRefuse !== undefined ? StatisticsList.approvalRefuse : '--' }}
+          </div>
+          <div class="undercount">审核不通过</div>
         </div>
       </div>
-      <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;">
+      <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
         <el-table-column label="策略流程ID" width="180">
           <template #default="scope">
             {{ scope.row.id }}
           </template>
         </el-table-column>
-        <el-table-column label="名称" width="180">
-          <template #default="scope">
-            {{ scope.row.name }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="状态" width="180">
+        <el-table-column label="名称" width="180" prop="touchName" />
+        <el-table-column label="状态" width="100">
           <template #default="scope">
             <el-tag class="mx-1" :type="statusLabels[scope.row.status].type" effect="light">
               {{ statusLabels[scope.row.status].Text }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="起止日期" width="280">
+        <el-table-column label="起止日期" width="400">
           <template #default="scope">
             {{ scope.row.startTime }}~{{ scope.row.endTime }}
           </template>
         </el-table-column>
 
-        <el-table-column label="起止日期" width="180">
+        <el-table-column label="类型" width="180">
           <template #default="scope">
             {{ typeMap[scope.row.executeType] }}
           </template>
         </el-table-column>
 
-        <el-table-column label="目标完成率" width="180">
+        <el-table-column label="目标完成率">
           <template #default="scope">
-            {{ scope.row.total }}
+            {{ scope.row.targetCount }}%
           </template>
         </el-table-column>
 
-        <el-table-column label=" 累计进入 / 累计触发 / 累计目标完成" width="180">
+        <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="180">
           <template #default="scope">
-            {{ scope.row.totalCount }}
+            <!-- targetCount 完成目标数量
+            touchCount 触达数量
+            triggerCount 触发数量 -->
+            {{ scope.row.touchCount }}/
+            {{ scope.row.triggerCount }}/
+            {{ scope.row.targetCount }}
+
           </template>
         </el-table-column>
 
-        <el-table-column label="创建人" width="180">
-          <template #default="scope">
-            {{ scope.row.founder }}
-          </template>
-        </el-table-column>
+        <el-table-column label="创建人" prop="createBy" />
 
-        <el-table-column label="操作" width="280" fixed="right">
+        <el-table-column label="操作" width="250" fixed="right">
           <template #default="scope">
             <el-space wrap>
               <!-- 
@@ -326,10 +316,8 @@ const handleCurrentChange = (val: number) => {
 }
 
 .showCount {
-  width: 100px;
-  height: 50px;
+  min-width: 150px;
   margin-right: 16px;
-
   background: linear-gradient(
     180deg,
     #f2f4f8 0%,
@@ -339,7 +327,6 @@ const handleCurrentChange = (val: number) => {
   opacity: 1;
   margin-bottom: 24px;
   padding: 24px;
-
   color: rgba(0, 0, 0, 0.9);
 
   .topcount {

@@ -1,9 +1,13 @@
 <script setup lang="ts" name="ZnxTemplate">
 import TouchSettingContents from "~/touch-flow/p/touch/TouchSettingContents.vue";
 import { useVModel } from "@vueuse/core";
-import { reactive } from "vue";
+import { reactive, watchEffect } from "vue";
 
-const origin ={
+const props = defineProps<{
+  data: any
+}>()
+
+const origin = {
   id: "",
   name: "",
   status: "",
@@ -23,19 +27,36 @@ const origin ={
           compareValue: "",
           defaultValue: "",
           fieldOp: "",
-          fieldValue: ""
-        }
-      ]
-    }
-  ]
-}
+          fieldValue: "",
+        },
+      ],
+    },
+  ],
+};
 
 const data = reactive<typeof origin>(origin);
 
+watchEffect(() => {
+  const _data = props.data.value
 
+  Object.assign(data, _data)
+})
 
 function saveData() {
-  console.log("save", data, origin);
+  const { id, name, outboundCode, variables } = data;
+  const outboundTemplate = {
+    outboundCode,
+    variables,
+    type: "outbound",
+  };
+
+  return {
+    id,
+    name,
+    type: data.type,
+    status: "available",
+    outboundTemplate,
+  };
 }
 
 defineExpose({ saveData });

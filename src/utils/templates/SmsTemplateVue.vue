@@ -1,7 +1,12 @@
 <script setup lang="ts" name="ZnxTemplate">
-import TouchSettingContents from '~/touch-flow/p/touch/TouchSettingContents.vue';
-import { useVModel } from '@vueuse/core'
-import { reactive } from 'vue'
+import TouchSettingContents from "~/touch-flow/p/touch/TouchSettingContents.vue";
+import { useVModel } from "@vueuse/core";
+import { reactive, watchEffect } from "vue";
+
+const props = defineProps<{
+  data?: any;
+  type?: any;
+}>();
 
 const origin = {
   id: "",
@@ -24,25 +29,42 @@ const origin = {
           compareValue: "",
           defaultValue: "",
           fieldOp: "",
-          fieldValue: ""
-        }
-      ]
-    }
-  ]
-}
+          fieldValue: "",
+        },
+      ],
+    },
+  ],
+};
 
-const data = reactive<typeof origin>(origin)
-
-
+const data = reactive<typeof origin>(origin);
+watchEffect(() => {
+  const _data = props.data.value;
+  console.log(data, origin);
+  Object.assign(data, _data);
+});
 function saveData() {
-  console.log('save', data, origin)
+  const { id, name, content, sceneCode, variables } = data;
+  const smsTemplate = {
+    content,
+    sceneCode,
+    variables,
+    type: "sms",
+  };
+
+  return {
+    id,
+    name,
+    type: data.type,
+    status: "available",
+    smsTemplate,
+  };
 }
 
-defineExpose({ saveData })
+defineExpose({ saveData });
 </script>
 
 <template>
-  <el-form label-position="top" :model="data">
+  <el-form label-position="top" :model="data" :disabled="type=='details'">
     <el-form-item label="模板名称">
       <el-input v-model="data.name"></el-input>
     </el-form-item>
@@ -50,7 +72,7 @@ defineExpose({ saveData })
       <el-input v-model="data.sceneCode" placeholder="请输入"></el-input>
     </el-form-item>
     <el-form-item label="短信内容">
-      <TouchSettingContents variables="titleVariables" content="listTitle" v-model="data" buttonTitle="输入变量" />
+      <TouchSettingContents variables="variables" content="listTitle" v-model="data" buttonTitle="输入变量" />
     </el-form-item>
   </el-form>
 </template>

@@ -1,6 +1,10 @@
 <script setup lang="ts" name="ZnxTemplate">
 import TouchSettingContents from '~/touch-flow/p/touch/TouchSettingContents.vue';
-import { reactive } from 'vue'
+import { reactive, watchEffect } from 'vue'
+
+const props = defineProps<{
+  data: any
+}>()
 
 const origin =
 {
@@ -40,6 +44,12 @@ const origin =
 }
 
 const data = reactive<typeof origin>(origin)
+
+watchEffect(() => {
+  const _data = props.data.value
+
+  Object.assign(data, _data)
+})
 
 function saveData() {
   const { id, name, carouselId, listTitle, moduleId, titleVariables, znxContent, znxTitle, znxTitleVariables } = data

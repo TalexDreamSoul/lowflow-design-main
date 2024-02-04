@@ -122,3 +122,10 @@ export const addMaterial = (data: any) => {
         data
     })
 }
+
+export const updateMaterial = (data: any) => {
+    return request.post({
+        url: '/api/updateMaterial.do',
+        data
+    })
+}

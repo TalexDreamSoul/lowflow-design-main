@@ -2,6 +2,8 @@
 import { type UseDraggableReturn, useDraggable } from 'vue-draggable-plus'
 import { ref, nextTick } from 'vue'
 import { useVModel } from '@vueuse/core';
+import TouchSettingContents from '~/touch-flow/p/touch/TouchSettingContents.vue';
+import { watchEffect } from 'vue';
 
 const props = defineProps<{
   modelValue?: Array<any>,
@@ -12,6 +14,11 @@ const emits = defineEmits(['update:modelValue'])
 const el = ref()
 const drag = ref(false)
 const list = useVModel(props, 'modelValue', emits)
+const thisList = ref<Array<any>>()
+
+watchEffect(() => {
+  thisList.value = props.modelValue
+})
 
 // @ts-ignore force
 const res = useDraggable(el, list, {
@@ -22,15 +29,30 @@ const res = useDraggable(el, list, {
   onEnd: () => nextTick(() => drag.value = false),
 })
 
+// function generateReflexlyProxy(arr: typeof list, index: number) {
+//   return new Proxy(arr.value?.at(index), {
+//     set: (target: any, p: string | symbol, newValue: any, receiver: any) => {
+
+//       arr.value!.at(index)[p] = newValue
+
+//       return true
+//     },
+//     get: (target: any, p: string | symbol, receiver: any) => {
+//       return arr.value!.at(index)[p]
+//     }
+//   })
+// }
 </script>
 
 <template>
   <div class="MicroEnterpriseDrag">
     <TransitionGroup ref="el" type="transition" tag="ul" :name="!drag ? 'fade' : undefined"
       class="flex flex-col gap-2 p-4 w-300px bg-gray-500/5 rounded">
-      <li class="drag-item" draggable="true" :data-ind="item.name" :key="item.id" v-for="(item, index) in list">
+      <li class="drag-item" draggable="true" :data-ind="item.name" :key="item.id" v-for="(item, index) in thisList">
         <div class="content-container">
-          {{ item }}
+           <img v-if="item.type === 'image'" :src="item.imgUrl" alt="AddonPic" />
+           <TouchSettingContents content="content" variables="variables" v-model="thisList![index]"  v-else-if="item.type === 'content'" />
+          <span v-else>{{ item }} ERROR</span>
         </div>
         <div class="drag-trigger-area">
 
