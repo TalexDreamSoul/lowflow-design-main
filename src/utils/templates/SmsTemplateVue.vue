@@ -1,6 +1,5 @@
 <script setup lang="ts" name="ZnxTemplate">
 import TouchSettingContents from "~/touch-flow/p/touch/TouchSettingContents.vue";
-import { useVModel } from "@vueuse/core";
 import { reactive, watchEffect } from "vue";
 
 const props = defineProps<{
@@ -77,7 +76,7 @@ defineExpose({ saveData });
       <el-input v-model="data.sceneCode" placeholder="请输入"></el-input>
     </el-form-item>
     <el-form-item label="短信内容">
-      <TouchSettingContents variables="variables" content="listTitle" v-model="data" buttonTitle="输入变量" />
+      <TouchSettingContents variables="variables" content="content" v-model="data" buttonTitle="输入变量" />
     </el-form-item>
   </el-form>
 </template>
