@@ -51,8 +51,13 @@ function saveData() {
     type: "sms",
   };
 
-  return {
+  return props.type=='details'||props.type=='update'?{
     id,
+    name,
+    type: data.type,
+    status: "available",
+    smsTemplate,
+  }:{
     name,
     type: data.type,
     status: "available",
