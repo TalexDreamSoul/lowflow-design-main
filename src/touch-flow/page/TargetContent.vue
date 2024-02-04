@@ -84,9 +84,9 @@ const attrs = computed(() => {
         <div class="fontstyle">并且满足</div>
         <div class="logical-operator" v-if="target.conditions?.length">
           <div class="logical-operator__line"></div>
-          <div class="custom-switch" :class="{ active: target.logicalOperator === 'and' }" @click="
+          <div class="custom-switch" :class="{ active: target.logicalOperator === '且' }" @click="
             target.logicalOperator =
-            target?.logicalOperator === 'and' ? 'or' : 'and'
+            target?.logicalOperator === '且' ? '或' : '且'
             ">
             {{ target?.logicalOperator === "and" ? "且" : "或" }}
           </div>

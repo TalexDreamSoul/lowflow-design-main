@@ -35,20 +35,20 @@ function openDrawer(comp: any) {
 
   Object.assign(drawerOptions, comp);
 
-  if (!props.p.labelPosition) props.p.labelPosition = "single";
+  if (!props.p.executeType) props.p.executeType = "immediately";
 
   drawerOptions.visible = true;
 }
 
 const flowType = computed(() => {
-  if (!props.p?.labelPosition) return "-";
+  if (!props.p?.executeType) return "-";
   const map: { [key: string]: string } = {
-    single: "定时型-单次",
+    immediately: "定时型-单次",
     repeat: "定时型-重复",
-    type: "触发型",
+    trigger: "触发型",
   };
 
-  const s: string = props.p?.labelPosition;
+  const s: string = props.p?.executeType;
 
   return map[s.toLowerCase()];
 });

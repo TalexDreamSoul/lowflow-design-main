@@ -5,7 +5,7 @@ import { computed, inject, Ref, ref, watchEffect, reactive } from "vue";
 import { Field } from "~/components/Render/interface";
 import { FormProperty } from "~/views copy/flowDesign/index";
 
-const labelPosition = ref("right");
+const executeType = ref("right");
 
 const sizeForm = reactive({
   name: "",
@@ -164,7 +164,7 @@ watchEffect(() => {
   <div>
 
   <div>
-    <el-radio-group v-model="labelPosition" label="position control">
+    <el-radio-group v-model="executeType" label="position control">
       <el-radio-button label="left">Left</el-radio-button>
       <el-radio-button label="right">Right</el-radio-button>
       <el-radio-button label="top">Top</el-radio-button>right

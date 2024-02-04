@@ -51,11 +51,11 @@ const marketingTouchNode = ref({
 const toggleLogicalOperator = () => {
   console.log(logicalOperator.value);
   switch (logicalOperator.value) {
-    case "and":
-      logicalOperator.value = "or";
+    case "且":
+      logicalOperator.value = "或";
       break;
     default:
-      logicalOperator.value = "and";
+      logicalOperator.value = "且";
       break;
   }
   // logicalOperator.value == 'and' ? 'or' : 'and'

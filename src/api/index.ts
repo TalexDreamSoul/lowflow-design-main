@@ -122,3 +122,10 @@ export const addMaterial = (data: any) => {
         data
     })
 }
+
+export const addMarketingTouch = (data: any) => {
+    return request.post({
+        url: '/api/addMarketingTouch.do',
+        data
+    })
+}

@@ -6,14 +6,14 @@ import SubBranch from './p/SubBranch.vue'
 import { useWindowSize } from "@vueuse/core";
 import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
 import { refreshLines, genJP } from "./line-creator";
-import { createTemplatePopover } from '../utils/touch-templates'
+// import { createTemplatePopover } from '../utils/touch-templates'
 
-const value = ref({
-  id: "323232",
-  name: "测试233",
-})
+// const value = ref({
+//   id: "323232",
+//   name: "测试233",
+// })
 // createTemplatePopover('新建企微模版', 'digital')
-createTemplatePopover('新建站内信模版', 'znx', value)
+// createTemplatePopover('新建站内信模版', 'znx', value)
 // createTemplatePopover('新建短信模版', 'sms')
 // createTemplatePopover('新建APP Push模版', 'app')
 // createTemplatePopover('新建外呼模版', 'outbound')

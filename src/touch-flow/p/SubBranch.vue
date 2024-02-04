@@ -48,8 +48,8 @@ function openDrawer(comp: any) {
 
   Object.assign(drawerOptions, comp)
 
-  if (!props.p.labelPosition)
-    props.p.labelPosition = "single";
+  if (!props.p.executeType)
+    props.p.executeType = "immediately";
 
   drawerOptions.visible = true
 }

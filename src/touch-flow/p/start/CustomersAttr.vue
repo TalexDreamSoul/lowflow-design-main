@@ -267,10 +267,10 @@ regSaveFunc(saveData);
             <div class="logical-operator">
               <div class="logical-operator__line"></div>
               <div class="custom-switch" :class="{
-                active: logicalOperator === 'and',
+                active: logicalOperator === '且',
               }" @click="
   customRuleContent!.logicalOperator =
-  logicalOperator === 'and' ? 'or' : 'and'
+  logicalOperator === '且' ? '或' : '且'
   ">
                 {{
                   customRuleContent.logicalOperator === "and" ? "且" : "或"

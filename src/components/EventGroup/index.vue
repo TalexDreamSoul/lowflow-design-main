@@ -72,11 +72,11 @@ defineExpose({ addGroup });
 const toggleLogicalOperator = () => {
   console.log(filterRules.value.logicalOperator);
   switch (filterRules.value.logicalOperator) {
-    case "and":
-      filterRules.value.logicalOperator = "or";
+    case "且":
+      filterRules.value.logicalOperator = "或";
       break;
     default:
-      filterRules.value.logicalOperator = "and";
+      filterRules.value.logicalOperator = "且";
       break;
   }
   // filterRules.value.logicalOperator == 'and' ? 'or' : 'and'

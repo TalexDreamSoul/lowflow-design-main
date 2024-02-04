@@ -19,7 +19,7 @@ import EventGroupFilter from "~/components/EventGroup/index.vue";
 import BehaviorFoldingGroup from "~/components/BehaviorFoldingGroup/index.vue";
 import { dictFilterTree } from "~/api";
 
-const labelPosition = ref("single");
+const executeType = ref("immediately");
 const sizeForm = reactive({
   name: "",
   region: "",
@@ -195,8 +195,8 @@ const callChildMethodB = () => {
   }
 };
 
-const setLabelPosition = (value: string) => {
-  labelPosition.value = value;
+const setexecuteType = (value: string) => {
+  executeType.value = value;
 };
 </script>
 
@@ -207,17 +207,17 @@ const setLabelPosition = (value: string) => {
       <el-form-item label="流程类型：" label-class="custom-label">
         <div>
           <div class="custom-radio-group">
-            <div class="custom-radio-button" :class="{ active: labelPosition === 'single' }" @click="setLabelPosition('single')">
+            <div class="custom-radio-button" :class="{ active: executeType === 'immediately' }" @click="setexecuteType('immediately')">
               <el-icon>
                 <AlarmClock />
               </el-icon>定时型-单次
             </div>
-            <div class="custom-radio-button" :class="{ active: labelPosition === 'Repeat' }" @click="setLabelPosition('Repeat')">
+            <div class="custom-radio-button" :class="{ active: executeType === 'repeat' }" @click="setexecuteType('repeat')">
               <el-icon>
                 <AlarmClock />
               </el-icon>定时型-重复
             </div>
-            <div class="custom-radio-button" :class="{ active: labelPosition === 'type' }" @click="setLabelPosition('type')">
+            <div class="custom-radio-button" :class="{ active: executeType === 'trigger' }" @click="setexecuteType('trigger')">
               <el-icon>
                 <Pointer />
               </el-icon>触发型
@@ -225,7 +225,7 @@ const setLabelPosition = (value: string) => {
           </div>
         </div>
       </el-form-item>
-      <div v-if="labelPosition === 'single'">
+      <div v-if="executeType === 'immediately'">
         <!-- 单次模块内容 -->
 
         <el-form-item label="流程开始时间（任务开始时间）：" label-class="custom-label">
@@ -242,7 +242,7 @@ const setLabelPosition = (value: string) => {
         </el-form-item>
       </div>
 
-      <div v-else-if="labelPosition === 'Repeat'">
+      <div v-else-if="executeType === 'repeat'">
         <!-- 重复模块内容 -->
         <el-form-item label="流程有效期：" label-class="custom-label">
           <el-col :span="12">
@@ -306,7 +306,7 @@ const setLabelPosition = (value: string) => {
         </div>
       </div>
 
-      <div v-else-if="labelPosition === 'type'">
+      <div v-else-if="executeType === 'immediately'">
         <!-- 触发型模块内容 -->
         <el-form-item label="流程有效期：" label-class="custom-label">
           <el-col :span="12">

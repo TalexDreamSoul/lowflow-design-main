@@ -22,7 +22,7 @@ function handleAdd(item: any) {
   const arr = (item.conditions = item.conditions || []);
   arr.push({
     conditions: [],
-    logicalChar: 'or'
+    logicalChar: '或'
   });
 }
 

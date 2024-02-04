@@ -21,7 +21,7 @@ export interface ErrorInfo {
  * 筛选规则
  */
 export interface FilterRules {
-    logicalOperator: 'or' | 'and',
+    logicalOperator: '或' | '且',
     conditions: Condition[]
     groups: FilterRules[]
 }

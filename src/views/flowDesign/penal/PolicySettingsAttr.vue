@@ -16,7 +16,7 @@ import useNode from '../../flowDesign/hooks/useNode'; // 请替换为正确的�
 
 
 
-const labelPosition = ref("single");
+const executeType = ref("immediately");
 const sizeForm = reactive({
   name: "",
   region: "",
@@ -175,11 +175,11 @@ const addGroup = () => {
 const toggleLogicalOperator = () => {
   console.log(logicalOperator.value);
   switch (logicalOperator.value) {
-    case "and":
-      logicalOperator.value = "or";
+    case "且":
+      logicalOperator.value = "或";
       break;
     default:
-      logicalOperator.value = "and";
+      logicalOperator.value = "且";
       break;
   }
   // logicalOperator.value == 'and' ? 'or' : 'and'
@@ -196,7 +196,7 @@ const toggleLogicalOperator = () => {
 
       </el-form-item>
       <el-form-item label="分流类型：">
-        <el-radio-group v-model="labelPosition">
+        <el-radio-group v-model="executeType">
           <el-radio label="single">不分流</el-radio>
           <el-radio label="Repeat">按属性用户行为分流</el-radio>
           <el-radio label="type">按触发事件分流</el-radio>
@@ -205,7 +205,7 @@ const toggleLogicalOperator = () => {
 
       <el-collapse accordion>
 
-        <el-collapse-item title="用户属性行为分流" name="4" v-if="labelPosition === 'Repeat'">
+        <el-collapse-item title="用户属性行为分流" name="4" v-if="executeType === 'repeat'">
           <div>
             进入该期策略的用户需要满足以下条件：
           </div>
@@ -245,7 +245,7 @@ const toggleLogicalOperator = () => {
           </el-form-item>
         </el-collapse-item>
 
-        <el-collapse-item title="按触发事件分流" name="5" v-if="labelPosition === 'type'">
+        <el-collapse-item title="按触发事件分流" name="5" v-if="executeType === 'trigger'">
           <div class="flex-column">
             <div>
               进入该器策略的客户需要满足以下条件：在&nbsp;&nbsp;

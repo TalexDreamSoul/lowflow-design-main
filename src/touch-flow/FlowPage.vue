@@ -1,8 +1,9 @@
 <script setup lang="ts" name="FlowPage">
-import { reactive } from "vue";
+import { onBeforeUnmount, onMounted, reactive } from "vue";
 import FlowHeader from "../touch-flow/page/FlowHeader.vue";
 import TouchFlow from "./TouchFlow.vue";
 import { randomStr } from "~/utils/common";
+import { touchSubmitReview, type Request, type MarketingTouchNodeEditDTO } from './touch-total'
 
 defineProps<{
   modelValue?: boolean;
@@ -11,7 +12,7 @@ defineProps<{
 const flowOptions = reactive({
   basic: {
     _expand: false,
-    name: "",
+    touchName: "test",
     disturb: {
       enable: false,
       time: [],
@@ -29,6 +30,86 @@ const flowOptions = reactive({
   },
 });
 
+function transformDisturb(disturb: typeof flowOptions.basic.disturb) {
+  return {
+    isDisturb: disturb.enable,
+    disturbStartTime: disturb.time[0],
+    disturbEndTime: disturb.time[1],
+    disturbType: disturb.action,
+  }
+}
+
+function disturbReduction(data: Request) {
+  return {
+    enable: data.isDisturb,
+    time: [data.disturbStartTime, data.disturbEndTime],
+    action: data.disturbType,
+  }
+}
+
+function transformTarget(target: typeof flowOptions.basic.target) {
+  return {
+    containTarget: target.enable,
+    targetRuleContent: target.list,
+  }
+}
+
+function transformNodes(__nodes: Array<any>) {
+  const res: Array<any> = []
+
+  ;[...__nodes].forEach((node: any) => {
+
+  if ( node.father ) {
+    delete node.father
+  }
+
+  if ( node.children ) {
+    [...node.children].forEach((child, index) => {
+      node.children[index] = transformNodes(child)
+    })
+  }
+
+  res.push(node)
+  })
+
+
+  return res
+}
+
+async function submitReview() {
+  const _flowOptions: any = {
+    ...flowOptions.p,
+    nodes: transformNodes(flowOptions.p.children),
+    touchName: flowOptions.basic.touchName,
+    ...transformDisturb(flowOptions.basic.disturb),
+    ...transformTarget(flowOptions.basic.target)
+   }
+
+   console.log(_flowOptions)
+
+  delete _flowOptions.children
+  delete _flowOptions.id
+
+  const data: Request = {}
+  Object.assign(data, _flowOptions)
+
+  const res = await touchSubmitReview(data)
+
+  console.log(res)
+}
+
+onBeforeUnmount(() => {
+  localStorage.setItem('_temp', JSON.stringify(flowOptions))
+})
+
+onMounted(() => {
+  const data = JSON.parse(localStorage.getItem('_temp') ?? "{}")
+
+  if ( data ) {
+    Object.assign(flowOptions, data)
+  }
+})
+
 console.log("total flow", flowOptions);
 </script>
 
@@ -36,7 +117,7 @@ console.log("total flow", flowOptions);
   <div class="FlowPage">
     <el-container :class="{ expand: flowOptions.basic._expand }" class="FlowPage-Container">
       <el-header>
-        <FlowHeader :basic="flowOptions.basic" />
+        <FlowHeader @submit-review="submitReview" :basic="flowOptions.basic" />
       </el-header>
       <el-main>
         <el-scrollbar>

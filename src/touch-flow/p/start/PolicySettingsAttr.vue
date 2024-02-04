@@ -9,7 +9,7 @@ import CustomBehavior from "../behavior/CustomBehavior.vue";
 import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
 import TouchSettingContents from '../touch/TouchSettingContents.vue'
 
-const labelPosition = ref("single");
+const executeType = ref("immediately");
 const transform = ref(true);
 const transformset = ref(true);
 
@@ -287,14 +287,14 @@ const platformOptions: any = {
         <el-input v-model="sizeForm.name" placeholder="填写名称" />
       </el-form-item>
       <el-form-item label="分流类型：">
-        <el-radio-group v-model="labelPosition">
+        <el-radio-group v-model="executeType">
           <el-radio label="single">不分流</el-radio>
           <el-radio label="Repeat">按属性用户行为分流</el-radio>
           <el-radio label="type">按触发事件分流</el-radio>
         </el-radio-group>
       </el-form-item>
 
-      <div class="BlockBackground" v-if="labelPosition === 'Repeat'">
+      <div class="BlockBackground" v-if="executeType === 'repeat'">
         <div class="title_set bg001">
           用户属性行为分流
           <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
@@ -310,8 +310,8 @@ const platformOptions: any = {
             <div class="filter-container">
               <div class="logical-operator">
                 <div class="logical-operator__line"></div>
-                <div class="custom-switch" :class="{ active: logicalOperator === 'and' }" @click="toggleLogicalOperator">
-                  {{ logicalOperator === "and" ? "且" : "或" }}
+                <div class="custom-switch" :class="{ active: logicalOperator === '且' }" @click="toggleLogicalOperator">
+                  {{ logicalOperator === "且" ? "且" : "或" }}
                 </div>
                 <!-- <el-switch v-model="logicalOperator" inline-prompt style="--el-switch-on-color: #409EFF; --el-switch-off-color: #67C23A" active-value="and" inactive-value="or" active-text="且" inactive-text="或" /> -->
               </div>
@@ -331,7 +331,7 @@ const platformOptions: any = {
           </div>
         </el-form-item>
       </div>
-      <div class="BlockBackground" v-if="labelPosition === 'type'">
+      <div class="BlockBackground" v-if="executeType === 'trigger'">
         <div class="title_set bg001">
           触发事件分流
           <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
