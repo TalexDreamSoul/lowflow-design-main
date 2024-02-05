@@ -36,11 +36,11 @@
             <CaretBottom />
           </el-icon></div>
       </template>
-      <el-menu-item class="pd-menu-item" index="/materialCenter/SmsTemplateVue">短信模版</el-menu-item>
-      <el-menu-item class="pd-menu-item" index="/materialCenter/OutboundTemplateVue">外呼模版</el-menu-item>
-      <el-menu-item class="pd-menu-item" index="/materialCenter/AppTemplateVue">APP Push模版</el-menu-item>
-      <el-menu-item class="pd-menu-item" index="/materialCenter/DigitalTemplateVue">企微模版</el-menu-item>
-      <el-menu-item class="pd-menu-item" index="/materialCenter/ZnxTemplateVue">站内信模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/sms">短信模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/outbound">外呼模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/appPush">APP Push模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/digital">企微模版</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/znx">站内信模版</el-menu-item>
 
     </el-sub-menu>
     <el-sub-menu index="5">
@@ -87,7 +87,7 @@ import { CaretBottom } from "@element-plus/icons-vue";
 const router = useRouter();
 const activeIndex = ref("2");
 
-const handleSelect = (key: string) => {
+const handleSelect = (key: string,params?:string) => {
   router.push(key);
 };
 </script>

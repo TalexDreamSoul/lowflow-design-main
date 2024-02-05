@@ -40,24 +40,8 @@ export const routes: RouterOptions["routes"] = [
     redirect: "/materialCenter/SmsTemplateVue",
     children: [
       {
-        path: "SmsTemplateVue",
+        path: "templatePanel/:type",
         component: () => import("../views/materialCenter/SmsTemplateVue.vue"),
-      },
-      {
-        path: "ZnxTemplateVue",
-        component: () => import("../views/materialCenter/ZnxTemplateVue.vue"),
-      },
-      {
-        path: "AppTemplateVue",
-        component: () => import("../views/materialCenter/AppTemplateVue.vue"),
-      },
-      {
-        path: "DigitalTemplateVue",
-        component: () => import("../views/materialCenter/DigitalTemplateVue.vue"),
-      },
-      {
-        path: "OutboundTemplateVue",
-        component: () => import("../views/materialCenter/OutboundTemplateVue.vue"),
       },
     ],
   },

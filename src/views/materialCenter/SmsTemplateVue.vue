@@ -10,12 +10,17 @@ import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import CustomEventComponent from "./CustomEventComponent.vue";
-import { createTemplatePopover } from '../utils/touch-templates'
+import { createTemplatePopover } from "~/utils/touch-templates";
+import { materialType } from "~/utils/common";
 
+// 使用 useRoute 获取当前路由信息
+const route = useRoute();
+// 通过 route.params 获取路由中的 type 参数
+// const getType = route.params.type;
 const formInline = reactive({
   name: "",
   // type	素材类型：sms 短信，appPush app消息，digital 数字员工，outbound 智能外呼，znx 站内信
-  type: "sms",
+  type: route.params.type,
   beginTime: "",
   endTime: "",
   status: "",
@@ -32,15 +37,31 @@ const statusLabels = {
   available: { Text: "可用", type: "success" },
   offline: { Text: "下线", type: "info" },
 };
-const value = ref()
 
+const value = ref();
+
+function getNameByValue(data: any[], val: string) {
+  const item = data.find((item: { value: any; }) => item.value === val);
+  return item ? item.name : '';
+}
+
+const materialTypeName = ref(getNameByValue(materialType, route.params.type));
+
+console.log(materialTypeName); // 输出：短信
 onMounted(async () => {
   fetchDataApi();
 });
+
+watch(() => route.fullPath, val => {
+  console.log(`output->val`,val)
+   materialTypeName.value = getNameByValue(materialType, route.params.type);
+  formInline.type=route.params.type
+  fetchDataApi();
+  
+})
 watch([currentPage, pageSize, formInline], () => {
   fetchDataApi();
 });
-
 const fetchDataApi = async () => {
   const res = await getqryMaterial({
     pageNum: unref(currentPage),
@@ -84,28 +105,32 @@ const updateMaterialStatusData = async (row: any, status: String) => {
 };
 
 const detailsData = async (row: any) => {
-  value.value=row
-// createTemplatePopover('新建企微模版', 'digital')
-// createTemplatePopover('新建站内信模版', 'znx', value)
-createTemplatePopover('短信模版详情', 'sms', value,'details')
-// createTemplatePopover('新建APP Push模版', 'app')
-// createTemplatePopover('新建外呼模版', 'outbound')
+  value.value = row;
+  // createTemplatePopover('新建企微模版', 'digital')
+  // createTemplatePopover('新建站内信模版', 'znx', value)
+  createTemplatePopover("短信模版详情", "sms", value, "details");
+  // createTemplatePopover('新建APP Push模版', 'app')
+  // createTemplatePopover('新建外呼模版', 'outbound')
 };
 
 const addData = async () => {
-  value.value=''
-createTemplatePopover('新建短信模版', 'sms',value)
+  value.value = "";
+  createTemplatePopover("新建短信模版", "sms", value);
 };
 const updateData = async (row: any) => {
-  ElMessageBox.alert(`当前有${row.usedCount}个策略流程正在使用该模版（流程LC1、LC5、LC22正在使用），确认后该修改内容会更新至正在使用的流程中`, "确认编辑", {
-    showCancelButton: true,
-    roundButton: true,
-    cancelButtonClass: "pd-button",
-    confirmButtonClass: "pd-button",
-    customClass: "delete-modal",
-  }).then(async () => {
-    value.value=row
-    createTemplatePopover('编辑短信模版', 'sms', value,'update')
+  ElMessageBox.alert(
+    `当前有${row.usedCount}个策略流程正在使用该模版（流程LC1、LC5、LC22正在使用），确认后该修改内容会更新至正在使用的流程中`,
+    "确认编辑",
+    {
+      showCancelButton: true,
+      roundButton: true,
+      cancelButtonClass: "pd-button",
+      confirmButtonClass: "pd-button",
+      customClass: "delete-modal",
+    }
+  ).then(async () => {
+    value.value = row;
+    createTemplatePopover("编辑短信模版", "sms", value, "update");
   });
 };
 const handleSizeChange = (val: any) => {
@@ -118,7 +143,7 @@ const handleCurrentChange = (val: number) => {
 
 <template>
   <div>
-    <CustomEventComponent :title="'短信模版列表'" :tableData="tableData" :total="total">
+    <CustomEventComponent :title="`${materialTypeName}模版列表`" :tableData="tableData" :total="total">
       <template #search>
         <div class="search">
           <el-form :inline="true">
@@ -135,12 +160,12 @@ const handleCurrentChange = (val: number) => {
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-input v-model="formInline.name" placeholder="请输入短信模版名称" clearable style="width:200px" :suffix-icon="Search" />
+              <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width:200px" :suffix-icon="Search" />
             </el-form-item>
 
           </el-form>
           <div>
-              <el-button type="primary" class="add" @click="addData()" round>新建短信模版</el-button>
+            <el-button type="primary" class="add" @click="addData()" round>新建{{materialTypeName}}模版</el-button>
           </div>
         </div>
       </template>
@@ -178,7 +203,7 @@ const handleCurrentChange = (val: number) => {
         </el-table>
       </template>
       <template #pagination>
-        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize"background layout="prev, pager, next, sizes, jumper"  :page-sizes="[10]" :small="small" :disabled="disabled"  :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
       </template>
     </CustomEventComponent>
   </div>
