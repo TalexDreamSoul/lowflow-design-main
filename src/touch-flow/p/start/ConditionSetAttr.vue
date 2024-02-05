@@ -30,9 +30,9 @@ const timeFuncs: { [func: string]: any } = {
       return date
     },
     (obj: any) => {
-      if (!props.p.time) return
+      if (!props.p.executeTime) return
 
-      const date = new Date(props.p.time);
+      const date = new Date(props.p.executeTime);
       obj.date1 = date.toString();
       obj.date2 = date.toString();
     }
@@ -42,9 +42,9 @@ const timeFuncs: { [func: string]: any } = {
       return obj.date3
     },
     (obj: any) => {
-      if (!props.p.time) return
+      if (!props.p.executeTime) return
 
-      obj.date3 = props.p.time;
+      obj.date3 = props.p.executeTime;
     }
   ],
   trigger: [
@@ -52,15 +52,15 @@ const timeFuncs: { [func: string]: any } = {
       return obj.date3
     },
     (obj: any) => {
-      if (!props.p.time) return
+      if (!props.p.executeTime) return
 
-      obj.date3 = props.p.time;
+      obj.date3 = props.p.executeTime;
     }
   ]
 }
 
 const sizeForm = reactive({
-  name: "",
+  nodeName: "",
   region: "",
   time: {
     funcs: timeFuncs
@@ -105,7 +105,7 @@ function saveData() {
 
   const [parse] = funcs[lp.toLowerCase()]
 
-  props.p.time = parse(sizeForm);
+  props.p.executeTime = parse(sizeForm);
 
   return true
 }

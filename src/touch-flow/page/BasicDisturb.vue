@@ -4,9 +4,18 @@ const props = defineProps<{
 }>()
 
 const disturbOptions = [
-  "放弃本次触达且退出流程",
-  "待勿扰时段结束立即触达",
-  "放弃本次触达且不退出流程"
+  {
+    value: "quit",
+    label: "放弃本次触达且退出流程",
+  },
+  {
+    value: "wait",
+    label: "待勿扰时段结束立即触达",
+  },
+  {
+    value: "giveUp",
+    label: "放弃本次触达且不退出流程",
+  }
 ]
 
 </script>
@@ -24,7 +33,7 @@ const disturbOptions = [
         end-placeholder="结束时间" />
       为客户勿扰时间段，勿扰时间内触达则
       <el-select v-model="disturb.action"  style="width: 240px;">
-        <el-option v-for="(item, index) in disturbOptions" :key="index" :label="item" :value="index" />
+        <el-option v-for="(item, index) in disturbOptions" :key="index" :label="item.label" :value="item.value" />
       </el-select>
     </div>
   </div>

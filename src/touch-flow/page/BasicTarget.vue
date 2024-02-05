@@ -30,7 +30,6 @@ function addTarget() {
 
 <template>
   <div class="Basic-Block">
-    <!-- @click="disturb.enable = !disturb.enable" -->
     <p class="Basic-Block-Head">
       <span>目标设置</span>
       <el-switch

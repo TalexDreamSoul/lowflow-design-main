@@ -24,7 +24,7 @@ const props = defineProps<{
 // 配置画布节点
 const comps: any = {
   start: PStartVue,
-  PolicySettings: PPolicySettings,
+  strategy: PPolicySettings,
   Delivery: Branch,
   SubBranch,
 };
@@ -112,7 +112,7 @@ watch(() => width.value + height.value, refreshCurves);
   <div class="TouchFlow-Layer">
     <div ref="now" class="TouchFlow">
       <div class="fake-point" />
-      <component :p="p" :is="comps[p.type]" />
+      <component :p="p" :is="comps[p.nodeType]" />
     </div>
   </div>
   <template v-if="p.children">

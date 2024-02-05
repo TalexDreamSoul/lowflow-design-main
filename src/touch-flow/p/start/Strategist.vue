@@ -1,23 +1,44 @@
 <script setup lang="ts">
 import { inject, ref, reactive, onMounted } from "vue";
+import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { getQryMaterial, getmarketingTouchEstimate } from "~/api";
+import TouchSettingContents from '../touch/TouchSettingContents.vue'
 
 const transform = ref(true);
 const transformset = ref(true);
+
 const origin = {
-  type: "PolicySettings",
-  reveal: true,
-  name: "兜底策略器",
+  nodeType: "strategy",
+  nodeName: "兜底策略器",
   value1: false,
   isDelayed: false,
   selectedType: "day",
   delayedAction: "day",
-  materialtype: "sms",
   cascaderLabel: "sms",
   do: false,
   num: 1,
+  diversionType: 'safeguard',
+  touch: {
+    type: -1,
+    content: "",
+    variables: []
+  },
+  material: {
+    type: "",
+    beginTime: "",
+    endTime: "",
+    name: "",
+    pageNum: 10,
+    pageSize: -1,
+    status: "available",
+    templates: [{
+      id: -1,
+      name: '不使用模板'
+    }]
+  }
 };
+
 const marketingTouchNode = ref({
   appPushCount: 0,
   digitalCount: 0,
@@ -110,9 +131,8 @@ const options = [
     ],
   },
 ];
-const sizeForm = reactive<typeof origin>(origin);
 
-const dictType = ref();
+const sizeForm = reactive<typeof origin>(origin);
 
 function reset() {
   Object.assign(sizeForm, origin);
@@ -124,23 +144,39 @@ const props = defineProps<{
   p: any;
 }>();
 
-const getqryMaterialval = async () => {
-  let param: any = {
-    beginTime: "",
-    endTime: "",
-    name: "",
-    pageNum: 10,
-    pageSize: 0,
-    status: "available",
-    type: "sms",
-  };
-  let res = await getQryMaterial(param);
-  dictType.value = res.data;
-};
+if (!props.p.customRuleContent) {
+  props.p.customRuleContent = {
+    customAttr: {},
+    customEvent: {},
+    eventSequence: {},
+  }
+}
+
+async function refreshMaterialTemplate() {
+  sizeForm.touch.type = -1
+
+  const { material } = sizeForm
+
+  let res = await getQryMaterial(material);
+
+  if (res.data?.records) {
+    sizeForm.material.templates = [{
+      id: -1,
+      name: "不使用模板"
+    }, ...res.data.records];
+  }
+}
 
 function saveData() {
+  if (!sizeForm.nodeName) {
+    ElMessage.warning({
+      message: "请输入策略名称",
+    });
 
-  const _ = { ...sizeForm, id: randomStr(12), father: props.p };
+    return false;
+  }
+
+  const _ = { ...sizeForm, nodeId: randomStr(12), father: props.p };
 
   if (!props.p.children) {
     props.p.children = [_];
@@ -149,6 +185,14 @@ function saveData() {
 
     while (arr.length) {
       const item = arr.shift();
+
+      if (item.name === _.nodeName) {
+        ElMessage.warning({
+          message: "策略名称重复",
+        });
+
+        return false;
+      }
 
       if (item.children) arr.push(...item.children);
     }
@@ -182,12 +226,62 @@ const estimation = async () => {
   marketingTouchNode.value = res.data;
   console.log("Mounted", res);
 };
+
+function attrsAdd() {
+  let attr = props.p.customRuleContent!.customAttr!.conditions! = (props.p.customRuleContent!.customAttr!.conditions! || []);
+
+  const obj = {
+    conditions: [{ conditions: {} }],
+    logicalChar: "或",
+  };
+
+  attr.push({
+    conditions: [obj],
+    logicalChar: "或",
+  });
+}
+
+function behaviorAdd() {
+  let attr = props.p.customRuleContent!.customEvent!.conditions! = (props.p.customRuleContent!.customEvent!.conditions! || []);
+
+  const obj = {
+    conditions: [{ conditions: {} }],
+    logicalChar: "或",
+  };
+
+  attr.push({
+    conditions: [obj],
+    logicalChar: "或",
+  });
+}
+
+function sequenceAdd() {
+  let attr = props.p.customRuleContent!.eventSequence!.conditions! = (props.p.customRuleContent!.eventSequence!.conditions! || []);
+
+  const obj = {
+    conditions: [{ conditions: [{}] }],
+    logicalChar: "或",
+  };
+
+  attr.push({
+    conditions: [obj],
+    logicalChar: "或",
+  });
+}
+
+const platformOptions: any = {
+  'sms': "短信",
+  'appPush': "app消息",
+  'digital': "数字员工",
+  'outbound': "智能外呼",
+  'znx': "站内信",
+}
 </script>
 
 <template>
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
-      <div class="blockbg">
+      <div class="BlockBackground">
         <div class="title_set">
           延迟设置
           <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
@@ -197,7 +291,7 @@ const estimation = async () => {
               <DArrowRight />
             </el-icon></el-text>
         </div>
-        <div class="underbg">
+        <div class="BlockBackground-Under">
           &nbsp;
           <el-select v-model="sizeForm.isDelayed" style="width: 100px">
             <el-option :value="true" label="延迟">延迟</el-option>
@@ -215,7 +309,8 @@ const estimation = async () => {
           </el-select>
         </div>
       </div>
-      <div class="blockbg">
+
+      <div class="BlockBackground">
         <div class="title_set pg2">
           触达设置
           <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
@@ -225,34 +320,29 @@ const estimation = async () => {
               <DArrowRight />
             </el-icon></el-text>
         </div>
-        <div class="underbg">
+        <div class="BlockBackground-Under">
           <el-form-item label="触达通道">
-            <el-col :span="12">
-              <el-select v-model="sizeForm.materialtype" style="width: 100px">
-                <el-option value="sms" label="短信">手机短信</el-option>
-                <el-option value="app" label="app消息">app消息</el-option>
-                <el-option value="digital" label="数字员工">数字员工</el-option>
-                <el-option value="outbound" label="智能外呼">智能外呼</el-option>
-                <el-option value="znx" label="站内信">站内信</el-option>
-              </el-select>
-            </el-col>
+            <el-select @change="refreshMaterialTemplate" v-model="sizeForm.material.type" style="width: 120px">
+              <el-option value="sms" label="短信">手机短信</el-option>
+              <el-option value="appPush" label="app消息">app消息</el-option>
+              <el-option value="digital" label="数字员工">数字员工</el-option>
+              <el-option value="outbound" label="智能外呼">智能外呼</el-option>
+              <el-option value="znx" label="站内信">站内信</el-option>
+            </el-select>
           </el-form-item>
-
-          <el-button type="primary" @click="getqryMaterialval" plain>获取模版</el-button>
           <el-form-item label="选择模版">
-            <el-select v-model="sizeForm.type" placeholder="请选择" style="width: 100px">
-              <el-option value="month" label="月份">发送触达并打上标签</el-option>
-              <el-option value="week" label="周">小时</el-option>
-              <el-option value="day" label="天">天</el-option> </el-select>&nbsp;&nbsp;&nbsp;<el-button type="primary"
-              plain>新增短信模块版本</el-button>
+            <el-select v-model="sizeForm.touch.type" style="width: 120px">
+              <el-option v-for="item in (sizeForm.material.templates) as any" :value="item.id"
+                :label="item.name"></el-option>
+            </el-select>
+            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>新增{{ platformOptions[sizeForm.material.type] }}模块版本</el-button>
           </el-form-item>
-
           <el-form-item label="触达内容">
-            <div class="inputValue">定制组件位置</div>
+            <TouchSettingContents content="content" variables="variables" v-model="sizeForm.touch" />
           </el-form-item>
         </div>
       </div>
-      <div class="blockbg">
+      <div class="BlockBackground">
         <div class="title_set pg3">
           标签设置
           <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
@@ -263,14 +353,14 @@ const estimation = async () => {
             </el-icon></el-text>
         </div>
 
-        <div class="underbg">
+        <div class="BlockBackground-Under">
           符合该策略器条件的用户打上 &nbsp;
           <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />
 
         </div>
       </div>
-      <div class="blockbg">
-        <div class="underbg">
+      <div class="BlockBackground">
+        <div class="BlockBackground-Under">
           <div class="yugu_flex">
             <div class="title">预估触达客户 &nbsp;</div>
             <el-button @click="estimation" class="buttonyugu" round>立即预估</el-button>
@@ -482,7 +572,7 @@ const estimation = async () => {
   }
 }
 
-.blockbg {
+.BlockBackground {
   font-size: 14px;
   border-radius: var(--el-border-radius-base);
   margin-top: 24px;
@@ -507,7 +597,7 @@ const estimation = async () => {
     border-left: 4px solid #277ae7;
   }
 
-  .underbg {
+  .BlockBackground-Under {
     padding: 12px;
     background: #f7f8fa;
   }

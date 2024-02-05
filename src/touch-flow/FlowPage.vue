@@ -24,8 +24,8 @@ const flowOptions = reactive({
     },
   },
   p: {
-    id: randomStr(12),
-    type: "start",
+    nodeId: randomStr(12),
+    nodeType: "start",
     children: [],
   },
 });
@@ -50,26 +50,33 @@ function disturbReduction(data: Request) {
 function transformTarget(target: typeof flowOptions.basic.target) {
   return {
     containTarget: target.enable,
-    targetRuleContent: target.list,
+    targetRuleContent: {
+      data: target.list
+    },
   }
 }
 
 function transformNodes(__nodes: Array<any>) {
-  const res: Array<any> = []
+  const res: Array<any> = [];
 
-  ;[...__nodes].forEach((node: any) => {
+  [...__nodes].forEach((node: any) => {
 
-  if ( node.father ) {
-    delete node.father
-  }
+    if (node.father) {
+      // 先拿到父元素中children 我这个元素的位置
+      const fatherInd = [ ...node.father.children ].indexOf((item: any) => item.nodeId === node.nodeId)
 
-  if ( node.children ) {
-    [...node.children].forEach((child, index) => {
-      node.children[index] = transformNodes(child)
-    })
-  }
+      node.preNodeId = (fatherInd < 1 ? node.father.nodeId : node.father.children[fatherInd - 1].nodeId)
 
-  res.push(node)
+      delete node.father
+    }
+
+    if (node.children) {
+      [...node.children].forEach((child, index) => {
+        node.children[index] = transformNodes(child)
+      })
+    }
+
+    res.push(node)
   })
 
 
@@ -83,9 +90,9 @@ async function submitReview() {
     touchName: flowOptions.basic.touchName,
     ...transformDisturb(flowOptions.basic.disturb),
     ...transformTarget(flowOptions.basic.target)
-   }
+  }
 
-   console.log(_flowOptions)
+  console.log(_flowOptions)
 
   delete _flowOptions.children
   delete _flowOptions.id
@@ -95,7 +102,7 @@ async function submitReview() {
 
   const res = await touchSubmitReview(data)
 
-  console.log(res)
+  console.log(res, data)
 }
 
 onBeforeUnmount(() => {
@@ -105,7 +112,7 @@ onBeforeUnmount(() => {
 onMounted(() => {
   const data = JSON.parse(localStorage.getItem('_temp') ?? "{}")
 
-  if ( data ) {
+  if (data) {
     Object.assign(flowOptions, data)
   }
 })

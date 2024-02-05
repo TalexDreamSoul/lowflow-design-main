@@ -14,8 +14,8 @@ const transform = ref(true);
 const transformset = ref(true);
 
 const origin = {
-  type: "PolicySettings",
-  name: "test",
+  nodeType: "strategy",
+  nodeName: "test",
   value1: false,
   isDelayed: false,
   selectedType: "day",
@@ -23,8 +23,9 @@ const origin = {
   cascaderLabel: "sms",
   do: false,
   num: 1,
+  diversionType: 'noDiversion',
   touch: {
-    type: "",
+    type: -1,
     content: "",
     variables: []
   },
@@ -36,7 +37,10 @@ const origin = {
     pageNum: 10,
     pageSize: -1,
     status: "available",
-    templates: []
+    templates: [{
+      id: -1,
+      name: '不使用模板'
+    }]
   }
 };
 
@@ -158,19 +162,22 @@ if (!props.p.customRuleContent) {
 function toggleLogicalOperator() { }
 
 async function refreshMaterialTemplate() {
-  sizeForm.touch.type = ""
+  sizeForm.touch.type = -1
 
   const { material } = sizeForm
 
   let res = await getQryMaterial(material);
 
   if (res.data?.records) {
-    sizeForm.material.templates = res.data.records;
+    sizeForm.material.templates = [{
+      id: -1,
+      name: "不使用模板"
+    }, ...res.data.records];
   }
 }
 
 function saveData() {
-  if (!sizeForm.name) {
+  if (!sizeForm.nodeName) {
     ElMessage.warning({
       message: "请输入策略名称",
     });
@@ -178,7 +185,7 @@ function saveData() {
     return false;
   }
 
-  const _ = { ...sizeForm, id: randomStr(12), father: props.p };
+  const _ = { ...sizeForm, nodeId: randomStr(12), father: props.p };
 
   if (!props.p.children) {
     props.p.children = [_];
@@ -188,7 +195,7 @@ function saveData() {
     while (arr.length) {
       const item = arr.shift();
 
-      if (item.name === _.name) {
+      if (item.name === _.nodeName) {
         ElMessage.warning({
           message: "策略名称重复",
         });
@@ -284,17 +291,17 @@ const platformOptions: any = {
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
       <el-form-item label="选择策略器名称：">
-        <el-input v-model="sizeForm.name" placeholder="填写名称" />
+        <el-input v-model="sizeForm.nodeName" placeholder="填写名称" />
       </el-form-item>
       <el-form-item label="分流类型：">
-        <el-radio-group v-model="executeType">
-          <el-radio label="single">不分流</el-radio>
-          <el-radio label="Repeat">按属性用户行为分流</el-radio>
-          <el-radio label="type">按触发事件分流</el-radio>
+        <el-radio-group v-model="sizeForm.diversionType">
+          <el-radio label="noDiversion">不分流</el-radio>
+          <el-radio label="attr">按属性用户行为分流</el-radio>
+          <el-radio label="event">按触发事件分流</el-radio>
         </el-radio-group>
       </el-form-item>
 
-      <div class="BlockBackground" v-if="executeType === 'repeat'">
+      <div class="BlockBackground" v-if="sizeForm.diversionType === 'attr'">
         <div class="title_set bg001">
           用户属性行为分流
           <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
@@ -330,7 +337,7 @@ const platformOptions: any = {
           </div>
         </el-form-item>
       </div>
-      <div class="BlockBackground" v-if="executeType === 'trigger'">
+      <div class="BlockBackground" v-if="sizeForm.diversionType === 'event'">
         <div class="title_set bg001">
           触发事件分流
           <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
@@ -426,11 +433,18 @@ const platformOptions: any = {
             </el-select>
           </el-form-item>
           <el-form-item label="选择模版">
-            <el-select v-model="sizeForm.touch.type" placeholder="请选择模板" style="width: 120px">
-              <el-option v-for="item in (sizeForm.material.templates ?? []) as any" :value="item.id"
-                :label="item.name"></el-option>
+            <el-select v-model="sizeForm.touch.type" style="width: 120px">
+              <el-option v-for="item in (sizeForm.material.templates) as any" :value="item.id" :label="item.name">
+                <div class="template-option">
+                  <span>{{ item.name }}</span>
+                  <span class="template-desc" v-if="item?.content?.content">
+                    {{ item.content.content }}
+                  </span>
+                </div>
+              </el-option>
             </el-select>
-            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>新增{{ platformOptions[sizeForm.material.type] }}模块版本</el-button>
+            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>新增{{
+              platformOptions[sizeForm.material.type] }}模块版本</el-button>
           </el-form-item>
           <el-form-item label="触达内容">
             <TouchSettingContents content="content" variables="variables" v-model="sizeForm.touch" />
@@ -540,6 +554,27 @@ const platformOptions: any = {
     </el-form>
   </div>
 </template>
+
+<style lang="scss">
+li:has(.template-option):has(.template-desc) {
+
+  height: 50px;
+}
+
+.template-desc {
+  position: relative;
+  margin-top: -15px;
+  display: block;
+
+  color: #000;
+  opacity: .4;
+
+  max-width: 100px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+</style>
 
 <style scoped lang="scss">
 .flex-column {

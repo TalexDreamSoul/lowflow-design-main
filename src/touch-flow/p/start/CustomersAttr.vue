@@ -14,7 +14,7 @@ const customRuleContent = reactive<CustomSearchDTO>({
     conditions: [
       {
         conditions: [
-          {}
+          // {}
         ],
         logicalChar: "或",
       }
@@ -25,7 +25,7 @@ const customRuleContent = reactive<CustomSearchDTO>({
     conditions: [
       {
         conditions: [
-          {}
+          // {}
         ],
         logicalChar: "或",
       }
@@ -36,9 +36,6 @@ const customRuleContent = reactive<CustomSearchDTO>({
     conditions: [
       {
         conditions: [
-          {
-            conditions: []
-          }
         ],
         logicalChar: "或",
       }

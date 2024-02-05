@@ -2,10 +2,10 @@
 import { ref, reactive, computed, provide } from "vue";
 import { Stamp, Plus } from "@element-plus/icons-vue";
 import ConditionSetAttr from "../p/start/ConditionSetAttr.vue";
-import Strategist from "../p/start/Strategist.vue";
 import CustomersAttr from "../p/start/CustomersAttr.vue";
 import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
+import Strategist from "./start/Strategist.vue";
 
 const props = defineProps<{
   p?: any;
@@ -54,7 +54,7 @@ const flowType = computed(() => {
 });
 
 const flowTime = computed(() => {
-  const _time = props.p.time;
+  const _time = props.p.executeTime;
   if (!_time) return "-";
 
   if (_time instanceof Date) {
@@ -81,7 +81,7 @@ const doDiverse = computed(() => {
 
   if (!children?.length) return false;
 
-  return [...children].find((child) => "PolicySettings" === child?.type) ?? true
+  return [...children].find((child) => "strategy" === child?.nodeType) ?? true
 });
 
 const haveDiverse = computed(() => {
@@ -91,7 +91,7 @@ const haveDiverse = computed(() => {
 
   if (!children?.length) return false;
 
-  return [...children].find((child) => "Delivery" === child?.type);
+  return [...children].find((child) => "Delivery" === child?.nodeType);
 })
 
 const haveReveal = computed(() => {
@@ -99,7 +99,7 @@ const haveReveal = computed(() => {
 
   if (!children?.length) return false;
 
-  return [...children].find((child) => "PolicySettings" === child?.type && child?.reveal) ?? false
+  return [...children].find((child) => "strategy" === child?.nodeType && child?.reveal) ?? false
 })
 
 const customerConditioned = computed(() => {
@@ -243,8 +243,8 @@ function handleClick(e: Event) {
       </el-drawer>
     </teleport>
   </el-card>
-
-  <el-button :class="{ display: conditioned && customerConditioned.display && !haveDiverse }"
+  <!-- && !customerConditioned.display -->
+  <el-button :class="{ display: conditioned  && !haveDiverse }"
     @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 
