@@ -41,8 +41,8 @@ const statusLabels = {
 const value = ref();
 
 function getNameByValue(data: any[], val: string) {
-  const item = data.find((item: { value: any; }) => item.value === val);
-  return item ? item.name : '';
+  const item = data.find((item: { value: any }) => item.value === val);
+  return item ? item.name : "";
 }
 
 const materialTypeName = ref(getNameByValue(materialType, route.params.type));
@@ -52,13 +52,15 @@ onMounted(async () => {
   fetchDataApi();
 });
 
-watch(() => route.fullPath, val => {
-  console.log(`output->val`,val)
-   materialTypeName.value = getNameByValue(materialType, route.params.type);
-  formInline.type=route.params.type
-  fetchDataApi();
-  
-})
+watch(
+  () => route.fullPath,
+  (val) => {
+    console.log(`output->val`, val);
+    materialTypeName.value = getNameByValue(materialType, route.params.type);
+    formInline.type = route.params.type;
+    fetchDataApi();
+  }
+);
 watch([currentPage, pageSize, formInline], () => {
   fetchDataApi();
 });
@@ -108,14 +110,26 @@ const detailsData = async (row: any) => {
   value.value = row;
   // createTemplatePopover('新建企微模版', 'digital')
   // createTemplatePopover('新建站内信模版', 'znx', value)
-  createTemplatePopover("短信模版详情", "sms", value, "details");
+  console.log(`output->row`,row)
+  let name= `${materialTypeName}模版详情`
+  createTemplatePopover(
+    "模版详情",
+    row.type,
+    value,
+    "details"
+  );
   // createTemplatePopover('新建APP Push模版', 'app')
   // createTemplatePopover('新建外呼模版', 'outbound')
 };
 
 const addData = async () => {
   value.value = "";
-  createTemplatePopover("新建短信模版", "sms", value);
+  let name= `新建${materialTypeName}模版`
+  createTemplatePopover(
+    name,
+    route.params.type,
+    value
+  );
 };
 const updateData = async (row: any) => {
   ElMessageBox.alert(
@@ -143,7 +157,7 @@ const handleCurrentChange = (val: number) => {
 
 <template>
   <div>
-    <CustomEventComponent :title="`${materialTypeName}模版列表`" :tableData="tableData" :total="total">
+    <CustomEventComponent :title="route.params.type=='all'?`${materialTypeName}`:`${materialTypeName}模版列表`" :tableData="tableData" :total="total">
       <template #search>
         <div class="search">
           <el-form :inline="true">
@@ -153,8 +167,13 @@ const handleCurrentChange = (val: number) => {
                   formInline.endTime = dayjs(val[1]).format('YYYY-MM-DD');val[0];
                 }" />
             </el-form-item>
+            <el-form-item v-if="route.params.type=='all'">
+              <el-select v-model="formInline.type" clearable style="width:200px" placeholder="模板类型">
+                <el-option  v-for="item in materialType"  :label="item.name" :value="item.value" />
+              </el-select>
+            </el-form-item>
             <el-form-item>
-              <el-select v-model="formInline.status" clearable style="width:200px">
+              <el-select v-model="formInline.status" clearable style="width:200px" placeholder="模板状态">
                 <el-option label="可用" value="available" />
                 <el-option label="下线" value="offline" />
               </el-select>
@@ -164,7 +183,7 @@ const handleCurrentChange = (val: number) => {
             </el-form-item>
 
           </el-form>
-          <div>
+          <div v-if="route.params.type!='all'">
             <el-button type="primary" class="add" @click="addData()" round>新建{{materialTypeName}}模版</el-button>
           </div>
         </div>
@@ -191,19 +210,21 @@ const handleCurrentChange = (val: number) => {
           </el-table-column>
           <el-table-column label="操作" width="280" fixed="right">
             <template #default="scope">
-              <el-space wrap>
+              <el-space wrap v-if="route.params.type!='all'">
                 <el-link type="primary" v-if="scope.row.status=='offline'" @click="updateMaterialStatusData(scope.row,'available')">上线</el-link>
                 <el-link type="primary" v-if="scope.row.status!=='offline'" @click="updateMaterialStatusData(scope.row,'offline')">下线</el-link>
                 <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
                 <el-link type="primary" @click="delData(scope.row)">删除</el-link>
                 <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
               </el-space>
+              <el-link v-else type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+
             </template>
           </el-table-column>
         </el-table>
       </template>
       <template #pagination>
-        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize"background layout="prev, pager, next, sizes, jumper"  :page-sizes="[10]" :small="small" :disabled="disabled"  :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, sizes, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
       </template>
     </CustomEventComponent>
   </div>

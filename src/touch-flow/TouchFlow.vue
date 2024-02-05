@@ -15,7 +15,7 @@ import { refreshLines, genJP } from "./line-creator";
 // createTemplatePopover('新建企微模版', 'digital')
 // createTemplatePopover('新建站内信模版', 'znx', value)
 // createTemplatePopover('新建短信模版', 'sms')
-// createTemplatePopover('新建APP Push模版', 'app')
+// createTemplatePopover('新建APP Push模版', 'appPush')
 // createTemplatePopover('新建外呼模版', 'outbound')
 
 const props = defineProps<{

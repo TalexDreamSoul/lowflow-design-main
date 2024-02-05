@@ -36,6 +36,8 @@
             <CaretBottom />
           </el-icon></div>
       </template>
+      
+      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/all">模版总览</el-menu-item>
       <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/sms">短信模版</el-menu-item>
       <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/outbound">外呼模版</el-menu-item>
       <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/appPush">APP Push模版</el-menu-item>

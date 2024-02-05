@@ -39,6 +39,7 @@ export const debounce = (fun: any, wait = 3000) => {
 
 
 export const materialType = [
+  { value: "all", name: "模版总览" },
   { value: "sms", name: "短信" },
   { value: "appPush", name: "APP PUSH" },
   { value: "digital", name: "数字员工" },
