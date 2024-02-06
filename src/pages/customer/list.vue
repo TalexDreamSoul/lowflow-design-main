@@ -1,5 +1,5 @@
 <template>
-  <div class="event list-layout">
+  <div class="customer-list list-layout">
     <div class="title">客户列表</div>
     <div class="search">
       <el-form :inline="true" :model="pageParams">
@@ -11,7 +11,7 @@
             clearable
           >
             <el-option
-              v-for="item of EVENT_TYPE"
+              v-for="item of PEOPLE_SOURCE"
               :label="item.label"
               :value="item.value"
             />
@@ -50,7 +50,7 @@
             <template #default="scope">
               {{
                 PEOPLE_SEX.find((v) => checkStringEqual(v.value, scope.row.sex))
-                  ?.label || '未知'
+                  ?.label || "未知"
               }}
             </template>
           </el-table-column>
@@ -81,6 +81,7 @@
           <el-table-column label="操作" min-width="158">
             <template #default="scope">
               <el-button
+                :disabled="scope.row.source !== peopleSourceEnum.Manual"
                 link
                 type="primary"
                 class="action-btn"
@@ -114,81 +115,120 @@
       :title="ModalTitleMap[modalType]"
     >
       <el-form
+        v-if="!checkStringEqual(modalType, DrawerType.Detail)"
         :disabled="checkStringEqual(modalType, DrawerType.Detail)"
         ref="formRef"
         :hide-required-asterisk="true"
         label-position="top"
         class="form"
-        :model="attrFormValues"
+        :model="formValues"
       >
         <el-form-item
           :rules="[
-            { required: true, message: '请输入客户名称' },
+            { required: true, message: '请输入' },
             {
               pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
               message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
             },
           ]"
           label="客户名称"
-          prop="fieldName"
+          prop="name"
         >
           <el-input
             size="large"
-            v-model="attrFormValues.fieldName"
+            v-model="formValues.name"
             placeholder="请输入"
             clearable
           />
         </el-form-item>
         <el-form-item
-          :rules="[
-            { required: true, message: '请输入手机号' },
-            {
-              pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
-              message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
-            },
-          ]"
-          label="客户名称"
-          prop="fieldName"
+          :rules="[{ required: true, message: '请输入' }]"
+          label="手机号"
+          prop="phone"
         >
           <el-input
             size="large"
-            v-model="attrFormValues.fieldName"
+            v-model="formValues.phone"
             placeholder="请输入"
             clearable
           />
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请选择数据类别' }]"
-          label="数据类别"
-          prop="fieldType"
+          :rules="[{ required: true, message: '请输入' }]"
+          label="互金客户号"
+          prop="itFinCode"
         >
-          <el-select
+          <el-input
             size="large"
-            v-model="attrFormValues.fieldType"
+            v-model="formValues.itFinCode"
+            placeholder="请输入"
+            clearable
+          />
+        </el-form-item>
+        <div class="flex">
+          <el-form-item label="性别" prop="sex">
+            <el-select
+              size="large"
+              v-model="formValues.sex"
+              placeholder="请选择"
+              clearable
+            >
+              <el-option
+                v-for="item of PEOPLE_SEX"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="省份" prop="province">
+            <el-select
+              size="large"
+              v-model="formValues.province"
+              placeholder="请选择"
+              clearable
+            >
+              <el-option
+                v-for="item of CITY_DATA"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="城市" prop="city">
+            <el-select
+              size="large"
+              v-model="formValues.city"
+              placeholder="请选择"
+              clearable
+            >
+              <el-option
+                v-for="item of CITY_DATA.find(
+                  (v) => v.value === formValues.province
+                )?.children || []"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+        </div>
+        <el-form-item label="生日" prop="birthday">
+          <el-date-picker
+            v-model="formValues.birthday"
+            type="date"
             placeholder="请选择"
-            clearable
-          >
-            <el-option
-              v-for="item of ATTR_FIELD_TYPE"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          :rules="[{ max: 40, message: '最多可输入40字' }]"
-          label="属性说明"
-          prop="describe"
-        >
-          <el-input
-            v-model="attrFormValues.describe"
-            :autosize="{ minRows: 4 }"
-            type="textarea"
-            :show-word-limit="true"
-            placeholder="请输入"
+            size="large"
+            value-format="YYYY-MM-DD"
           />
         </el-form-item>
       </el-form>
+      <div class="people-detail" v-if="checkStringEqual(modalType, DrawerType.Detail)">
+        <div class="info">
+          <div class="user">
+            <div class="avatar"></div>
+            
+          </div>
+        </div>
+      </div>
       <template #footer>
         <span class="dialog-footer">
           <el-button
@@ -221,10 +261,10 @@
 <script lang="ts" setup>
 import { reactive, ref, watch, onMounted } from "vue";
 import {
-  EVENT_TYPE,
-  ATTR_FIELD_TYPE,
   PEOPLE_SEX,
   PEOPLE_SOURCE,
+  peopleSourceEnum,
+  CITY_DATA,
 } from "~/constants";
 import API from "~/api/customer";
 import { checkStringEqual, debounce } from "~/utils/common";
@@ -239,7 +279,7 @@ enum DrawerType {
 }
 
 const ModalTitleMap: any = {
-  [DrawerType.Create]: "新建属性",
+  [DrawerType.Create]: "手动添加客户",
   [DrawerType.Detail]: "属性详情",
   [DrawerType.Edit]: "编辑属性",
 };
@@ -251,21 +291,15 @@ const pageParams = reactive({
 });
 
 const defaultFormValues = {
-  eventName: "",
-  eventType: "",
-  eventCode: "",
-  describe: "",
-  attrTableData: [],
+  name: "",
+  phone: "",
+  province: "",
+  city: "",
+  sex: "",
+  birthday: "",
+  itFinCode: "",
 };
-const formValues: any = reactive({ ...defaultFormValues });
-
-const defaultAttrFormValues = {
-  field: "",
-  fieldName: "",
-  describe: "",
-  fieldType: "",
-};
-let attrFormValues = reactive({ ...defaultAttrFormValues });
+let formValues = reactive({ ...defaultFormValues });
 
 const formRef = ref<FormInstance>();
 
@@ -322,10 +356,10 @@ const handleDelete = (values: any) => {
     confirmButtonClass: "pd-button",
     customClass: "delete-modal",
   }).then(async () => {
-    // let res = await API.deleteEventDict({ id: values.id });
-    // if (checkStringEqual(res?.code, 0)) {
-    //   getData(pageParams);
-    // }
+    let res = await API.deleteCustom({ id: values.id });
+    if (checkStringEqual(res?.code, 0)) {
+      getData(pageParams);
+    }
   });
 };
 
@@ -333,21 +367,15 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   try {
     await formEl.validate();
-    // let { attrTableData, ...params } = formValues;
-    // let res = await API[
-    //   checkStringEqual(modalType.value, DrawerType.Create)
-    //     ? "addEventDict"
-    //     : "updateEventDict"
-    // ]({
-    //   ...params,
-    //   eventAttr: {
-    //     attrs: attrTableData,
-    //   },
-    // });
-    // if (checkStringEqual(res?.code, 0)) {
-    //   getData(pageParams);
-    //   modalVisible.value = false;
-    // }
+    console.log({ ...formValues, source: peopleSourceEnum.Manual });
+    let res = await API.addCustom({
+      ...formValues,
+      source: peopleSourceEnum.Manual,
+    });
+    if (checkStringEqual(res?.code, 0)) {
+      getData(pageParams);
+      modalVisible.value = false;
+    }
   } catch (error) {
     console.error(error);
   }
@@ -356,4 +384,12 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
 <style lang="scss">
 @import "~/styles/list-layout.scss";
+.customer-list {
+  .flex {
+    gap: 16px;
+    > div {
+      flex: 1;
+    }
+  }
+}
 </style>

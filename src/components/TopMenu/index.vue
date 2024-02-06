@@ -93,7 +93,7 @@ const handleSelect = (key: string) => {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .el-menu-demo {
   align-items: center;
   height: 64px;
