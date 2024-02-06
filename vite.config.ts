@@ -50,12 +50,6 @@ export default defineConfig({
     plugins: [
         vue(),
         vueJsx(),
-        viteMockServe({
-            mockPath: './mock',
-            localEnabled: true,
-            prodEnabled: true,
-            injectCode: ` import { setupProdMockServer } from './mockProdServer'; setupProdMockServer(); `,
-        }),
         VueSetupExtend(),
         Components({
             // allow auto load markdown components under `./src/components/`
