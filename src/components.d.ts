@@ -7,6 +7,11 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+<<<<<<< Updated upstream
+=======
+    BehaviorFoldingGroup: typeof import('./components/BehaviorFoldingGroup/index.ts')['default']
+    Condition: typeof import('./components/Condition/index.ts')['default']
+>>>>>>> Stashed changes
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElCascader: typeof import('element-plus/es')['ElCascader']
@@ -20,6 +25,10 @@ declare module 'vue' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElHeader: typeof import('element-plus/es')['ElHeader']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+<<<<<<< Updated upstream
+=======
+    ElImage: typeof import('element-plus/es')['ElImage']
+>>>>>>> Stashed changes
     ElInput: typeof import('element-plus/es')['ElInput']
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
     ElLink: typeof import('element-plus/es')['ElLink']
@@ -45,6 +54,12 @@ declare module 'vue' {
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     ElWatermark: typeof import('element-plus/es')['ElWatermark']
+<<<<<<< Updated upstream
+=======
+    EventGroup: typeof import('./components/EventGroup/index.ts')['default']
+    Interface: typeof import('./components/Render/interface.ts')['default']
+    RoleSelection: typeof import('./components/RoleSelection/index.ts')['default']
+>>>>>>> Stashed changes
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
