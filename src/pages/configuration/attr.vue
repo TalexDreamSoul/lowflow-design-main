@@ -183,7 +183,9 @@ const onSubmitAttr = async (formEl: FormInstance | undefined) => {
   }
 }
 </script>
-<style lang="scss" src="~/styles/list-layout.scss">
+<style lang="scss">
+@import '~/styles/list-layout.scss';
+
 .attr {
   .attr-modal {
     border-radius: 8px;
