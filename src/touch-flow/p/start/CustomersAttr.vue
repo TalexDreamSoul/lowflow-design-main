@@ -36,6 +36,7 @@ const customRuleContent = reactive<CustomSearchDTO>({
     conditions: [
       {
         conditions: [
+          // {}
         ],
         logicalChar: "或",
       }

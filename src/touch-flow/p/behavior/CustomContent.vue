@@ -75,7 +75,7 @@ const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([.
 
 <template>
   <div class="CustomContent">
-    <LogicalLine :display="conditionArr?.length" v-model="condition.logicalChar">
+    <LogicalLine :display="!conditionArr?.length" v-model="condition.logicalChar">
       <div v-if="conditionArr" class="filter-option-content">
         <el-form :label-width="0" :inline="true" :model="condition.conditions">
           <el-row v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="filter-item-rule">

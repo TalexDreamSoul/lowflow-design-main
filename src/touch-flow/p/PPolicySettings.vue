@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, provide } from 'vue'
+import { ref, reactive, provide, computed } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import PolicySettingsAttr from './start/PolicySettingsAttr.vue'
 import { delChild } from '../flow-utils'
@@ -67,6 +67,29 @@ function handleSave() {
 provide('save', (regFunc: () => boolean) => {
   _saveFunc = regFunc
 })
+
+const pushTemplate = computed(() => {
+  const { type } = props.p.material
+
+  let val;
+
+  if ( type === 'sms' ) {
+    val = '短信模板：'
+  } else if (type === 'znx') {
+    val = '站内信模板：'
+  } else if (type === 'appPush') {
+    val = 'APP消息模板：'
+  } else if (type === 'digital') {
+    val = '数字员工模板：'
+  } else if (type === 'outbound') {
+    val = '智能外呼模板：'
+  }
+
+  return {
+    has: type?.length,
+    val: ""
+  }
+})
 </script>
 
 <template>
@@ -86,19 +109,28 @@ provide('save', (regFunc: () => boolean) => {
         <p>
           客户属性行为分流
         </p>
-        <span>不分流</span>
+        <span v-if="p.diversionType === 'noDiversion'">
+          不分流
+        </span>
+        <span v-else-if="p.diversionType === 'attr'">
+          按属性用户行为分流
+        </span>
+        <span v-else-if="p.diversionType === 'event'">按触发事件分流</span>
       </div>
       <div style="--theme-color: #7DC757" class="PBlock-Section">
         <p>
           延迟设置
         </p>
-        <span>立即针对符合该策略器条件的客户发送触达</span>
+        <span v-if="p.eventDelayed.isDelayed">
+          符合该策略器 {{ p.eventDelayed.delayedTime }} {{ p.eventDelayed.delayedUnit }} 后 {{ p.eventDelayed.delayedAction }}
+        </span>
+        <span v-else>立即针对符合该策略器条件的客户发送触达</span>
       </div>
-      <div style="--theme-color: #FFB858" class="PBlock-Section">
+      <div v-if="pushTemplate.has" style="--theme-color: #FFB858" class="PBlock-Section">
         <p>
           APP推送
         </p>
-        <span>积极分子标题：参加活动赢好礼</span>
+        <span>{{ pushTemplate.val }}</span>
       </div>
     </div>
 
