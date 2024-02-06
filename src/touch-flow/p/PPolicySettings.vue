@@ -105,7 +105,7 @@ const pushTemplate = computed(() => {
       </el-button>
     </p>
     <div class="PBlock-Content theme">
-      <div style="--theme-color: #90A0B8" class="PBlock-Section">
+      <div v-if="p.nodeName !== '兜底策略器'" style="--theme-color: #90A0B8" class="PBlock-Section">
         <p>
           客户属性行为分流
         </p>

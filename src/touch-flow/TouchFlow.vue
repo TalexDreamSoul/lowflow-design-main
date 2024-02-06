@@ -39,6 +39,10 @@ onBeforeUnmount(() => {
 })
 
 onMounted(() => {
+  // if ( props.p.nodeType !== 'Delivery' ) {
+  //   return
+  // }
+
   now.value._refreshCurves = refreshCurves
 
   const nextLayerDom = nextLayer.value
@@ -129,10 +133,10 @@ watch(() => width.value + height.value, refreshCurves);
 
 .TouchFlow-Layer {
   &+& {
-    margin-bottom: 40px;
+    // margin-bottom: 40px;
 
     .fake-point {
-      top: -300%;
+      top: -100%;
     }
 
     .single-line {
@@ -189,13 +193,15 @@ watch(() => width.value + height.value, refreshCurves);
   width: 32px;
   height: 32px;
 
-  top: -30%;
+  top: -40%;
   left: 30%;
 
   transform: translate(-50%, -50%);
 
   position: none;
   border-radius: 50%;
+
+  background-color: red;
 }
 
 .single-line:has(div.PBlock) {

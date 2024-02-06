@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, reactive, onMounted } from "vue";
+import { inject, ref, reactive, onMounted, watchEffect } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { getQryMaterial, getmarketingTouchEstimate } from "~/api";
@@ -9,11 +9,8 @@ import CustomBehavior from "../behavior/CustomBehavior.vue";
 import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
 import TouchSettingContents from '../touch/TouchSettingContents.vue'
 
-const executeType = ref("immediately");
-const transform = ref(true);
-const transformset = ref(true);
-
 const origin = {
+  nodeId: "",
   nodeType: "strategy",
   nodeName: "test",
   value1: false,
@@ -59,103 +56,17 @@ const marketingTouchNode = ref({
   znxCount: 0,
 });
 
-const options = [
-  {
-    value: 1,
-    label: "Asia",
-    children: [
-      {
-        value: 2,
-        label: "China",
-        children: [
-          { value: 3, label: "Beijing" },
-          { value: 4, label: "Shanghai" },
-          { value: 5, label: "Hangzhou" },
-        ],
-      },
-      {
-        value: 6,
-        label: "Japan",
-        children: [
-          { value: 7, label: "Tokyo" },
-          { value: 8, label: "Osaka" },
-          { value: 9, label: "Kyoto" },
-        ],
-      },
-      {
-        value: 10,
-        label: "Korea",
-        children: [
-          { value: 11, label: "Seoul" },
-          { value: 12, label: "Busan" },
-          { value: 13, label: "Taegu" },
-        ],
-      },
-    ],
-  },
-  {
-    value: 14,
-    label: "Europe",
-    children: [
-      {
-        value: 15,
-        label: "France",
-        children: [
-          { value: 16, label: "Paris" },
-          { value: 17, label: "Marseille" },
-          { value: 18, label: "Lyon" },
-        ],
-      },
-      {
-        value: 19,
-        label: "UK",
-        children: [
-          { value: 20, label: "London" },
-          { value: 21, label: "Birmingham" },
-          { value: 22, label: "Manchester" },
-        ],
-      },
-    ],
-  },
-  {
-    value: 23,
-    label: "North America",
-    children: [
-      {
-        value: 24,
-        label: "US",
-        children: [
-          { value: 25, label: "New York" },
-          { value: 26, label: "Los Angeles" },
-          { value: 27, label: "Washington" },
-        ],
-      },
-      {
-        value: 28,
-        label: "Canada",
-        children: [
-          { value: 29, label: "Toronto" },
-          { value: 30, label: "Montreal" },
-          { value: 31, label: "Ottawa" },
-        ],
-      },
-    ],
-  },
-];
+const props = defineProps<{
+  p: any;
+}>();
 
 const sizeForm = reactive<typeof origin>(origin);
 
 function reset() {
   Object.assign(sizeForm, origin);
+  console.log(sizeForm, origin, props.p)
 }
-
-onMounted(reset);
-
-const logicalOperator = ref("且");
-
-const props = defineProps<{
-  p: any;
-}>();
+reset()
 
 if (!props.p.customRuleContent) {
   props.p.customRuleContent = {
@@ -164,6 +75,19 @@ if (!props.p.customRuleContent) {
     eventSequence: {},
   }
 }
+
+watchEffect(() => {
+  const { nodeType, nodeId } = props.p
+
+  if (nodeType !== 'strategy') return
+
+  if (nodeId) {
+    sizeForm.nodeId = nodeId;
+  }
+})
+
+const logicalOperator = ref("且");
+
 
 function toggleLogicalOperator() { }
 
@@ -191,17 +115,22 @@ function saveData() {
     return false;
   }
 
-  const _ = { ...sizeForm, nodeId: randomStr(12), father: props.p };
+  const _: any = { nodeId: "", father: props.p, children: [] };
+  Object.assign(_, sizeForm)
 
-  if (!props.p.children) {
-    props.p.children = [_];
+  // 修改 Modify Edit
+  if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {
+
+    Object.assign(props.p, _)
+
   } else {
+
     const arr = [...props.p.children];
 
     while (arr.length) {
       const item = arr.shift();
 
-      if (item.name === _.nodeName) {
+      if (item.nodeName === _.nodeName) {
         ElMessage.warning({
           message: "策略名称重复",
         });
@@ -209,10 +138,12 @@ function saveData() {
         return false;
       }
 
-      if (item.children) arr.push(...item.children);
     }
 
+    _.nodeId = randomStr(12)
+
     props.p.children.push(_);
+
   }
 
   return true;
@@ -468,11 +399,11 @@ const platformOptions: any = {
             </el-icon></el-text>
         </div>
 
-        <div class="BlockBackground-Under">
+        <!-- <div class="BlockBackground-Under">
           符合该策略器条件的用户打上 &nbsp;
           <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />
 
-        </div>
+        </div> -->
       </div>
       <div class="BlockBackground">
         <div class="BlockBackground-Under">

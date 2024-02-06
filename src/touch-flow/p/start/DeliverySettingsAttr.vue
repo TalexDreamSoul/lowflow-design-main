@@ -5,9 +5,7 @@ import { randomStr } from "~/utils/common";
 
 const origin = {
   nodeName: "DeliverySettings",
-  branchName: "test",
   nodeType: "Delivery",
-  num: 1,
   nodeId: "",
   branches: [
     { name: "branch1", ratio: 50 },
@@ -41,9 +39,9 @@ function reset() {
 reset()
 
 watchEffect(() => {
-  const { type, nodeId } = props.p
+  const { nodeType, nodeId } = props.p
 
-  if ( type !== 'Delivery' ) return
+  if ( nodeType !== 'Delivery' ) return
 
   if (nodeId) {
     sizeForm.nodeId = nodeId;
@@ -94,18 +92,6 @@ function saveData() {
   });
 
   if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {
-    // 说明是修改
-    // console.log(props.p)
-    // const index = props.p.father.children.indexOf(props.p)
-
-    // if (index === -1) {
-    //   throw new Error("index not found");
-    // }
-
-    // console.log('REPLACE', props.p)
-
-    // // replace
-    // props.p.father.children.splice(index, 1, _);
 
       Object.assign(props.p, _)
 
