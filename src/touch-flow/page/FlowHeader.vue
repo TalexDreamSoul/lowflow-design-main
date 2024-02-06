@@ -4,18 +4,26 @@ import BasicTarget from "../page/BasicTarget.vue";
 const props = defineProps<{
   basic: any;
 }>();
+
+const emits = defineEmits<{
+  (e: 'submitReview'): void
+}>()
+
+async function submitReview() {
+  emits('submitReview')
+}
 </script>
 
 <template>
   <div class="TouchFlow-Header">
     <div class="TouchFlow-Header-Start">
       <span>策略流程名称：</span>
-      <el-input placeholder="策略流程名称" v-model="basic.flowName" :style="{ width: '400px', height: '40px' }" />
+      <el-input placeholder="策略流程名称" v-model="basic.touchName" :style="{ width: '400px', height: '40px' }" />
     </div>
     <div>
       <el-button round>返回</el-button>
       <el-button round>保存草稿</el-button>
-      <el-button round type="primary" primaryStyle>提交审核</el-button>
+      <el-button round type="primary" @click="submitReview" primaryStyle>提交审核</el-button>
     </div>
   </div>
 

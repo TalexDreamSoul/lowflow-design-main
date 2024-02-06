@@ -48,8 +48,8 @@ function openDrawer(comp: any) {
 
   Object.assign(drawerOptions, comp)
 
-  if (!props.p.labelPosition)
-    props.p.labelPosition = "single";
+  if (!props.p.executeType)
+    props.p.executeType = "immediately";
 
   drawerOptions.visible = true
 }
@@ -72,7 +72,7 @@ provide('save', (regFunc: () => boolean) => {
   <el-card style="width: 355px" class="PBlock">
     <p class="title">
       <!-- 选择策略器 -->
-      {{ p.name }}
+      {{ p.nodeName }}
       <el-button @click="delChild(p)" text type="primary">
         <el-icon>
           <Delete />

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, provide } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
-import ConditionSetAttr from './start/ConditionSetAttr.vue'
 import PolicySettingsAttr from './start/PolicySettingsAttr.vue'
 import { delChild } from '../flow-utils'
+import Strategist from './start/Strategist.vue'
 
 const props = defineProps<{
   p?: any,
@@ -31,14 +31,16 @@ const comps = [
     },
     title: "兜底策略器",
     desc: "按客户属性行为或触发事件对客户筛选分流，并执行动作。",
-    comp: ConditionSetAttr
+    comp: Strategist
   }
 ]
 
 function openCondition() {
+  const { nodeName } = props.p
+
   openDrawer({
-    title: "选择策略器",
-    comp: PolicySettingsAttr
+    title: nodeName,
+    comp: nodeName === '兜底策略器' ? Strategist : PolicySettingsAttr
   })
 }
 
@@ -47,8 +49,8 @@ function openDrawer(comp: any) {
 
   Object.assign(drawerOptions, comp)
 
-  if (!props.p.labelPosition)
-    props.p.labelPosition = "single";
+  if (!props.p.executeType)
+    props.p.executeType = "immediately";
 
   drawerOptions.visible = true
 }
@@ -68,10 +70,10 @@ provide('save', (regFunc: () => boolean) => {
 </script>
 
 <template>
-  <el-card style="width: 355px" class="PBlock">
+  <el-card style="width: 355px" @click="openCondition" class="PBlock">
     <p class="title">
       <!-- 选择策略器 -->
-      {{ p.name }}
+      {{ p.nodeName }}
       <el-button @click="delChild(p)" text type="primary">
         <el-icon>
           <Delete />
@@ -80,19 +82,19 @@ provide('save', (regFunc: () => boolean) => {
       </el-button>
     </p>
     <div class="PBlock-Content theme">
-      <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">
+      <div style="--theme-color: #90A0B8" class="PBlock-Section">
         <p>
           客户属性行为分流
         </p>
         <span>不分流</span>
       </div>
-      <div style="--theme-color: #7DC757" @click="openCondition" class="PBlock-Section">
+      <div style="--theme-color: #7DC757" class="PBlock-Section">
         <p>
           延迟设置
         </p>
         <span>立即针对符合该策略器条件的客户发送触达</span>
       </div>
-      <div style="--theme-color: #FFB858" @click="openCondition" class="PBlock-Section">
+      <div style="--theme-color: #FFB858" class="PBlock-Section">
         <p>
           APP推送
         </p>

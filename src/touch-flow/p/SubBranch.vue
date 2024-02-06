@@ -48,8 +48,8 @@ function openDrawer(comp: any) {
 
   Object.assign(drawerOptions, comp)
 
-  if (!props.p.labelPosition)
-    props.p.labelPosition = "single";
+  if (!props.p.executeType)
+    props.p.executeType = "immediately";
 
   drawerOptions.visible = true
 }
@@ -73,7 +73,7 @@ provide('save', (regFunc: () => boolean) => {
   子分流器 demo
     <p class="title">
       <!-- 选择策略器 -->
-      {{ p.name }}
+      {{ p.nodeName }}
     </p>
     <div class="PBlock-Content theme">
       <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">

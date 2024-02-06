@@ -6,16 +6,16 @@ import SubBranch from './p/SubBranch.vue'
 import { useWindowSize } from "@vueuse/core";
 import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
 import { refreshLines, genJP } from "./line-creator";
-import { createTemplatePopover } from '../utils/touch-templates'
+// import { createTemplatePopover } from '../utils/touch-templates'
 
-const value = ref({
-  id: "323232",
-  name: "测试233",
-})
+// const value = ref({
+//   id: "323232",
+//   name: "测试233",
+// })
 // createTemplatePopover('新建企微模版', 'digital')
-createTemplatePopover('新建站内信模版', 'znx', value)
+// createTemplatePopover('新建站内信模版', 'znx', value)
 // createTemplatePopover('新建短信模版', 'sms')
-// createTemplatePopover('新建APP Push模版', 'app')
+// createTemplatePopover('新建APP Push模版', 'appPush')
 // createTemplatePopover('新建外呼模版', 'outbound')
 
 const props = defineProps<{
@@ -24,7 +24,7 @@ const props = defineProps<{
 // 配置画布节点
 const comps: any = {
   start: PStartVue,
-  PolicySettings: PPolicySettings,
+  strategy: PPolicySettings,
   Delivery: Branch,
   SubBranch,
 };
@@ -112,7 +112,7 @@ watch(() => width.value + height.value, refreshCurves);
   <div class="TouchFlow-Layer">
     <div ref="now" class="TouchFlow">
       <div class="fake-point" />
-      <component :p="p" :is="comps[p.type]" />
+      <component :p="p" :is="comps[p.nodeType]" />
     </div>
   </div>
   <template v-if="p.children">

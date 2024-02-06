@@ -4,29 +4,8 @@ import { createRouter, createWebHistory } from "vue-router";
 export const routes: RouterOptions["routes"] = [
   {
     path: "/",
-    component: () => import("../views/dashboard/index.vue"),
-  },
-  {
-    path: "/pinia",
-    component: () => import("../views/Pinia/PiniaExample.vue"),
-    meta: {
-      hideTopMenu: true,
-    },
-  },
-  {
-    path: "/dashboard",
-    component: () => import("../views/dashboard/index.vue"),
-    meta: {
-      hideTopMenu: true,
-    },
-  },
-
-  {
-    path: "/page",
-    component: () => import("../views/pagenull/index.vue"),
-    meta: {
-      hideTopMenu: true,
-    },
+    redirect: '/configuration'
+    // component: () => import("../views/dashboard/index.vue"),
   },
   {
     path: "/designNew",
@@ -70,30 +49,13 @@ export const routes: RouterOptions["routes"] = [
     ],
   },
   // * 素材类型：sms 短信，app app消息，digital 数字员工，outbound 智能外呼，znx 站内信
- 
   {
     path: "/materialCenter",
     redirect: "/materialCenter/SmsTemplateVue",
     children: [
       {
-        path: "SmsTemplateVue",
-        component: () => import("../materialCenter/SmsTemplateVue.vue"),
-      },
-      {
-        path: "ZnxTemplateVue",
-        component: () => import("../materialCenter/ZnxTemplateVue.vue"),
-      },
-      {
-        path: "AppTemplateVue",
-        component: () => import("../materialCenter/AppTemplateVue.vue"),
-      },
-      {
-        path: "DigitalTemplateVue",
-        component: () => import("../materialCenter/DigitalTemplateVue.vue"),
-      },
-      {
-        path: "OutboundTemplateVue",
-        component: () => import("../materialCenter/OutboundTemplateVue.vue"),
+        path: "templatePanel/:type",
+        component: () => import("../views/materialCenter/SmsTemplateVue.vue"),
       },
     ],
   },

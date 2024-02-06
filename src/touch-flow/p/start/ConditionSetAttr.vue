@@ -5,6 +5,7 @@ import {
   inject,
   reactive,
   onMounted,
+watch,
 } from "vue";
 import { Delete } from "@element-plus/icons-vue";
 
@@ -13,7 +14,7 @@ import TouchBlockGenre from "~/touch-flow/p/genre/TouchBlockGenre.vue";
 
 const dict = ref<any>();
 const timeFuncs: { [func: string]: any } = {
-  single: [
+  immediately: [
     (obj: any) => {
       const { date1, date2 } = obj
       if (!date1 || !date2) return
@@ -29,9 +30,9 @@ const timeFuncs: { [func: string]: any } = {
       return date
     },
     (obj: any) => {
-      if (!props.p.time) return
+      if (!props.p.executeTime) return
 
-      const date = new Date(props.p.time);
+      const date = new Date(props.p.executeTime);
       obj.date1 = date.toString();
       obj.date2 = date.toString();
     }
@@ -41,25 +42,25 @@ const timeFuncs: { [func: string]: any } = {
       return obj.date3
     },
     (obj: any) => {
-      if (!props.p.time) return
+      if (!props.p.executeTime) return
 
-      obj.date3 = props.p.time;
+      obj.date3 = props.p.executeTime;
     }
   ],
-  type: [
+  trigger: [
     (obj: any) => {
       return obj.date3
     },
     (obj: any) => {
-      if (!props.p.time) return
+      if (!props.p.executeTime) return
 
-      obj.date3 = props.p.time;
+      obj.date3 = props.p.executeTime;
     }
   ]
 }
 
 const sizeForm = reactive({
-  name: "",
+  nodeName: "",
   region: "",
   time: {
     funcs: timeFuncs
@@ -79,8 +80,9 @@ const sizeForm = reactive({
   monthday: "",
 });
 const planB = ref(false);
-const selectedType = ref()
-const input = ref()
+
+watch(() => planB.value, (val: boolean) => props.p.triggerRuleContent.isDelayed = val)
+
 const daysInMonth = computed(() => {
   const days = [];
   for (let i = 1; i <= 31; i++) {
@@ -96,14 +98,14 @@ const props = defineProps<{
 }>();
 
 function saveData() {
-  const lp: string = props.p.labelPosition
+  const lp: string = props.p.executeType
   if (!lp) return false
 
   const funcs = sizeForm.time.funcs
 
   const [parse] = funcs[lp.toLowerCase()]
 
-  props.p.time = parse(sizeForm);
+  props.p.executeTime = parse(sizeForm);
 
   return true
 }
@@ -120,29 +122,29 @@ onMounted(async () => {
         "customEvent": {
           "conditions": [{
             "conditions": [{}],
-            "logicalChar": "or"
+            "logicalChar": "或"
           }],
-          "logicalChar": "or"
+          "logicalChar": "或"
         },
-        "logicalChar": "or"
+        "logicalChar": "或"
       },
       "eventB": {
         "customEvent": {
           "conditions": [{
             "conditions": [{}],
-            "logicalChar": "or"
+            "logicalChar": "或"
           }],
-          "logicalChar": "or"
+          "logicalChar": "或"
         },
-        "logicalChar": "or"
+        "logicalChar": "或"
       }
     }
   }
 
 
   // sync time
-  if (props.p.labelPosition) {
-    const [, analyze] = sizeForm.time.funcs[props.p.labelPosition!.toLowerCase()]
+  if (props.p.executeType) {
+    const [, analyze] = sizeForm.time.funcs[props.p.executeType!.toLowerCase()]
 
     analyze(sizeForm)
   }
@@ -158,14 +160,14 @@ onMounted(async () => {
 function addEventA() {
   props.p.triggerRuleContent.eventA.customEvent.conditions.push({
     conditions: [{}],
-    logicalChar: "or"
+    logicalChar: "或"
   });
 }
 
 function addEventB() {
   props.p.triggerRuleContent.eventB.customEvent.conditions.push({
     conditions: [{}],
-    logicalChar: "or"
+    logicalChar: "或"
   });
 }
 </script>
@@ -176,20 +178,20 @@ function addEventB() {
       <el-form-item label="流程类型：" label-class="custom-label">
         <div>
           <div class="custom-radio-group">
-            <div class="custom-radio-button" :class="{ active: p.labelPosition === 'single' }"
-              @click="p.labelPosition = 'single'">
+            <div class="custom-radio-button" :class="{ active: p.executeType === 'immediately' }"
+              @click="p.executeType = 'immediately'">
               <el-icon>
                 <AlarmClock />
               </el-icon>定时型-单次
             </div>
-            <div class="custom-radio-button" :class="{ active: p.labelPosition === 'Repeat' }"
-              @click="p.labelPosition = 'Repeat'">
+            <div class="custom-radio-button" :class="{ active: p.executeType === 'repeat' }"
+              @click="p.executeType = 'repeat'">
               <el-icon>
                 <AlarmClock />
               </el-icon>定时型-重复
             </div>
-            <div class="custom-radio-button" :class="{ active: p.labelPosition === 'type' }"
-              @click="p.labelPosition = 'type'">
+            <div class="custom-radio-button" :class="{ active: p.executeType === 'trigger' }"
+              @click="p.executeType = 'trigger'">
               <el-icon>
                 <Pointer />
               </el-icon>触发型
@@ -197,7 +199,7 @@ function addEventB() {
           </div>
         </div>
       </el-form-item>
-      <div v-if="p.labelPosition === 'single'">
+      <div v-if="p.executeType === 'immediately'">
         <!-- 单次模块内容 -->
 
         <el-form-item label="流程开始时间（任务开始时间）：" label-class="custom-label">
@@ -215,7 +217,7 @@ function addEventB() {
         </el-form-item>
       </div>
 
-      <div v-else-if="p.labelPosition === 'Repeat'">
+      <div v-else-if="p.executeType === 'repeat'">
         <!-- 重复模块内容 -->
         <el-form-item label="流程有效期：" label-class="custom-label">
           <el-col :span="12">
@@ -280,7 +282,7 @@ function addEventB() {
         </div>
       </div>
 
-      <div v-else-if="p.labelPosition === 'type'">
+      <div v-else-if="p.executeType === 'trigger'">
         <!-- 触发型模块内容 -->
         <el-form-item label="流程有效期：" label-class="custom-label">
           <el-col :span="12">
@@ -338,15 +340,15 @@ function addEventB() {
             justify-content: space-between;">
               <div>
                 <el-text>且在</el-text>&nbsp;
-                <el-input v-model="input" type="number" style="width: 100px" />&nbsp;
-                <el-select v-model="selectedType" style="width: 150px">
+                <el-input v-model="p.triggerRuleContent.delayedTime" type="number" style="width: 100px" />&nbsp;
+                <el-select v-model="p.triggerRuleContent.delayedUnit" style="width: 150px">
                   <el-option value="month" label="月份">分钟</el-option>
                   <el-option value="week" label="周">小时</el-option>
                   <el-option value="day" label="天">天</el-option>
                 </el-select>&nbsp;
                 <el-text>后立即判断</el-text>
                 &nbsp;
-                <el-select v-model="selectedType" style="width: 150px">
+                <el-select v-model="p.triggerRuleContent.delayedAction" style="width: 150px">
                   <el-option value="=" label="月份">做过</el-option>
                   <el-option value="!=" label="周">未做过</el-option>
                 </el-select>&nbsp;

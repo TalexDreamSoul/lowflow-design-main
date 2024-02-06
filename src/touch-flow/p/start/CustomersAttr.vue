@@ -14,38 +14,35 @@ const customRuleContent = reactive<CustomSearchDTO>({
     conditions: [
       {
         conditions: [
-          {}
+          // {}
         ],
-        logicalChar: "or",
+        logicalChar: "或",
       }
     ],
-    logicalChar: "or",
+    logicalChar: "或",
   },
   customEvent: {
     conditions: [
       {
         conditions: [
-          {}
+          // {}
         ],
-        logicalChar: "or",
+        logicalChar: "或",
       }
     ],
-    logicalChar: "or",
+    logicalChar: "或",
   },
   eventSequence: {
     conditions: [
       {
         conditions: [
-          {
-            conditions: []
-          }
         ],
-        logicalChar: "or",
+        logicalChar: "或",
       }
     ],
-    logicalChar: "or",
+    logicalChar: "或",
   },
-  logicalChar: "or",
+  logicalChar: "或",
 });
 
 const props = defineProps<{
@@ -205,12 +202,12 @@ function attrsAdd() {
 
   const obj = {
     conditions: [{ conditions: {} }],
-    logicalChar: "or",
+    logicalChar: "或",
   };
 
   attr.push({
     conditions: [obj],
-    logicalChar: "or",
+    logicalChar: "或",
   });
 }
 
@@ -219,12 +216,12 @@ function behaviorAdd() {
 
   const obj = {
     conditions: [{ conditions: {} }],
-    logicalChar: "or",
+    logicalChar: "或",
   };
 
   attr.push({
     conditions: [obj],
-    logicalChar: "or",
+    logicalChar: "或",
   });
 }
 
@@ -233,12 +230,12 @@ function sequenceAdd() {
 
   const obj = {
     conditions: [{ conditions: [{}] }],
-    logicalChar: "or",
+    logicalChar: "或",
   };
 
   attr.push({
     conditions: [obj],
-    logicalChar: "or",
+    logicalChar: "或",
   });
 }
 
@@ -267,13 +264,13 @@ regSaveFunc(saveData);
             <div class="logical-operator">
               <div class="logical-operator__line"></div>
               <div class="custom-switch" :class="{
-                active: logicalOperator === 'and',
+                active: logicalOperator === '且',
               }" @click="
   customRuleContent!.logicalOperator =
-  logicalOperator === 'and' ? 'or' : 'and'
+  logicalOperator === '且' ? '或' : '且'
   ">
                 {{
-                  customRuleContent.logicalOperator === "and" ? "且" : "或"
+                  customRuleContent.logicalOperator === "且" ? "且" : "或"
                 }}
               </div>
             </div>

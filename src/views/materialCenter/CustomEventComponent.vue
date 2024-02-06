@@ -1,12 +1,10 @@
-<!-- CustomEventComponent.vue -->
 <template>
   <div class="event warp">
     <div class="title">{{ title }}</div>
     <slot name="search"></slot>
     <div class="content">
-      <el-watermark content="用户名+时间" :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
-        <slot name="table" :tableData="tableData"></slot>
-      </el-watermark>
+ 
+      <slot name="table" :tableData="tableData"></slot>
       <slot name="pagination"></slot>
     </div>
   </div>

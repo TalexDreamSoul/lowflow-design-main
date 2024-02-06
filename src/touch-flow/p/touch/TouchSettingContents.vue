@@ -4,7 +4,7 @@ import { ref, h, watch } from 'vue'
 import { createFloatingPanel } from './floating-panel'
 import { getDictAnalyzedTree } from '../../flow-utils'
 import TouchSelectWrapper from './TouchSelectable.vue'
-import Operator from '~/components/BehaviorFoldingGroup/Operator.vue'
+import Operator from '../../page/Operator.vue'
 import { randomStr } from '~/utils/common'
 
 /**

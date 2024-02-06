@@ -11,7 +11,7 @@ import OutboundTemplateVue from './templates/OutboundTemplateVue.vue'
 const templates = {
   znx: ZnxTemplateVue,
   sms: SmsTemplateVue,
-  app: AppTemplateVue,
+  appPush: AppTemplateVue,
   digital: DigitalTemplateVue,
   outbound: OutboundTemplateVue,
 }

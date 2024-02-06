@@ -1,7 +1,12 @@
+import { addMarketingTouch } from "~/api";
+
 /**
+ * Request
+ *
  * MarketingTouchEditDTO
  */
-export type MarketingTouchEditDTO = {
+export type Request = {
+  blacklist?: JsonStructListTouchBlacklistDTO;
   /**
    * 是否包含目标
    */
@@ -44,7 +49,7 @@ export type MarketingTouchEditDTO = {
    */
   executeTime?: Date;
   /**
-   * 执行类型：immediately:定时-单次，delayed:定时-重复，trigger：触发型
+   * 执行类型：immediately:定时-单次，repeat:定时-重复，trigger：触发型
    */
   executeType?: 'immediately' | 'repeat' | 'trigger';
   /**
@@ -59,6 +64,7 @@ export type MarketingTouchEditDTO = {
    * 节点信息
    */
   nodes?: MarketingTouchNodeEditDTO[];
+  repeatTime?: RepeatTimeDTO;
   /**
    * 有效时间-开始时间
    */
@@ -74,6 +80,32 @@ export type MarketingTouchEditDTO = {
    */
   touchName?: string;
   triggerRuleContent?: EventTriggerConditionDTO;
+  [property: string]: any;
+}
+
+/**
+ * JsonStruct«List«TouchBlacklistDTO»»
+ */
+export type JsonStructListTouchBlacklistDTO = {
+  /**
+   * data
+   */
+  data?: TouchBlacklistDTO[];
+  [property: string]: any;
+}
+
+/**
+ * TouchBlacklistDTO
+ */
+export type TouchBlacklistDTO = {
+  /**
+   * 黑名单名称
+   */
+  blacklistName?: string;
+  /**
+   * 黑名单id
+   */
+  id?: number;
   [property: string]: any;
 }
 
@@ -139,10 +171,6 @@ export type SearchCondition = {
  */
 export type AttrDTO = {
   /**
-   * 结束时间
-   */
-  endTime?: Date;
-  /**
    * 字段
    */
   field?: string;
@@ -170,10 +198,42 @@ export type AttrDTO = {
    * 字段值
    */
   fieldValue?: string;
+  timeCondition?: TimeConditionDTO;
+  [property: string]: any;
+}
+
+/**
+ * TimeConditionDTO
+ */
+export type TimeConditionDTO = {
+  /**
+   * 结束天数
+   */
+  endDay?: number;
+  /**
+   * 结束时间
+   */
+  endTime?: Date;
+  /**
+   * 是否是未来
+   */
+  isFuture?: boolean;
+  /**
+   * 是否范围之内
+   */
+  isWithin?: boolean;
+  /**
+   * 起始天数
+   */
+  startDay?: number;
   /**
    * 开始时间
    */
   startTime?: Date;
+  /**
+   * 时间类型：绝对 absolute，绝对区间 absoluteInterval 相对 relative，相对区间 relativeInterval
+   */
+  timeType?: string;
   [property: string]: any;
 }
 
@@ -413,10 +473,6 @@ export type DelayedDTO = {
    */
   delayedTime?: number;
   /**
-   * 延时类别
-   */
-  delayedType?: string;
-  /**
    * 延时单位
    */
   delayedUnit?: string;
@@ -498,7 +554,7 @@ export type MaterialTemplateEditDTO = {
    */
   status?: string;
   /**
-   * 素材类型：sms 短信，app app消息，digital 数字员工，outbound 智能外呼，znx 站内信
+   * 素材类型：sms 短信，appPush app消息，digital 数字员工，outbound 智能外呼，znx 站内信
    */
   type?: string;
   znxTemplate?: ZnxTemplateDTO;
@@ -526,6 +582,10 @@ export type AppPushTemplateDTO = {
    */
   pageLink?: string;
   /**
+   * 场景码
+   */
+  sceneCode?: string;
+  /**
    * 标题
    */
   title?: string;
@@ -541,10 +601,6 @@ export type AppPushTemplateDTO = {
  */
 export type VariableTemplateDTO = {
   /**
-   * 默认值
-   */
-  defaultValue?: string;
-  /**
    * 字段
    */
   field?: string;
@@ -553,7 +609,46 @@ export type VariableTemplateDTO = {
    */
   fieldName?: string;
   /**
-   * 字段值
+   * 标签id
+   */
+  labelId?: number;
+  /**
+   * 标签名
+   */
+  labelName?: string;
+  /**
+   * 标签值
+   */
+  labelValue?: { [key: string]: any }[];
+  /**
+   * 类型 1：基础属性 2：客户标签
+   */
+  type?: string;
+  /**
+   * 变量值
+   */
+  variables?: VariableDTO[];
+  [property: string]: any;
+}
+
+/**
+ * VariableDTO
+ */
+export type VariableDTO = {
+  /**
+   * 比较值
+   */
+  compareValue?: string;
+  /**
+   * 默认值
+   */
+  defaultValue?: string;
+  /**
+   * 关系
+   */
+  fieldOp?: string;
+  /**
+   * 设置值
    */
   fieldValue?: string;
   [property: string]: any;
@@ -579,6 +674,10 @@ export type DigitalTemplateDetailDTO = {
    * 图片链接
    */
   imgUrl?: string;
+  /**
+   * 触达类型：message 消息，addFriend 添加好友
+   */
+  type?: string;
   /**
    * 变量列表
    */
@@ -609,6 +708,10 @@ export type SmsTemplateDTO = {
    * 素材内容
    */
   content?: string;
+  /**
+   * 场景码
+   */
+  sceneCode?: string;
   /**
    * 变量列表
    */
@@ -656,6 +759,25 @@ export type ZnxTemplateDTO = {
 }
 
 /**
+ * RepeatTimeDTO
+ */
+export type RepeatTimeDTO = {
+  /**
+   * 重复日期，1-31
+   */
+  repeatDay?: number;
+  /**
+   * 重复时间：12：00
+   */
+  repeatTime?: string;
+  /**
+   * 重复类型：month 月，week 周，day 天
+   */
+  repeatType?: string;
+  [property: string]: any;
+}
+
+/**
  * JsonStruct«List«MarketingTouchTargetDTO»»
  */
 export type JsonStructListMarketingTouchTargetDTO = {
@@ -670,15 +792,12 @@ export type JsonStructListMarketingTouchTargetDTO = {
  * EventTriggerConditionDTO
  */
 export type EventTriggerConditionDTO = {
-  /**
-   * 延时时间
-   */
-  delayedTime?: number;
-  /**
-   * 延时单位
-   */
-  delayedUnit?: string;
+  delayed?: DelayedDTO;
   eventA?: CustomSearchDTO;
   eventB?: CustomSearchDTO;
   [property: string]: any;
+}
+
+export function touchSubmitReview(touchPageFlow: MarketingTouchNodeEditDTO) {
+  return addMarketingTouch(touchPageFlow)
 }

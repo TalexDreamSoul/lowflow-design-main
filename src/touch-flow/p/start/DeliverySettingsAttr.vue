@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { inject, ref, reactive, onMounted, computed } from "vue";
+import { inject, ref, reactive, watchEffect, computed } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 
 const origin = {
-  name: "DeliverySettings",
+  nodeName: "DeliverySettings",
   branchName: "test",
-  type: "Delivery",
+  nodeType: "Delivery",
   num: 1,
-  id: "",
+  nodeId: "",
   branches: [
     { name: "branch1", ratio: 50 },
     { name: "branch2", ratio: 50 },
@@ -19,8 +19,9 @@ const props = defineProps<{
   p: any;
 }>();
 
-// transform children 2 branches
 const { children } = props.p
+
+const sizeForm = reactive<typeof origin>(origin);
 
 !(children.length && (() => {
   origin.branches = []
@@ -33,18 +34,26 @@ const { children } = props.p
   });
 })())
 
-const errortxt = ref("");
-const sizeForm = reactive<typeof origin>(origin);
-
 function reset() {
   Object.assign(sizeForm, origin);
+  console.log(sizeForm, origin, props.p)
 }
-onMounted(reset);
+reset()
+
+watchEffect(() => {
+  const { type, nodeId } = props.p
+
+  if ( type !== 'Delivery' ) return
+
+  if (nodeId) {
+    sizeForm.nodeId = nodeId;
+  }
+})
 
 const totalRatio = computed(() => sizeForm.branches.reduce((acc: number, curVal) => acc + +curVal.ratio, 0))
 
 function saveData() {
-  if (!sizeForm.name) {
+  if (!sizeForm.nodeName) {
     ElMessage.warning({
       message: "请输入分流器名称",
     });
@@ -69,7 +78,7 @@ function saveData() {
     return false;
   }
 
-  const _: any = { id: randomStr(12) , father: props.p, children: [] };
+  const _: any = { nodeId: "", father: props.p, children: [] };
   Object.assign(_, sizeForm)
 
   // transform branch prop 2 children prop
@@ -84,22 +93,29 @@ function saveData() {
     _.children.push(child)
   });
 
-  if (sizeForm.id === _.id && sizeForm.id.length) {
+  if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {
     // 说明是修改
-    const index = props.p.father.children.indexOf(props.p)
+    // console.log(props.p)
+    // const index = props.p.father.children.indexOf(props.p)
 
-    if (index === -1) {
-      throw new Error("index not found");
-    }
+    // if (index === -1) {
+    //   throw new Error("index not found");
+    // }
 
-    console.log('REPLACE', props.p)
+    // console.log('REPLACE', props.p)
 
-    // replace
-    props.p.father.children.splice(index, 1, _);
+    // // replace
+    // props.p.father.children.splice(index, 1, _);
+
+      Object.assign(props.p, _)
 
   }
 
-  else props.p.children.push(_);
+  else /* if (!_.id?.length)  */{
+    _.nodeId = randomStr(12)
+
+    props.p.children.push(_);
+  }
 
   return true;
 }
@@ -124,7 +140,7 @@ const deleteBranch = (index: number) => {
         客户将流量分配比例随机进入任一分支，流量总和为100%。如果同一个客户多次进入该流程，每次都默认分配到同一个组内。
       </div>
       <el-form-item label="分流器名称：">
-        <el-input v-model="sizeForm.name" placeholder="填写名称" style="width: 400px" />
+        <el-input v-model="sizeForm.nodeName" placeholder="填写名称" style="width: 400px" />
       </el-form-item>
 
       <div class="blockbg">
@@ -163,9 +179,6 @@ const deleteBranch = (index: number) => {
                 <CirclePlusFilled />
               </el-icon>
               添加分支
-            </el-text>
-            <el-text type="primary" style="cursor: pointer;" @click="addBranch">
-              {{ errortxt }}
             </el-text>
           </el-row>
         </div>

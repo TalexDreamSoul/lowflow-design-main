@@ -12,11 +12,11 @@ const emits = defineEmits<{
   (e: "update:modelValue", value: string): void;
 }>();
 
-const label = computed(() => ("and" === model.value ? "且" : "或"));
+const label = computed(() => ("且" === model.value ? "且" : "或"));
 const model = useVModel(props, "modelValue", emits);
 
 function toggle() {
-  model.value = model.value === "and" ? "or" : "and";
+  model.value = model.value === "且" ? "或" : "且";
 }
 </script>
 

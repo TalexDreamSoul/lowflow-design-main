@@ -12,8 +12,41 @@ const props = defineProps<{
   dict: any;
 }>();
 
+if ( !props.target.targetDelayed ) {
+  props.target.targetDelayed = {
+    delayedAction: "",
+    delayedTime: 0,
+    delayedUnit: "day",
+    isDelayed: false
+  }
+}
+
+if (!props.target?.targetRuleContent) {
+
+  props.target.targetRuleContent = {
+    customEvent: {
+      conditions: []
+    },
+    logicalChar: '或'
+  }
+
+}
+
 function getConditions() {
-  return (props.target.conditions = props.target.conditions || []);
+  let target = props.target?.targetRuleContent?.customEvent
+
+  // if (!target) {
+
+  //   props.target.targetRuleContent = target = {
+  //     customEvent: {
+  //       conditions: []
+  //     },
+  //     logicalChar: '或'
+  //   }
+
+  // }
+
+  return target.conditions //(props.target.targetRuleContent = props.target.conditions || []);
 }
 
 const addCondition = () => {
@@ -45,7 +78,7 @@ const attrs = computed(() => {
   const targetEvents =
     [...events]
       .map((e: any) => e.events)
-      .find((_: any) => (_e: any) => _e.id === props.target.delayedAction)?.[0]
+      .find((_: any) => (_e: any) => _e.id === props.target.targetDelayed.delayedAction)?.[0]
       ?.eventAttr?.attrs ?? null;
 
   return targetEvents;
@@ -61,8 +94,8 @@ const attrs = computed(() => {
     <div class="filter-wrap">
       <div class="garyblock">
         <el-text>客户进入流程后，在</el-text>&nbsp;
-        <el-input v-model="target.delayedTime" type="number" style="width: 100px" />&nbsp;
-        <el-select v-model="target.delayedUnit" style="width: 150px">
+        <el-input v-model="target.targetDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
+        <el-select v-model="target.targetDelayed.delayedUnit" style="width: 150px">
           <el-option value="month" label="月份">分钟</el-option>
           <el-option value="week" label="周">小时</el-option>
           <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
@@ -82,19 +115,20 @@ const attrs = computed(() => {
       </div>
       <div class="filter-container">
         <div class="fontstyle">并且满足</div>
-        <div class="logical-operator" v-if="target.conditions?.length">
+        <div class="logical-operator" v-if="target.targetRuleContent.customEvent.conditions?.length">
           <div class="logical-operator__line"></div>
-          <div class="custom-switch" :class="{ active: target.logicalOperator === 'and' }" @click="
-            target.logicalOperator =
-            target?.logicalOperator === 'and' ? 'or' : 'and'
-            ">
-            {{ target?.logicalOperator === "and" ? "且" : "或" }}
+          <div class="custom-switch" :class="{ active: target.targetRuleContent.customEvent.logicalOperator === '且' }"
+            @click="
+              target.targetRuleContent.customEvent.logicalOperator =
+              target?.targetRuleContent.customEvent?.logicalOperator === '且' ? '或' : '且'
+              ">
+            {{ target?.targetRuleContent.customEvent?.logicalOperator === "且" ? "且" : "或" }}
           </div>
         </div>
         <div v-if="attrs" class="filter-option-content">
           <el-form :label-width="0" :inline="true" :model="target.conditions">
-            <el-row v-for="(item, index) in target.conditions" :key="`${item.field}-${index}`" :gutter="5"
-              class="filter-item-rule">
+            <el-row v-for="(item, index) in target.targetRuleContent.customEvent.conditions"
+              :key="`${item.field}-${index}`" :gutter="5" class="filter-item-rule">
               <el-col :xs="24" :sm="7">
                 <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
                   <trigger v-model="item.field" :attrs="attrs" />
@@ -122,12 +156,6 @@ const attrs = computed(() => {
                 </el-text>
               </el-col>
             </el-row>
-
-            <div v-if="!(
-              target?.filterRules?.groups?.length |
-              target?.filterRules?.conditions?.length
-            )
-              " class="filter-item-rule" />
           </el-form>
         </div>
       </div>

@@ -3,7 +3,11 @@
     <div class="common-layout">
       <TopMenu v-if="!meta.hideTopMenu" />
       <div class="content">
-        <router-view></router-view>
+        <el-watermark content="用户名+时间" :font="{ color: 'rgba(0, 0, 0, 0.15)' }" v-if="!meta.hideTopMenu" >
+          <router-view></router-view>
+        </el-watermark>
+        <router-view v-if="meta.hideTopMenu" ></router-view>
+
       </div>
     </div>
   </el-config-provider>
@@ -12,7 +16,7 @@
 <script lang="ts" setup>
 // @ts-ignore sure exist
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
-import TopMenu from "~/components/TopMenu/index.vue";
+import TopMenu from "~/views/TopMenu/index.vue";
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
