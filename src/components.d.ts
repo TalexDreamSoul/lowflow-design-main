@@ -7,6 +7,14 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+<<<<<<< Updated upstream
+=======
+    BehaviorFoldingGroup: typeof import('./components/BehaviorFoldingGroup/index.ts')['default']
+    Condition: typeof import('./components/Condition/index.ts')['default']
+    EventGroup: typeof import('./components/EventGroup/index.ts')['default']
+    Interface: typeof import('./components/Render/interface.ts')['default']
+    RoleSelection: typeof import('./components/RoleSelection/index.ts')['default']
+>>>>>>> Stashed changes
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
