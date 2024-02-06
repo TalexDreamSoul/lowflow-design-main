@@ -73,7 +73,7 @@ const pushTemplate = computed(() => {
 
   let val;
 
-  if ( type === 'sms' ) {
+  if (type === 'sms') {
     val = '短信模板：'
   } else if (type === 'znx') {
     val = '站内信模板：'
@@ -87,24 +87,40 @@ const pushTemplate = computed(() => {
 
   return {
     has: type?.length,
-    val: ""
+    val
   }
 })
+
+const visible = ref(false)
+function del(p: any) {
+  delChild(p)
+
+  visible.value = false
+}
 </script>
 
 <template>
-  <el-card style="width: 355px" @click="openCondition" class="PBlock">
+  <el-card style="width: 355px" class="PBlock">
     <p class="title">
       <!-- 选择策略器 -->
       {{ p.nodeName }}
-      <el-button @click="delChild(p)" text type="primary">
-        <el-icon>
-          <Delete />
-        </el-icon>
-        删除
-      </el-button>
+      <el-popover :visible="visible" placement="top" :width="160">
+        <p>是否确认删除？</p>
+        <div style="text-align: right; margin: 0">
+          <el-button size="small" text @click="visible = false">取消</el-button>
+          <el-button size="small" type="primary" @click="del(p)">确认</el-button>
+        </div>
+        <template #reference>
+          <el-button @click="visible = true" text type="primary">
+            <el-icon>
+              <Delete />
+            </el-icon>
+            删除
+          </el-button>
+        </template>
+      </el-popover>
     </p>
-    <div class="PBlock-Content theme">
+    <div class="PBlock-Content theme" @click="openCondition">
       <div v-if="p.nodeName !== '兜底策略器'" style="--theme-color: #90A0B8" class="PBlock-Section">
         <p>
           客户属性行为分流
@@ -152,7 +168,7 @@ const pushTemplate = computed(() => {
     </teleport>
 
     <teleport to="body">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title">
+      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :p="p" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>

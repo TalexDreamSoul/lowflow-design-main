@@ -59,20 +59,22 @@ function transformTarget(target: typeof flowOptions.basic.target) {
 function transformNodes(__nodes: Array<any>) {
   const res: Array<any> = [];
 
+  console.log(__nodes);
+
   [...__nodes].forEach((node: any) => {
 
     if (node.father) {
       // 先拿到父元素中children 我这个元素的位置
-      const fatherInd = [ ...node.father.children ].indexOf((item: any) => item.nodeId === node.nodeId)
+      const fatherInd = [...node.father.children].indexOf((item: any) => item.nodeId === node.nodeId)
 
       node.preNodeId = (fatherInd < 1 ? node.father.nodeId : node.father.children[fatherInd - 1].nodeId)
 
-      delete node.father
+      // delete node.father
     }
 
     if (node.children) {
       [...node.children].forEach((child, index) => {
-        node.children[index] = transformNodes(child)
+        node.children[index] = transformNodes([child])
       })
     }
 
@@ -84,6 +86,8 @@ function transformNodes(__nodes: Array<any>) {
 }
 
 async function submitReview() {
+  console.log("transformNodes", flowOptions.p.children)
+
   const _flowOptions: any = {
     ...flowOptions.p,
     nodes: transformNodes(flowOptions.p.children),
@@ -92,7 +96,7 @@ async function submitReview() {
     ...transformTarget(flowOptions.basic.target)
   }
 
-  console.log(_flowOptions)
+  console.log("flowOptions", _flowOptions)
 
   delete _flowOptions.children
   delete _flowOptions.id
@@ -104,18 +108,6 @@ async function submitReview() {
 
   console.log(res, data)
 }
-
-onBeforeUnmount(() => {
-  localStorage.setItem('_temp', JSON.stringify(flowOptions))
-})
-
-onMounted(() => {
-  const data = JSON.parse(localStorage.getItem('_temp') ?? "{}")
-
-  if (data) {
-    Object.assign(flowOptions, data)
-  }
-})
 
 console.log("total flow", flowOptions);
 </script>

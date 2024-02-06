@@ -2,7 +2,7 @@
 import { ElMessage } from "element-plus";
 import BehaviorGroup from "../behavior/BehaviorGroup.vue";
 import { ref, reactive, computed, inject } from "vue";
-import { getmarketingTouchEstimate } from "~/api/index";
+import { getmarketingTouchEstimate, getBlackList } from "~/api/index";
 import CustomAttr from "../behavior/CustomAttr.vue";
 import CustomBehavior from "../behavior/CustomBehavior.vue";
 import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
@@ -252,6 +252,15 @@ function saveData(): boolean {
 type IRegSaveFunc = (regFunc: () => boolean) => void;
 const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
+
+const blackList = ref()
+!(async () => {
+  const res = await getBlackList({})
+
+  if (res.data) {
+    blackList.value = res.data
+  }
+})()
 </script>
 
 <template>
@@ -371,9 +380,12 @@ regSaveFunc(saveData);
       </div>
 
       <el-form-item label="过滤黑名单" label-class="custom-label">
-        <el-select style="width: 100px">
+        <el-select v-model="customRuleContent.blackList" style="width: 100px">
           <el-option value="no" label="不过滤">不过滤</el-option>
           <el-option value="yes" label="过滤">过滤</el-option>
+        </el-select>
+        <el-select v-if="customRuleContent?.blackList === 'yes'" style="width: 100px">
+          <el-option v-for="item in blackList.records" :value="item.value" :label="item.label">{{ item }}</el-option>
         </el-select>
       </el-form-item>
     </el-form>

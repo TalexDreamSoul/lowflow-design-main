@@ -115,8 +115,13 @@ function saveData() {
     return false;
   }
 
-  const _: any = { nodeId: "", father: props.p, children: [] };
+  const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)
+
+  Object.defineProperty(_, 'father', {
+    value: props.p,
+    enumerable: false
+  })
 
   // 修改 Modify Edit
   if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {

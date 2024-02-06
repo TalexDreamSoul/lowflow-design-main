@@ -99,3 +99,32 @@ export const updateMaterial = (data: any) => {
         data
     })
 }
+
+export const getBlackList = (data: {
+    beginTime?: string,
+    endTime?: string,
+    pageNum?: number,
+    pageSize?: number,
+    blacklistName?: string,
+    blacklistSource?: string,
+    blacklistType?: string,
+    id?: string,
+}) => {
+    const defaultVal = {
+        "beginTime": "",
+        "blacklistName": "",
+        "blacklistSource": "",
+        "blacklistType": "",
+        "endTime": "",
+        "id": 0,
+        "pageNum": 0,
+        "pageSize": 0
+    }
+
+    Object.assign(defaultVal, data)
+
+    return request.post({
+        url: '/api/qryBlacklist.do',
+        data: defaultVal
+    })
+}

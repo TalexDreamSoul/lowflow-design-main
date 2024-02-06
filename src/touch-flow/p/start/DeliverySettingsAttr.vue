@@ -76,13 +76,18 @@ function saveData() {
     return false;
   }
 
-  const _: any = { nodeId: "", father: props.p, children: [] };
+  const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)
+
+  Object.defineProperty(_, 'father', {
+    value: props.p,
+    enumerable: false
+  })
 
   // transform branch prop 2 children prop
   sizeForm.branches.forEach((branch) => {
     const child = {
-      type: "SubBranch",
+      nodeType: "SubBranch",
       name: branch.name,
       ratio: branch.ratio,
       father: _

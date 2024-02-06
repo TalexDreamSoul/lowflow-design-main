@@ -66,6 +66,13 @@ function handleSave() {
 provide('save', (regFunc: () => boolean) => {
   _saveFunc = regFunc
 })
+
+const visible = ref(false)
+function del(p: any) {
+  delChild(p)
+
+  visible.value = false
+}
 </script>
 
 <template>
@@ -73,12 +80,21 @@ provide('save', (regFunc: () => boolean) => {
     <p class="title">
       <!-- 选择策略器 -->
       {{ p.nodeName }}
-      <el-button @click="delChild(p)" text type="primary">
-        <el-icon>
-          <Delete />
-        </el-icon>
-        删除
-      </el-button>
+      <el-popover :visible="visible" placement="top" :width="160">
+        <p>是否确认删除？</p>
+        <div style="text-align: right; margin: 0">
+          <el-button size="small" text @click="visible = false">取消</el-button>
+          <el-button size="small" type="primary" @click="del(p)">确认</el-button>
+        </div>
+        <template #reference>
+          <el-button @click="visible = true" text type="primary">
+            <el-icon>
+              <Delete />
+            </el-icon>
+            删除
+          </el-button>
+        </template>
+      </el-popover>
     </p>
     <div class="PBlock-Content theme">
       <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">
@@ -106,7 +122,7 @@ provide('save', (regFunc: () => boolean) => {
     </teleport>
 
     <teleport to="body">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title">
+      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :p="p" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
