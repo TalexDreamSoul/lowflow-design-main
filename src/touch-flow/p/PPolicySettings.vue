@@ -4,6 +4,7 @@ import { Stamp, Plus } from '@element-plus/icons-vue'
 import PolicySettingsAttr from './start/PolicySettingsAttr.vue'
 import { delChild } from '../flow-utils'
 import Strategist from './start/Strategist.vue'
+import { Handle, Position } from '@vue-flow/core'
 
 const props = defineProps<{
   p?: any,
@@ -73,7 +74,7 @@ const pushTemplate = computed(() => {
 
   let val;
 
-  if ( type === 'sms' ) {
+  if (type === 'sms') {
     val = '短信模板：'
   } else if (type === 'znx') {
     val = '站内信模板：'
@@ -93,10 +94,16 @@ const pushTemplate = computed(() => {
 </script>
 
 <template>
-  <el-card style="width: 355px" @click="openCondition" class="PBlock">
+  <el-card @click="openCondition" class="PStrategy PBlock">
+
+    <Handle type="target" :position="Position.Top" />
+    <Handle type="source" :position="Position.Bottom" />
+
     <p class="title">
       <!-- 选择策略器 -->
-      {{ p.nodeName }}
+      <span>
+        {{ p.nodeName }}
+      </span>
       <el-button @click="delChild(p)" text type="primary">
         <el-icon>
           <Delete />
@@ -166,6 +173,10 @@ const pushTemplate = computed(() => {
 </template>
 
 <style lang="scss">
+.PStrategy {
+  width: 330px;
+}
+
 .Dialog-Sections {
   display: flex;
 

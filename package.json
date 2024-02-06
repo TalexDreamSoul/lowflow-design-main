@@ -14,8 +14,12 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "@floating-ui/vue": "^1.0.6",
+    "@vue-flow/background": "^1.2.0",
+    "@vue-flow/core": "^1.31.0",
+    "@vue-flow/minimap": "^1.4.0",
     "@vueuse/core": "^10.7.2",
     "axios": "^1.5.1",
+    "dagre": "^0.8.5",
     "element-plus": "^2.3.12",
     "file-saver": "^2.0.5",
     "pinia": "^2.1.6",

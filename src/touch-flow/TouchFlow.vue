@@ -1,22 +1,16 @@
 <script setup lang="ts">
+import dagre from 'dagre'
 import PStartVue from "./p/PStart.vue";
 import PPolicySettings from "./p/PPolicySettings.vue";
 import Branch from "./p/Branch.vue";
 import SubBranch from './p/SubBranch.vue'
-import { useWindowSize } from "@vueuse/core";
-import { ref, watch, nextTick, onMounted, onBeforeUnmount } from "vue";
-import { refreshLines, genJP } from "./line-creator";
-// import { createTemplatePopover } from '../utils/touch-templates'
-
-// const value = ref({
-//   id: "323232",
-//   name: "测试233",
-// })
-// createTemplatePopover('新建企微模版', 'digital')
-// createTemplatePopover('新建站内信模版', 'znx', value)
-// createTemplatePopover('新建短信模版', 'sms')
-// createTemplatePopover('新建APP Push模版', 'appPush')
-// createTemplatePopover('新建外呼模版', 'outbound')
+import { ref, watch, nextTick, onMounted, onBeforeUnmount, watchEffect } from "vue";
+import { VueFlow, useVueFlow, Position } from '@vue-flow/core'
+// import { ControlButton, Controls } from '@vue-flow/controls'
+import { MiniMap } from '@vue-flow/minimap'
+import { createNodes } from './flow-drawer'
+import '@vue-flow/core/dist/theme-default.css'
+import '@vue-flow/core/dist/style.css'
 
 const props = defineProps<{
   p: any;
@@ -29,137 +23,111 @@ const comps: any = {
   SubBranch,
 };
 
-const now = ref();
-const nextLayer = ref();
+const nodes = ref<Array<any>>([])
+const edges = ref<Array<any>>([])
 
-let _next;
+function refreshFlow() {
 
-onBeforeUnmount(() => {
-  _next!?.remove()
-})
+  const [_nodes, _edges] = createNodes(props.p)
 
-onMounted(() => {
-  // if ( props.p.nodeType !== 'Delivery' ) {
-  //   return
-  // }
+  console.log(_nodes, _edges)
 
-  now.value._refreshCurves = refreshCurves
+  nodes.value = _nodes
+  edges.value = _edges
 
-  const nextLayerDom = nextLayer.value
+}
+refreshFlow()
 
-  if (!nextLayerDom) return
+const flow = useVueFlow()
 
-  _next = nextLayerDom
+flow.onPaneReady(() => flow.fitView())
+
+const dagreGraph = ref(new dagre.graphlib.Graph())
+
+dagreGraph.value.setDefaultEdgeLabel(() => ({}))
+
+function handleLayout() {
+  console.log('layout')
+
+  // we create a new graph instance, in case some nodes/edges were removed, otherwise dagre would act as if they were still there
+  dagreGraph.value = new dagre.graphlib.Graph()
+
+  dagreGraph.value.setDefaultEdgeLabel(() => ({}))
+
+  dagreGraph.value.setGraph({
+    rankdir: 'TB',
+    align: 'DL',
+    nodesep: 100,  //相同层级中节点的间距  默认 50
+    edgesep: 100,  //一个节点同事有多条连接线之间的间距  默认10
+    ranksep: 50,   //相邻层级之间的间距  默认50
+    marginx: 50,   //图整体与画布的左右间距。默认 0
+    marginy: 100  //图整体与画布的上下间距。默认 0
+  })
+
+  for (const node of nodes.value) {
+    // if you need width+height of nodes for your layout, you can use the dimensions property of the internal node (`GraphNode` type)
+    const graphNode = flow.findNode(node.id)!
+
+    dagreGraph.value.setNode(node.id, { width: graphNode.dimensions.width || 150, height: graphNode.dimensions.height || 50 })
+  }
+
+  for (const edge of edges.value) {
+    dagreGraph.value.setEdge(edge.source, edge.target)
+  }
+
+  dagre.layout(dagreGraph.value)
+
+  console.log(dagreGraph.value)
+
+  // set nodes with updated positions
+  nodes.value = nodes.value.map((node) => {
+    const nodeWithPosition = dagreGraph.value.node(node.id)
+
+    return {
+      ...node,
+      position: { x: nodeWithPosition.x, y: nodeWithPosition.y },
+    }
+  })
 
   nextTick(() => {
-    const layerParent = nextLayerDom.parentElement;
-    if (!layerParent.classList.contains("TouchFlow-Layer")) return
-
-    const lpp = layerParent.parentElement
-
-    layerParent.removeChild(nextLayerDom);
-    lpp.appendChild(nextLayerDom);
-
-    nextTick(refreshCurves)
+    flow.fitView()
   })
-})
-
-const { width, height } = useWindowSize();
-
-const jp = genJP();
-
-const f = [
-  now,
-  eval("!![] + ![] - !!([] + !![]) + [[]][!![]]"),
-  (100000 + Math.random() * 1000000).toString(16).slice(6),
-];
-
-function refreshCurves() {
-  const __genner = function (_: any) {
-    const __ = f[0x2];
-
-    return [
-      f[0].value,
-      (100000 + Math.random() * 1000000).toString(16).slice(6),
-      f[2],
-      f[-0x11bd + -0x2 * 0xfce + -0x1 * -0x315a],
-      _,
-    ];
-  };
-
-  const _genner = (_: any) => {
-    const [a, b, c, d] = __genner(_);
-
-    return [
-      a ?? b,
-      f[0x1],
-      d > 0 ? _ : props.p,
-      (c ?? _) / -0x11bd + -0x2 * 0xfce + -0x1 * -0x315a - 0x1 ?? b,
-      d,
-    ];
-  };
-
-  const genner = (v?: any) =>
-    !__genner.length ? _genner(v) : [..._genner(v), jp];
-
-  refreshLines(f[0].value, genner);
 }
 
-watch(props.p, () => {
-  nextTick(refreshCurves);
-});
+console.log(flow)
 
-watch(() => width.value + height.value, refreshCurves);
+// @ts-ignore
+window.refreshFlow = refreshFlow
 </script>
 
 <template>
-  <div class="TouchFlow-Layer">
-    <div ref="now" class="TouchFlow">
-      <div class="fake-point" />
-      <component :p="p" :is="comps[p.nodeType]" />
-    </div>
-  </div>
-  <template v-if="p.children">
-    <div ref="nextLayer" class="TouchFlow-Layer">
-      <TouchFlow v-for="child in p.children" :p="child" />
-    </div>
-  </template>
+  <!-- <component :p="p" :is="comps[p.nodeType]" /> -->
+  <VueFlow :nodes="nodes" :edges="edges" @nodes-initialized="handleLayout">
+
+    <template #node-start="slot">
+      <PStartVue :p="flow.findNode(slot.id)!.data" />
+    </template>
+
+    <template #node-strategy="slot">
+      <PPolicySettings :p="flow.findNode(slot.id)!.data" />
+    </template>
+
+    <MiniMap />
+
+  </VueFlow>
 </template>
 
 <style lang="scss">
-.TouchFlow {
-  position: absolute;
+.vue-flow {
+  // width: 100%;
+
+  // height: calc(100% - 80px);
+
+  // overflow: hidden;
 }
 
-.TouchFlow-Layer {
-  &+& {
-    // margin-bottom: 40px;
-
-    .fake-point {
-      top: -100%;
-    }
-
-    .single-line {
-      &::before {
-        bottom: -380px;
-
-        height: 260px;
-      }
-
-      &::after {
-        bottom: -250px;
-      }
-    }
-  }
-
-  position: relative;
-  display: flex;
-
-  margin: 10px 20px 320px;
-
-  justify-content: center;
-
-  width: 100%;
+.vue-flow__node {
+  visibility: visible !important;
 }
 
 .start-add {
@@ -177,6 +145,7 @@ watch(() => width.value + height.value, refreshCurves);
   position: absolute;
 
   left: 50%;
+  top: 100%;
 
   opacity: 0;
   pointer-events: none;
@@ -186,69 +155,14 @@ watch(() => width.value + height.value, refreshCurves);
   transition: 0.25s;
 }
 
-.fake-point {
-  z-index: 100;
-  position: absolute;
-
-  width: 32px;
-  height: 32px;
-
-  top: -40%;
-  left: 30%;
-
-  transform: translate(-50%, -50%);
-
-  position: none;
-  border-radius: 50%;
-
-  background-color: red;
-}
-
-.single-line:has(div.PBlock) {
-  &::before {
-    content: "";
-    position: absolute;
-
-    bottom: -180px;
-    left: 50%;
-
-    transform: translate(-50%, -50%);
-
-    width: 2px;
-    height: 120px;
-
-    background-color: var(--el-color-primary);
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-
-    bottom: -140px;
-    left: 50%;
-
-    transform: translate(-50%, -50%) scale(0.5, 1) rotate(-45deg);
-
-    border: 10px solid var(--el-color-primary);
-    border-radius: 5px;
-    border-top-color: transparent;
-    border-right-color: transparent;
-    // background-color: var(--el-color-primary);
-  }
-}
-
 div.PBlock {
   p {
     &.title {
-      .el-button {
-        position: absolute;
-
-        right: 20px;
+      button {
+        padding-right: 0;
       }
 
       display: flex;
-
-      gap: 2rem;
 
       align-items: center;
       justify-content: space-between;
@@ -259,8 +173,6 @@ div.PBlock {
     margin: 0;
     font-size: 1.25rem;
   }
-
-  display: flex;
 
   &-Section {
     &:hover {
@@ -332,13 +244,12 @@ div.PBlock {
     font-size: 14px;
   }
 
-  position: relative;
-
-  left: 50%;
+  // position: absolute;
+  display: inline-flex;
 
   border-radius: 8px;
 
-  transform: translateX(-50%);
+  // transform: translate(-50%, -50%);
   overflow: unset;
 }
 </style>

@@ -6,6 +6,7 @@ import CustomersAttr from "../p/start/CustomersAttr.vue";
 import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
 import Strategist from "./start/Strategist.vue";
+import { Handle, Position } from '@vue-flow/core'
 
 const props = defineProps<{
   p?: any;
@@ -154,6 +155,9 @@ let _saveFunc: (() => boolean) | null = null;
 function handleSave() {
   if (!_saveFunc || !_saveFunc()) return;
 
+  // @ts-ignore
+  window.refreshFlow?.()
+
   dialogVisible.value = false;
   drawerOptions.visible = false;
 }
@@ -174,7 +178,15 @@ function handleClick(e: Event) {
 </script>
 
 <template>
-  <el-card class="PBlock">
+  <el-card class="PBlock PStart">
+
+    <Handle type="source" :position="Position.Bottom" />
+    <!-- <Handle type="source" :position="Position.Top" /> -->
+
+    <!-- && !customerConditioned.display -->
+    <el-button :class="{ display: conditioned && !haveDiverse }" @click="dialogVisible = true" class="start-add"
+      type="primary" :icon="Plus" circle />
+
     <p>进入流程设置</p>
     <div class="PBlock-Content">
       <div @click="openCustomer" :class="{ checked: customerConditioned.display }" class="PBlock-Section">
@@ -243,12 +255,14 @@ function handleClick(e: Event) {
       </el-drawer>
     </teleport>
   </el-card>
-  <!-- && !customerConditioned.display -->
-  <el-button :class="{ display: conditioned  && !haveDiverse }"
-    @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">
+.PStart {
+  width: 608px;
+  height: 200px;
+}
+
 .Dialog-Sections {
   p {
     margin: 0;

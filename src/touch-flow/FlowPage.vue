@@ -63,7 +63,7 @@ function transformNodes(__nodes: Array<any>) {
 
     if (node.father) {
       // 先拿到父元素中children 我这个元素的位置
-      const fatherInd = [ ...node.father.children ].indexOf((item: any) => item.nodeId === node.nodeId)
+      const fatherInd = [...node.father.children].indexOf((item: any) => item.nodeId === node.nodeId)
 
       node.preNodeId = (fatherInd < 1 ? node.father.nodeId : node.father.children[fatherInd - 1].nodeId)
 
@@ -127,9 +127,9 @@ console.log("total flow", flowOptions);
         <FlowHeader @submit-review="submitReview" :basic="flowOptions.basic" />
       </el-header>
       <el-main>
-        <el-scrollbar>
-          <TouchFlow :p="flowOptions.p" />
-        </el-scrollbar>
+        <!-- <el-scrollbar> -->
+        <TouchFlow :p="flowOptions.p" />
+        <!-- </el-scrollbar> -->
       </el-main>
     </el-container>
   </div>
