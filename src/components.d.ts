@@ -7,8 +7,6 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    BehaviorFoldingGroup: typeof import('./components/BehaviorFoldingGroup/index.ts')['default']
-    Condition: typeof import('./components/Condition/index.ts')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElCascader: typeof import('element-plus/es')['ElCascader']
@@ -47,9 +45,6 @@ declare module 'vue' {
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     ElWatermark: typeof import('element-plus/es')['ElWatermark']
-    EventGroup: typeof import('./components/EventGroup/index.ts')['default']
-    Interface: typeof import('./components/Render/interface.ts')['default']
-    RoleSelection: typeof import('./components/RoleSelection/index.ts')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
