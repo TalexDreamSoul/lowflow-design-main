@@ -5,7 +5,6 @@ import {
   getqryMarketingTouch,
   deleteMarketingTouch,
   getqryTouchStatusCount,
-  getupdateMarketingTouch,
   getstartMarketingTouch,
   getpauseMarketingTouch,
 } from "~/api/index";
@@ -36,7 +35,7 @@ const typeMap = {
   delayed: "定时-重复",
   trigger: "触发型",
 };
-let tableData = ref();
+const tableData = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
@@ -231,7 +230,7 @@ const handleCurrentChange = (val: number) => {
           </template>
         </el-table-column>
 
-        <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="180">
+        <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="280">
           <template #default="scope">
             <!-- targetCount 完成目标数量
             touchCount 触达数量
@@ -275,13 +274,8 @@ const handleCurrentChange = (val: number) => {
 </template>
 <style lang="scss" scoped>
 .warp {
-  background: linear-gradient(
-    to bottom,
-    #eeeff6,
-    rgba(56, 128, 228, 0.1098039216)
-  );
+
   padding: 24px 40px;
-  height: 90vh;
 }
 
 .tableCard {

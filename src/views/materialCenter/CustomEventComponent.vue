@@ -2,7 +2,7 @@
   <div class="event warp">
     <div class="title">{{ title }}</div>
     <slot name="search"></slot>
-    <div class="content">
+    <div class="contentview">
  
       <slot name="table" :tableData="tableData"></slot>
       <slot name="pagination"></slot>
@@ -28,7 +28,7 @@ const props = defineProps({
   display: flex;
   flex-direction: column;
   padding: 24px 40px;
-  background-color: #f8f9fa;
+  //background-color: #f8f9fa;
   overflow-y: auto;
 
   > .title {
@@ -59,7 +59,7 @@ const props = defineProps({
     }
   }
 
-  .content {
+  .contentview {
     flex: 1;
     background-color: white;
     border-radius: 8px;
