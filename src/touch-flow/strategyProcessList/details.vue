@@ -99,7 +99,7 @@ const updateData = async (row: any) => {
   fetchDataApi();
 };
 const detailsData = async (row: any) => {
-  router.push(`/strategyProcess/details/${row.id}`);
+  router.push('/strategyProcess');
 
   // await getpauseMarketingTouch({ id: row.id }).finally(() => {});
 };

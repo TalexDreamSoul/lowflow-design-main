@@ -15,9 +15,18 @@ export const routes: RouterOptions["routes"] = [
     },
   },
   {
-    path: "/strategyProcessList",
-    component: () =>
-      import("../touch-flow/strategyProcessList/strategyProcessList.vue"),
+    path: "/strategyProcess",
+    redirect: "/strategyProcess/List",
+    children: [
+      {
+        path: "List",
+        component: () => import("~/touch-flow/strategyProcessList/strategyProcessList.vue"),
+      },
+      {
+        path: "details/:id",
+        component: () => import("~/touch-flow/strategyProcessList/details.vue"),
+      },
+    ],
   },
 
   {
