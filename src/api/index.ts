@@ -78,7 +78,7 @@ export const getpauseMarketingTouch = (data: any) => {
 
 // 营销触达开始
 export const getstartMarketingTouch = (data: any) => {
-    return request.post({ url: '/api/pauseMarketingTouch.do', data })
+    return request.post({ url: '/api/startMarketingTouch.do', data })
 }
 
 // 删除营销触达
