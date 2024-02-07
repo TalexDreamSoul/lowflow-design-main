@@ -54,6 +54,7 @@ const marketingTouchNode = ref({
 
 const props = defineProps<{
   p: any;
+  new?: boolean
 }>();
 
 const sizeForm = reactive<typeof origin>(origin);
@@ -67,7 +68,7 @@ reset()
 watchEffect(() => {
   const { nodeType, nodeId } = props.p
 
-  if (nodeType !== 'strategy') return
+  if (props.new || nodeType !== 'strategy') return
 
   if (nodeId) {
     sizeForm.nodeId = nodeId;

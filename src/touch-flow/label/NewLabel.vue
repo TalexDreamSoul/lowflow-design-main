@@ -40,10 +40,10 @@ function handleDelete(index: number) {
               <el-option label="布尔型" value="boolean" />
             </el-select>
           </el-form-item>
-          <el-form-item label="标签名称">
+          <el-form-item v-if="model.labelValueType === 'boolean'" label="标签名称">
             <el-input v-model="model.labelName" />
           </el-form-item>
-          <el-form-item v-if="model.labelValueType === 'boolean'" v-for="(item, index) in model.labelValue.data"
+          <el-form-item v-for="(item, index) in model.labelValue.data"
             :label="`标签值${index + 1}`">
             <div style="display: flex;width: 100%;">
               <el-input style="width: 100%" v-model="model.labelValue.data[index]" />

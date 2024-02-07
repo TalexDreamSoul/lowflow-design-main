@@ -169,7 +169,7 @@ function del(p: any) {
 
     <teleport to="body">
       <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
-        <component :p="p" :is="drawerOptions.comp" />
+        <component :new="true" :p="p" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
           <el-button round @click="handleSave" type="primary">保存</el-button>
@@ -178,7 +178,9 @@ function del(p: any) {
     </teleport>
   </el-card>
 
-  <el-button @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
+  <el-button @click="dialogVisible = true"
+    :class="{ display: p.diversionType && p.eventDelayed.isDelayed !== undefined && pushTemplate }" class="start-add"
+    type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">

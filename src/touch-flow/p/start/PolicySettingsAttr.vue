@@ -94,6 +94,7 @@ const marketingTouchNode = ref({
 
 const props = defineProps<{
   p: any;
+  new?: boolean
 }>();
 
 const sizeForm = reactive<typeof origin>(origin);
@@ -107,7 +108,7 @@ reset()
 watchEffect(() => {
   const { nodeType, nodeId } = props.p
 
-  if (nodeType !== 'strategy') return
+  if (props.new || nodeType !== 'strategy') return
 
   if (nodeId) {
     sizeForm.nodeId = nodeId;
@@ -333,7 +334,7 @@ const platformOptions: any = {
         </template>
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus title="触达设置" color="#EEDD7C">
+      <BehaviorGroupPlus title="触达设置" color="#FFD561">
         <div class="BlockBackground-Under">
           <el-form-item label="触达通道">
             <el-select @change="refreshMaterialTemplate" v-model="sizeForm.material.type" style="width: 120px">
