@@ -115,7 +115,7 @@ onMounted(() => {
 <template>
   <div class="warp">
     <div class="pageTitle">
-      <div>{{marketingDetail?.touchName}}</div> <el-button @click="goBack" round>返回</el-button>
+      <div>{{ marketingDetail?.touchName }}</div> <el-button @click="goBack" round>返回</el-button>
     </div>
 
     <div class="tableCard">
@@ -133,7 +133,8 @@ onMounted(() => {
             有效期：
           </div>
           <div class="description">
-            {{ dayjs(marketingDetail?.startTime).format("YYYY-MM-DD HH:mm") }} 至 {{ dayjs(marketingDetail?.endTime).format("YYYY-MM-DD HH:mm") }}
+            {{ dayjs(marketingDetail?.startTime).format("YYYY-MM-DD HH:mm") }} 至 {{
+              dayjs(marketingDetail?.endTime).format("YYYY-MM-DD HH:mm") }}
           </div>
         </div>
         <div style="width:200px">
@@ -212,6 +213,9 @@ onMounted(() => {
 </template>
 <style lang="scss" scoped>
 .warp {
+  // max-width: 100%;
+  // overflow-x: hidden;
+
   padding: 24px 40px;
 }
 
@@ -257,12 +261,14 @@ onMounted(() => {
 .statisticsblock {
   display: flex;
 }
+
 .description {
   color: #333;
   font-size: 16px;
   font-weight: 500;
   line-height: 24px;
 }
+
 .desctitle {
   color: #666;
   font-size: 14px;
@@ -272,11 +278,9 @@ onMounted(() => {
 .showCount {
   min-width: 150px;
   margin-right: 16px;
-  background: linear-gradient(
-    180deg,
-    #f2f4f8 0%,
-    rgba(242, 244, 248, 0.4) 100%
-  );
+  background: linear-gradient(180deg,
+      #f2f4f8 0%,
+      rgba(242, 244, 248, 0.4) 100%);
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
@@ -308,9 +312,11 @@ onMounted(() => {
 }
 
 .contentflow {
+  position: relative;
+
   height: 800px;
   width: 100%;
   background: #F7F8FB;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 </style>

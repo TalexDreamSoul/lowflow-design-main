@@ -44,7 +44,7 @@ div {
 }
 .content {
   flex: 1;
-  overflow: scroll;
+  overflow-y: scroll;
   background: linear-gradient(to bottom, #eeeff6, rgba(56, 128, 228, 0.1098039216));
 }
 </style>

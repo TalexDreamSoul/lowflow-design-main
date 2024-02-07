@@ -1,12 +1,13 @@
 <script setup lang="ts" name="FlowPage">
-import { onBeforeUnmount, onMounted, reactive } from "vue";
+import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import FlowHeader from "../touch-flow/page/FlowHeader.vue";
 import TouchFlow from "./TouchFlow.vue";
 import { randomStr } from "~/utils/common";
 import { touchSubmitReview, type Request, type MarketingTouchNodeEditDTO } from './touch-total'
 
-defineProps<{
+const props = defineProps<{
   modelValue?: boolean;
+  readonly: boolean;
 }>();
 
 const flowOptions = reactive({
@@ -86,6 +87,8 @@ function transformNodes(__nodes: Array<any>) {
 }
 
 async function submitReview(status: string = 'approvalPending') {
+  if (props.readonly) return
+  
   console.log("transformNodes", flowOptions.p.children)
 
   const _flowOptions: any = {
@@ -111,14 +114,23 @@ async function submitReview(status: string = 'approvalPending') {
   console.log(res, data)
 }
 
+const dialogVisible = ref()
+
 console.log("total flow", flowOptions);
 </script>
 
 <template>
   <div class="FlowPage">
-    <el-container :class="{ expand: flowOptions.basic._expand }" class="FlowPage-Container">
+    <el-container :class="{ readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
       <el-header>
-        <FlowHeader @submit-review="submitReview" :basic="flowOptions.basic" />
+        <FlowHeader v-if="!readonly" @submit-review="submitReview" :basic="flowOptions.basic" />
+        <div v-else class="FlowPage-ReadHeader">
+          流程基础设置
+          &nbsp;&nbsp;
+          <el-text>
+            <el-button type="primary" @click="dialogVisible = true">查看设置</el-button>
+          </el-text>
+        </div>
       </el-header>
       <el-main>
         <el-scrollbar>
@@ -127,6 +139,12 @@ console.log("total flow", flowOptions);
       </el-main>
     </el-container>
   </div>
+
+  <teleport to="body">
+    <el-drawer v-model="dialogVisible">
+      <FlowHeader @submit-review="submitReview" :basic="flowOptions.basic" />
+    </el-drawer>
+  </teleport>
 </template>
 
 <style lang="scss">

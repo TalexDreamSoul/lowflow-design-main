@@ -64,14 +64,6 @@ function reset() {
 }
 reset()
 
-if (!props.p.customRuleContent) {
-  props.p.customRuleContent = {
-    customAttr: {},
-    customEvent: {},
-    eventSequence: {},
-  }
-}
-
 watchEffect(() => {
   const { nodeType, nodeId } = props.p
 
@@ -181,17 +173,19 @@ const platformOptions: any = {
           <el-select v-model="sizeForm.eventDelayed.isDelayed" style="width: 100px">
             <el-option :value="true" label="延迟">延迟</el-option>
             <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
-          <el-input v-model="sizeForm.eventDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
-          <el-select v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
-            <el-option value="month" label="月份">分钟</el-option>
-            <el-option value="week" label="周">小时</el-option>
-            <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
-          <el-select v-model="sizeForm.eventDelayed.delayedAction" placeholder="请选择" style="width: 150px">
-            <el-option value="week" label="发送触达">发送触达</el-option>
-            <el-option value="day" label="打上标签">打上标签</el-option>
-            <el-option value="day" label="不执行动作">不执行动作</el-option>
-            <el-option value="month" label="发送触达并打上标签">发送触达并打上标签</el-option>
-          </el-select>
+          <template v-if="sizeForm.eventDelayed.isDelayed">
+            <el-input v-model="sizeForm.eventDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
+            <el-select v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
+              <el-option value="month" label="月份">分钟</el-option>
+              <el-option value="week" label="周">小时</el-option>
+              <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
+            <el-select v-model="sizeForm.eventDelayed.delayedAction" placeholder="请选择" style="width: 150px">
+              <el-option value="week" label="发送触达">发送触达</el-option>
+              <el-option value="day" label="打上标签">打上标签</el-option>
+              <el-option value="day" label="不执行动作">不执行动作</el-option>
+              <el-option value="month" label="发送触达并打上标签">发送触达并打上标签</el-option>
+            </el-select>
+          </template>
         </div>
       </div>
 
