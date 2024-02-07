@@ -199,7 +199,7 @@ const handleCurrentChange = (val: number) => {
         </div>
       </div>
       <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
-        <el-table-column label="策略流程ID" width="180">
+        <el-table-column label="策略流程ID" width="120">
           <template #default="scope">
             {{ scope.row.id }}
           </template>
@@ -212,19 +212,19 @@ const handleCurrentChange = (val: number) => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="起止日期" width="400">
+        <el-table-column label="起止日期" width="330">
           <template #default="scope">
             {{ scope.row.startTime }}~{{ scope.row.endTime }}
           </template>
         </el-table-column>
 
-        <el-table-column label="类型" width="180">
+        <el-table-column label="类型" width="150">
           <template #default="scope">
             {{ typeMap[scope.row.executeType] }}
           </template>
         </el-table-column>
 
-        <el-table-column label="目标完成率">
+        <el-table-column label="目标完成率" width="150">
           <template #default="scope">
             {{ scope.row.targetCount }}%
           </template>
@@ -238,7 +238,6 @@ const handleCurrentChange = (val: number) => {
             {{ scope.row.touchCount }}/
             {{ scope.row.triggerCount }}/
             {{ scope.row.targetCount }}
-
           </template>
         </el-table-column>
 

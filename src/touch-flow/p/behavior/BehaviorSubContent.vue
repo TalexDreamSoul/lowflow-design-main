@@ -67,27 +67,25 @@ const attrs = computed(() => {
                 <trigger v-model="item.field" :attrs="attrs" />
               </el-form-item>
             </el-col>
-            <el-col :xs="24" :sm="5" v-if="item.field">
+            <el-col :xs="24" :sm="4" v-if="item.field">
               <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
                 <operator ref="operatorRef" v-model="item.operator" />
               </el-form-item>
             </el-col>
-            <el-col :xs="24" :sm="10" v-if="item.field">
+            <el-col :xs="24" :sm="6" v-if="item.field">
               <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <AttrRender :field="item.field" v-model="item.fieldValue" :attrs="attrs" />&nbsp;
+                <AttrRender :field="item.field" v-model="item.fieldValue" :attrs="attrs" />
               </el-form-item>
             </el-col>
-            <el-col :xs="24" :sm="2" style="
-                  display: flex;
-                  align-items: center;
-                  flex-direction: row-reverse;
-                ">
-              <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="addCondition">
+            <el-col :xs="24" :sm="3">
+              <el-text type="primary" style="cursor: pointer;zoom: 0.8;    display: inline-block;width: 100px;" @click="addCondition">
                 <el-icon size="14">
                   <CirclePlusFilled />
                 </el-icon>
                 添加筛选
               </el-text>
+            </el-col>
+            <el-col :xs="24" :sm="1">
               <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
                 <el-icon size="14">
                   <Delete />

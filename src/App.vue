@@ -24,7 +24,7 @@ const route = useRoute()
 
 const meta = computed(() => route.meta)
 </script>
-<style>
+<style lang="scss">
 html, body, #app {
   height: 100%;
 }

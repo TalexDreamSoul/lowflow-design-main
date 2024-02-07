@@ -207,7 +207,7 @@ const attrs = computed(() => {
       display: flex;
       align-items: center;
       overflow: hidden;
-      min-width: 60px;
+      min-width: 70px;
       padding-right: 5px;
     }
 

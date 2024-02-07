@@ -122,7 +122,7 @@ function handleSubAdd(item: any) {
       display: flex;
       align-items: center;
       overflow: hidden;
-      min-width: 55px;
+      min-width: 70px;
     }
 
     .logical-operator {
