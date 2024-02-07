@@ -7,11 +7,11 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-  (e: 'submitReview'): void
+  (e: 'submitReview', status?: string): void
 }>()
 
-async function submitReview() {
-  emits('submitReview')
+async function submitReview(status?: string) {
+  emits('submitReview', status)
 }
 const router = useRouter();
 
@@ -28,7 +28,7 @@ const goBack = () => {
     </div>
     <div>
       <el-button  @click="goBack" round>返回</el-button>
-      <el-button round>保存草稿</el-button>
+      <el-button @click="submitReview('draft')" round>保存草稿</el-button>
       <el-button round type="primary" @click="submitReview" primaryStyle>提交审核</el-button>
     </div>
   </div>

@@ -85,7 +85,7 @@ function transformNodes(__nodes: Array<any>) {
   return res
 }
 
-async function submitReview() {
+async function submitReview(status: string = 'approvalPending') {
   console.log("transformNodes", flowOptions.p.children)
 
   const _flowOptions: any = {
@@ -101,7 +101,9 @@ async function submitReview() {
   delete _flowOptions.children
   delete _flowOptions.id
 
-  const data: Request = {}
+  const data: Request = {
+    status
+  }
   Object.assign(data, _flowOptions)
 
   const res = await touchSubmitReview(data)
