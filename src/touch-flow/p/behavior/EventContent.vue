@@ -1,7 +1,8 @@
-<script setup lang="ts" name="SequenceContent">
+<script setup lang="ts" name="EventContent">
 import { computed, inject } from "vue";
-import SequenceSubContent from './SequenceSubContent.vue'
 import { Delete } from "@element-plus/icons-vue";
+import BehaviorSubContent from "./BehaviorSubContent.vue";
+import LogicalLine from "./LogicalLine.vue";
 
 const props = defineProps<{
   condition: any;
@@ -18,88 +19,78 @@ const handleDel = (index: number) => {
 
 const conditionArr = computed(() => props.condition.conditions);
 
-function handleAdd(item: any) {
-  const arr = (item.conditions = item.conditions || []);
-  arr.push({
-    conditions: [],
-    logicalChar: '或'
-  });
+function handleAdd() {
+  props.condition.conditions.push({});
 }
 
 function handleSubAdd(item: any) {
-  const arr = item.conditions = (item.conditions || []);
+  const arr = (item.conditions = item.conditions || []);
 
   arr.push({});
 }
+
+const attrs = computed(() => {
+  const { events } = props.dict;
+
+  return events;
+});
 </script>
 
 <template>
   <div class="CustomContent">
-    <div v-if="conditionArr" class="filter-option-content">
-      <el-form :label-width="0" :inline="true" :model="condition.conditions">
-        <div v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="CustomBehavior-Main">
-          <el-row class="filter-item-rule">
-            <el-col :xs="24" :sm="10">
-              <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                <el-date-picker v-model="condition.timeRange" type="daterange" range-separator="-"
-                  start-placeholder="开始日期" end-placeholder="结束日期" />
-              </el-form-item>
-            </el-col>
-            <span style="zoom: 0.9;font-size:12px;color:#484545;">
-              &nbsp;&nbsp; 依次做过
-            </span>
-            <el-col :xs="24" :sm="2" style="
+    <LogicalLine :display="conditionArr?.length" v-model="condition.logicalChar">
+      <div v-if="conditionArr" class="filter-option-content">
+        <el-form :label-width="0" :inline="true" :model="condition.conditions">
+          <div v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="CustomBehavior-Main">
+            <el-row class="filter-item-rule">
+              &nbsp;<el-col :xs="24" :sm="6">
+                <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
+                  <el-select v-model="item.action">
+                    <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
+                      <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
+                    </el-option-group> </el-select>
+                </el-form-item>
+              </el-col>
+
+              &nbsp;
+              <el-col :xs="24" :sm="3" >
+
+                <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="handleSubAdd(item)">
+                  <el-icon size="12">
+                    <Plus />
+                  </el-icon>
+                  添加筛选
+                </el-text> &nbsp;
+              </el-col>
+              &nbsp;&nbsp;
+              <el-col :xs="24" :sm="1" style="
                 display: flex;
                 align-items: center;
                 flex-direction: row-reverse;
               ">
               <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
-                <el-icon size="14">
-                  <Delete />
-                </el-icon>
-              </el-text>
-              &nbsp;&nbsp;&nbsp;
-              <el-text type="primary" style="cursor: pointer" @click="handleAdd(item)">
-                <el-icon size="14">
-                  <CirclePlus />
-                </el-icon>
-              </el-text>
-            </el-col>
-
-          </el-row>
-
-          <div class="SequenceContent-Events" v-for="(event, _index) in item.conditions" :key="`${event.field}-${index}`">
-            <el-row class="filter-item-rule">
-              <el-col :xs="24" :sm="5">
-                <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                  <el-select v-model="condition.delayedAction">
-                    <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
-                      <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
-                    </el-option-group>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="5">
-                &nbsp;&nbsp;&nbsp;
-                <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="handleSubAdd(event)">
                   <el-icon size="14">
-                    <CirclePlusFilled />
+                    <Delete />
                   </el-icon>
-                  添加筛选
                 </el-text>
-              </el-col>
-            </el-row>
-            <SequenceSubContent :index="_index" :dict="dict" :condition="event" />
-          </div>
-        </div>
+                &nbsp;&nbsp;
+                <el-text type="primary" style="cursor: pointer" @click="handleAdd">
+                  <el-icon size="14">
+                    <CirclePlus />
+                  </el-icon>
+                </el-text>
+                &nbsp;&nbsp;
 
-        <div v-if="!(
-          condition?.filterRules?.groups?.length |
-          condition?.filterRules?.conditions?.length
-        )
-          " class="filter-item-rule" />
-      </el-form>
-    </div>
+              </el-col>
+
+            </el-row>
+
+            <BehaviorSubContent title="并且满足" :index="index" :dict="dict" :condition="item" />
+          </div>
+
+        </el-form>
+      </div>
+    </LogicalLine>
   </div>
 </template>
 
@@ -122,7 +113,7 @@ function handleSubAdd(item: any) {
       display: flex;
       align-items: center;
       overflow: hidden;
-      min-width: 70px;
+      min-width: 55px;
     }
 
     .logical-operator {
@@ -165,7 +156,11 @@ function handleSubAdd(item: any) {
     }
   }
 }
-
+.filter-item-rule {
+  display: flex;
+  align-items: center;
+  //min-height: 48px;
+}
 .TargetContent-TopBanner {
   background: #ebeff3;
   border-radius: 4px 4px 0px 0px;

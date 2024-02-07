@@ -8,6 +8,10 @@ import CustomAttr from "../behavior/CustomAttr.vue";
 import CustomBehavior from "../behavior/CustomBehavior.vue";
 import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
 import TouchSettingContents from '../touch/TouchSettingContents.vue'
+import LogicalLine from "../behavior/LogicalLine.vue";
+import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
+import EventBehavior from "../behavior/EventBehavior.vue";
+import NewLabel from '../../label/NewLabel.vue'
 
 const origin = {
   nodeId: "",
@@ -44,6 +48,38 @@ const origin = {
     delayedTime: 0,
     delayedUnit: '',
     isDelayed: false
+  },
+  customRuleContent: {
+    customAttr: {
+      conditions: [
+
+      ],
+      logicalChar: '或'
+    },
+    customEvent: {
+      conditions: [
+
+      ],
+      logicalChar: '或'
+    },
+    eventSequence: {
+      conditions: [
+
+      ],
+      logicalChar: '或'
+    },
+    logicalChar: '或'
+  },
+  eventRuleContent: {
+    customEvent: {
+      conditions: [
+        {
+          conditions: [{}]
+        }
+      ],
+      logicalChar: '或'
+    },
+    logicalChar: '或'
   }
 };
 
@@ -58,6 +94,7 @@ const marketingTouchNode = ref({
 
 const props = defineProps<{
   p: any;
+  new?: boolean
 }>();
 
 const sizeForm = reactive<typeof origin>(origin);
@@ -68,28 +105,15 @@ function reset() {
 }
 reset()
 
-if (!props.p.customRuleContent) {
-  props.p.customRuleContent = {
-    customAttr: {},
-    customEvent: {},
-    eventSequence: {},
-  }
-}
-
 watchEffect(() => {
   const { nodeType, nodeId } = props.p
 
-  if (nodeType !== 'strategy') return
+  if (props.new || nodeType !== 'strategy') return
 
   if (nodeId) {
     sizeForm.nodeId = nodeId;
   }
 })
-
-const logicalOperator = ref("且");
-
-
-function toggleLogicalOperator() { }
 
 async function refreshMaterialTemplate() {
   sizeForm.touch.type = -1
@@ -179,7 +203,7 @@ const estimation = async () => {
 };
 
 function attrsAdd() {
-  let attr = props.p.customRuleContent!.customAttr!.conditions! = (props.p.customRuleContent!.customAttr!.conditions! || []);
+  let attr: any = sizeForm.customRuleContent!.customAttr!.conditions! = (sizeForm.customRuleContent!.customAttr!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -193,7 +217,7 @@ function attrsAdd() {
 }
 
 function behaviorAdd() {
-  let attr = props.p.customRuleContent!.customEvent!.conditions! = (props.p.customRuleContent!.customEvent!.conditions! || []);
+  let attr: any = sizeForm.customRuleContent!.customEvent!.conditions! = (sizeForm.customRuleContent!.customEvent!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -207,7 +231,7 @@ function behaviorAdd() {
 }
 
 function sequenceAdd() {
-  let attr = props.p.customRuleContent!.eventSequence!.conditions! = (props.p.customRuleContent!.eventSequence!.conditions! || []);
+  let attr: any = sizeForm.customRuleContent!.eventSequence!.conditions! = (sizeForm.customRuleContent!.eventSequence!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: [{}] }],
@@ -243,52 +267,26 @@ const platformOptions: any = {
         </el-radio-group>
       </el-form-item>
 
-      <div class="BlockBackground" v-if="sizeForm.diversionType === 'attr'">
-        <div class="title_set bg001">
-          用户属性行为分流
-          <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
+      <BehaviorGroupPlus title="用户属性行为分流" color="#333333" v-if="sizeForm.diversionType === 'attr'">
         <div class="titleCondition">进入该策略期的用户需要满足以下条件：</div>
         <el-form-item label="">
           <div class="pannel">
-            <div class="filter-container">
-              <div class="logical-operator">
-                <div class="logical-operator__line"></div>
-                <div class="custom-switch" :class="{ active: logicalOperator === '且' }" @click="toggleLogicalOperator">
-                  {{ logicalOperator === "且" ? "且" : "或" }}
-                </div>
-              </div>
-
-              <div class="filter-option-content">
-                <BehaviorGroup @add="attrsAdd" title="客户属性满足">
-                  <CustomAttr :custom="p.customRuleContent!.customAttr" />
-                </BehaviorGroup>
-                <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-                  <CustomBehavior :custom="p.customRuleContent!.customEvent" />
-                </BehaviorGroup>
-                <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-                  <CustomBehaviorSequence :custom="p.customRuleContent!.eventSequence" />
-                </BehaviorGroup>
-              </div>
-            </div>
+            <LogicalLine v-model="sizeForm.customRuleContent.logicalChar">
+              <BehaviorGroup @add="attrsAdd" title="客户属性满足">
+                <CustomAttr :custom="sizeForm.customRuleContent!.customAttr" />
+              </BehaviorGroup>
+              <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
+                <CustomBehavior :custom="sizeForm.customRuleContent!.customEvent" />
+              </BehaviorGroup>
+              <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
+                <CustomBehaviorSequence :custom="sizeForm.customRuleContent!.eventSequence" />
+              </BehaviorGroup>
+            </LogicalLine>
           </div>
         </el-form-item>
-      </div>
-      <div class="BlockBackground" v-if="sizeForm.diversionType === 'event'">
-        <div class="title_set bg001">
-          触发事件分流
-          <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
+      </BehaviorGroupPlus>
+
+      <BehaviorGroupPlus title="触发事件分流" color="#333333" v-if="sizeForm.diversionType === 'event'">
         <div class="flex-column titleCondition">
           <div>
             进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;
@@ -309,37 +307,19 @@ const platformOptions: any = {
         </div>
         <el-form-item label="">
           <div class="pannel">
-            <div class="filter-container">
-              <div class="logical-operator">
-                <div class="logical-operator__line"></div>
-                <div class="custom-switch" :class="{ active: logicalOperator === 'and' }" @click="toggleLogicalOperator">
-                  {{ logicalOperator === "且" ? "且" : "或" }}
-                </div>
-              </div>
-              <div class="filter-option-content">
-                <BehaviorGroup title="客户属性满足"> </BehaviorGroup>
-                <BehaviorGroup title="客户行为满足"> </BehaviorGroup>
-                <BehaviorGroup title="行为序列满足"> </BehaviorGroup>
-              </div>
-            </div>
+            <!-- <LogicalLine v-model="sizeForm.eventRuleContent.logicalChar"> -->
+              <EventBehavior :custom="sizeForm.eventRuleContent!.customEvent" />
+            <!-- </LogicalLine> -->
           </div>
         </el-form-item>
-      </div>
-      <div class="BlockBackground">
-        <div class="title_set">
-          延迟设置
-          <el-text class="mx-1" type="primary" @click="transform = !transform">{{ transform ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
-        <div class="BlockBackground-Under">
-          &nbsp;
-          <el-select v-model="sizeForm.eventDelayed.isDelayed" style="width: 100px">
-            <el-option :value="true" label="延迟">延迟</el-option>
-            <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
+      </BehaviorGroupPlus>
+
+      <BehaviorGroupPlus title="延迟设置" color="#62C943">
+        &nbsp;
+        <el-select v-model="sizeForm.eventDelayed.isDelayed" style="width: 100px">
+          <el-option :value="true" label="延迟">延迟</el-option>
+          <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
+        <template v-if="sizeForm.eventDelayed.isDelayed">
           <el-input v-model="sizeForm.eventDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
           <el-select v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
             <el-option value="month" label="月份">分钟</el-option>
@@ -351,19 +331,10 @@ const platformOptions: any = {
             <el-option value="day" label="不执行动作">不执行动作</el-option>
             <el-option value="month" label="发送触达并打上标签">发送触达并打上标签</el-option>
           </el-select>
-        </div>
-      </div>
+        </template>
+      </BehaviorGroupPlus>
 
-      <div class="BlockBackground">
-        <div class="title_set pg2">
-          触达设置
-          <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
+      <BehaviorGroupPlus title="触达设置" color="#FFD561">
         <div class="BlockBackground-Under">
           <el-form-item label="触达通道">
             <el-select @change="refreshMaterialTemplate" v-model="sizeForm.material.type" style="width: 120px">
@@ -376,40 +347,33 @@ const platformOptions: any = {
           </el-form-item>
           <el-form-item label="选择模版">
             <el-select v-model="sizeForm.touch.type" style="width: 120px">
-              <el-option v-for="item in (sizeForm.material.templates) as any" :value="item.id" :label="item.name">
+              <el-option v-for="item in (sizeForm.material.templates)" :value="item.id" :label="item.name">
                 <div class="template-option">
                   <span>{{ item.name }}</span>
-                  <span class="template-desc" v-if="item?.content?.content">
-                    {{ item.content.content }}
+                  <span class="template-desc" v-if="(item as any)?.content?.content">
+                    {{ (item as any).content.content }}
                   </span>
                 </div>
               </el-option>
             </el-select>
-            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>新增{{
-              platformOptions[sizeForm.material.type] }}模块版本</el-button>
+            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>
+              新增{{ platformOptions[sizeForm.material.type] }}模块版本</el-button>
           </el-form-item>
           <el-form-item label="触达内容">
             <TouchSettingContents content="content" variables="variables" v-model="sizeForm.touch" />
           </el-form-item>
         </div>
-      </div>
-      <div class="BlockBackground">
-        <div class="title_set pg3">
-          标签设置
-          <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
+      </BehaviorGroupPlus>
 
+      <BehaviorGroupPlus title="标签设置" color="#277AE7">
+        <NewLabel />
         <!-- <div class="BlockBackground-Under">
           符合该策略器条件的用户打上 &nbsp;
           <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />
 
         </div> -->
-      </div>
+      </BehaviorGroupPlus>
+
       <div class="BlockBackground">
         <div class="BlockBackground-Under">
           <div class="yugu_flex">

@@ -245,7 +245,7 @@ watch(() => _content.value, handleBlur)
 
 <template>
   <div @blur="handleBlur" tabindex="1" class="TouchSettingsContentWrapper">
-    <div @click="handleClick" ref="contentRef" class="TouchSettingsContent" contenteditable="true">
+    <div @click="handleClick" @input="handleBlur" ref="contentRef" class="TouchSettingsContent" contenteditable="true">
       {{ _content }}
     </div>
 

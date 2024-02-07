@@ -1,17 +1,23 @@
 <script setup lang="ts">
 import BasicDisturb from "./BasicDisturb.vue";
 import BasicTarget from "../page/BasicTarget.vue";
+import { useRouter } from "vue-router";
 const props = defineProps<{
   basic: any;
 }>();
 
 const emits = defineEmits<{
-  (e: 'submitReview'): void
+  (e: 'submitReview', status?: string): void
 }>()
 
-async function submitReview() {
-  emits('submitReview')
+async function submitReview(status?: string) {
+  emits('submitReview', status)
 }
+const router = useRouter();
+
+const goBack = () => {
+  router.go(-1);
+};
 </script>
 
 <template>
@@ -21,8 +27,8 @@ async function submitReview() {
       <el-input placeholder="策略流程名称" v-model="basic.touchName" :style="{ width: '400px', height: '40px' }" />
     </div>
     <div>
-      <el-button round>返回</el-button>
-      <el-button round>保存草稿</el-button>
+      <el-button  @click="goBack" round>返回</el-button>
+      <el-button @click="submitReview('draft')" round>保存草稿</el-button>
       <el-button round type="primary" @click="submitReview" primaryStyle>提交审核</el-button>
     </div>
   </div>

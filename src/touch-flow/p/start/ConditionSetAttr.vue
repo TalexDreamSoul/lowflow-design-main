@@ -5,7 +5,7 @@ import {
   inject,
   reactive,
   onMounted,
-watch,
+  watch,
 } from "vue";
 import { Delete } from "@element-plus/icons-vue";
 
@@ -70,7 +70,9 @@ const sizeForm = reactive({
   date3: "",
   delivery: false,
   type: [],
-  restrictions: "Unrestricted",
+  enterType: 'noLimit',
+  enterCount: 0,
+  enterDay: 0,
   resourceday: "",
   resourcetimes: "",
   desc: "",
@@ -261,20 +263,20 @@ function addEventB() {
 
           <el-form-item label="进入流程限制:" label-class="custom-label">
 
-            <el-radio-group v-model="sizeForm.restrictions">
+            <el-radio-group v-model="sizeForm.enterType">
               <!-- Unrestricted
               Enter once
               Entered multiple times -->
-              <el-radio label="Unrestricted">不限制</el-radio>
+              <el-radio label="noLimit">不限制</el-radio>
               <el-radio label="once">进入一次</el-radio>
-              <el-radio label="multiple">进入多次</el-radio>
+              <el-radio label="multi">进入多次</el-radio>
             </el-radio-group>
           </el-form-item>
-          <div class="flex-column" v-if="sizeForm.restrictions === 'multiple'">
+          <div class="flex-column" v-if="sizeForm.enterType === 'multi'">
             <el-text>当前流程，同一客户</el-text>&nbsp;
-            <el-input style="width: 100px" v-model="sizeForm.resourceday" label="First Name" placeholder="First Name" />
+            <el-input style="width: 100px" v-model="sizeForm.enterDay" placeholder="天数" />
             <el-text>&nbsp;天内，最多进入</el-text>&nbsp;
-            <el-input style="width: 100px" v-model="sizeForm.resourcetimes" label="First Name" placeholder="First Name" />
+            <el-input style="width: 100px" v-model="sizeForm.enterCount" placeholder="次数" />
             <el-text> &nbsp;次
             </el-text>
 
