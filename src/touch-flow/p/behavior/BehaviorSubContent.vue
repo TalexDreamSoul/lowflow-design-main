@@ -10,6 +10,7 @@ const props = defineProps<{
   condition: any;
   index: number;
   dict: any;
+  title?: string
 }>();
 
 function getConditions() {
@@ -55,7 +56,7 @@ const attrs = computed(() => {
 <template>
   <div class="BehaviorSubContent">
 
-    <LogicalLine :model-value="condition.logicalChar"
+    <LogicalLine :title="title" :model-value="condition.logicalChar"
       :display="condition.conditions ? !(condition.conditions.length > 1) : !0">
       <div v-if="attrs" class="filter-option-content">
         <el-form :label-width="0" :inline="true" :model="condition.conditions">

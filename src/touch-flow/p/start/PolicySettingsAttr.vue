@@ -9,6 +9,8 @@ import CustomBehavior from "../behavior/CustomBehavior.vue";
 import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
 import TouchSettingContents from '../touch/TouchSettingContents.vue'
 import LogicalLine from "../behavior/LogicalLine.vue";
+import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
+import EventBehavior from "../behavior/EventBehavior.vue";
 
 const origin = {
   nodeId: "",
@@ -51,24 +53,32 @@ const origin = {
       conditions: [
 
       ],
-      logicalOperator: '或'
+      logicalChar: '或'
     },
     customEvent: {
       conditions: [
 
       ],
-      logicalOperator: '或'
+      logicalChar: '或'
     },
     eventSequence: {
       conditions: [
 
       ],
-      logicalOperator: '或'
+      logicalChar: '或'
     },
     logicalChar: '或'
   },
   eventRuleContent: {
-    
+    customEvent: {
+      conditions: [
+        {
+          conditions: [{}]
+        }
+      ],
+      logicalChar: '或'
+    },
+    logicalChar: '或'
   }
 };
 
@@ -239,12 +249,6 @@ const platformOptions: any = {
   'outbound': "智能外呼",
   'znx': "站内信",
 }
-
-const transform = reactive({
-  a: false,
-  b: false,
-  c: false
-})
 </script>
 
 <template>
@@ -261,16 +265,7 @@ const transform = reactive({
         </el-radio-group>
       </el-form-item>
 
-      <div class="BlockBackground" v-if="sizeForm.diversionType === 'attr'">
-        <div class="title_set bg001">
-          用户属性行为分流
-          <el-text class="mx-1" type="primary" @click="transform.a = !transform.a">{{ transform.a ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
+      <BehaviorGroupPlus title="用户属性行为分流" color="#333333" v-if="sizeForm.diversionType === 'attr'">
         <div class="titleCondition">进入该策略期的用户需要满足以下条件：</div>
         <el-form-item label="">
           <div class="pannel">
@@ -287,17 +282,9 @@ const transform = reactive({
             </LogicalLine>
           </div>
         </el-form-item>
-      </div>
-      <div class="BlockBackground" v-if="sizeForm.diversionType === 'event'">
-        <div class="title_set bg001">
-          触发事件分流
-          <el-text class="mx-1" type="primary" @click="transform.b = !transform.b">{{ transform.b ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
+      </BehaviorGroupPlus>
+
+      <BehaviorGroupPlus title="触发事件分流" color="#333333" v-if="sizeForm.diversionType === 'event'">
         <div class="flex-column titleCondition">
           <div>
             进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;
@@ -318,55 +305,34 @@ const transform = reactive({
         </div>
         <el-form-item label="">
           <div class="pannel">
-            <LogicalLine>
-              <BehaviorGroup title="客户属性满足"> </BehaviorGroup>
-              <BehaviorGroup title="客户行为满足"> </BehaviorGroup>
-              <BehaviorGroup title="行为序列满足"> </BehaviorGroup>
-            </LogicalLine>
+            <!-- <LogicalLine v-model="sizeForm.eventRuleContent.logicalChar"> -->
+              <EventBehavior :custom="sizeForm.eventRuleContent!.customEvent" />
+            <!-- </LogicalLine> -->
           </div>
         </el-form-item>
-      </div>
-      <div class="BlockBackground">
-        <div class="title_set">
-          延迟设置
-          <el-text class="mx-1" type="primary" @click="transform.c = !transform.c">{{ transform.c ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transform ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
-        <div class="BlockBackground-Under">
-          &nbsp;
-          <el-select v-model="sizeForm.eventDelayed.isDelayed" style="width: 100px">
-            <el-option :value="true" label="延迟">延迟</el-option>
-            <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
-          <template v-if="sizeForm.eventDelayed.isDelayed">
-            <el-input v-model="sizeForm.eventDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
-            <el-select v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
-              <el-option value="month" label="月份">分钟</el-option>
-              <el-option value="week" label="周">小时</el-option>
-              <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
-            <el-select v-model="sizeForm.eventDelayed.delayedAction" placeholder="请选择" style="width: 150px">
-              <el-option value="week" label="发送触达">发送触达</el-option>
-              <el-option value="day" label="打上标签">打上标签</el-option>
-              <el-option value="day" label="不执行动作">不执行动作</el-option>
-              <el-option value="month" label="发送触达并打上标签">发送触达并打上标签</el-option>
-            </el-select>
-          </template>
-        </div>
-      </div>
+      </BehaviorGroupPlus>
 
-      <div class="BlockBackground">
-        <div class="title_set pg2">
-          触达设置
-          <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
+      <BehaviorGroupPlus title="延迟设置" color="#62C943">
+        &nbsp;
+        <el-select v-model="sizeForm.eventDelayed.isDelayed" style="width: 100px">
+          <el-option :value="true" label="延迟">延迟</el-option>
+          <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
+        <template v-if="sizeForm.eventDelayed.isDelayed">
+          <el-input v-model="sizeForm.eventDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
+          <el-select v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
+            <el-option value="month" label="月份">分钟</el-option>
+            <el-option value="week" label="周">小时</el-option>
+            <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
+          <el-select v-model="sizeForm.eventDelayed.delayedAction" placeholder="请选择" style="width: 150px">
+            <el-option value="week" label="发送触达">发送触达</el-option>
+            <el-option value="day" label="打上标签">打上标签</el-option>
+            <el-option value="day" label="不执行动作">不执行动作</el-option>
+            <el-option value="month" label="发送触达并打上标签">发送触达并打上标签</el-option>
+          </el-select>
+        </template>
+      </BehaviorGroupPlus>
+
+      <BehaviorGroupPlus title="触达设置" color="#EEDD7C">
         <div class="BlockBackground-Under">
           <el-form-item label="触达通道">
             <el-select @change="refreshMaterialTemplate" v-model="sizeForm.material.type" style="width: 120px">
@@ -379,40 +345,32 @@ const transform = reactive({
           </el-form-item>
           <el-form-item label="选择模版">
             <el-select v-model="sizeForm.touch.type" style="width: 120px">
-              <el-option v-for="item in (sizeForm.material.templates) as any" :value="item.id" :label="item.name">
+              <el-option v-for="item in (sizeForm.material.templates)" :value="item.id" :label="item.name">
                 <div class="template-option">
                   <span>{{ item.name }}</span>
-                  <span class="template-desc" v-if="item?.content?.content">
-                    {{ item.content.content }}
+                  <span class="template-desc" v-if="(item as any)?.content?.content">
+                    {{ (item as any).content.content }}
                   </span>
                 </div>
               </el-option>
             </el-select>
-            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>新增{{
-              platformOptions[sizeForm.material.type] }}模块版本</el-button>
+            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>
+              新增{{ platformOptions[sizeForm.material.type] }}模块版本</el-button>
           </el-form-item>
           <el-form-item label="触达内容">
             <TouchSettingContents content="content" variables="variables" v-model="sizeForm.touch" />
           </el-form-item>
         </div>
-      </div>
-      <div class="BlockBackground">
-        <div class="title_set pg3">
-          标签设置
-          <el-text class="mx-1" type="primary" @click="transformset = !transformset">{{ transformset ? "收起" : "展开" }}
-            <el-icon class="icondown" :style="{
-              transform: transformset ? 'rotate(-90deg)' : 'rotate(90deg)',
-            }">
-              <DArrowRight />
-            </el-icon></el-text>
-        </div>
+      </BehaviorGroupPlus>
 
+      <BehaviorGroupPlus title="标签设置" color="#277AE7">
         <!-- <div class="BlockBackground-Under">
           符合该策略器条件的用户打上 &nbsp;
           <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />
 
         </div> -->
-      </div>
+      </BehaviorGroupPlus>
+
       <div class="BlockBackground">
         <div class="BlockBackground-Under">
           <div class="yugu_flex">
