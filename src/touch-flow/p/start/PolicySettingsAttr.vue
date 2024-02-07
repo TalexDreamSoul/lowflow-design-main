@@ -11,6 +11,7 @@ import TouchSettingContents from '../touch/TouchSettingContents.vue'
 import LogicalLine from "../behavior/LogicalLine.vue";
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import EventBehavior from "../behavior/EventBehavior.vue";
+import NewLabel from '../../label/NewLabel.vue'
 
 const origin = {
   nodeId: "",
@@ -364,6 +365,7 @@ const platformOptions: any = {
       </BehaviorGroupPlus>
 
       <BehaviorGroupPlus title="标签设置" color="#277AE7">
+        <NewLabel />
         <!-- <div class="BlockBackground-Under">
           符合该策略器条件的用户打上 &nbsp;
           <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />
