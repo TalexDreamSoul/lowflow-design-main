@@ -1,7 +1,7 @@
 <script setup lang="ts" name="SubBranch">
 import { ref, reactive, provide, inject, computed } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
-import ConditionSetAttr from "../p/start/ConditionSetAttr.vue";
+import SubDiversionAttr from './start/SubDiversionAttr.vue';
 import CustomersAttr from "../p/start/CustomersAttr.vue";
 import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
@@ -10,8 +10,6 @@ import Strategist from "./start/Strategist.vue";
 const getNode: Function = inject('getNode')!
 const { data: _data } = getNode()
 const data = _data.$d(_data.id)
-
-console.log("@@@", data)
 
 const dialogVisible = ref(false)
 const drawerOptions = reactive<any>({
@@ -91,7 +89,7 @@ function openCondition() {
   openDrawer({
     title: "流量策略器设置",
     // TODO page draw
-    comp: ConditionSetAttr,
+    comp: SubDiversionAttr,
   });
 }
 
@@ -124,7 +122,7 @@ provide('save', (regFunc: () => boolean) => {
     </div>
 
     <teleport to="body">
-      <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
+      <el-dialog v-model="dialogVisible" width="55%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section">
             <p>
