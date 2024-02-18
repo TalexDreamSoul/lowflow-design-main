@@ -3,6 +3,8 @@ import { register, getTeleport } from "@antv/x6-vue-shape";
 
 import PStartVue from "~/touch-flow/p/PStart.vue";
 import PPolicySettingsVue from "../p/PPolicySettings.vue";
+import BranchVue from "../p/Branch.vue";
+import SubBranchVue from "../p/SubBranch.vue";
 
 const registerNode = () => {
   register({
@@ -47,6 +49,80 @@ const registerNode = () => {
     width: 610,
     height: 100,
     component: PPolicySettingsVue,
+    async: true,
+    ports: {
+      groups: {
+        top: {
+          position: "top",
+          attrs: {
+            circle: {
+              r: 4,
+              magnet: true,
+              stroke: "#277AE7",
+              strokeWidth: 1,
+              fill: "#277AE7",
+            },
+          },
+        },
+        bottom: {
+          position: "bottom",
+          attrs: {
+            circle: {
+              r: 4,
+              magnet: true,
+              stroke: "#277AE7",
+              strokeWidth: 1,
+              fill: "#277AE7",
+            },
+          },
+        },
+      },
+    },
+  });
+
+  register({
+    shape: "diversion",
+    // inherit: "vue-shape",
+    width: 610,
+    height: 100,
+    component: BranchVue,
+    async: true,
+    ports: {
+      groups: {
+        top: {
+          position: "top",
+          attrs: {
+            circle: {
+              r: 4,
+              magnet: true,
+              stroke: "#277AE7",
+              strokeWidth: 1,
+              fill: "#277AE7",
+            },
+          },
+        },
+        bottom: {
+          position: "bottom",
+          attrs: {
+            circle: {
+              r: 4,
+              magnet: true,
+              stroke: "#277AE7",
+              strokeWidth: 1,
+              fill: "#277AE7",
+            },
+          },
+        },
+      },
+    },
+  });
+
+  register({
+    shape: "subDiversion",
+    // inherit: "vue-shape",
+    width: 610,
+    height: 100,
+    component: SubBranchVue,
     async: true,
     ports: {
       groups: {

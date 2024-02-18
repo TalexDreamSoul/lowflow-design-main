@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { ref, reactive, provide } from 'vue'
+import { ref, reactive, provide, inject } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import ConditionSetAttr from './start/ConditionSetAttr.vue'
 import PolicySettingsAttr from './start/PolicySettingsAttr.vue'
 import DeliverySettingsAttr from './start/DeliverySettingsAttr.vue'
 import { delChild } from '../flow-utils'
 
-const props = defineProps<{
-  p?: any,
-}>()
+const getNode: Function = inject('getNode')!
+const { data: _data } = getNode()
+const data = _data.$d(_data.id)
 
 const dialogVisible = ref(false)
 const drawerOptions = reactive<any>({
@@ -48,8 +48,8 @@ function openDrawer(comp: any) {
 
   Object.assign(drawerOptions, comp)
 
-  if (!props.p.executeType)
-    props.p.executeType = "immediately";
+  if (!data.executeType)
+    data.executeType = "immediately";
 
   drawerOptions.visible = true
 }
@@ -79,12 +79,12 @@ function del(p: any) {
   <el-card style="width: 355px" class="PBlock">
     <p class="title">
       <!-- 选择策略器 -->
-      {{ p.nodeName }}
+      {{ data.nodeName }}
       <el-popover :visible="visible" placement="top" :width="160">
         <p>是否确认删除？</p>
         <div style="text-align: right; margin: 0">
           <el-button size="small" text @click="visible = false">取消</el-button>
-          <el-button size="small" type="primary" @click="del(p)">确认</el-button>
+          <el-button size="small" type="primary" @click="del(data)">确认</el-button>
         </div>
         <template #reference>
           <el-button @click="visible = true" text type="primary">
@@ -99,7 +99,7 @@ function del(p: any) {
     <div class="PBlock-Content theme">
       <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">
         <div>
-          包含{{ p.branches.length }}个分支
+          包含{{ data.branches.length }}个分支
         </div>
       </div>
     </div>
@@ -123,7 +123,7 @@ function del(p: any) {
 
     <teleport to="body">
       <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
-        <component :p="p" :is="drawerOptions.comp" />
+        <component :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
           <el-button round @click="handleSave" type="primary">保存</el-button>

@@ -36,7 +36,7 @@ const layoutFn = () => {
   const result = Hierarchy.compactBox(treeMap, {
     direction: 'TB',
     getWidth() {
-      return 610;
+      return 680;
     },
     getHeight(d: any) {
       return d.height ? parseInt(d.height) : 40;
@@ -45,7 +45,7 @@ const layoutFn = () => {
       return 30;
     },
     getVGap() {
-      return 150;
+      return 120;
     },
     getSide: () => {
       return 'bottom';
@@ -57,13 +57,16 @@ const layoutFn = () => {
   } = { nodes: [], edges: [] };
 
   const _: any = {
-    'Start': (height: number) => height - 125,
+    'Start': (height: number) => height - 65,
     'strategy': (height: number, data: any) => {
-      console.log("@@@", data)
+      console.log("@@@---", data.data, data.data?.father?.nodeType)
+      if ( data.data?.father?.nodeType === 'subDiversion' ) return 0
       if (data.data.nodeName === '兜底策略器') return height - 135
 
-      return height - 35
-    }
+      return height - 150
+    },
+    'diversion': (height: number) => height - 152,
+    'subDiversion': (height: number) => height - 140,
   }
 
   const traverse = (data: any) => {
@@ -74,7 +77,6 @@ const layoutFn = () => {
       const shape = `${data.data.nodeType}`;
       const calc = _[shape]
 
-      console.log("calc", calc, shape)
       model.nodes?.push({
         id: `${data.id}`,
         x: data.x + 700,
@@ -123,6 +125,8 @@ const layoutFn = () => {
 
     if (data.children) {
       data.children.forEach((item: any) => {
+        traverse(item);
+
         model.edges?.push({
           source: { cell: data.id, port: 'bottom-' + data.id },
           target: { cell: item.id, port: 'top-' + item.id },
@@ -140,7 +144,7 @@ const layoutFn = () => {
             },
           ],
         });
-        traverse(item);
+        
       });
     }
   };
@@ -249,6 +253,12 @@ window.l = layoutFn
     opacity: 1;
 
     pointer-events: unset;
+  }
+  &.disabled {
+    opacity: .85;
+    filter: invert(.1) brightness(95%);
+
+    pointer-events: none;
   }
 
   &:hover {

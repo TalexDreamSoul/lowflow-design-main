@@ -107,7 +107,6 @@ export function validateCustomerAttributes(customRuleContent: any) {
 
 export function genIdNodeReactive(p: any) {
   return function (id: string) {
-    console.log("find target", id)
     const stack: any[] = [p]
 
     while (stack.length) {

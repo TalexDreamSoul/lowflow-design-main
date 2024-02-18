@@ -5,11 +5,11 @@ import { randomStr } from "~/utils/common";
 
 const origin = {
   nodeName: "DeliverySettings",
-  nodeType: "Delivery",
+  nodeType: "diversion",
   nodeId: "",
   branches: [
-    { name: "branch1", ratio: 50 },
-    { name: "branch2", ratio: 50 },
+    { nodeName: "branch1", ratio: 50, children: [] },
+    { nodeName: "branch2", ratio: 50, children: [] },
   ]
 };
 
@@ -26,8 +26,9 @@ const sizeForm = reactive<typeof origin>(origin);
 
   children.forEach((child: any) => {
     origin.branches.push({
-      name: child.name,
+      nodeName: child.nodeName,
       ratio: child.ratio,
+      children: child.children
     });
   });
 })())
@@ -41,7 +42,7 @@ reset()
 watchEffect(() => {
   const { nodeType, nodeId } = props.p
 
-  if ( nodeType !== 'Delivery' ) return
+  if ( nodeType !== 'diversion' ) return
 
   if (nodeId) {
     sizeForm.nodeId = nodeId;
@@ -68,7 +69,7 @@ function saveData() {
     return false;
   }
 
-  if (sizeForm.branches.filter(branch => (branch.ratio === 0 || branch.name.length < 1)).length) {
+  if (sizeForm.branches.filter(branch => (branch.ratio === 0 || branch.nodeName.length < 1)).length) {
     ElMessage.warning({
       message: "不能存在未命名或配比为0%的流量",
     });
@@ -87,9 +88,11 @@ function saveData() {
   // transform branch prop 2 children prop
   sizeForm.branches.forEach((branch) => {
     const child = {
-      nodeType: "SubBranch",
-      name: branch.name,
+      nodeType: "subDiversion",
+      nodeName: branch.nodeName,
       ratio: branch.ratio,
+      nodeId: randomStr(12),
+      children: branch.children || [],
       father: _
     }
 
@@ -116,7 +119,7 @@ const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
 const addBranch = () => {
-  sizeForm.branches.push({ name: "", ratio: 0 });
+  sizeForm.branches.push({ nodeName: "分流器" + (sizeForm.branches.length + 1), ratio: 0 });
 };
 
 const deleteBranch = (index: number) => {
@@ -147,7 +150,7 @@ const deleteBranch = (index: number) => {
           <el-row :gutter="20" style="    align-items: center;
           margin-top: 16px;" v-for="(branch, index) in sizeForm.branches" :key="index">
             <el-col :span="14">
-              <el-input v-model="branch.name" />
+              <el-input v-model="branch.nodeName" />
             </el-col>
             <el-col :span="7">
               <el-input-number :min="0" :max="100 - +totalRatio + branch.ratio" placeholder="百分比"
