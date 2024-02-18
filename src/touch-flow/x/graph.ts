@@ -19,9 +19,9 @@ const registerNode = () => {
             circle: {
               r: 4,
               magnet: true,
-              stroke: "#C2C8D5",
+              stroke: "#5989E2",
               strokeWidth: 1,
-              fill: "#fff",
+              fill: "#5989E2",
             },
           },
         },
@@ -31,9 +31,9 @@ const registerNode = () => {
             circle: {
               r: 4,
               magnet: true,
-              stroke: "#C2C8D5",
+              stroke: "#5989E2",
               strokeWidth: 1,
-              fill: "#fff",
+              fill: "#5989E2",
             },
           },
         },
@@ -56,9 +56,9 @@ const registerNode = () => {
             circle: {
               r: 4,
               magnet: true,
-              stroke: "#C2C8D5",
+              stroke: "#277AE7",
               strokeWidth: 1,
-              fill: "#fff",
+              fill: "#277AE7",
             },
           },
         },
@@ -68,9 +68,9 @@ const registerNode = () => {
             circle: {
               r: 4,
               magnet: true,
-              stroke: "#C2C8D5",
+              stroke: "#277AE7",
               strokeWidth: 1,
-              fill: "#fff",
+              fill: "#277AE7",
             },
           },
         },
@@ -124,7 +124,7 @@ const registerNode = () => {
       },
       attrs: {
         line: {
-          stroke: "#C2C8D5",
+          stroke: "#5989E2",
           strokeWidth: 2,
           targetMarker: {
             name: "block",
