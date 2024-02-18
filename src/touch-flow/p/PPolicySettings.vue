@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref, reactive, provide, computed } from 'vue'
+import { ref, reactive, provide, computed, inject } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import PolicySettingsAttr from './start/PolicySettingsAttr.vue'
 import { delChild } from '../flow-utils'
 import Strategist from './start/Strategist.vue'
 
-const props = defineProps<{
-  p?: any,
-}>()
+const getNode: Function = inject('getNode')!
+const { data: _data } = getNode()
+const data = _data.$d(_data.id)
 
 const dialogVisible = ref(false)
 const drawerOptions = reactive<any>({
@@ -36,7 +36,7 @@ const comps = [
 ]
 
 function openCondition() {
-  const { nodeName } = props.p
+  const { nodeName } = data
 
   openDrawer({
     title: nodeName,
@@ -49,8 +49,8 @@ function openDrawer(comp: any) {
 
   Object.assign(drawerOptions, comp)
 
-  if (!props.p.executeType)
-    props.p.executeType = "immediately";
+  if (!data.executeType)
+    data.executeType = "immediately";
 
   drawerOptions.visible = true
 }
@@ -69,7 +69,7 @@ provide('save', (regFunc: () => boolean) => {
 })
 
 const pushTemplate = computed(() => {
-  const { type } = props.p.material
+  const { type } = data.material
 
   let val;
 
@@ -103,12 +103,12 @@ function del(p: any) {
   <el-card style="width: 355px" class="PBlock">
     <p class="title">
       <!-- 选择策略器 -->
-      {{ p.nodeName }}
+      {{ data.nodeName }}
       <el-popover :visible="visible" placement="top" :width="160">
         <p>是否确认删除？</p>
         <div style="text-align: right; margin: 0">
           <el-button size="small" text @click="visible = false">取消</el-button>
-          <el-button size="small" type="primary" @click="del(p)">确认</el-button>
+          <el-button size="small" type="primary" @click="del(data)">确认</el-button>
         </div>
         <template #reference>
           <el-button @click="visible = true" text type="primary">
@@ -121,24 +121,24 @@ function del(p: any) {
       </el-popover>
     </p>
     <div class="PBlock-Content theme" @click="openCondition">
-      <div v-if="p.nodeName !== '兜底策略器'" style="--theme-color: #90A0B8" class="PBlock-Section">
+      <div v-if="data.nodeName !== '兜底策略器'" style="--theme-color: #90A0B8" class="PBlock-Section">
         <p>
           客户属性行为分流
         </p>
-        <span v-if="p.diversionType === 'noDiversion'">
+        <span v-if="data.diversionType === 'noDiversion'">
           不分流
         </span>
-        <span v-else-if="p.diversionType === 'attr'">
+        <span v-else-if="data.diversionType === 'attr'">
           按属性用户行为分流
         </span>
-        <span v-else-if="p.diversionType === 'event'">按触发事件分流</span>
+        <span v-else-if="data.diversionType === 'event'">按触发事件分流</span>
       </div>
       <div style="--theme-color: #7DC757" class="PBlock-Section">
         <p>
           延迟设置
         </p>
-        <span v-if="p.eventDelayed.isDelayed">
-          符合该策略器 {{ p.eventDelayed.delayedTime }} {{ p.eventDelayed.delayedUnit }} 后 {{ p.eventDelayed.delayedAction }}
+        <span v-if="data.eventDelayed.isDelayed">
+          符合该策略器 {{ data.eventDelayed.delayedTime }} {{ data.eventDelayed.delayedUnit }} 后 {{ data.eventDelayed.delayedAction }}
         </span>
         <span v-else>立即针对符合该策略器条件的客户发送触达</span>
       </div>
@@ -169,7 +169,7 @@ function del(p: any) {
 
     <teleport to="body">
       <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
-        <component :new="true" :p="p" :is="drawerOptions.comp" />
+        <component :new="true" :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
           <el-button round @click="handleSave" type="primary">保存</el-button>
@@ -179,7 +179,7 @@ function del(p: any) {
   </el-card>
 
   <el-button @click="dialogVisible = true"
-    :class="{ display: p.diversionType && p.eventDelayed.isDelayed !== undefined && pushTemplate }" class="start-add"
+    :class="{ display: data.diversionType && data.eventDelayed.isDelayed !== undefined && pushTemplate }" class="start-add"
     type="primary" :icon="Plus" circle />
 </template>
 

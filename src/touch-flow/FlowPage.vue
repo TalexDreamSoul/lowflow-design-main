@@ -1,13 +1,14 @@
 <script setup lang="ts" name="FlowPage">
 import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import FlowHeader from "../touch-flow/page/FlowHeader.vue";
-import TouchFlow from "./TouchFlow.vue";
+// import TouchFlow from "./TouchFlow.vue";
 import { randomStr } from "~/utils/common";
 import { touchSubmitReview, type Request, type MarketingTouchNodeEditDTO } from './touch-total'
+import XFlow from './x/XFlow.vue'
 
 const props = defineProps<{
   modelValue?: boolean;
-  readonly: boolean;
+  readonly?: boolean;
 }>();
 
 const flowOptions = reactive({
@@ -26,7 +27,7 @@ const flowOptions = reactive({
   },
   p: {
     nodeId: randomStr(12),
-    nodeType: "start",
+    nodeType: "Start",
     children: [],
   },
 });
@@ -134,7 +135,8 @@ console.log("total flow", flowOptions);
       </el-header>
       <el-main>
         <el-scrollbar>
-          <TouchFlow :p="flowOptions.p" />
+          <XFlow :p="flowOptions.p" />
+          <!-- <TouchFlow :p="flowOptions.p" /> -->
         </el-scrollbar>
       </el-main>
     </el-container>

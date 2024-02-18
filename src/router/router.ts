@@ -8,8 +8,15 @@ export const routes: RouterOptions["routes"] = [
     // component: () => import("../views/dashboard/index.vue"),
   },
   {
-    path: "/designNew",
+    path: "/design",
     component: () => import("../touch-flow/FlowPage.vue"),
+    meta: {
+      hideTopMenu: true,
+    },
+  },
+  {
+    path: "/tree",
+    component: () => import("../flow/index.vue"),
     meta: {
       hideTopMenu: true,
     },

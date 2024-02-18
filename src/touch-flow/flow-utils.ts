@@ -1,94 +1,127 @@
-import { toRefs } from "vue"
-import { dictFilterTree } from '~/api/index'
+import { toRefs } from "vue";
+import { dictFilterTree } from "~/api/index";
 
 export async function getDictAnalyzedTree() {
-  const dict = await dictFilterTree()
-  const { data: res } = dict
+  const dict = await dictFilterTree();
+  const { data: res } = dict;
 
-  const { attrs, labels } = res
+  const { attrs, labels } = res;
 
   const _attrs = attrs.map((attr: any) => {
     return {
       label: attr.fieldName,
       value: attr.field,
-      ...attr
-    }
-  })
+      ...attr,
+    };
+  });
 
   const _labels = labels.map((label: any) => {
-    const children: any = []
+    const children: any = [];
     if (label.labelValue) {
-      [...label.labelValue.data].forEach(item => {
+      [...label.labelValue.data].forEach((item) => {
         children.push({
           label: item,
           value: item,
-          ...label
-        })
-      })
+          ...label,
+        });
+      });
     }
 
     return {
       label: label.labelName,
       children,
-      ...label
-    }
-  })
+      ...label,
+    };
+  });
 
-  return [[
-    {
-      label: "用户属性",
-      value: "attr",
-      children: _attrs,
-    },
-    {
-      label: "用户标签",
-      value: "label",
-      children: _labels,
-    },
-  ], dict]
+  return [
+    [
+      {
+        label: "用户属性",
+        value: "attr",
+        children: _attrs,
+      },
+      {
+        label: "用户标签",
+        value: "label",
+        children: _labels,
+      },
+    ],
+    dict,
+  ];
 }
 
 export function _delChild(parent: any, child: any) {
+  const { children } = toRefs(parent);
+  if (!children) return false;
 
-  const { children } = toRefs(parent)
-  if (!children) return false
-
-  const index = children.value.indexOf(child)
-  return index > -1 ? (children.value.splice(index, 1)) && true : false
+  const index = children.value.indexOf(child);
+  return index > -1 ? children.value.splice(index, 1) && true : false;
 }
 
-export function delChild(child: { father: any, children: any[], [key: string]: any }) {
-  return _delChild(child.father, child)
+export function delChild(child: {
+  father: any;
+  children: any[];
+  [key: string]: any;
+}) {
+  return _delChild(child.father, child);
 }
 
 export interface IFlowUtils {
-  delChild: (child: any) => boolean
+  delChild: (child: any) => boolean;
 }
 
 export function validateSingleCondition(condition: object) {
-  const res = JSON.stringify(condition)?.length > 5
+  const res = JSON.stringify(condition)?.length > 5;
 
   if (!res) {
-    console.log(condition, 'none')
+    console.log(condition, "none");
   }
-  return res
+  return res;
 }
 
 export function validateConditions(conditions: Array<any>): boolean {
-  return [...conditions].filter((condition: any) => {
-    if (condition.conditions) {
-      return !validateObjConditions(condition)
-    }
-    return !validateSingleCondition(condition)
-  })?.length === 0
+  return (
+    [...conditions].filter((condition: any) => {
+      if (condition.conditions) {
+        return !validateObjConditions(condition);
+      }
+      return !validateSingleCondition(condition);
+    })?.length === 0
+  );
 }
 
 export function validateObjConditions(obj: any) {
-  return validateConditions(obj?.conditions)
+  return validateConditions(obj?.conditions);
 }
 
 export function validateCustomerAttributes(customRuleContent: any) {
-  const { customAttr, customEvent, eventSequence } = customRuleContent
+  const { customAttr, customEvent, eventSequence } = customRuleContent;
 
-  return validateObjConditions(customAttr) && validateObjConditions(customEvent) && validateObjConditions(eventSequence)
+  return (
+    validateObjConditions(customAttr) &&
+    validateObjConditions(customEvent) &&
+    validateObjConditions(eventSequence)
+  );
+}
+
+export function genIdNodeReactive(p: any) {
+  return function (id: string) {
+    console.log("find target", id)
+    const stack: any[] = [p]
+
+    while (stack.length) {
+      const node = stack.pop()
+
+      if (node.id === id) {
+        return node
+      }
+
+      if (node.children) {
+        stack.push(...node.children)
+      }
+    }
+
+    return null
+  };
 }
