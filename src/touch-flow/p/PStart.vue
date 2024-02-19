@@ -9,7 +9,8 @@ import Strategist from "./start/Strategist.vue";
 
 const getNode: Function = inject('getNode')!
 const { data: _data  } = getNode()
-const data = _data.$d(_data.id)
+const __data = _data.$d(_data.id)
+const data = _data.data
 
 const dialogVisible = ref(false);
 const drawerOptions = reactive<any>({
@@ -153,6 +154,8 @@ let _saveFunc: (() => boolean) | null = null;
 
 function handleSave() {
   if (!_saveFunc || !_saveFunc()) return;
+
+  Object.assign(__data, data)
 
   dialogVisible.value = false;
   drawerOptions.visible = false;
