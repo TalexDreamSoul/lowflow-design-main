@@ -10,7 +10,7 @@ import Strategist from "./start/Strategist.vue";
 const getNode: Function = inject('getNode')!
 const { data: _data  } = getNode()
 const __data = _data.$d(_data.id)
-const data = _data.data
+const data = reactive(_data.data)
 
 const dialogVisible = ref(false);
 const drawerOptions = reactive<any>({
