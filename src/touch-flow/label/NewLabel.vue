@@ -29,8 +29,8 @@ function handleDelete(index: number) {
   <div class="NewLabel">
     <div class="NewLabel-Main">
       符合该策略器条件的用户打上
-      <el-select />
-      <el-select />
+      <el-select placeholder="标签名称" style="width: 150px" />
+      <el-select placeholder="标签值" style="width: 150px" />
       标签
     </div>
 
@@ -93,6 +93,20 @@ function handleDelete(index: number) {
 
   cursor: pointer;
   background: linear-gradient(to top, #598ff1, #205ccb);
+}
+
+.NewLabel {
+  &-Main {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+  }
+
+  display: flex;
+
+  gap: 1rem;
 }
 
 .LabelForm {
