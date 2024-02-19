@@ -39,7 +39,7 @@ const layoutFn = () => {
       return 680;
     },
     getHeight(d: any) {
-      return d.height ? parseInt(d.height) : 40;
+      return d.height ? parseInt(d.height) : 120;
     },
     getHGap() {
       return 30;
@@ -57,15 +57,15 @@ const layoutFn = () => {
   } = { nodes: [], edges: [] };
 
   const _: any = {
-    'Start': (height: number) => height - 65,
+    'Start': (height: number) => height - 145,
     'strategy': (height: number, data: any) => {
       console.log("@@@---", data.data)
       if ( data.data?.father?.nodeType === 'subDiversion' ) return 0
-      if (data.data.nodeName === '兜底策略器') return height - 135
+      if (data.data.nodeName === '兜底策略器') return height - 155
 
-      return height - 150
+      return height - 60
     },
-    'diversion': (height: number) => height - 152,
+    'diversion': (height: number) => height - 232,
     'subDiversion': (height: number) => height - 140,
   }
 
@@ -80,7 +80,7 @@ const layoutFn = () => {
       model.nodes?.push({
         id: `${data.id}`,
         x: data.x + 700,
-        y: data.y + 200,
+        y: data.y + 260,
         shape,
         data: { ...data, $d: getNodeReactive },
         width: 610,
