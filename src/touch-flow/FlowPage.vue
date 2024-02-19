@@ -10,6 +10,7 @@ const props = defineProps<{
   modelValue?: boolean;
   readonly?: boolean;
 }>();
+console.log(`output->modelValue~~~~~~~~~~~~~~~~~~~~~`,props.modelValue)
 
 const flowOptions = reactive({
   basic: {
