@@ -9,7 +9,8 @@ import Strategist from "./start/Strategist.vue";
 
 const getNode: Function = inject('getNode')!
 const { data: _data } = getNode()
-const data = _data.$d(_data.id)
+const __data = _data.$d(_data.id)
+const data = reactive(_data.data)
 
 const dialogVisible = ref(false)
 const drawerOptions = reactive<any>({
@@ -98,6 +99,8 @@ let _saveFunc: (() => boolean) | null = null
 function handleSave() {
   if (!_saveFunc || !_saveFunc()) return
 
+  Object.assign(__data, data)
+
   dialogVisible.value = false
   drawerOptions.visible = false
 }
@@ -149,8 +152,8 @@ provide('save', (regFunc: () => boolean) => {
     </teleport>
   </el-card>
 
-  <el-button :class="{ display: true, disabled: haveDiverse }"
-      @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
+  <el-button :class="{ display: true, disabled: haveDiverse }" @click="dialogVisible = true" class="start-add"
+    type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">

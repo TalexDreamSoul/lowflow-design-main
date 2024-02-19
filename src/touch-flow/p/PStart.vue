@@ -134,7 +134,7 @@ const _comps = [
     },
     title: "分流器",
     desc: "按设置的比例自动客户对随机分流，并执行动作。",
-    show: () => !doDiverse.value,
+    show: () => !haveReveal.value && !doDiverse.value,
     comp: DeliverySettingsAttr,
   },
   {
