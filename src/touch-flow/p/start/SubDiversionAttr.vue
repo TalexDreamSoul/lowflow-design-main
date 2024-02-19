@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElMessage } from "element-plus";
-import { inject, reactive, ref, watchEffect } from "vue";
+import { inject, markRaw, reactive, ref, watchEffect } from "vue";
 import { getQryMaterial, getmarketingTouchEstimate } from "~/api";
 import { randomStr } from "~/utils/common";
 import NewLabel from '../../label/NewLabel.vue';
@@ -138,7 +138,7 @@ function saveData() {
   Object.assign(_, sizeForm)
 
   Object.defineProperty(_, 'father', {
-    value: props.p,
+    value: markRaw(props.p),
     enumerable: false
   })
 

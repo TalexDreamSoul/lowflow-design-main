@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, reactive, onMounted, watchEffect } from "vue";
+import { inject, ref, reactive, onMounted, watchEffect, markRaw } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { getQryMaterial, getmarketingTouchEstimate } from "~/api";
@@ -103,7 +103,7 @@ function saveData() {
   Object.assign(_, sizeForm)
 
   Object.defineProperty(_, 'father', {
-    value: props.p,
+    value: markRaw(props.p),
     enumerable: false
   })
 

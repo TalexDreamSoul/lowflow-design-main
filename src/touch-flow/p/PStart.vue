@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, provide, inject } from "vue";
+import { ref, reactive, computed, provide, inject, markRaw } from "vue";
 import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
 import ConditionSetAttr from "../p/start/ConditionSetAttr.vue";
 import CustomersAttr from "../p/start/CustomersAttr.vue";
@@ -156,6 +156,14 @@ function handleSave() {
   if (!_saveFunc || !_saveFunc()) return;
 
   Object.assign(__data, data)
+
+  // console.log("assign", data)
+
+  // // define father
+  // Object.defineProperty(__data, 'father', {
+  //   value: markRaw(data.father),
+  //   enumerable: false
+  // })
 
   dialogVisible.value = false;
   drawerOptions.visible = false;

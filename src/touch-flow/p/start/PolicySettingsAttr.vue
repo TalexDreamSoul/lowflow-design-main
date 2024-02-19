@@ -12,6 +12,7 @@ import LogicalLine from "../behavior/LogicalLine.vue";
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import EventBehavior from "../behavior/EventBehavior.vue";
 import NewLabel from '../../label/NewLabel.vue'
+import { markRaw } from "vue";
 
 const origin = {
   nodeId: "",
@@ -143,7 +144,7 @@ function saveData() {
   Object.assign(_, sizeForm)
 
   Object.defineProperty(_, 'father', {
-    value: props.p,
+    value: markRaw(props.p),
     enumerable: false
   })
 

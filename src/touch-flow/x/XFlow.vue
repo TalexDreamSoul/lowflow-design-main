@@ -59,7 +59,7 @@ const layoutFn = () => {
   const _: any = {
     'Start': (height: number) => height - 65,
     'strategy': (height: number, data: any) => {
-      console.log("@@@---", data.data, data.data?.father?.nodeType)
+      console.log("@@@---", data.data)
       if ( data.data?.father?.nodeType === 'subDiversion' ) return 0
       if (data.data.nodeName === '兜底策略器') return height - 135
 

@@ -2,6 +2,7 @@
 import { inject, ref, reactive, watchEffect, computed } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
+import { markRaw } from "vue";
 
 const origin = {
   nodeName: "DeliverySettings",
@@ -81,7 +82,7 @@ function saveData() {
   Object.assign(_, sizeForm)
 
   Object.defineProperty(_, 'father', {
-    value: props.p,
+    value: markRaw(props.p),
     enumerable: false
   })
 
