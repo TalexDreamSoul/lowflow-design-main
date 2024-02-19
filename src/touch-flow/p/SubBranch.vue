@@ -105,6 +105,29 @@ function handleSave() {
   drawerOptions.visible = false
 }
 
+const pushTemplate = computed(() => {
+  const { type } = data.material
+
+  let val;
+
+  if (type === 'sms') {
+    val = '短信模板：'
+  } else if (type === 'znx') {
+    val = '站内信模板：'
+  } else if (type === 'appPush') {
+    val = 'APP消息模板：'
+  } else if (type === 'digital') {
+    val = '数字员工模板：'
+  } else if (type === 'outbound') {
+    val = '智能外呼模板：'
+  }
+
+  return {
+    has: type?.length,
+    val
+  }
+})
+
 provide('save', (regFunc: () => boolean) => {
   _saveFunc = regFunc
 })
@@ -113,15 +136,53 @@ provide('save', (regFunc: () => boolean) => {
 <template>
   <el-card style="width: 355px" class="PBlock">
     <p class="title">
-      <!-- 选择策略器 -->
-      {{ data.nodeName }}
+        流量策略器
+      <span style="float: right">
+        分支{{ data.nodeName }}
+        <span style="color: green;font-weight: 600">{{data.ratio}}%</span>
+      </span>
     </p>
     <div class="PBlock-Content theme">
+    <template v-if="data.diversionType || data.eventDelayed?.isDelayed">
       <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">
-        <div>
-          BRANCH
+        
+        <div style="--theme-color: #90A0B8" class="PBlock-Section">
+          <p>
+            客户属性行为分流
+          </p>
+          <span v-if="data.diversionType === 'noDiversion'">
+            不分流
+          </span>
+          <span v-else-if="data.diversionType === 'attr'">
+            按属性用户行为分流
+          </span>
+          <span v-else-if="data.diversionType === 'event'">按触发事件分流</span>
         </div>
+        <div style="--theme-color: #7DC757" class="PBlock-Section">
+          <p>
+            延迟设置
+          </p>
+          <span v-if="data.eventDelayed?.isDelayed">
+            符合该策略器 {{ data.eventDelayed.delayedTime }} {{ data.eventDelayed.delayedUnit }} 后 {{ data.eventDelayed.delayedAction }}
+          </span>
+          <span v-else>立即针对符合该策略器条件的客户发送触达</span>
+        </div>
+        <div v-if="pushTemplate.has" style="--theme-color: #FFB858" class="PBlock-Section">
+          <p>
+            APP推送
+          </p>
+          <span>{{ pushTemplate.val }}</span>
+        </div>
+        
       </div>
+      </template>
+        <template v-else>
+          <el-empty>
+            <template #description>
+              暂未配置.
+            </template>
+          </el-empty>
+        </template>
     </div>
 
     <teleport to="body">
