@@ -122,7 +122,7 @@ provide('save', (regFunc: () => boolean) => {
     </div>
 
     <teleport to="body">
-      <el-dialog v-model="dialogVisible" width="55%" title="请选择添加类型" align-center>
+      <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section">
             <p>
