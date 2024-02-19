@@ -247,7 +247,7 @@ export default function initGraph() {
     mousewheel: {
       enabled: true,
       modifiers: "ctrl",
-      factor: 1.1,
+      factor: 0.8,
       maxScale: 1.5,
       minScale: 0.5,
     },
