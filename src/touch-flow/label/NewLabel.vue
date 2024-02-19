@@ -26,9 +26,18 @@ function handleDelete(index: number) {
 </script>
 
 <template>
-  <el-button @click="visible = true">
-    添加标签
-  </el-button>
+  <div class="NewLabel">
+    <div class="NewLabel-Main">
+      符合该策略器条件的用户打上
+      <el-select />
+      <el-select />
+      标签
+    </div>
+
+    <el-button @click="visible = true">
+      添加标签
+    </el-button>
+  </div>
 
   <teleport to="body">
     <el-dialog width="400px" title="新增标签" v-model="visible">
@@ -43,8 +52,7 @@ function handleDelete(index: number) {
           <el-form-item v-if="model.labelValueType === 'boolean'" label="标签名称">
             <el-input v-model="model.labelName" />
           </el-form-item>
-          <el-form-item v-for="(item, index) in model.labelValue.data"
-            :label="`标签值${index + 1}`">
+          <el-form-item v-for="(item, index) in model.labelValue.data" :label="`标签值${index + 1}`">
             <div style="display: flex;width: 100%;">
               <el-input style="width: 100%" v-model="model.labelValue.data[index]" />
               <el-button @click="handleDelete(index)" plain text v-if="index" style="margin-left: 10px">
@@ -102,6 +110,7 @@ function handleDelete(index: number) {
     background: #fff;
     box-sizing: border-box;
   }
+
   padding-bottom: 1rem;
 
   height: 30rem;

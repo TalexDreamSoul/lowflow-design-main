@@ -1,17 +1,12 @@
 <script setup lang="ts">
-import { inject, ref, reactive, onMounted, watchEffect } from "vue";
 import { ElMessage } from "element-plus";
-import { randomStr } from "~/utils/common";
+import { inject, reactive, ref, watchEffect } from "vue";
 import { getQryMaterial, getmarketingTouchEstimate } from "~/api";
-import BehaviorGroup from "../behavior/BehaviorGroup.vue";
-import CustomAttr from "../behavior/CustomAttr.vue";
-import CustomBehavior from "../behavior/CustomBehavior.vue";
-import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
-import TouchSettingContents from '../touch/TouchSettingContents.vue'
-import LogicalLine from "../behavior/LogicalLine.vue";
+import { randomStr } from "~/utils/common";
+import NewLabel from '../../label/NewLabel.vue';
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import EventBehavior from "../behavior/EventBehavior.vue";
-import NewLabel from '../../label/NewLabel.vue'
+import TouchSettingContents from '../touch/TouchSettingContents.vue';
 
 const origin = {
   nodeId: "",

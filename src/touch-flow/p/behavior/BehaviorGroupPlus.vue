@@ -1,5 +1,6 @@
 <script setup lang="ts" name="BehaviorGroupPlus">
 import { ref } from "vue";
+import { DArrowRight } from '@element-plus/icons-vue'
 
 defineProps<{
   title: string;
