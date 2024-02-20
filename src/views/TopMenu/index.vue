@@ -52,8 +52,8 @@
           </el-icon></div>
       </template>
       <el-menu-item class="pd-menu-item" index="/customer/list">客户列表</el-menu-item>
-      <el-menu-item class="pd-menu-item" index="/page">客户标签</el-menu-item>
-      <el-menu-item class="pd-menu-item" index="/page">黑名单管理</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/customer/tag">客户标签</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/customer/blackList">黑名单管理</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="6">
       <template #title>

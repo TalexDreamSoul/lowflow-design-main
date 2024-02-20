@@ -36,69 +36,63 @@
       >
     </div>
     <div class="content">
-      <el-watermark content="11111" :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="id" label="客户ID" width="186" />
-          <el-table-column prop="name" label="客户名" width="189" />
-          <el-table-column prop="itFinCode" label="互金客户号" width="185" />
-          <el-table-column
-            prop="phone"
-            label="手机号"
-            width="187"
-          ></el-table-column>
-          <el-table-column prop="sex" label="性别" width="188">
-            <template #default="scope">
-              {{
-                PEOPLE_SEX.find((v) => checkStringEqual(v.value, scope.row.sex))
-                  ?.label || "未知"
-              }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="province"
-            label="省份"
-            width="187"
-          ></el-table-column>
-          <el-table-column
-            prop="city"
-            label="城市"
-            width="186"
-          ></el-table-column>
-          <el-table-column
-            prop="birthday"
-            label="生日"
-            width="188"
-          ></el-table-column>
-          <el-table-column prop="source" label="来源" width="186">
-            <template #default="scope">
-              {{
-                PEOPLE_SOURCE.find((v) =>
-                  checkStringEqual(v.value, scope.row.source)
-                )?.label
-              }}
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" min-width="158">
-            <template #default="scope">
-              <el-button
-                :disabled="scope.row.source !== peopleSourceEnum.Manual"
-                link
-                type="primary"
-                class="action-btn"
-                @click="handleDelete(scope.row)"
-                >删除</el-button
-              >
-              <el-button
-                @click="handleModal(DrawerType.Detail, scope.row)"
-                link
-                type="primary"
-                class="action-btn"
-                >查看详情</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-watermark>
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column prop="id" label="客户ID" width="186" />
+        <el-table-column prop="name" label="客户名" width="189" />
+        <el-table-column prop="itFinCode" label="互金客户号" width="185" />
+        <el-table-column
+          prop="phone"
+          label="手机号"
+          width="187"
+        ></el-table-column>
+        <el-table-column prop="sex" label="性别" width="188">
+          <template #default="scope">
+            {{
+              PEOPLE_SEX.find((v) => checkStringEqual(v.value, scope.row.sex))
+                ?.label || "未知"
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="province"
+          label="省份"
+          width="187"
+        ></el-table-column>
+        <el-table-column prop="city" label="城市" width="186"></el-table-column>
+        <el-table-column
+          prop="birthday"
+          label="生日"
+          width="188"
+        ></el-table-column>
+        <el-table-column prop="source" label="来源" width="186">
+          <template #default="scope">
+            {{
+              PEOPLE_SOURCE.find((v) =>
+                checkStringEqual(v.value, scope.row.source)
+              )?.label
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" min-width="158">
+          <template #default="scope">
+            <el-button
+              :disabled="scope.row.source !== peopleSourceEnum.Manual"
+              link
+              type="primary"
+              class="action-btn"
+              @click="handleDelete(scope.row)"
+              >删除</el-button
+            >
+            <el-button
+              @click="handleModal(DrawerType.Detail, scope.row)"
+              link
+              type="primary"
+              class="action-btn"
+              >查看详情</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
       <el-pagination
         background
         layout="prev, pager, next, sizes, jumper"
@@ -221,12 +215,66 @@
           />
         </el-form-item>
       </el-form>
-      <div class="people-detail" v-if="checkStringEqual(modalType, DrawerType.Detail)">
+      <div
+        class="people-detail"
+        v-if="checkStringEqual(modalType, DrawerType.Detail)"
+      >
         <div class="info">
           <div class="user">
-            <div class="avatar"></div>
-            
+            <div class="avatar">
+              <img
+                v-if="modalData?.custom?.avatar"
+                :src="modalData?.custom?.avatar"
+                alt=""
+              />
+            </div>
+            <div class="user-content">
+              <div class="name">{{ modalData?.custom?.name }}</div>
+              <div class="desc">xxx</div>
+            </div>
           </div>
+          <el-table :data="[modalData?.custom]" style="width: 100%">
+            <el-table-column prop="id" label="客户ID" width="120" />
+            <el-table-column prop="itFinCode" label="互金客户号" width="120" />
+            <el-table-column
+              prop="phone"
+              label="手机号"
+              width="120"
+            ></el-table-column>
+            <el-table-column prop="sex" label="性别" width="71">
+              <template #default="scope">
+                {{
+                  PEOPLE_SEX.find((v) =>
+                    checkStringEqual(v.value, scope.row.sex)
+                  )?.label || "未知"
+                }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="province"
+              label="省份"
+              width="111"
+            ></el-table-column>
+            <el-table-column
+              prop="city"
+              label="城市"
+              width="90"
+            ></el-table-column>
+            <el-table-column
+              prop="birthday"
+              label="生日"
+              width="120"
+            ></el-table-column>
+          </el-table>
+        </div>
+        <div class="tag">
+          <div class="title">客户标签</div>
+          <div class="tag-content">
+            <el-tag v-for="item of (modalData?.labels || [])">{{ item.labelName }}：{{ item.labelValue?.data?.join?.('、') }}</el-tag>
+          </div>
+        </div>
+        <div class="black-list">
+          <div class="title">所在黑名单</div>
         </div>
       </div>
       <template #footer>
@@ -280,7 +328,7 @@ enum DrawerType {
 
 const ModalTitleMap: any = {
   [DrawerType.Create]: "手动添加客户",
-  [DrawerType.Detail]: "属性详情",
+  [DrawerType.Detail]: "客户详情",
   [DrawerType.Edit]: "编辑属性",
 };
 
@@ -300,6 +348,7 @@ const defaultFormValues = {
   itFinCode: "",
 };
 let formValues = reactive({ ...defaultFormValues });
+let modalData = reactive<any>({});
 
 const formRef = ref<FormInstance>();
 
@@ -334,15 +383,13 @@ const getData = async (params: any) => {
   }
 };
 
-const handleModal = (type: string, values?: any) => {
+const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Create) {
     Object.assign(formValues, defaultFormValues);
   } else {
-    let { eventAttr, ...params } = values;
-    Object.assign(formValues, {
-      ...params,
-      attrTableData: eventAttr?.attrs || [],
-    });
+    let res = await API.customDetail({ id: values?.id });
+    if (!checkStringEqual(res?.code, 0)) return;
+    Object.assign(modalData, res?.data);
   }
   modalType.value = type;
   modalVisible.value = true;
@@ -389,6 +436,56 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     gap: 16px;
     > div {
       flex: 1;
+    }
+  }
+  .people-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    > div > .title {
+      color: rgba(0, 0, 0, 0.9);
+    }
+    .info {
+      background-color: rgba(144, 160, 184, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .tag-content {
+      margin-top: 8px;
+      .el-tag {
+        padding: 8px;
+        font-size: 14px;
+        line-height: 16px;
+      }
+    }
+    .user {
+      display: flex;
+      padding: 16px;
+      gap: 16px;
+      align-items: center;
+      .avatar {
+        width: 60px;
+        height: 60px;
+        overflow: hidden;
+        border-radius: 50%;
+        background-color: black;
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .name {
+        font-size: 18px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.9);
+      }
+    }
+    .el-table {
+      border-radius: 0;
+
+      .el-table__cell {
+        background-color: rgba(242, 244, 248, 1);
+      }
     }
   }
 }
