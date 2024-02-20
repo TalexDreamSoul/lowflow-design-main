@@ -46,7 +46,10 @@ const origin =
 const data = reactive<typeof origin>(origin)
 
 watchEffect(() => {
-  const _data = props.data.value
+  const _data = props.data?.value
+  if (!_data) return
+
+  console.log("znx", data, origin, props);
 
   Object.assign(data, _data)
 })

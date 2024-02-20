@@ -151,6 +151,10 @@ const res = useDraggable(el, list, {
       border: 2px dashed #7D7D7D50;
     }
 
+    .content-container {
+      width: calc(100% - 30px)
+    }
+
     position: relative;
     padding: 1rem;
 

@@ -8,7 +8,7 @@ import MicroEnterpriseDrag from "./MicroEnterpriseDrag.vue";
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 
-const action = `${import.meta.env.VITE_API_BASE_PATH}/api/uploadMaterialFile.do`
+const action = `api/uploadMaterialFile.do`
 
 const props = defineProps<{
   data: any
@@ -49,7 +49,8 @@ const origin = {
 const data = reactive<typeof origin>(origin);
 
 watchEffect(() => {
-  const _data = props.data.value
+  const _data = props.data?.value
+  if (!_data) return
 
   Object.assign(data, _data)
 })
@@ -128,7 +129,8 @@ function addMessage() {
     <MicroEnterpriseDrag style="margin-bottom: 6.5rem" v-model="list" />
 
     <div class="FloatFixed">
-      <el-upload :action="action" :on-success="addPic" :auto-upload="false"
+      <el-upload :action="action" :on-success="addPic" :auto-upload="true"
+      :show-file-list="false"
         class="upload-demo button-groupupload">
         <el-text type="primary" style="cursor: pointer;">
           <el-icon size="14">
@@ -150,6 +152,9 @@ function addMessage() {
 </template>
 <style lang="scss" scoped>
 .FloatFixed {
+  & > div {
+    height: 40px;
+  }
   position: absolute;
 
   width: calc(100% - 5rem);

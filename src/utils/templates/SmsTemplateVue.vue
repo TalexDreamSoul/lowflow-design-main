@@ -38,7 +38,7 @@ const origin = {
 const data = reactive<typeof origin>(origin);
 watchEffect(() => {
   const _data = props.data.value;
-  console.log(data, origin);
+  console.log("sms", data, origin,);
   Object.assign(data, _data);
 });
 function saveData() {

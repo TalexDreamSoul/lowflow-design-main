@@ -8,7 +8,9 @@ import XFlow from './x/XFlow.vue'
 import { ArrowRight } from "@element-plus/icons-vue";
 import { useRouter } from 'vue-router'
 import { ElMessage } from "element-plus";
+// import { createTemplatePopover } from '../utils/touch-templates'
 
+// createTemplatePopover('新建企微模版', '')
 const props = defineProps<{
   modelValue?: Request;
   readonly?: boolean;
@@ -40,14 +42,15 @@ watchEffect(() => {
   if (props.modelValue) {
     const data = props.modelValue
 
-    Object.assign(flowOptions, {
-      basic: {
-        touchName: data.touchName,
-        disturb: disturbReduction(data),
-        target: targetReduction(data),
-      },
-      p: data
+    console.log("!!!", data)
+
+    Object.assign(flowOptions.basic, {
+      touchName: data.touchName,
+      disturb: disturbReduction(data),
+      target: targetReduction(data),
     })
+
+    flowOptions.p.children = data.nodes as any
 
     //   touchName: flowOptions.basic.touchName,
     //   ...transformDisturb(flowOptions.basic.disturb),
@@ -149,7 +152,7 @@ async function submitReview(status: string = 'approvalPending') {
 
   const res = await touchSubmitReview(data)
 
-  if (+res.code) {
+  if (!+res.code) {
     return ElMessage({
       message: res.msg,
       type: "success",
