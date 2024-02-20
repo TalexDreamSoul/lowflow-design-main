@@ -4,6 +4,8 @@ import BasicTarget from "../page/BasicTarget.vue";
 import { useRouter } from "vue-router";
 const props = defineProps<{
   basic: any;
+  expandAll?: boolean;
+  readonly?: boolean
 }>();
 
 const emits = defineEmits<{
@@ -24,22 +26,22 @@ const goBack = () => {
   <div class="TouchFlow-Header">
     <div class="TouchFlow-Header-Start">
       <span>策略流程名称：</span>
-      <el-input placeholder="策略流程名称" v-model="basic.touchName" :style="{ width: '400px', height: '40px' }" />
+      <el-input :disabled="readonly" placeholder="策略流程名称" v-model="basic.touchName" :style="{ width: '400px', height: '40px' }" />
     </div>
-    <div>
+    <div v-if="!expandAll">
       <el-button  @click="goBack" round>返回</el-button>
       <el-button @click="submitReview('draft')" round>保存草稿</el-button>
       <el-button round type="primary" @click="submitReview" primaryStyle>提交审核</el-button>
     </div>
   </div>
 
-  <div class="TouchFlow-Addon" v-show="basic._expand">
+  <div :class="{ expandAll }" class="TouchFlow-Addon" v-show="basic._expand || expandAll">
     <el-scrollbar>
-      <BasicDisturb :disturb="basic.disturb" />
-      <BasicTarget :target="basic.target" />
+      <BasicDisturb :readonly="readonly" :disturb="basic.disturb" />
+      <BasicTarget :readonly="readonly" :target="basic.target" />
     </el-scrollbar>
   </div>
-  <div @click="basic._expand = !basic._expand" :class="basic._expand ? 'baseSet baseSetpoz' : 'baseSet'">
+  <div v-if="!expandAll" @click="basic._expand = !basic._expand" :class="basic._expand ? 'baseSet baseSetpoz' : 'baseSet'">
     {{ basic._expand ? "收起" : "展开" }}基础设置
     <el-icon class="icondown" :style="{ transform: basic._expand ? 'rotate(-90deg)' : 'rotate(90deg)' }">
       <DArrowRight />
@@ -119,6 +121,9 @@ const goBack = () => {
 }
 
 .TouchFlow-Addon {
+  &.expandAll {
+    height: 400px;
+  }
   height: calc(100% - 60px);
 }
 

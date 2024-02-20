@@ -204,7 +204,7 @@ onMounted(() => {
 
       </div>
       <div class="contentflow">
-        <FlowPage  :modelValue="marketingDetail" :readonly="true"/>
+        <FlowPage  v-model="marketingDetail" :readonly="true"/>
       </div>
 
     </div>

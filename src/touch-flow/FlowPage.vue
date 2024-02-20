@@ -1,16 +1,16 @@
 <script setup lang="ts" name="FlowPage">
-import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
+import { watchEffect, onMounted, reactive, ref } from "vue";
 import FlowHeader from "../touch-flow/page/FlowHeader.vue";
 // import TouchFlow from "./TouchFlow.vue";
 import { randomStr } from "~/utils/common";
 import { touchSubmitReview, type Request, type MarketingTouchNodeEditDTO } from './touch-total'
 import XFlow from './x/XFlow.vue'
+import { ArrowRight } from "@element-plus/icons-vue";
 
 const props = defineProps<{
-  modelValue?: any;
+  modelValue?: Request;
   readonly?: boolean;
 }>();
-console.log(`output->modelValue~~~~~~~~~~~~~~~~~~~~~`,props.modelValue)
 
 const flowOptions = reactive({
   basic: {
@@ -33,9 +33,27 @@ const flowOptions = reactive({
   },
 });
 
-if ( props.modelValue ) {
-  Object.assign(flowOptions, props.modelValue)
-}
+watchEffect(() => {
+  if (props.modelValue) {
+    const data = props.modelValue
+
+    Object.assign(flowOptions, {
+      basic: {
+        touchName: data.touchName,
+        disturb: disturbReduction(data),
+        target: targetReduction(data),
+      },
+      p: data
+    })
+
+    //   touchName: flowOptions.basic.touchName,
+    //   ...transformDisturb(flowOptions.basic.disturb),
+    // ...transformTarget(flowOptions.basic.target)
+
+
+    console.log('FlowPage updated!', props.modelValue)
+  }
+})
 
 function transformDisturb(disturb: typeof flowOptions.basic.disturb) {
   return {
@@ -60,6 +78,13 @@ function transformTarget(target: typeof flowOptions.basic.target) {
     targetRuleContent: {
       data: target.list
     },
+  }
+}
+
+function targetReduction(data: Request) {
+  return {
+    enable: data.containTarget ?? props.readonly,
+    list: data.targetRuleContent?.data || [],
   }
 }
 
@@ -94,7 +119,7 @@ function transformNodes(__nodes: Array<any>) {
 
 async function submitReview(status: string = 'approvalPending') {
   if (props.readonly) return
-  
+
   console.log("transformNodes", flowOptions.p.children)
 
   const _flowOptions: any = {
@@ -127,20 +152,21 @@ console.log("total flow", flowOptions);
 
 <template>
   <div class="FlowPage">
-    <el-container :class="{ readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
+    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
       <el-header>
-        <FlowHeader v-if="!readonly" @submit-review="submitReview" :basic="flowOptions.basic" />
+        <FlowHeader v-if="!modelValue || !readonly" @submit-review="submitReview" :basic="flowOptions.basic" />
         <div v-else class="FlowPage-ReadHeader">
           流程基础设置
-          &nbsp;&nbsp;
-          <el-text>
-            <el-button type="primary" @click="dialogVisible = true">查看设置</el-button>
-          </el-text>
+          <el-button text type="primary" @click="dialogVisible = true">
+            查看设置<el-icon>
+              <ArrowRight />
+            </el-icon>
+          </el-button>
         </div>
       </el-header>
       <el-main>
         <el-scrollbar>
-          <XFlow :p="flowOptions.p" />
+          <XFlow :p="flowOptions.p as any" />
           <!-- <TouchFlow :p="flowOptions.p" /> -->
         </el-scrollbar>
       </el-main>
@@ -148,9 +174,10 @@ console.log("total flow", flowOptions);
   </div>
 
   <teleport to="body">
-    <el-drawer v-model="dialogVisible">
-      <FlowHeader @submit-review="submitReview" :basic="flowOptions.basic" />
-    </el-drawer>
+    <el-dialog v-model="dialogVisible">
+      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview"
+        :basic="flowOptions.basic" />
+    </el-dialog>
   </teleport>
 </template>
 
@@ -162,6 +189,16 @@ div.el-dialog {
 .FlowPage-Container.expand {
   .el-header {
     height: auto;
+  }
+}
+
+.FlowPage-Container.shrink {
+  .el-header {
+    height: 32px;
+    line-height: 32px;
+
+    font-size: 14px;
+    font-weight: 600;
   }
 }
 
