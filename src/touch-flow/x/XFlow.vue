@@ -115,7 +115,7 @@ const layoutFn = () => {
               position: 'bottom',
               attrs: {
                 circle: {
-                  stroke: 'red',
+                  stroke: 'transparent',
                   strokeWidth: 1,
                   fill: 'transparent',
                 },
@@ -126,9 +126,9 @@ const layoutFn = () => {
               position: 'top',
               attrs: {
                 circle: {
-                  stroke: 'green;',
+                  stroke: 'transparent;',
                   strokeWidth: 1,
-                  fill: 'green',
+                  fill: 'transparent',
                 },
               },
             },

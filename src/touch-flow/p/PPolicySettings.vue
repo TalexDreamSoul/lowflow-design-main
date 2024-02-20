@@ -13,7 +13,8 @@ const data = reactive(_data.data)
 
 const dialogVisible = ref(false)
 const drawerOptions = reactive<any>({
-  visible: false
+  visible: false,
+  new: false
 })
 
 const doDiverse = computed(() => {
@@ -100,13 +101,10 @@ function openCondition() {
   })
 }
 
-function openDrawer(comp: any) {
+function openDrawer(comp: any, doNew: boolean = false) {
   dialogVisible.value = false
 
-  Object.assign(drawerOptions, {
-    ...comp,
-    new: true
-  })
+  Object.assign(drawerOptions, { ...comp, new: doNew })
 
   if (!data.executeType)
     data.executeType = "immediately";
@@ -218,7 +216,7 @@ function del(p: any) {
     <teleport to="body">
       <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section">
+          <div @click="openDrawer(item, true)" v-for="item in comps" class="PBlock-Section" :class="{ disabled: item.disabled?.value }">
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />

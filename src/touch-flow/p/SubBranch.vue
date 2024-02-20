@@ -197,7 +197,7 @@ provide('save', (regFunc: () => boolean) => {
     <teleport to="body">
       <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section">
+          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section" :class="{ disabled: item.disabled?.value }">
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />

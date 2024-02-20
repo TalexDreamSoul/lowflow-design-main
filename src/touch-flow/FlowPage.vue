@@ -6,6 +6,8 @@ import { randomStr } from "~/utils/common";
 import { touchSubmitReview, type Request, type MarketingTouchNodeEditDTO } from './touch-total'
 import XFlow from './x/XFlow.vue'
 import { ArrowRight } from "@element-plus/icons-vue";
+import { useRouter } from 'vue-router'
+import { ElMessage } from "element-plus";
 
 const props = defineProps<{
   modelValue?: Request;
@@ -147,10 +149,23 @@ async function submitReview(status: string = 'approvalPending') {
 
   const res = await touchSubmitReview(data)
 
+  if (+res.code) {
+    return ElMessage({
+      message: res.msg,
+      type: "success",
+      duration: 1000,
+      onClose: () => {
+        router.go(-1);
+      },
+    })
+  }
+
   console.log(res, data)
 
   console.groupEnd()
 }
+
+const router = useRouter();
 
 const dialogVisible = ref()
 
