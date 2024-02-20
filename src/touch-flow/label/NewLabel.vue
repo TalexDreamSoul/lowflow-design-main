@@ -1,7 +1,11 @@
 <script setup lang="ts" name="NewLabel">
 import { CirclePlusFilled } from '@element-plus/icons-vue';
-import { reactive, ref } from 'vue';
+import { reactive, ref, watch, computed } from 'vue';
+import { getLabelList } from '../../api/index'
 
+const props = defineProps<{
+  p: any
+}>()
 const model = reactive<any>({
   labelName: '',
   labelType: '',
@@ -11,6 +15,13 @@ const model = reactive<any>({
   labelValueType: 'text'
 })
 const visible = ref(false)
+const labelList = ref<any[]>([])
+
+!(async() => {
+  const data = (await getLabelList())
+
+  labelList.value = data.data.records
+})()
 
 function addLabel() {
   model.labelValue.data.push("")
@@ -23,15 +34,32 @@ function save() {
 function handleDelete(index: number) {
   model.labelValue.data.splice(index, 1)
 }
+
+const selectItem = computed(() => [ ...labelList.value ].find((item: any) => item.labelName === props.p.labelContent.labelName))
+
+watch(() => props.p.labelContent?.labelName, () => {
+  const res = selectItem.value
+
+  if ( res ) {
+    props.p.labelContent.labelId = res.id
+  }
+})
 </script>
 
 <template>
   <div class="NewLabel">
     <div class="NewLabel-Main">
-      符合该策略器条件的用户打上
-      <el-select placeholder="标签名称" style="width: 150px" />
-      <el-select placeholder="标签值" style="width: 150px" />
-      标签
+      <el-text>
+        符合该策略器条件的用户打上
+        <el-select v-model="p.labelContent.labelName" placeholder="标签名称" style="width: 150px">
+          <el-option v-for="item in labelList" :key="item.labelName" :label="item.labelName" :value="item.labelName" />
+        </el-select>
+        &nbsp;
+        <el-select v-if="selectItem" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px">
+          <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
+        </el-select>
+        标签
+      </el-text>
     </div>
 
     <el-button @click="visible = true">

@@ -81,6 +81,11 @@ const origin = {
       logicalChar: '或'
     },
     logicalChar: '或'
+  },
+  labelContent: {
+    labelId: -1,
+    labelName: '',
+    labelValue: []
   }
 };
 
@@ -362,7 +367,7 @@ const platformOptions: any = {
       </BehaviorGroupPlus>
 
       <BehaviorGroupPlus title="标签设置" color="#277AE7">
-        <NewLabel />
+        <NewLabel :p="sizeForm" />
         <!-- <div class="BlockBackground-Under">
           符合该策略器条件的用户打上 &nbsp;
           <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />

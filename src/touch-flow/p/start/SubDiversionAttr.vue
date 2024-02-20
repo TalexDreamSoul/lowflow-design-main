@@ -97,6 +97,11 @@ const origin = {
     delayedUnit: '',
     isDelayed: false
   },
+  labelContent: {
+    labelId: -1,
+    labelName: '',
+    labelValue: []
+  }
 };
 
 const marketingTouchNode = ref({
@@ -248,7 +253,7 @@ const platformOptions: any = {
 
       <!-- v-if="`${("" + sizeForm.eventDelayed.delayedAction).contains('label')}`" -->
       <BehaviorGroupPlus title="标签设置" color="#277AE7">
-        <NewLabel />
+        <NewLabel :p="sizeForm" />
         <!-- <div class="BlockBackground-Under">
           符合该策略器条件的用户打上 &nbsp;
           <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />
