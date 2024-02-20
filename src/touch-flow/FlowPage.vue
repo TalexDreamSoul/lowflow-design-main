@@ -7,7 +7,7 @@ import { touchSubmitReview, type Request, type MarketingTouchNodeEditDTO } from 
 import XFlow from './x/XFlow.vue'
 
 const props = defineProps<{
-  modelValue?: boolean;
+  modelValue?: any;
   readonly?: boolean;
 }>();
 console.log(`output->modelValue~~~~~~~~~~~~~~~~~~~~~`,props.modelValue)
@@ -15,7 +15,7 @@ console.log(`output->modelValue~~~~~~~~~~~~~~~~~~~~~`,props.modelValue)
 const flowOptions = reactive({
   basic: {
     _expand: false,
-    touchName: "test",
+    touchName: "",
     disturb: {
       enable: false,
       time: [],
@@ -32,6 +32,10 @@ const flowOptions = reactive({
     children: [],
   },
 });
+
+if ( props.modelValue ) {
+  Object.assign(flowOptions, props.modelValue)
+}
 
 function transformDisturb(disturb: typeof flowOptions.basic.disturb) {
   return {
