@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ElMessage } from "element-plus";
-import { inject, markRaw, reactive, ref, watchEffect } from "vue";
+import { inject, toRaw, reactive, ref, watchEffect } from "vue";
 import { getQryMaterial, getmarketingTouchEstimate } from "~/api";
-import { randomStr } from "~/utils/common";
 import NewLabel from '../../label/NewLabel.vue';
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
-import EventBehavior from "../behavior/EventBehavior.vue";
 import DiversionBehavior from "../behavior/diversion/DiversionBehavior.vue";
 import TouchSettingContents from '../touch/TouchSettingContents.vue';
 
@@ -13,7 +11,6 @@ const origin = {
   nodeId: "",
   nodeType: "subDiversion",
   nodeName: "默认分支",
-  value1: false,
 
   targetRuleContent: {
     targetDelayed: {
@@ -75,12 +72,6 @@ const origin = {
       logicalChar: "或"
     }
   },
-  isDelayed: false,
-  selectedType: "day",
-  delayedAction: "day",
-  cascaderLabel: "sms",
-  do: false,
-  num: 1,
   touch: {
     type: -1,
     content: "",
@@ -124,16 +115,13 @@ const props = defineProps<{
 
 const sizeForm = reactive<typeof origin>(origin);
 
-watchEffect(() => {
-  const { nodeType, nodeId } = props.p
+const { nodeType, nodeId } = props.p
 
-  if (props.new || nodeType !== 'subDiversion') return
-
+if (!props.new && nodeType === 'subDiversion') {
   if (nodeId) {
-    Object.assign(sizeForm, props.p);
-    // sizeForm.nodeId = nodeId;
+    Object.assign(sizeForm, props.p)
   }
-})
+}
 
 async function refreshMaterialTemplate() {
   sizeForm.touch.type = -1
