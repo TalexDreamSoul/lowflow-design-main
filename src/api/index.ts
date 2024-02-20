@@ -97,6 +97,30 @@ export const updateMaterial = (data: any) => {
   });
 };
 
+export const addCustomLabel = (data: {
+  labelValueType: string;
+  labelValue: {
+    data: string[];
+  };
+  labelName: string;
+}) => {
+  const defaultVal = {
+    labelValueType: "",
+    labelValue: {
+      data: [],
+    },
+    labelName: "",
+  };
+
+  return request.post({
+    url: "/api/addCustomLabel.do",
+    data: {
+      ...defaultVal,
+      ...data,
+    },
+  });
+};
+
 export const getLabelList = (data?: {
   beginTime?: string;
   endTime?: string;
