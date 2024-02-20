@@ -106,7 +106,10 @@ function handleSave() {
 }
 
 const pushTemplate = computed(() => {
-  const { type } = data.material
+  const { type, templates } = data.material
+  const { type: targetId } = data.touch
+
+  const res = templates.filter((item: any) => item.id === targetId)?.[0]?.name || 'ERROR'
 
   let val;
 
@@ -124,7 +127,7 @@ const pushTemplate = computed(() => {
 
   return {
     has: type?.length,
-    val
+    val: `${val}${res}`
   }
 })
 
@@ -136,53 +139,41 @@ provide('save', (regFunc: () => boolean) => {
 <template>
   <el-card style="width: 355px" class="PBlock">
     <p class="title">
-        流量策略器
+      流量策略器
       <span style="float: right">
-        分支{{ data.nodeName }}
-        <span style="color: green;font-weight: 600">{{data.ratio}}%</span>
+        {{ data.nodeName }}
+        <span style="color: green;font-weight: 600">{{ data.ratio }}%</span>
       </span>
     </p>
     <div @click="openCondition" class="PBlock-Content theme">
-    <template v-if="data.diversionType || data.eventDelayed?.isDelayed">
-      <div style="--theme-color: #90A0B8" class="PBlock-Section">
-        
-        <div style="--theme-color: #90A0B8" class="PBlock-Section">
-          <p>
-            客户属性行为分流
-          </p>
-          <span v-if="data.diversionType === 'noDiversion'">
-            不分流
-          </span>
-          <span v-else-if="data.diversionType === 'attr'">
-            按属性用户行为分流
-          </span>
-          <span v-else-if="data.diversionType === 'event'">按触发事件分流</span>
+      <template v-if="data.diversionType || data.eventDelayed?.isDelayed">
+        <div style="display: flex; flex-direction: column; gap: 1rem" >
+          <div style="--theme-color: #7DC757" class="PBlock-Section">
+            <p>
+              延迟设置
+            </p>
+            <span v-if="data.eventDelayed?.isDelayed">
+              符合该策略器 {{ data.eventDelayed.delayedTime }} {{ data.eventDelayed.delayedUnit }} 后 {{
+                data.eventDelayed.delayedAction }}
+            </span>
+            <span v-else>立即针对符合该策略器条件的客户发送触达</span>
+          </div>
+          <div v-if="pushTemplate.has" style="--theme-color: #FFB858" class="PBlock-Section">
+            <p>
+              APP推送
+            </p>
+            <span>{{ pushTemplate.val }}</span>
+          </div>
+
         </div>
-        <div style="--theme-color: #7DC757" class="PBlock-Section">
-          <p>
-            延迟设置
-          </p>
-          <span v-if="data.eventDelayed?.isDelayed">
-            符合该策略器 {{ data.eventDelayed.delayedTime }} {{ data.eventDelayed.delayedUnit }} 后 {{ data.eventDelayed.delayedAction }}
-          </span>
-          <span v-else>立即针对符合该策略器条件的客户发送触达</span>
-        </div>
-        <div v-if="pushTemplate.has" style="--theme-color: #FFB858" class="PBlock-Section">
-          <p>
-            APP推送
-          </p>
-          <span>{{ pushTemplate.val }}</span>
-        </div>
-        
-      </div>
       </template>
-        <template v-else>
-          <el-empty>
-            <template #description>
-              暂未配置.
-            </template>
-          </el-empty>
-        </template>
+      <template v-else>
+        <el-empty>
+          <template #description>
+            暂未配置.
+          </template>
+        </el-empty>
+      </template>
     </div>
 
     <teleport to="body">

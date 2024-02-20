@@ -100,19 +100,14 @@ const props = defineProps<{
 
 const sizeForm = reactive<typeof origin>(origin);
 
-function reset() {
-  Object.assign(sizeForm, origin);
-  console.log(sizeForm, origin, props.p)
-}
-reset()
-
 watchEffect(() => {
   const { nodeType, nodeId } = props.p
 
   if (props.new || nodeType !== 'strategy') return
 
   if (nodeId) {
-    sizeForm.nodeId = nodeId;
+    Object.assign(sizeForm, props.p);
+    // sizeForm.nodeId = nodeId;
   }
 })
 
@@ -322,7 +317,7 @@ const platformOptions: any = {
           <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
         <template v-if="sizeForm.eventDelayed.isDelayed">
           <el-input v-model="sizeForm.eventDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
-          <el-select v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
+          <el-select placeholder="请选择" v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
             <el-option value="month" label="月份">分钟</el-option>
             <el-option value="week" label="周">小时</el-option>
             <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;

@@ -6,74 +6,75 @@ import { randomStr } from "~/utils/common";
 import NewLabel from '../../label/NewLabel.vue';
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import EventBehavior from "../behavior/EventBehavior.vue";
+import DiversionBehavior from "../behavior/diversion/DiversionBehavior.vue";
 import TouchSettingContents from '../touch/TouchSettingContents.vue';
 
 const origin = {
   nodeId: "",
   nodeType: "subDiversion",
-  nodeName: "test",
+  nodeName: "默认分支",
   value1: false,
 
   targetRuleContent: {
-				targetDelayed: {
-					delayedAction: "",
-					delayedTime: 0,
-					delayedType: "",
-					delayedUnit: "day",
-					isDelayed: false
-				},
-				targetRuleContent: {
-					eventSequence: {
-						conditions: [
-							{
-								conditions: [
-									{
-										action: "",
-										conditions: {
-											conditions: [
-												{
-													attr: {
-														field: "",
-														fieldMultiValue: [],
-														fieldName: "",
-														fieldOp: "",
-														fieldRangeValue: "",
-														fieldType: "",
-														fieldValue: "",
-														timeCondition: {
-															endDay: 0,
-															endTime: "",
-															isFuture: false,
-															isWithin: false,
-															startDay: 0,
-															startTime: "",
-															timeType: ""
-														}
-													},
-													label: {
-														labelId: 0,
-														labelName: "",
-														labelValue: []
-													},
-													type: ""
-												}
-											],
-											logicalChar: ""
-										},
-										eventCode: "",
-										eventName: ""
-									}
-								],
-								endTime: "",
-								logicalChar: "",
-								startTime: ""
-							}
-						],
-						logicalChar: ""
-					},
-					logicalChar: ""
-				}
-			},
+    targetDelayed: {
+      delayedAction: "",
+      delayedTime: 0,
+      delayedType: "",
+      delayedUnit: "day",
+      isDelayed: false
+    },
+    targetRuleContent: {
+      eventSequence: {
+        conditions: [
+          {
+            conditions: [
+              {
+                action: "",
+                conditions: {
+                  conditions: [
+                    {
+                      attr: {
+                        field: "",
+                        fieldMultiValue: [],
+                        fieldName: "",
+                        fieldOp: "",
+                        fieldRangeValue: "",
+                        fieldType: "",
+                        fieldValue: "",
+                        timeCondition: {
+                          endDay: 0,
+                          endTime: "",
+                          isFuture: false,
+                          isWithin: false,
+                          startDay: 0,
+                          startTime: "",
+                          timeType: ""
+                        }
+                      },
+                      label: {
+                        labelId: 0,
+                        labelName: "",
+                        labelValue: []
+                      },
+                      type: ""
+                    }
+                  ],
+                  logicalChar: "或"
+                },
+                eventCode: "",
+                eventName: ""
+              }
+            ],
+            endTime: "",
+            logicalChar: "或",
+            startTime: ""
+          }
+        ],
+        logicalChar: "或"
+      },
+      logicalChar: "或"
+    }
+  },
   isDelayed: false,
   selectedType: "day",
   delayedAction: "day",
@@ -105,38 +106,6 @@ const origin = {
     delayedUnit: '',
     isDelayed: false
   },
-  customRuleContent: {
-    customAttr: {
-      conditions: [
-
-      ],
-      logicalChar: '或'
-    },
-    customEvent: {
-      conditions: [
-
-      ],
-      logicalChar: '或'
-    },
-    eventSequence: {
-      conditions: [
-
-      ],
-      logicalChar: '或'
-    },
-    logicalChar: '或'
-  },
-  eventRuleContent: {
-    customEvent: {
-      conditions: [
-        {
-          conditions: [{}]
-        }
-      ],
-      logicalChar: '或'
-    },
-    logicalChar: '或'
-  }
 };
 
 const marketingTouchNode = ref({
@@ -155,19 +124,14 @@ const props = defineProps<{
 
 const sizeForm = reactive<typeof origin>(origin);
 
-function reset() {
-  Object.assign(sizeForm, origin);
-  console.log(sizeForm, origin, props.p)
-}
-reset()
-
 watchEffect(() => {
   const { nodeType, nodeId } = props.p
 
-  if (props.new || nodeType !== 'strategy') return
+  if (props.new || nodeType !== 'subDiversion') return
 
   if (nodeId) {
-    sizeForm.nodeId = nodeId;
+    Object.assign(sizeForm, props.p);
+    // sizeForm.nodeId = nodeId;
   }
 })
 
@@ -198,38 +162,7 @@ function saveData() {
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)
 
-  Object.defineProperty(_, 'father', {
-    value: markRaw(props.p),
-    enumerable: false
-  })
-
-  // 修改 Modify Edit
-  if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {
-
-    Object.assign(props.p, _)
-
-  } else {
-
-    const arr = [...props.p.children];
-
-    while (arr.length) {
-      const item = arr.shift();
-
-      if (item.nodeName === _.nodeName) {
-        ElMessage.warning({
-          message: "策略名称重复",
-        });
-
-        return false;
-      }
-
-    }
-
-    _.nodeId = randomStr(12)
-
-    props.p.children.push(_);
-
-  }
+  Object.assign(props.p, _)
 
   return true;
 }
@@ -258,48 +191,6 @@ const estimation = async () => {
   console.log("Mounted", res);
 };
 
-function attrsAdd() {
-  let attr: any = sizeForm.customRuleContent!.customAttr!.conditions! = (sizeForm.customRuleContent!.customAttr!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
-
-function behaviorAdd() {
-  let attr: any = sizeForm.customRuleContent!.customEvent!.conditions! = (sizeForm.customRuleContent!.customEvent!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
-
-function sequenceAdd() {
-  let attr: any = sizeForm.customRuleContent!.eventSequence!.conditions! = (sizeForm.customRuleContent!.eventSequence!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: [{}] }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
-
 const platformOptions: any = {
   'sms': "短信",
   'appPush': "app消息",
@@ -323,7 +214,7 @@ const platformOptions: any = {
           <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
         <template v-if="sizeForm.eventDelayed.isDelayed">
           <el-input v-model="sizeForm.eventDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
-          <el-select v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
+          <el-select placeholder="请选择" v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
             <el-option value="month" label="月份">分钟</el-option>
             <el-option value="week" label="周">小时</el-option>
             <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
@@ -367,6 +258,7 @@ const platformOptions: any = {
         </div>
       </BehaviorGroupPlus>
 
+      <!-- v-if="`${("" + sizeForm.eventDelayed.delayedAction).contains('label')}`" -->
       <BehaviorGroupPlus title="标签设置" color="#277AE7">
         <NewLabel />
         <!-- <div class="BlockBackground-Under">
@@ -461,14 +353,15 @@ const platformOptions: any = {
           <div v-if="sizeForm.targetRuleContent.targetDelayed.isDelayed">
             <div class="garyblock">
               <el-text>该策略器的延时以及动作执行完毕后，在</el-text>&nbsp;
-              <el-input v-model="sizeForm.targetRuleContent.targetDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
+              <el-input v-model="sizeForm.targetRuleContent.targetDelayed.delayedTime" type="number"
+                style="width: 100px" />&nbsp;
               <el-select v-model="sizeForm.targetRuleContent.targetDelayed.delayedUnit" style="width: 150px">
                 <el-option value="month" label="月份">分钟</el-option>
                 <el-option value="week" label="周">小时</el-option>
                 <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
               <el-text>后立即判断客户是否完成以下转化事件，则认为完成该策略器模板。</el-text>
             </div>
-            <EventBehavior :custom="sizeForm.eventRuleContent!.customEvent" />
+            <DiversionBehavior :custom="sizeForm.targetRuleContent!.targetRuleContent!.eventSequence" />
           </div>
 
         </div>

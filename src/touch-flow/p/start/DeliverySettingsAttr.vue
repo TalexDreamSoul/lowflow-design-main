@@ -34,12 +34,6 @@ const sizeForm = reactive<typeof origin>(origin);
   });
 })())
 
-function reset() {
-  Object.assign(sizeForm, origin);
-  console.log(sizeForm, origin, props.p)
-}
-reset()
-
 watchEffect(() => {
   const { nodeType, nodeId } = props.p
 
@@ -70,13 +64,16 @@ function saveData() {
     return false;
   }
 
-  if (sizeForm.branches.filter(branch => (branch.ratio === 0 || branch.nodeName.length < 1)).length) {
+  const _map: any = {}
+  if (sizeForm.branches.filter(branch => (branch.ratio === 0 || branch.nodeName.length < 1) || ((m: any) => m[branch.nodeName] === 1 ? true : ((m[branch.nodeName] = 1) && false))(_map)).length) {
     ElMessage.warning({
-      message: "不能存在未命名或配比为0%的流量",
+      message: "不能存在重复、未命名或配比为0%的流量",
     });
 
     return false;
   }
+
+  console.log("==", _map)
 
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)
@@ -94,8 +91,13 @@ function saveData() {
       ratio: branch.ratio,
       nodeId: randomStr(12),
       children: branch.children || [],
-      father: _
+      // father: _
     }
+
+    Object.defineProperty(child, 'father', {
+      value: markRaw(_),
+      enumerable: false
+    })
 
     _.children.push(child)
   });
@@ -120,7 +122,7 @@ const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
 const addBranch = () => {
-  sizeForm.branches.push({ nodeName: "分流器" + (sizeForm.branches.length + 1), ratio: 0 });
+  sizeForm.branches.push({ nodeName: "分流器" + (sizeForm.branches.length + 1), ratio: 0, children: [] });
 };
 
 const deleteBranch = (index: number) => {

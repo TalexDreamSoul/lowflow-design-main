@@ -77,7 +77,7 @@ const attrs = computed(() => {
                 <AttrRender :field="item.field" v-model="item.fieldValue" :attrs="attrs" />
               </el-form-item>
             </el-col>
-            <el-col :xs="24" :sm="3">
+            <el-col class="add-filter__inner" :xs="24" :sm="3">
               <el-text type="primary" style="cursor: pointer;zoom: 0.8;    display: inline-block;width: 100px;" @click="addCondition">
                 <el-icon size="14">
                   <CirclePlusFilled />

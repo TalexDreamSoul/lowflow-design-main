@@ -33,6 +33,8 @@ let treeMap = props.p;
 const getNodeReactive = genIdNodeReactive(props.p)
 
 const layoutFn = () => {
+  console.groupCollapsed('layoutFn');
+
   const result = Hierarchy.compactBox(treeMap, {
     direction: 'TB',
     getWidth() {
@@ -42,10 +44,10 @@ const layoutFn = () => {
       return d.height ? parseInt(d.height) : 120;
     },
     getHGap() {
-      return 30;
+      return 0;
     },
     getVGap() {
-      return 120;
+      return 150;
     },
     getSide: () => {
       return 'bottom';
@@ -57,16 +59,16 @@ const layoutFn = () => {
   } = { nodes: [], edges: [] };
 
   const _: any = {
-    'Start': (height: number) => height - 145,
+    'Start': (height: number) => height - 205,
     'strategy': (height: number, data: any) => {
       console.log("@@@---", data.data)
-      if ( data.data?.father?.nodeType === 'subDiversion' ) return 0
+      if ( data.data?.father?.nodeType === 'subDiversion' ) return 200
       if (data.data.nodeName === '兜底策略器') return height - 155
 
-      return height - 60
+      return height - 200
     },
-    'diversion': (height: number) => height - 232,
-    'subDiversion': (height: number) => height - 140,
+    'diversion': (height: number) => height - 292,
+    'subDiversion': (height: number) => height - 200,
   }
 
   const traverse = (data: any) => {
@@ -144,13 +146,15 @@ const layoutFn = () => {
             },
           ],
         });
-        
+
       });
     }
   };
   traverse(result);
 
   console.log(model)
+
+  console.groupEnd();
 
   _Graph.fromJSON(model);
 };
@@ -164,8 +168,6 @@ onMounted(() => {
 
     layoutFn()
     layoutFn()
-
-    // setTimeout(() => { layoutFn() }, 5)
   })
 });
 
