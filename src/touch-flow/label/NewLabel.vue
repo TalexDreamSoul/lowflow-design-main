@@ -7,14 +7,15 @@ import { ElMessage } from 'element-plus';
 const props = defineProps<{
   p: any
 }>()
-const model = reactive<any>({
+const origin = {
   labelName: '',
   labelType: '',
   labelValue: {
     data: [""]
   },
   labelValueType: 'text'
-})
+}
+const model = reactive<any>(origin)
 const visible = ref(false)
 const labelList = ref<any[]>([])
 
@@ -41,6 +42,8 @@ async function save() {
   }
 
   const res = await addCustomLabel(model)
+
+  Object.assign(model, origin)
 
   refreshLabelList()
 
@@ -78,7 +81,7 @@ watch(() => props.p.labelContent?.labelName, () => {
           <el-option v-for="item in labelList" :key="item.labelName" :label="item.labelName" :value="item.labelName" />
         </el-select>
         &nbsp;
-        <el-select v-if="selectItem" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px">
+        <el-select v-if="selectItem?.labelValue?.data?.[0]?.length" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px">
           <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
         </el-select>
         标签
