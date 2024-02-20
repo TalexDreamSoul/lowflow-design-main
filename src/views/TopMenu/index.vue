@@ -27,8 +27,8 @@
           </el-icon></div>
       </template>
 
-      <el-menu-item class="pd-menu-item" index="/designNew">流程画布</el-menu-item>
-      <el-menu-item class="pd-menu-item" index="/strategyProcessList">策略流程列表</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/design">流程画布</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/strategyProcess">策略流程列表</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="4">
       <template #title>

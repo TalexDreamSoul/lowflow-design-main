@@ -9,6 +9,7 @@ const props = defineProps<{
   field: string;
   attrs: any;
   selected?: string;
+  readonly?: boolean
 }>();
 const emits = defineEmits<{
   (e: "update:modelValue", value: AttrType): void;
@@ -20,8 +21,8 @@ const model = useVModel(props, "modelValue", emits);
 
 <template>
   <div class="AttrRender">
-    <el-input v-if="type === 'num'" v-model.number="model" />
-    <el-input v-else-if="type === 'text'" v-model="model" />
+    <el-input :disabled="readonly" v-if="type === 'num'" v-model.number="model" />
+    <el-input :disabled="readonly" v-else-if="type === 'text'" v-model="model" />
     <span v-else>NULL</span>
   </div>
 </template>

@@ -2,7 +2,7 @@
 import { ref, unref, reactive, onMounted, watch } from "vue";
 import dayjs from "dayjs";
 import {
-  getqryMaterial,
+  getQryMaterial,
   setDeleteMaterial,
   setUpdateMaterialStatus,
 } from "~/api/index";
@@ -65,7 +65,7 @@ watch([currentPage, pageSize, formInline], () => {
   fetchDataApi();
 });
 const fetchDataApi = async () => {
-  const res = await getqryMaterial({
+  const res = await getQryMaterial({
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
     ...formInline,
@@ -124,7 +124,7 @@ const detailsData = async (row: any) => {
 
 const addData = async () => {
   value.value = "";
-  let name= `新建${materialTypeName}模版`
+  let name= '新建'+materialTypeName.value+'模版';
   createTemplatePopover(
     name,
     route.params.type,

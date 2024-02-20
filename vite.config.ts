@@ -20,100 +20,105 @@ const pathSrc = path.resolve(__dirname, 'src')
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    // base: '/lowflow-design',
-    resolve: {
-        alias: {
-            '~/': `${pathSrc}/`,
-        },
+  // base: '/lowflow-design',
+  resolve: {
+    alias: {
+      "~/": `${pathSrc}/`,
+      "@antv/x6": "@antv/x6/lib",
+      "@antv/x6-vue-shape": "@antv/x6-vue-shape/lib",
     },
-    css: {
-        preprocessorOptions: {
-            scss: {
-                additionalData: `@use "~/styles/element/index.scss" as *;`,
-            },
-        },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@use "~/styles/element/index.scss" as *;`,
+      },
     },
-    ssr: {
-        noExternal: ['element-plus']
+  },
+  ssr: {
+    noExternal: ["element-plus"],
+  },
+  server: {
+    hmr: true,
+    open: "/#/",
+    port: 3200,
+    proxy: {
+      "/api": {
+        target: "http://172.30.3.6:18700",
+        changeOrigin: true,
+      },
     },
-    server: {
-        hmr: true,
-        open: "/#/",
-        port: 3200,
-        proxy: {
-            "/api": {
-                target: "http://172.30.3.6:18700",
-                changeOrigin: true,
-            },
-        },
-    },
-    plugins: [
-        vue(),
-        vueJsx(),
-        viteMockServe({
-            mockPath: './mock',
-            localEnabled: true,
-            prodEnabled: true,
-            injectCode: ` import { setupProdMockServer } from './mockProdServer'; setupProdMockServer(); `,
+  },
+  plugins: [
+    vue(),
+    vueJsx(),
+    VueSetupExtend(),
+    Components({
+      // allow auto load markdown components under `./src/components/`
+      extensions: ["ts"],
+      // allow auto import and register components used in markdown
+      include: [/\.vue$/, /\.vue\?vue/, /\.md$/, /\.[tj]sx?$/],
+      resolvers: [
+        ElementPlusResolver({
+          importStyle: "sass",
         }),
-        VueSetupExtend(),
-        Components({
-            // allow auto load markdown components under `./src/components/`
-            extensions: ['ts'],
-            // allow auto import and register components used in markdown
-            include: [/\.vue$/, /\.vue\?vue/, /\.md$/, /\.[tj]sx?$/],
-            resolvers: [
-                ElementPlusResolver({
-                    importStyle: 'sass',
-                }),
-            ],
-            dts: 'src/components.d.ts',
+      ],
+      dts: "src/components.d.ts",
+    }),
+    // https://github.com/antfu/unocss
+    // see unocss.config.ts for config
+    Unocss({
+      presets: [
+        presetUno(),
+        presetAttributify(),
+        presetIcons({
+          scale: 1.2,
+          warn: true,
         }),
-        // https://github.com/antfu/unocss
-        // see unocss.config.ts for config
-        Unocss({
-            presets: [
-                presetUno(),
-                presetAttributify(),
-                presetIcons({
-                    scale: 1.2,
-                    warn: true,
-                }),
-            ],
-            rules: [
-                ['flex-center', { display: 'flex', 'align-items': 'center', 'justify-content': 'center' }],
-                ['primaryStyle', { background: 'linear-gradient(to top, #598ff1, #205ccb)' }],
-                ['contentPrimary', { color: '#333' }]
-            ],
-            transformers: [
-                transformerDirectives(),
-                transformerVariantGroup(),
-            ]
-        }),
-    ],
-    build: {
-        rollupOptions: {
-            output: {
-                // 打包分类
-                chunkFileNames: 'assets/js/[name]-[hash].js',
-                entryFileNames: 'assets/js/[name]-[hash].js',
-                assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
-                // 分包策略
-                manualChunks(id: string) {
-                    if (id.includes('node_modules')) {
-                        return id.split('/node_modules/').pop()?.split('/')[0]
-                    }
-                },
-                // 打包后的文件夹名称生成规则-->解决部分静态服务器无法正常返回_plugin-vue_export-helper文件
-                sanitizeFileName(name) {
-                    const match = /^[a-z]:/i.exec(name)
-                    const driveLetter = match ? match[0] : ''
-                    return (
-                        driveLetter +
-                        name.substring(driveLetter.length).replace(/[\x00-\x1F\x7F<>*#"{}|^[\]`;?:&=+$,]/g, '')
-                    )
-                }
-            }
-        }
-    }
-})
+      ],
+      rules: [
+        [
+          "flex-center",
+          {
+            display: "flex",
+            "align-items": "center",
+            "justify-content": "center",
+          },
+        ],
+        [
+          "primaryStyle",
+          { background: "linear-gradient(to top, #598ff1, #205ccb)" },
+        ],
+        ["contentPrimary", { color: "#333" }],
+      ],
+      transformers: [transformerDirectives(), transformerVariantGroup()],
+    }),
+  ],
+  build: {
+    rollupOptions: {
+      output: {
+        // 打包分类
+        chunkFileNames: "assets/js/[name]-[hash].js",
+        entryFileNames: "assets/js/[name]-[hash].js",
+        assetFileNames: "assets/[ext]/[name]-[hash].[ext]",
+        // 分包策略
+        manualChunks(id: string) {
+          if (id.includes("node_modules")) {
+            return id.split("/node_modules/").pop()?.split("/")[0];
+          }
+        },
+        // 打包后的文件夹名称生成规则-->解决部分静态服务器无法正常返回_plugin-vue_export-helper文件
+        sanitizeFileName(name) {
+          const match = /^[a-z]:/i.exec(name);
+          const driveLetter = match ? match[0] : "";
+          return (
+            driveLetter +
+            name
+              .substring(driveLetter.length)
+              .replace(/[\x00-\x1F\x7F<>*#"{}|^[\]`;?:&=+$,]/g, "")
+          );
+        },
+      },
+    },
+  },
+});

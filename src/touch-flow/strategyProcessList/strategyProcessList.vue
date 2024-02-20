@@ -5,7 +5,6 @@ import {
   getqryMarketingTouch,
   deleteMarketingTouch,
   getqryTouchStatusCount,
-  getupdateMarketingTouch,
   getstartMarketingTouch,
   getpauseMarketingTouch,
 } from "~/api/index";
@@ -36,7 +35,7 @@ const typeMap = {
   delayed: "定时-重复",
   trigger: "触发型",
 };
-let tableData = ref();
+const tableData = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
@@ -55,7 +54,6 @@ const StatisticsList = ref({
   approvalRefuse: 0,
   done: 0,
 });
-const totalCount = ref();
 
 onMounted(async () => {
   getmarketingTouchNode();
@@ -79,27 +77,33 @@ const getmarketingTouchNode = async () => {
   console.log(StatisticsList, "res");
 };
 
-const setSearchParams = () => {
-  console.log(`output->`, formInline);
-  fetchDataApi();
-};
+
 
 const delData = async (row: any) => {
   await deleteMarketingTouch({ id: row.id }).finally(() => {});
+  fetchDataApi();
 };
 const startData = async (row: any) => {
   await getstartMarketingTouch({ id: row.id }).finally(() => {});
+  fetchDataApi();
 };
 
 const pauseData = async (row: any) => {
   await getpauseMarketingTouch({ id: row.id }).finally(() => {});
+  fetchDataApi();
 };
 
 const updateData = async (row: any) => {
   await getpauseMarketingTouch({ id: row.id }).finally(() => {});
+  fetchDataApi();
 };
 const detailsData = async (row: any) => {
-  await getpauseMarketingTouch({ id: row.id }).finally(() => {});
+  router.push(`/strategyProcess/details/${row.id}`);
+
+  // await getpauseMarketingTouch({ id: row.id }).finally(() => {});
+};
+const copyData = async (row: any) => {
+  // await getcopyMarketingTouch({ id: row.id }).finally(() => {});
 };
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);
@@ -155,7 +159,7 @@ const handleCurrentChange = (val: number) => {
 
         <div class="showCount allcount">
           <div class="topcount">{{ StatisticsList.total !== undefined ? StatisticsList.total : '--' }}
-           </div>
+          </div>
           <div class="undercount">全部</div>
         </div>
         <div class="showCount">
@@ -184,7 +188,7 @@ const handleCurrentChange = (val: number) => {
         <div class="showCount">
           <div class="topcount">
             {{ StatisticsList.draft !== undefined ? StatisticsList.draft : '--' }}
-            </div>
+          </div>
           <div class="undercount">草稿</div>
         </div>
         <div class="showCount">
@@ -195,7 +199,7 @@ const handleCurrentChange = (val: number) => {
         </div>
       </div>
       <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
-        <el-table-column label="策略流程ID" width="180">
+        <el-table-column label="策略流程ID" width="120">
           <template #default="scope">
             {{ scope.row.id }}
           </template>
@@ -208,25 +212,25 @@ const handleCurrentChange = (val: number) => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="起止日期" width="400">
+        <el-table-column label="起止日期" width="330">
           <template #default="scope">
             {{ scope.row.startTime }}~{{ scope.row.endTime }}
           </template>
         </el-table-column>
 
-        <el-table-column label="类型" width="180">
+        <el-table-column label="类型" width="150">
           <template #default="scope">
             {{ typeMap[scope.row.executeType] }}
           </template>
         </el-table-column>
 
-        <el-table-column label="目标完成率">
+        <el-table-column label="目标完成率" width="150">
           <template #default="scope">
             {{ scope.row.targetCount }}%
           </template>
         </el-table-column>
 
-        <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="180">
+        <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="280">
           <template #default="scope">
             <!-- targetCount 完成目标数量
             touchCount 触达数量
@@ -234,7 +238,6 @@ const handleCurrentChange = (val: number) => {
             {{ scope.row.touchCount }}/
             {{ scope.row.triggerCount }}/
             {{ scope.row.targetCount }}
-
           </template>
         </el-table-column>
 
@@ -255,7 +258,7 @@ const handleCurrentChange = (val: number) => {
               <el-link type="primary" v-if="scope.row.status=='suspend'" @click="startData(scope.row)">开始</el-link>
               <el-link type="primary" v-if="scope.row.status=='waitStart'||scope.row.status=='running'||scope.row.status=='approvalSuccess'" @click="pauseData(scope.row)">暂停</el-link>
               <el-link type="primary" v-if="scope.row.status=='draft'||scope.row.status=='approvalRefuse'||scope.row.status=='suspend'||scope.row.status=='done'" @click="delData(scope.row)">删除</el-link>
-              <el-link type="primary">复制</el-link>
+              <el-link type="primary" @click="copyData(scope.row)">复制</el-link>
               <el-link type="primary" v-if="scope.row.status=='approvalRefuse'||scope.row.status=='draft'" @click="updateData(scope.row)">编辑</el-link>
               <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
             </el-space>
@@ -270,13 +273,8 @@ const handleCurrentChange = (val: number) => {
 </template>
 <style lang="scss" scoped>
 .warp {
-  background: linear-gradient(
-    to bottom,
-    #eeeff6,
-    rgba(56, 128, 228, 0.1098039216)
-  );
+
   padding: 24px 40px;
-  height: 90vh;
 }
 
 .tableCard {

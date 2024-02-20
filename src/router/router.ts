@@ -8,16 +8,32 @@ export const routes: RouterOptions["routes"] = [
     // component: () => import("../views/dashboard/index.vue"),
   },
   {
-    path: "/designNew",
+    path: "/design",
     component: () => import("../touch-flow/FlowPage.vue"),
     meta: {
       hideTopMenu: true,
     },
   },
   {
-    path: "/strategyProcessList",
-    component: () =>
-      import("../touch-flow/strategyProcessList/strategyProcessList.vue"),
+    path: "/tree",
+    component: () => import("../flow/index.vue"),
+    meta: {
+      hideTopMenu: true,
+    },
+  },
+  {
+    path: "/strategyProcess",
+    redirect: "/strategyProcess/List",
+    children: [
+      {
+        path: "List",
+        component: () => import("~/touch-flow/strategyProcessList/strategyProcessList.vue"),
+      },
+      {
+        path: "details/:id",
+        component: () => import("~/touch-flow/strategyProcessList/details.vue"),
+      },
+    ],
   },
 
   {

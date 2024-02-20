@@ -24,7 +24,7 @@ const route = useRoute()
 
 const meta = computed(() => route.meta)
 </script>
-<style>
+<style lang="scss">
 html, body, #app {
   height: 100%;
 }
@@ -44,6 +44,7 @@ div {
 }
 .content {
   flex: 1;
-  overflow: hidden;
+  overflow-y: scroll;
+  background: linear-gradient(to bottom, #eeeff6, rgba(56, 128, 228, 0.1098039216));
 }
 </style>

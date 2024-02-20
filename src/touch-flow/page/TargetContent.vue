@@ -10,6 +10,7 @@ const props = defineProps<{
   target: any;
   index: number;
   dict: any;
+  readonly?: boolean
 }>();
 
 if ( !props.target.targetDelayed ) {
@@ -94,19 +95,19 @@ const attrs = computed(() => {
     <div class="filter-wrap">
       <div class="garyblock">
         <el-text>客户进入流程后，在</el-text>&nbsp;
-        <el-input v-model="target.targetDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
-        <el-select v-model="target.targetDelayed.delayedUnit" style="width: 150px">
+        <el-input :disabled="readonly" v-model="target.targetDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
+        <el-select :disabled="readonly" v-model="target.targetDelayed.delayedUnit" style="width: 150px">
           <el-option value="month" label="月份">分钟</el-option>
           <el-option value="week" label="周">小时</el-option>
           <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
         <el-text>内完成以下转化事件，则认为完成目标</el-text>
       </div>
       <div>
-        <el-select v-model="target.delayedAction" style="width: 240px">
+        <el-select :disabled="readonly" v-model="target.delayedAction" style="width: 240px">
           <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
             <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
           </el-option-group> </el-select>&nbsp;
-        <el-text type="primary" style="cursor: pointer" @click="addCondition">
+        <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="addCondition">
           <el-icon size="14">
             <CirclePlusFilled />
           </el-icon>
@@ -131,17 +132,17 @@ const attrs = computed(() => {
               :key="`${item.field}-${index}`" :gutter="5" class="filter-item-rule">
               <el-col :xs="24" :sm="7">
                 <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                  <trigger v-model="item.field" :attrs="attrs" />
+                  <trigger :readonly="readonly" v-model="item.field" :attrs="attrs" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="5" v-if="item.field">
                 <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                  <operator ref="operatorRef" v-model="item.operator" />
+                  <operator :readonly="readonly" ref="operatorRef" v-model="item.operator" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="10" v-if="item.field">
                 <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                  <AttrRender :field="item.field" v-model="item.fieldValue" :attrs="attrs" />&nbsp;
+                  <AttrRender :readonly="readonly" :field="item.field" v-model="item.fieldValue" :attrs="attrs" />&nbsp;
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="2" style="
@@ -151,7 +152,7 @@ const attrs = computed(() => {
                 ">
                 <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
                   <el-icon size="14">
-                    <Delete />
+                    <Delete :disabled="readonly" />
                   </el-icon>
                 </el-text>
               </el-col>
@@ -207,7 +208,7 @@ const attrs = computed(() => {
       display: flex;
       align-items: center;
       overflow: hidden;
-      min-width: 60px;
+      min-width: 70px;
       padding-right: 5px;
     }
 

@@ -1,18 +1,21 @@
 <script setup lang="ts" name="FlowPage">
-import { onBeforeUnmount, onMounted, reactive } from "vue";
+import { watchEffect, onMounted, reactive, ref } from "vue";
 import FlowHeader from "../touch-flow/page/FlowHeader.vue";
-import TouchFlow from "./TouchFlow.vue";
+// import TouchFlow from "./TouchFlow.vue";
 import { randomStr } from "~/utils/common";
 import { touchSubmitReview, type Request, type MarketingTouchNodeEditDTO } from './touch-total'
+import XFlow from './x/XFlow.vue'
+import { ArrowRight } from "@element-plus/icons-vue";
 
-defineProps<{
-  modelValue?: boolean;
+const props = defineProps<{
+  modelValue?: Request;
+  readonly?: boolean;
 }>();
 
 const flowOptions = reactive({
   basic: {
     _expand: false,
-    touchName: "test",
+    touchName: "",
     disturb: {
       enable: false,
       time: [],
@@ -25,10 +28,32 @@ const flowOptions = reactive({
   },
   p: {
     nodeId: randomStr(12),
-    nodeType: "start",
+    nodeType: "Start",
     children: [],
   },
 });
+
+watchEffect(() => {
+  if (props.modelValue) {
+    const data = props.modelValue
+
+    Object.assign(flowOptions, {
+      basic: {
+        touchName: data.touchName,
+        disturb: disturbReduction(data),
+        target: targetReduction(data),
+      },
+      p: data
+    })
+
+    //   touchName: flowOptions.basic.touchName,
+    //   ...transformDisturb(flowOptions.basic.disturb),
+    // ...transformTarget(flowOptions.basic.target)
+
+
+    console.log('FlowPage updated!', props.modelValue)
+  }
+})
 
 function transformDisturb(disturb: typeof flowOptions.basic.disturb) {
   return {
@@ -56,23 +81,32 @@ function transformTarget(target: typeof flowOptions.basic.target) {
   }
 }
 
+function targetReduction(data: Request) {
+  return {
+    enable: data.containTarget ?? props.readonly,
+    list: data.targetRuleContent?.data || [],
+  }
+}
+
 function transformNodes(__nodes: Array<any>) {
   const res: Array<any> = [];
+
+  console.log(__nodes);
 
   [...__nodes].forEach((node: any) => {
 
     if (node.father) {
       // 先拿到父元素中children 我这个元素的位置
-      const fatherInd = [ ...node.father.children ].indexOf((item: any) => item.nodeId === node.nodeId)
+      const fatherInd = [...node.father.children].indexOf((item: any) => item.nodeId === node.nodeId)
 
       node.preNodeId = (fatherInd < 1 ? node.father.nodeId : node.father.children[fatherInd - 1].nodeId)
 
-      delete node.father
+      // delete node.father
     }
 
     if (node.children) {
       [...node.children].forEach((child, index) => {
-        node.children[index] = transformNodes(child)
+        node.children[index] = transformNodes([child])
       })
     }
 
@@ -83,7 +117,11 @@ function transformNodes(__nodes: Array<any>) {
   return res
 }
 
-async function submitReview() {
+async function submitReview(status: string = 'approvalPending') {
+  if (props.readonly) return
+
+  console.log("transformNodes", flowOptions.p.children)
+
   const _flowOptions: any = {
     ...flowOptions.p,
     nodes: transformNodes(flowOptions.p.children),
@@ -92,12 +130,14 @@ async function submitReview() {
     ...transformTarget(flowOptions.basic.target)
   }
 
-  console.log(_flowOptions)
+  console.log("flowOptions", _flowOptions)
 
   delete _flowOptions.children
   delete _flowOptions.id
 
-  const data: Request = {}
+  const data: Request = {
+    status
+  }
   Object.assign(data, _flowOptions)
 
   const res = await touchSubmitReview(data)
@@ -105,34 +145,40 @@ async function submitReview() {
   console.log(res, data)
 }
 
-onBeforeUnmount(() => {
-  localStorage.setItem('_temp', JSON.stringify(flowOptions))
-})
-
-onMounted(() => {
-  const data = JSON.parse(localStorage.getItem('_temp') ?? "{}")
-
-  if (data) {
-    Object.assign(flowOptions, data)
-  }
-})
+const dialogVisible = ref()
 
 console.log("total flow", flowOptions);
 </script>
 
 <template>
   <div class="FlowPage">
-    <el-container :class="{ expand: flowOptions.basic._expand }" class="FlowPage-Container">
+    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
       <el-header>
-        <FlowHeader @submit-review="submitReview" :basic="flowOptions.basic" />
+        <FlowHeader v-if="!modelValue || !readonly" @submit-review="submitReview" :basic="flowOptions.basic" />
+        <div v-else class="FlowPage-ReadHeader">
+          流程基础设置
+          <el-button text type="primary" @click="dialogVisible = true">
+            查看设置<el-icon>
+              <ArrowRight />
+            </el-icon>
+          </el-button>
+        </div>
       </el-header>
       <el-main>
         <el-scrollbar>
-          <TouchFlow :p="flowOptions.p" />
+          <XFlow :p="flowOptions.p as any" />
+          <!-- <TouchFlow :p="flowOptions.p" /> -->
         </el-scrollbar>
       </el-main>
     </el-container>
   </div>
+
+  <teleport to="body">
+    <el-dialog v-model="dialogVisible">
+      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview"
+        :basic="flowOptions.basic" />
+    </el-dialog>
+  </teleport>
 </template>
 
 <style lang="scss">
@@ -143,6 +189,16 @@ div.el-dialog {
 .FlowPage-Container.expand {
   .el-header {
     height: auto;
+  }
+}
+
+.FlowPage-Container.shrink {
+  .el-header {
+    height: 32px;
+    line-height: 32px;
+
+    font-size: 14px;
+    font-weight: 600;
   }
 }
 

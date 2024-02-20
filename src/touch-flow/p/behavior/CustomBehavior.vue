@@ -32,9 +32,11 @@ provide("refreshTree", refreshTree);
     <div class="Basic-Block-Content">
       <div v-if="dict && custom.conditions?.length" class="Target-Block">
         <LogicalLine :display="!custom.conditions?.length" v-model="custom.LogicalLine">
-          <BehaviorContent v-for="condition in custom.conditions" :key="condition.id" :condition="condition" :dict="dict">
-            <slot :condition="condition" :dict="dict" />
-          </BehaviorContent>
+          <div v-for="condition in custom.conditions" :key="condition.id">
+            <BehaviorContent v-if="condition?.conditions?.length" :condition="condition" :dict="dict">
+              <slot :condition="condition" :dict="dict" />
+            </BehaviorContent>
+          </div>
         </LogicalLine>
       </div>
     </div>

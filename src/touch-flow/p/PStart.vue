@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { ref, reactive, computed, provide } from "vue";
-import { Stamp, Plus } from "@element-plus/icons-vue";
+import { ref, reactive, computed, provide, inject, markRaw } from "vue";
+import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
 import ConditionSetAttr from "../p/start/ConditionSetAttr.vue";
 import CustomersAttr from "../p/start/CustomersAttr.vue";
 import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
 import Strategist from "./start/Strategist.vue";
 
-const props = defineProps<{
-  p?: any;
-}>();
+const getNode: Function = inject('getNode')!
+const { data: _data  } = getNode()
+const __data = _data.$d(_data.id)
+const data = reactive(_data.data)
 
 const dialogVisible = ref(false);
 const drawerOptions = reactive<any>({
@@ -35,26 +36,26 @@ function openDrawer(comp: any) {
 
   Object.assign(drawerOptions, comp);
 
-  if (!props.p.executeType) props.p.executeType = "immediately";
+  if (!data.executeType) data.executeType = "immediately";
 
   drawerOptions.visible = true;
 }
 
 const flowType = computed(() => {
-  if (!props.p?.executeType) return "-";
+  if (!data?.executeType) return "-";
   const map: { [key: string]: string } = {
     immediately: "定时型-单次",
     repeat: "定时型-重复",
     trigger: "触发型",
   };
 
-  const s: string = props.p?.executeType;
+  const s: string = data?.executeType;
 
   return map[s.toLowerCase()];
 });
 
 const flowTime = computed(() => {
-  const _time = props.p.executeTime;
+  const _time = data.executeTime;
   if (!_time) return "-";
 
   if (_time instanceof Date) {
@@ -77,7 +78,7 @@ const conditioned = computed(
 );
 
 const doDiverse = computed(() => {
-  const { children } = props.p;
+  const { children } = data;
 
   if (!children?.length) return false;
 
@@ -87,15 +88,15 @@ const doDiverse = computed(() => {
 const haveDiverse = computed(() => {
   if (!doDiverse.value) return false;
 
-  const { children } = props.p;
+  const { children } = data;
 
   if (!children?.length) return false;
 
-  return [...children].find((child) => "Delivery" === child?.nodeType);
+  return [...children].find((child) => "diversion" === child?.nodeType);
 })
 
 const haveReveal = computed(() => {
-  const { children } = props.p;
+  const { children } = data;
 
   if (!children?.length) return false;
 
@@ -103,7 +104,7 @@ const haveReveal = computed(() => {
 })
 
 const customerConditioned = computed(() => {
-  const { customAttr, customEvent } = (props.p?.customRuleContent ?? {})
+  const { customAttr, customEvent } = (data?.customRuleContent ?? {})
 
   const _obj = {
     customAttr: customAttr?.conditions?.length ?? 0,
@@ -133,7 +134,7 @@ const _comps = [
     },
     title: "分流器",
     desc: "按设置的比例自动客户对随机分流，并执行动作。",
-    show: () => !doDiverse.value,
+    show: () => !haveReveal.value && !doDiverse.value,
     comp: DeliverySettingsAttr,
   },
   {
@@ -153,6 +154,16 @@ let _saveFunc: (() => boolean) | null = null;
 
 function handleSave() {
   if (!_saveFunc || !_saveFunc()) return;
+
+  Object.assign(__data, data)
+
+  // console.log("assign", data)
+
+  // // define father
+  // Object.defineProperty(__data, 'father', {
+  //   value: markRaw(data.father),
+  //   enumerable: false
+  // })
 
   dialogVisible.value = false;
   drawerOptions.visible = false;
@@ -235,7 +246,7 @@ function handleClick(e: Event) {
 
     <teleport to="body">
       <el-drawer @click="handleClick" v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
-        <component :p="p" :is="drawerOptions.comp" />
+        <component :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
           <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
@@ -244,7 +255,7 @@ function handleClick(e: Event) {
     </teleport>
   </el-card>
   <!-- && !customerConditioned.display -->
-  <el-button :class="{ display: conditioned  && !haveDiverse }"
+  <el-button :class="{ display: conditioned, disabled: haveDiverse }"
     @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 

@@ -1,57 +1,97 @@
 <script setup lang="ts" name="SubBranch">
-import { ref, reactive, provide } from 'vue'
+import { ref, reactive, provide, inject, computed } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
-import ConditionSetAttr from './start/ConditionSetAttr.vue'
-import PolicySettingsAttr from './start/PolicySettingsAttr.vue'
-import DeliverySettingsAttr from './start/DeliverySettingsAttr.vue'
-import { delChild } from '../flow-utils'
+import SubDiversionAttr from './start/SubDiversionAttr.vue';
+import CustomersAttr from "../p/start/CustomersAttr.vue";
+import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
+import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
+import Strategist from "./start/Strategist.vue";
 
-const props = defineProps<{
-  p?: any,
-}>()
+const getNode: Function = inject('getNode')!
+const { data: _data } = getNode()
+const __data = _data.$d(_data.id)
+const data = reactive(_data.data)
 
 const dialogVisible = ref(false)
 const drawerOptions = reactive<any>({
   visible: false
 })
 
-const comps = [
+const doDiverse = computed(() => {
+  const { children } = data;
+
+  if (!children?.length) return false;
+
+  return [...children].find((child) => "strategy" === child?.nodeType) ?? true
+});
+
+const haveDiverse = computed(() => {
+  if (!doDiverse.value) return false;
+
+  const { children } = data;
+
+  if (!children?.length) return false;
+
+  return [...children].find((child) => "diversion" === child?.nodeType);
+})
+
+const haveReveal = computed(() => {
+  const { children } = data;
+
+  if (!children?.length) return false;
+
+  return [...children].find((child) => "strategy" === child?.nodeType && child?.reveal) ?? false
+})
+
+const _comps = [
   {
     icon: {
-      type: 'comp',
-      value: Stamp
+      type: "comp",
+      value: Stamp,
     },
-    title: "分流器",
-    desc: "按设置的比例自动客户对随机分流，并执行动作。",
-    comp: PolicySettingsAttr
+    title: "选择策略器",
+    desc: "按客户属性行为或触发事件对客户筛选分流，并执行动作。",
+    comp: PolicySettingsAttr,
   },
   {
     icon: {
-      type: 'comp',
-      value: Stamp
+      type: "comp",
+      value: Stamp,
     },
-    title: "兜底策略器",
-    desc: "按客户属性行为或触发事件对客户筛选分流，并执行动作。",
-    comp: ConditionSetAttr
-  }
-]
-
-function openCondition() {
-  openDrawer({
     title: "分流器",
-    comp: DeliverySettingsAttr
-  })
-}
+    desc: "按设置的比例自动客户对随机分流，并执行动作。",
+    show: () => !doDiverse.value,
+    comp: DeliverySettingsAttr,
+  },
+  {
+    icon: {
+      type: "comp",
+      value: Stamp,
+    },
+    title: "兜底选择器",
+    disabled: haveReveal,
+    desc: "筛选未进入本节点下选择策略器的客户，并执行动作。",
+    show: () => doDiverse.value,
+    comp: Strategist,
+  },
+];
+
+const comps = computed(() => _comps.filter((comp) => comp?.show?.() ?? true));
 
 function openDrawer(comp: any) {
   dialogVisible.value = false
 
   Object.assign(drawerOptions, comp)
 
-  if (!props.p.executeType)
-    props.p.executeType = "immediately";
-
   drawerOptions.visible = true
+}
+
+function openCondition() {
+  openDrawer({
+    title: "流量策略器设置",
+    // TODO page draw
+    comp: SubDiversionAttr,
+  });
 }
 
 let _saveFunc: (() => boolean) | null = null
@@ -59,9 +99,37 @@ let _saveFunc: (() => boolean) | null = null
 function handleSave() {
   if (!_saveFunc || !_saveFunc()) return
 
+  Object.assign(__data, data)
+
   dialogVisible.value = false
   drawerOptions.visible = false
 }
+
+const pushTemplate = computed(() => {
+  const { type, templates } = data.material
+  const { type: targetId } = data.touch
+
+  const res = templates.filter((item: any) => item.id === targetId)?.[0]?.name || 'ERROR'
+
+  let val;
+
+  if (type === 'sms') {
+    val = '短信模板：'
+  } else if (type === 'znx') {
+    val = '站内信模板：'
+  } else if (type === 'appPush') {
+    val = 'APP消息模板：'
+  } else if (type === 'digital') {
+    val = '数字员工模板：'
+  } else if (type === 'outbound') {
+    val = '智能外呼模板：'
+  }
+
+  return {
+    has: type?.length,
+    val: `${val}${res}`
+  }
+})
 
 provide('save', (regFunc: () => boolean) => {
   _saveFunc = regFunc
@@ -70,17 +138,42 @@ provide('save', (regFunc: () => boolean) => {
 
 <template>
   <el-card style="width: 355px" class="PBlock">
-  子分流器 demo
     <p class="title">
-      <!-- 选择策略器 -->
-      {{ p.nodeName }}
+      流量策略器
+      <span style="float: right">
+        {{ data.nodeName }}
+        <span style="color: green;font-weight: 600">{{ data.ratio }}%</span>
+      </span>
     </p>
-    <div class="PBlock-Content theme">
-      <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">
-        <div>
-        BRANCH
+    <div @click="openCondition" class="PBlock-Content theme">
+      <template v-if="data.diversionType || data.eventDelayed?.isDelayed">
+        <div style="display: flex; flex-direction: column; gap: 1rem" >
+          <div style="--theme-color: #7DC757" class="PBlock-Section">
+            <p>
+              延迟设置
+            </p>
+            <span v-if="data.eventDelayed?.isDelayed">
+              符合该策略器 {{ data.eventDelayed.delayedTime }} {{ data.eventDelayed.delayedUnit }} 后 {{
+                data.eventDelayed.delayedAction }}
+            </span>
+            <span v-else>立即针对符合该策略器条件的客户发送触达</span>
+          </div>
+          <div v-if="pushTemplate.has" style="--theme-color: #FFB858" class="PBlock-Section">
+            <p>
+              APP推送
+            </p>
+            <span>{{ pushTemplate.val }}</span>
+          </div>
+
         </div>
-      </div>
+      </template>
+      <template v-else>
+        <el-empty>
+          <template #description>
+            暂未配置.
+          </template>
+        </el-empty>
+      </template>
     </div>
 
     <teleport to="body">
@@ -101,8 +194,8 @@ provide('save', (regFunc: () => boolean) => {
     </teleport>
 
     <teleport to="body">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title">
-        <component :p="p" :is="drawerOptions.comp" />
+      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
+        <component :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
           <el-button round @click="handleSave" type="primary">保存</el-button>
@@ -111,7 +204,8 @@ provide('save', (regFunc: () => boolean) => {
     </teleport>
   </el-card>
 
-  <el-button @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
+  <el-button :class="{ display: true, disabled: haveDiverse }" @click="dialogVisible = true" class="start-add"
+    type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">

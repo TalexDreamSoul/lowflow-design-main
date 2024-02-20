@@ -75,7 +75,7 @@ const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([.
 
 <template>
   <div class="CustomContent">
-    <LogicalLine :display="conditionArr?.length" v-model="condition.logicalChar">
+    <LogicalLine :display="!conditionArr?.length" v-model="condition.logicalChar">
       <div v-if="conditionArr" class="filter-option-content">
         <el-form :label-width="0" :inline="true" :model="condition.conditions">
           <el-row v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="filter-item-rule">
@@ -84,7 +84,7 @@ const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([.
                 <trigger multiple v-model="item.field" :attrs="attrs" placeholder="客户属性/标签" />
               </el-form-item>
             </el-col>
-            &nbsp;<el-col :xs="24" :sm="6" v-if="item.field">
+            &nbsp;<el-col :xs="24" :sm="4" v-if="item.field">
               <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
                 <operator ref="operatorRef" v-model="item.operator" />
               </el-form-item>
@@ -145,7 +145,7 @@ const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([.
       display: flex;
       align-items: center;
       overflow: hidden;
-      min-width: 55px;
+      min-width: 70px;
     }
 
     .logical-operator {

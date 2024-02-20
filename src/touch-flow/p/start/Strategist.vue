@@ -1,14 +1,12 @@
 <script setup lang="ts">
-import { inject, ref, reactive, onMounted } from "vue";
+import { inject, ref, reactive, onMounted, watchEffect, markRaw } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { getQryMaterial, getmarketingTouchEstimate } from "~/api";
 import TouchSettingContents from '../touch/TouchSettingContents.vue'
 
-const transform = ref(true);
-const transformset = ref(true);
-
 const origin = {
+  nodeId: "",
   nodeType: "strategy",
   nodeName: "兜底策略器",
   value1: false,
@@ -36,6 +34,12 @@ const origin = {
       id: -1,
       name: '不使用模板'
     }]
+  },
+  eventDelayed: {
+    delayedAction: '',
+    delayedTime: 0,
+    delayedUnit: '',
+    isDelayed: false
   }
 };
 
@@ -48,109 +52,28 @@ const marketingTouchNode = ref({
   znxCount: 0,
 });
 
-const options = [
-  {
-    value: 1,
-    label: "Asia",
-    children: [
-      {
-        value: 2,
-        label: "China",
-        children: [
-          { value: 3, label: "Beijing" },
-          { value: 4, label: "Shanghai" },
-          { value: 5, label: "Hangzhou" },
-        ],
-      },
-      {
-        value: 6,
-        label: "Japan",
-        children: [
-          { value: 7, label: "Tokyo" },
-          { value: 8, label: "Osaka" },
-          { value: 9, label: "Kyoto" },
-        ],
-      },
-      {
-        value: 10,
-        label: "Korea",
-        children: [
-          { value: 11, label: "Seoul" },
-          { value: 12, label: "Busan" },
-          { value: 13, label: "Taegu" },
-        ],
-      },
-    ],
-  },
-  {
-    value: 14,
-    label: "Europe",
-    children: [
-      {
-        value: 15,
-        label: "France",
-        children: [
-          { value: 16, label: "Paris" },
-          { value: 17, label: "Marseille" },
-          { value: 18, label: "Lyon" },
-        ],
-      },
-      {
-        value: 19,
-        label: "UK",
-        children: [
-          { value: 20, label: "London" },
-          { value: 21, label: "Birmingham" },
-          { value: 22, label: "Manchester" },
-        ],
-      },
-    ],
-  },
-  {
-    value: 23,
-    label: "North America",
-    children: [
-      {
-        value: 24,
-        label: "US",
-        children: [
-          { value: 25, label: "New York" },
-          { value: 26, label: "Los Angeles" },
-          { value: 27, label: "Washington" },
-        ],
-      },
-      {
-        value: 28,
-        label: "Canada",
-        children: [
-          { value: 29, label: "Toronto" },
-          { value: 30, label: "Montreal" },
-          { value: 31, label: "Ottawa" },
-        ],
-      },
-    ],
-  },
-];
+const props = defineProps<{
+  p: any;
+  new?: boolean
+}>();
 
 const sizeForm = reactive<typeof origin>(origin);
 
 function reset() {
   Object.assign(sizeForm, origin);
+  console.log(sizeForm, origin, props.p)
 }
+reset()
 
-onMounted(reset);
+watchEffect(() => {
+  const { nodeType, nodeId } = props.p
 
-const props = defineProps<{
-  p: any;
-}>();
+  if (props.new || nodeType !== 'strategy') return
 
-if (!props.p.customRuleContent) {
-  props.p.customRuleContent = {
-    customAttr: {},
-    customEvent: {},
-    eventSequence: {},
+  if (nodeId) {
+    sizeForm.nodeId = nodeId;
   }
-}
+})
 
 async function refreshMaterialTemplate() {
   sizeForm.touch.type = -1
@@ -176,28 +99,25 @@ function saveData() {
     return false;
   }
 
-  const _ = { ...sizeForm, nodeId: randomStr(12), father: props.p };
+  const _: any = { nodeId: "", children: [], reveal: true };
+  Object.assign(_, sizeForm)
 
-  if (!props.p.children) {
-    props.p.children = [_];
+  Object.defineProperty(_, 'father', {
+    value: markRaw(props.p),
+    enumerable: false
+  })
+
+  // 修改 Modify Edit
+  if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {
+
+    Object.assign(props.p, _)
+
   } else {
-    const arr = [...props.p.children];
 
-    while (arr.length) {
-      const item = arr.shift();
-
-      if (item.name === _.nodeName) {
-        ElMessage.warning({
-          message: "策略名称重复",
-        });
-
-        return false;
-      }
-
-      if (item.children) arr.push(...item.children);
-    }
+    _.nodeId = randomStr(12)
 
     props.p.children.push(_);
+
   }
 
   return true;
@@ -227,48 +147,6 @@ const estimation = async () => {
   console.log("Mounted", res);
 };
 
-function attrsAdd() {
-  let attr = props.p.customRuleContent!.customAttr!.conditions! = (props.p.customRuleContent!.customAttr!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
-
-function behaviorAdd() {
-  let attr = props.p.customRuleContent!.customEvent!.conditions! = (props.p.customRuleContent!.customEvent!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
-
-function sequenceAdd() {
-  let attr = props.p.customRuleContent!.eventSequence!.conditions! = (props.p.customRuleContent!.eventSequence!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: [{}] }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
-
 const platformOptions: any = {
   'sms': "短信",
   'appPush': "app消息",
@@ -293,20 +171,22 @@ const platformOptions: any = {
         </div>
         <div class="BlockBackground-Under">
           &nbsp;
-          <el-select v-model="sizeForm.isDelayed" style="width: 100px">
+          <el-select v-model="sizeForm.eventDelayed.isDelayed" style="width: 100px">
             <el-option :value="true" label="延迟">延迟</el-option>
             <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
-          <el-input v-model="sizeForm.num" type="number" style="width: 100px" />&nbsp;
-          <el-select v-model="sizeForm.selectedType" style="width: 100px">
-            <el-option value="month" label="月份">分钟</el-option>
-            <el-option value="week" label="周">小时</el-option>
-            <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
-          <el-select v-model="sizeForm.delayedAction" placeholder="请选择" style="width: 150px">
-            <el-option value="week" label="发送触达">发送触达</el-option>
-            <el-option value="day" label="打上标签">打上标签</el-option>
-            <el-option value="day" label="不执行动作">不执行动作</el-option>
-            <el-option value="month" label="发送触达并打上标签">发送触达并打上标签</el-option>
-          </el-select>
+          <template v-if="sizeForm.eventDelayed.isDelayed">
+            <el-input v-model="sizeForm.eventDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
+            <el-select v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
+              <el-option value="month" label="月份">分钟</el-option>
+              <el-option value="week" label="周">小时</el-option>
+              <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
+            <el-select v-model="sizeForm.eventDelayed.delayedAction" placeholder="请选择" style="width: 150px">
+              <el-option value="week" label="发送触达">发送触达</el-option>
+              <el-option value="day" label="打上标签">打上标签</el-option>
+              <el-option value="day" label="不执行动作">不执行动作</el-option>
+              <el-option value="month" label="发送触达并打上标签">发送触达并打上标签</el-option>
+            </el-select>
+          </template>
         </div>
       </div>
 
@@ -335,7 +215,8 @@ const platformOptions: any = {
               <el-option v-for="item in (sizeForm.material.templates) as any" :value="item.id"
                 :label="item.name"></el-option>
             </el-select>
-            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>新增{{ platformOptions[sizeForm.material.type] }}模块版本</el-button>
+            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>新增{{
+              platformOptions[sizeForm.material.type] }}模块版本</el-button>
           </el-form-item>
           <el-form-item label="触达内容">
             <TouchSettingContents content="content" variables="variables" v-model="sizeForm.touch" />
