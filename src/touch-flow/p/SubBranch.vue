@@ -142,9 +142,9 @@ provide('save', (regFunc: () => boolean) => {
         <span style="color: green;font-weight: 600">{{data.ratio}}%</span>
       </span>
     </p>
-    <div class="PBlock-Content theme">
+    <div @click="openCondition" class="PBlock-Content theme">
     <template v-if="data.diversionType || data.eventDelayed?.isDelayed">
-      <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">
+      <div style="--theme-color: #90A0B8" class="PBlock-Section">
         
         <div style="--theme-color: #90A0B8" class="PBlock-Section">
           <p>

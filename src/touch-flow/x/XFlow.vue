@@ -371,6 +371,7 @@ div.PBlock {
     gap: 0.5rem;
 
     font-size: 14px;
+    cursor: pointer;
   }
 
   position: relative;
