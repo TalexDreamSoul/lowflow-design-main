@@ -22,6 +22,7 @@ interface ImportMeta {
 
 declare module globalThis {
   interface Window {
-    jsPlumb: any
+    jsPlumb: any;
+    $refreshLayout: Function
   }
 }

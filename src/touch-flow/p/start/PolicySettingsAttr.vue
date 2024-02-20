@@ -105,6 +105,8 @@ const props = defineProps<{
 
 const sizeForm = reactive<typeof origin>(origin);
 
+console.log("here", sizeForm, props.p, props.new)
+
 watchEffect(() => {
   const { nodeType, nodeId } = props.p
 
@@ -112,7 +114,8 @@ watchEffect(() => {
 
   if (nodeId) {
     Object.assign(sizeForm, props.p);
-    // sizeForm.nodeId = nodeId;
+
+    sizeForm.nodeId = nodeId;
   }
 })
 

@@ -219,7 +219,6 @@ function handleClick(e: Event) {
 }
 
 function handleBlur() {
-  console.log('calc content')
   const contentDom = contentRef.value
 
   let content = ''

@@ -120,6 +120,8 @@ const props = defineProps<{
 
 const sizeForm = reactive<typeof origin>(origin);
 
+console.log("分流器", sizeForm, props.p)
+
 const { nodeType, nodeId } = props.p
 
 if (!props.new && nodeType === 'subDiversion') {
@@ -151,6 +153,8 @@ function saveData() {
 
     return false;
   }
+
+  console.log("> update", sizeForm, props)
 
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)

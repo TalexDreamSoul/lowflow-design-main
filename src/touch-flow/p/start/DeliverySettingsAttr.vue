@@ -7,6 +7,7 @@ import { markRaw } from "vue";
 const origin = {
   nodeName: "DeliverySettings",
   nodeType: "diversion",
+  height: 200,
   nodeId: "",
   branches: [
     { nodeName: "branch1", ratio: 50, children: [] },
@@ -73,8 +74,6 @@ function saveData() {
     return false;
   }
 
-  console.log("==", _map)
-
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)
 
@@ -112,6 +111,8 @@ function saveData() {
     _.nodeId = randomStr(12)
 
     props.p.children.push(_);
+
+    window.$refreshLayout()
   }
 
   return true;

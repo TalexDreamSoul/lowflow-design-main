@@ -29,6 +29,7 @@ const flowOptions = reactive({
   p: {
     nodeId: randomStr(12),
     nodeType: "Start",
+    height: 250,
     children: [],
   },
 });
@@ -94,6 +95,7 @@ function transformNodes(__nodes: Array<any>) {
   console.log(__nodes);
 
   [...__nodes].forEach((node: any) => {
+    console.log("do have father", node.father)
 
     if (node.father) {
       // 先拿到父元素中children 我这个元素的位置
@@ -105,9 +107,10 @@ function transformNodes(__nodes: Array<any>) {
     }
 
     if (node.children) {
-      [...node.children].forEach((child, index) => {
-        node.children[index] = transformNodes([child])
-      })
+      transformNodes(node.children)
+      // [...node.children].forEach((child, index) => {
+      //   node.children[index] = transformNodes([child])
+      // })
     }
 
     res.push(node)
@@ -120,11 +123,13 @@ function transformNodes(__nodes: Array<any>) {
 async function submitReview(status: string = 'approvalPending') {
   if (props.readonly) return
 
+  console.groupCollapsed('submit')
+
   console.log("transformNodes", flowOptions.p.children)
 
   const _flowOptions: any = {
     ...flowOptions.p,
-    nodes: transformNodes(flowOptions.p.children),
+    nodes: transformNodes([ ...flowOptions.p.children ]),
     touchName: flowOptions.basic.touchName,
     ...transformDisturb(flowOptions.basic.disturb),
     ...transformTarget(flowOptions.basic.target)
@@ -143,6 +148,8 @@ async function submitReview(status: string = 'approvalPending') {
   const res = await touchSubmitReview(data)
 
   console.log(res, data)
+
+  console.groupEnd()
 }
 
 const dialogVisible = ref()

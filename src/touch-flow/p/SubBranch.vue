@@ -1,5 +1,5 @@
 <script setup lang="ts" name="SubBranch">
-import { ref, reactive, provide, inject, computed } from 'vue'
+import { ref, reactive, provide, inject, computed, watchEffect } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import SubDiversionAttr from './start/SubDiversionAttr.vue';
 import CustomersAttr from "../p/start/CustomersAttr.vue";
@@ -12,6 +12,7 @@ const { data: _data } = getNode()
 const __data = _data.$d(_data.id)
 const data = reactive(_data.data)
 
+const dom = ref()
 const dialogVisible = ref(false)
 const drawerOptions = reactive<any>({
   visible: false
@@ -99,13 +100,26 @@ let _saveFunc: (() => boolean) | null = null
 function handleSave() {
   if (!_saveFunc || !_saveFunc()) return
 
+  data.$template = pushTemplate.value
+
   Object.assign(__data, data)
+
+  console.log("@save", __data, data)
+
+  window.$refreshLayout()
 
   dialogVisible.value = false
   drawerOptions.visible = false
 }
 
 const pushTemplate = computed(() => {
+  if ( !data.material || !data.touch ) {
+    return {
+      has: false,
+      val: ''
+    }
+  }
+
   const { type, templates } = data.material
   const { type: targetId } = data.touch
 
@@ -125,10 +139,14 @@ const pushTemplate = computed(() => {
     val = '智能外呼模板：'
   }
 
-  return {
+  const obj = {
     has: type?.length,
     val: `${val}${res}`
   }
+
+  // Object.defineProperty(, '$template', { value: obj, enumerable: false, configurable: false, writable: false })
+
+  return obj
 })
 
 provide('save', (regFunc: () => boolean) => {
@@ -137,7 +155,7 @@ provide('save', (regFunc: () => boolean) => {
 </script>
 
 <template>
-  <el-card style="width: 355px" class="PBlock">
+  <el-card ref="dom" style="width: 355px" class="PBlock">
     <p class="title">
       流量策略器
       <span style="float: right">
@@ -147,7 +165,7 @@ provide('save', (regFunc: () => boolean) => {
     </p>
     <div @click="openCondition" class="PBlock-Content theme">
       <template v-if="data.diversionType || data.eventDelayed?.isDelayed">
-        <div style="display: flex; flex-direction: column; gap: 1rem" >
+        <div style="display: flex; flex-direction: column; gap: 1rem">
           <div style="--theme-color: #7DC757" class="PBlock-Section">
             <p>
               延迟设置
@@ -204,7 +222,7 @@ provide('save', (regFunc: () => boolean) => {
     </teleport>
   </el-card>
 
-  <el-button :class="{ display: true, disabled: haveDiverse }" @click="dialogVisible = true" class="start-add"
+  <el-button :class="{ display: data.diversionType || data.eventDelayed?.isDelayed, disabled: haveDiverse }" @click="dialogVisible = true" class="start-add"
     type="primary" :icon="Plus" circle />
 </template>
 

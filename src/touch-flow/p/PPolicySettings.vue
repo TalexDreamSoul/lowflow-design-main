@@ -103,7 +103,10 @@ function openCondition() {
 function openDrawer(comp: any) {
   dialogVisible.value = false
 
-  Object.assign(drawerOptions, comp)
+  Object.assign(drawerOptions, {
+    ...comp,
+    new: true
+  })
 
   if (!data.executeType)
     data.executeType = "immediately";
@@ -117,6 +120,8 @@ function handleSave() {
   if (!_saveFunc || !_saveFunc()) return
 
   Object.assign(__data, data)
+
+  window.$refreshLayout()
 
   dialogVisible.value = false
   drawerOptions.visible = false
@@ -152,6 +157,8 @@ const pushTemplate = computed(() => {
 const visible = ref(false)
 function del(p: any) {
   delChild(p)
+
+  window.$refreshLayout()
 
   visible.value = false
 }
@@ -227,7 +234,7 @@ function del(p: any) {
 
     <teleport to="body">
       <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
-        <component :new="true" :p="data" :is="drawerOptions.comp" />
+        <component :new="drawerOptions?.new" :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
           <el-button round @click="handleSave" type="primary">保存</el-button>

@@ -41,13 +41,19 @@ const layoutFn = () => {
       return 680;
     },
     getHeight(d: any) {
-      return d.height ? parseInt(d.height) : 120;
+      const { nodeType } = d
+      console.log("__d", d, nodeType)
+      if (nodeType === 'subDiversion') {
+        console.log("__subDiversion")
+        return 450
+      }
+      return d.height ? parseInt(d.height) : 280;
     },
     getHGap() {
       return 0;
     },
     getVGap() {
-      return 150;
+      return 30;
     },
     getSide: () => {
       return 'bottom';
@@ -59,16 +65,30 @@ const layoutFn = () => {
   } = { nodes: [], edges: [] };
 
   const _: any = {
-    'Start': (height: number) => height - 205,
+    'Start': (height: number) => height - 95,
     'strategy': (height: number, data: any) => {
       console.log("@@@---", data.data)
-      if ( data.data?.father?.nodeType === 'subDiversion' ) return 200
+      if (data.data?.father?.nodeType === 'subDiversion') return height - 40
       if (data.data.nodeName === '兜底策略器') return height - 155
 
-      return height - 200
+      return height - 40
     },
-    'diversion': (height: number) => height - 292,
-    'subDiversion': (height: number) => height - 200,
+    'diversion': (height: number) => height - 132,
+    'subDiversion': (height: number, _data: any) => {
+      const { data } = _data
+      let calcHeight = height - 125
+
+      if ( data.diversionType || data.eventDelayed?.isDelayed ) {
+        calcHeight = calcHeight - 200
+        if ( data.$template.has ) {
+          calcHeight += 100
+        }
+      }
+
+      console.log("><", data)
+
+      return calcHeight
+    },
   }
 
   const traverse = (data: any) => {
@@ -79,22 +99,24 @@ const layoutFn = () => {
       const shape = `${data.data.nodeType}`;
       const calc = _[shape]
 
+      console.log("calc-height", data.height, calc(data.height, data))
+
       model.nodes?.push({
         id: `${data.id}`,
         x: data.x + 700,
-        y: data.y + 260,
+        y: data.y + 100,
         shape,
         data: { ...data, $d: getNodeReactive },
         width: 610,
-        height: calc(data.height, data) || 100,
+        height: calc(data.height, data),
         ports: {
           groups: {
             bottom: {
               position: 'bottom',
               attrs: {
                 circle: {
-                  stroke: 'transparent',
-                  strokeWidth: 0,
+                  stroke: 'red',
+                  strokeWidth: 1,
                   fill: 'transparent',
                 },
               },
@@ -104,9 +126,9 @@ const layoutFn = () => {
               position: 'top',
               attrs: {
                 circle: {
-                  stroke: 'transparent',
-                  strokeWidth: 0,
-                  fill: 'transparent',
+                  stroke: 'green;',
+                  strokeWidth: 1,
+                  fill: 'green',
                 },
               },
             },
@@ -171,7 +193,7 @@ onMounted(() => {
   })
 });
 
-window.l = layoutFn
+window.$refreshLayout = layoutFn
 </script>
 
 <style lang="scss">
@@ -256,6 +278,7 @@ window.l = layoutFn
 
     pointer-events: unset;
   }
+
   &.disabled {
     opacity: .85;
     filter: invert(.1) brightness(95%);

@@ -129,6 +129,8 @@ const visible = ref(false)
 function del(p: any) {
   delChild(p)
 
+  window.$refreshLayout()
+
   visible.value = false
 }
 </script>

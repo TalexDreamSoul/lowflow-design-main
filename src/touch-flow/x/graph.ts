@@ -6,152 +6,68 @@ import PPolicySettingsVue from "../p/PPolicySettings.vue";
 import BranchVue from "../p/Branch.vue";
 import SubBranchVue from "../p/SubBranch.vue";
 
-const registerNode = () => {
-  register({
-    shape: "Start",
-    // inherit: "vue-shape",
-    width: 610,
-    height: 100,
-    component: PStartVue,
-    ports: {
-      groups: {
-        top: {
-          position: "top",
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: "#5989E2",
-              strokeWidth: 1,
-              fill: "#5989E2",
-            },
-          },
-        },
-        bottom: {
-          position: "bottom",
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: "#5989E2",
-              strokeWidth: 1,
-              fill: "#5989E2",
-            },
-          },
+const ports = {
+  groups: {
+    top: {
+      position: "top",
+      attrs: {
+        circle: {
+          r: 4,
+          magnet: true,
+          stroke: "#277AE7",
+          strokeWidth: 1,
+          fill: "#277AE7",
         },
       },
     },
+    bottom: {
+      position: "bottom",
+      attrs: {
+        circle: {
+          r: 4,
+          magnet: true,
+          stroke: "#277AE7",
+          strokeWidth: 1,
+          fill: "#277AE7",
+        },
+      },
+    },
+  },
+};
+
+const registerNode = () => {
+  register({
+    shape: "Start",
+    width: 610,
+    height: 100,
+    component: PStartVue,
+    // ports,
   });
 
   register({
     shape: "strategy",
-    // inherit: "vue-shape",
     width: 610,
-    height: 100,
+    height: 400,
     component: PPolicySettingsVue,
-    async: true,
-    ports: {
-      groups: {
-        top: {
-          position: "top",
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: "#277AE7",
-              strokeWidth: 1,
-              fill: "#277AE7",
-            },
-          },
-        },
-        bottom: {
-          position: "bottom",
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: "#277AE7",
-              strokeWidth: 1,
-              fill: "#277AE7",
-            },
-          },
-        },
-      },
-    },
+    // ports,
   });
 
   register({
     shape: "diversion",
     // inherit: "vue-shape",
     width: 610,
-    height: 100,
+    height: 400,
     component: BranchVue,
-    async: true,
-    ports: {
-      groups: {
-        top: {
-          position: "top",
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: "#277AE7",
-              strokeWidth: 1,
-              fill: "#277AE7",
-            },
-          },
-        },
-        bottom: {
-          position: "bottom",
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: "#277AE7",
-              strokeWidth: 1,
-              fill: "#277AE7",
-            },
-          },
-        },
-      },
-    },
+    // ports,
   });
 
   register({
     shape: "subDiversion",
     // inherit: "vue-shape",
     width: 610,
-    height: 100,
+    height: 400,
     component: SubBranchVue,
-    async: true,
-    ports: {
-      groups: {
-        top: {
-          position: "top",
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: "#277AE7",
-              strokeWidth: 1,
-              fill: "#277AE7",
-            },
-          },
-        },
-        bottom: {
-          position: "bottom",
-          attrs: {
-            circle: {
-              r: 4,
-              magnet: true,
-              stroke: "#277AE7",
-              strokeWidth: 1,
-              fill: "#277AE7",
-            },
-          },
-        },
-      },
-    },
+    // ports,
   });
 
   Graph.registerEdge(
@@ -279,16 +195,16 @@ export default function initGraph() {
       },
       createEdge() {},
     },
-    selecting: {
-      enabled: true,
-      multiple: true,
-      rubberEdge: true,
-      rubberNode: true,
-      modifiers: "shift",
-      rubberband: true,
-    },
-    keyboard: true,
-    clipboard: true,
-    history: true,
+    // selecting: {
+    //   enabled: true,
+    //   multiple: true,
+    //   rubberEdge: true,
+    //   rubberNode: true,
+    //   modifiers: "shift",
+    //   rubberband: true,
+    // },
+    // keyboard: true,
+    // clipboard: true,
+    // history: true,
   });
 }
