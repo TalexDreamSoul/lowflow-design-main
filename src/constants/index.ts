@@ -134,6 +134,41 @@ export const PEOPLE_SOURCE = [
 ];
 
 /**
+ * 标签来源
+ */
+export enum TagSourceEnum {
+  Market = "market",
+  Other = "other",
+}
+
+/**
+ * 标签来源
+ */
+export const TAG_SOURCE = [
+  {
+    label: "营销平台",
+    value: TagSourceEnum.Market,
+  },
+  {
+    label: "第三方导入",
+    value: TagSourceEnum.Other,
+  },
+];
+/**
+ * 标签来源
+ */
+export const BLACK_LIST_TYPE = [
+  {
+    label: "营销推送黑名单",
+    value: 'marketTouch',
+  },
+  {
+    label: "活动资源位黑名单",
+    value: 'activity',
+  },
+];
+
+/**
  * 省市数据
  */
 export const CITY_DATA = [

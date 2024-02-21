@@ -59,8 +59,12 @@ export const routes: RouterOptions["routes"] = [
         component: () => import("../pages/customer/list.vue"),
       },
       {
-        path: "attr",
-        component: () => import("../pages/configuration/attr.vue"),
+        path: "tag",
+        component: () => import("../pages/customer/tag.vue"),
+      },
+      {
+        path: "blackList",
+        component: () => import("../pages/customer/blacklist.vue"),
       },
     ],
   },
