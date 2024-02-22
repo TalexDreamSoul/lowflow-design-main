@@ -164,7 +164,7 @@ provide('save', (regFunc: () => boolean) => {
       </span>
     </p>
     <div @click="openCondition" class="PBlock-Content theme">
-      <template v-if="data.diversionType || data.eventDelayed?.isDelayed">
+      <template v-if="data.diversionType || data.eventDelayed?.isDelayed || pushTemplate?.has">
         <div style="display: flex; flex-direction: column; gap: 1rem">
           <div style="--theme-color: #7DC757" class="PBlock-Section">
             <p>

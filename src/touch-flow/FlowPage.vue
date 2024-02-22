@@ -8,9 +8,9 @@ import XFlow from './x/XFlow.vue'
 import { ArrowRight } from "@element-plus/icons-vue";
 import { useRouter } from 'vue-router'
 import { ElMessage } from "element-plus";
-// import { createTemplatePopover } from '../utils/touch-templates'
+import { createTemplatePopover } from '../utils/touch-templates'
 
-// createTemplatePopover('新建企微模版', '')
+createTemplatePopover('新建外呼模版', 'outbound')
 const props = defineProps<{
   modelValue?: Request;
   readonly?: boolean;

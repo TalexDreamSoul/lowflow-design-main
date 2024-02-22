@@ -216,10 +216,10 @@ const platformOptions: any = {
             <el-option value="week" label="周">小时</el-option>
             <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
           <el-select v-model="sizeForm.eventDelayed.delayedAction" placeholder="请选择" style="width: 150px">
-            <el-option value="week" label="发送触达">发送触达</el-option>
-            <el-option value="day" label="打上标签">打上标签</el-option>
-            <el-option value="day" label="不执行动作">不执行动作</el-option>
-            <el-option value="month" label="发送触达并打上标签">发送触达并打上标签</el-option>
+            <el-option value="touch" label="发送触达">发送触达</el-option>
+            <el-option value="label" label="打上标签">打上标签</el-option>
+            <el-option value="none" label="不执行动作">不执行动作</el-option>
+            <el-option value="touchAndLabel" label="发送触达并打上标签">发送触达并打上标签</el-option>
           </el-select>
         </template>
       </BehaviorGroupPlus>
@@ -255,8 +255,7 @@ const platformOptions: any = {
         </div>
       </BehaviorGroupPlus>
 
-      <!-- v-if="`${("" + sizeForm.eventDelayed.delayedAction).contains('label')}`" -->
-      <BehaviorGroupPlus title="标签设置" color="#277AE7">
+      <BehaviorGroupPlus v-if="String(sizeForm.eventDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1" title="标签设置" color="#277AE7">
         <NewLabel :p="sizeForm" />
         <!-- <div class="BlockBackground-Under">
           符合该策略器条件的用户打上 &nbsp;

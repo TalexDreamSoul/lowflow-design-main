@@ -37,7 +37,9 @@ const origin = {
 
 const data = reactive<typeof origin>(origin);
 watchEffect(() => {
-  const _data = props.data.value;
+  const _data = props.data?.value
+  if (!_data) return
+
   console.log("sms", data, origin,);
   Object.assign(data, _data);
 });
@@ -50,13 +52,13 @@ function saveData() {
     type: "sms",
   };
 
-  return props.type=='details'||props.type=='update'?{
+  return props.type == 'details' || props.type == 'update' ? {
     id,
     name,
     type: data.type,
     status: "available",
     smsTemplate,
-  }:{
+  } : {
     name,
     type: data.type,
     status: "available",
@@ -68,7 +70,7 @@ defineExpose({ saveData });
 </script>
 
 <template>
-  <el-form label-position="top" :model="data" :disabled="type=='details'">
+  <el-form label-position="top" :model="data" :disabled="type == 'details'">
     <el-form-item label="模板名称">
       <el-input v-model="data.name"></el-input>
     </el-form-item>

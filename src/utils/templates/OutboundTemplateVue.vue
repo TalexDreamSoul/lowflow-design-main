@@ -37,7 +37,8 @@ const origin = {
 const data = reactive<typeof origin>(origin);
 
 watchEffect(() => {
-  const _data = props.data.value
+  const _data = props.data?.value
+  if (!_data) return
 
   Object.assign(data, _data)
 })
@@ -62,14 +63,14 @@ function saveData() {
 defineExpose({ saveData });
 const tableData = [
   {
-    id: "01",
+    id: "001",
     variableFilled: "生肖",
     variable: "variable",
     screen: "screen",
     defaultValue: "defaultValue",
   },
   {
-    id: "01",
+    id: "002",
     variableFilled: "性别",
     variable: "variable",
     screen: "screen",
@@ -90,7 +91,8 @@ const tableData = [
       </el-select>
     </el-form-item>
     <el-form-item label="设置变量值">
-      <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #EDEFF4;--el-table-header-bg-color: #EDEFF4;--el-table-tr-bg-color: #F7F8FB;--el-table-header-text-color:#333;">
+      <el-table :data="tableData"
+        style="width: 100% ----el-table-header-bg-color: #EDEFF4;--el-table-header-bg-color: #EDEFF4;--el-table-tr-bg-color: #F7F8FB;--el-table-header-text-color:#333;">
         <el-table-column prop="id" label="序号" />
         <el-table-column prop="variableFilled" label="待填变量">
         </el-table-column>
@@ -102,7 +104,9 @@ const tableData = [
             <el-option label="外呼系统的话术模版2" value="addfriends" />
           </el-select>
         </el-table-column>
-        <el-table-column prop="screen" label="筛选" width="300" />
+        <el-table-column prop="screen" label="筛选" width="300">
+          123
+        </el-table-column>
 
         <el-table-column prop="defaultValue" label="默认值">
           <el-input v-model="data.name" placeholder="请输入"></el-input>
@@ -112,6 +116,13 @@ const tableData = [
     </el-form-item>
   </el-form>
 </template>
+
+<style>
+.BaseTemplate {
+  width: 60%;
+}
+</style>
+
 <style scoped>
 .el-table th.el-table__cell {
   background-color: #dbdbdb !important;
