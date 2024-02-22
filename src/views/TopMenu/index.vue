@@ -91,9 +91,9 @@
             <CaretBottom />
           </el-icon></div>
       </template>
-      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/all">用户管理</el-menu-item>
-      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/sms">角色管理</el-menu-item>
-      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/outbound">个人信息</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/userCenter/userManagement">用户管理</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/userCenter/rolesManagement">角色管理</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/userCenter/personalInformation">个人信息</el-menu-item>
     </el-sub-menu>
     <MenuPersonal />
   </el-menu>

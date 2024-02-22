@@ -79,7 +79,6 @@ export const routes: RouterOptions["routes"] = [
       },
     ],
   },
-  // * 素材类型：sms 短信，app app消息，digital 数字员工，outbound 智能外呼，znx 站内信
   {
     path: "/channelManagement",
     redirect: "/channelManagement/transactionList",
@@ -99,6 +98,24 @@ export const routes: RouterOptions["routes"] = [
       {
         path: "channelDisturb",
         component: () => import("../views/channelManagement/channelDisturb.vue"),
+      }
+    ],
+  },
+  {
+    path: "/userCenter",
+    redirect: "/userCenter/userManagement",
+    children: [
+      {
+        path: "userManagement",
+        component: () => import("../views/userCenter/userManagement.vue"),
+      },
+      {
+        path: "rolesManagement",
+        component: () => import("../views/userCenter/rolesManagement.vue"),
+      },
+      {
+        path: "personalInformation",
+        component: () => import("../views/userCenter/personalInformation.vue"),
       }
     ],
   },
