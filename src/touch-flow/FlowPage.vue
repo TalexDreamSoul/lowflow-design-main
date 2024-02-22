@@ -97,8 +97,6 @@ function targetReduction(data: Request) {
 function transformNodes(__nodes: Array<any>) {
   const res: Array<any> = [];
 
-  console.log(__nodes);
-
   [...__nodes].forEach((node: any) => {
     console.log("do have father", node.father)
 
@@ -127,14 +125,27 @@ function transformNodes(__nodes: Array<any>) {
 
 function flatMaps(__nodes: Array<any>) {
   // 铺平，然后删除每一项的children 记得浅拷贝
-  return __nodes.map((item: any) => {
-    const { children, ...rest } = item
+  // 每一个node有一个children: [] 要铺平
+  const res: Array<any> = [];
 
-    return {
-      ...rest,
-      children: children ? flatMaps(children) : [],
+  const stack: any = [...__nodes]
+
+  while (stack.length) {
+    const node = stack.pop()
+
+    const obj = { ...node }
+
+    if (obj.children) {
+      stack.push(...node.children)
+
+      delete obj.children
     }
-  })
+
+    res.push(obj)
+
+  }
+
+  return res
 }
 
 async function submitReview(status: string = 'approvalPending') {
@@ -146,7 +157,7 @@ async function submitReview(status: string = 'approvalPending') {
 
   const _flowOptions: any = {
     ...flowOptions.p,
-    nodes: transformNodes([ ...flowOptions.p.children ]),
+    nodes: flatMaps(transformNodes([ ...flowOptions.p.children ])),
     touchName: flowOptions.basic.touchName,
     ...transformDisturb(flowOptions.basic.disturb),
     ...transformTarget(flowOptions.basic.target)
