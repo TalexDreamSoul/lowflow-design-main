@@ -185,7 +185,7 @@ function handleClick(e: Event) {
 </script>
 
 <template>
-  <el-card class="PBlock">
+  <el-card class="PBlock" style="    margin-top: 100px;">
     <p>进入流程设置</p>
     <div class="PBlock-Content">
       <div @click="openCustomer" :class="{ checked: customerConditioned.display }" class="PBlock-Section">
