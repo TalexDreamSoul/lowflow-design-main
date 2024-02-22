@@ -3,7 +3,7 @@
     <div class="common-layout">
       <TopMenu v-if="!meta.hideTopMenu" />
       <div class="content">
-        <el-watermark content="用户名+时间" :font="{ color: 'rgba(0, 0, 0, 0.15)' }" v-if="!meta.hideTopMenu" >
+        <el-watermark style="height: 100%;" content="用户名+时间" :font="{ color: 'rgba(0, 0, 0, 0.15)' }" v-if="!meta.hideTopMenu" >
           <router-view></router-view>
         </el-watermark>
         <router-view v-if="meta.hideTopMenu" ></router-view>
