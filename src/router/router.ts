@@ -79,6 +79,29 @@ export const routes: RouterOptions["routes"] = [
       },
     ],
   },
+  // * 素材类型：sms 短信，app app消息，digital 数字员工，outbound 智能外呼，znx 站内信
+  {
+    path: "/channelManagement",
+    redirect: "/channelManagement/transactionList",
+    children: [
+      {
+        path: "transactionList",
+        component: () => import("../views/channelManagement/transactionList.vue"),
+      },
+      {
+        path: "reconciliationList",
+        component: () => import("../views/channelManagement/reconciliationList.vue"),
+      },
+      {
+        path: "equityManagement",
+        component: () => import("../views/channelManagement/equityManagement.vue"),
+      },
+      {
+        path: "channelDisturb",
+        component: () => import("../views/channelManagement/channelDisturb.vue"),
+      }
+    ],
+  },
   // 添加需要隐藏 TopMenu 的页面，并设置 meta.hideTopMenu 为 true
 ];
 

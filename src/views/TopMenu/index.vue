@@ -36,7 +36,7 @@
             <CaretBottom />
           </el-icon></div>
       </template>
-      
+
       <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/all">模版总览</el-menu-item>
       <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/sms">短信模版</el-menu-item>
       <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/outbound">外呼模版</el-menu-item>
@@ -64,10 +64,19 @@
       <el-menu-item class="pd-menu-item" index="/configuration/event">事件管理</el-menu-item>
       <el-menu-item class="pd-menu-item" index="/configuration/attr">属性管理</el-menu-item>
     </el-sub-menu>
-    <el-menu-item index="/dashboard">
-      <div class="title">素材权益管理</div>
-    </el-menu-item>
     <el-sub-menu index="7">
+      <template #title>
+        <div class="title">渠道管理 <el-icon :size="12">
+            <CaretBottom />
+          </el-icon></div>
+      </template>
+      <el-menu-item class="pd-menu-item" index="/channelManagement/transactionList">交易明细</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/channelManagement/reconciliationList">交易对账</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/channelManagement/channelDisturb">渠道勿扰设置</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/channelManagement/equityManagement">权益管理</el-menu-item>
+    </el-sub-menu>
+
+    <el-sub-menu index="8">
       <template #title>
         <div class="title">审核中心 <el-icon :size="12">
             <CaretBottom />
@@ -75,6 +84,16 @@
       </template>
       <el-menu-item class="pd-menu-item" index="/pinia">Service</el-menu-item>
       <el-menu-item class="pd-menu-item" index="/page">Service</el-menu-item>
+    </el-sub-menu>
+    <el-sub-menu index="9">
+      <template #title>
+        <div class="title">用户中心 <el-icon :size="12">
+            <CaretBottom />
+          </el-icon></div>
+      </template>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/all">用户管理</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/sms">角色管理</el-menu-item>
+      <el-menu-item class="pd-menu-item" index="/materialCenter/templatePanel/outbound">个人信息</el-menu-item>
     </el-sub-menu>
     <MenuPersonal />
   </el-menu>
@@ -87,10 +106,10 @@ import { useRouter } from "vue-router";
 import HeaderIcon from "~/assets/header-icon.png";
 import { CaretBottom } from "@element-plus/icons-vue";
 
-const router = useRouter()
+const router = useRouter();
 const activeIndex = ref(router.currentRoute.value.path);
 
-const handleSelect = (key: string,params?:string) => {
+const handleSelect = (key: string, params?: string) => {
   router.push(key);
 };
 </script>
