@@ -369,7 +369,7 @@ const platformOptions: any = {
         </div>
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus v-if="String(sizeForm.eventDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1" title="标签设置" color="#277AE7">
+      <BehaviorGroupPlus v-if="sizeForm.eventDelayed.isDelayed && String(sizeForm.eventDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1" title="标签设置" color="#277AE7">
         <NewLabel :p="sizeForm" />
         <!-- <div class="BlockBackground-Under">
           符合该策略器条件的用户打上 &nbsp;
