@@ -125,6 +125,18 @@ function transformNodes(__nodes: Array<any>) {
   return res
 }
 
+function flatMaps(__nodes: Array<any>) {
+  // 铺平，然后删除每一项的children 记得浅拷贝
+  return __nodes.map((item: any) => {
+    const { children, ...rest } = item
+
+    return {
+      ...rest,
+      children: children ? flatMaps(children) : [],
+    }
+  })
+}
+
 async function submitReview(status: string = 'approvalPending') {
   if (props.readonly) return
 

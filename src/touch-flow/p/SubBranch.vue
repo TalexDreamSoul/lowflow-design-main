@@ -222,7 +222,7 @@ provide('save', (regFunc: () => boolean) => {
     </teleport>
   </el-card>
 
-  <el-button :class="{ display: data.diversionType || data.eventDelayed?.isDelayed, disabled: haveDiverse }" @click="dialogVisible = true" class="start-add"
+  <el-button :class="{ display: data.diversionType || data.eventDelayed?.isDelayed || pushTemplate?.has, disabled: haveDiverse }" @click="dialogVisible = true" class="start-add"
     type="primary" :icon="Plus" circle />
 </template>
 
