@@ -80,8 +80,8 @@ const sizeForm = reactive({
   selectedType: "month",
   weekday: "",
   monthday: "",
+  planB: false
 });
-const planB = ref(false);
 
 watch(() => planB.value, (val: boolean) => props.p.triggerRuleContent.isDelayed = val)
 
@@ -313,25 +313,25 @@ function addEventB() {
             </div>
 
             <!-- props.p.triggerRuleContent.eventA.customEvent.conditions -->
-            <TouchBlockGenre :condition="p.triggerRuleContent.eventA.customEvent" :dict="dict" />
+            <TouchBlockGenre v-if="dict" :condition="p.triggerRuleContent.eventA.customEvent" :dict="dict" />
 
           </div>
         </el-form-item>
 
-        <div class="underright" v-show="!planB" @click="planB = !planB">
+        <div class="underright" v-show="!sizeForm.planB" @click="sizeForm.planB = !sizeForm.planB">
           <el-icon size="14">
             <CirclePlusFilled />
           </el-icon> 添加事件组b
 
         </div>
-        <el-form-item v-show="planB">
+        <el-form-item v-show="sizeForm.planB">
           <div class="pannel">
 
             <div class="toppannel" style="    display: flex;
             justify-content: space-between;">
               触发事件组B
 
-              <el-text type="primary" style="cursor: pointer;" @click="planB = !planB">
+              <el-text type="primary" style="cursor: pointer;" @click="sizeForm.planB = !sizeForm.planB">
                 <el-icon size="14">
                   <Delete />
                 </el-icon>
@@ -363,7 +363,7 @@ function addEventB() {
               </el-text>
             </div>
 
-            <TouchBlockGenre :condition="p.triggerRuleContent.eventB.customEvent" :dict="dict" />
+            <TouchBlockGenre v-if="dict" :condition="p.triggerRuleContent.eventB.customEvent" :dict="dict" />
           </div>
         </el-form-item>
         <div>
