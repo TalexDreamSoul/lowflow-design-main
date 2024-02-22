@@ -297,10 +297,9 @@ window.$refreshLayout = layoutFn
 
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) scale(1.2);
   background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
 
-  zoom: 1.2;
   transition: 0.25s;
 }
 

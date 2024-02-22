@@ -176,7 +176,7 @@ async function submitReview(status: string = 'approvalPending') {
 
   const res = await touchSubmitReview(data)
 
-  if (!+res.code) {
+  if (!+res?.code) {
     return ElMessage({
       message: res.msg,
       type: "success",
