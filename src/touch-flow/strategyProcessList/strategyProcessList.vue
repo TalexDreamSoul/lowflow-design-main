@@ -139,7 +139,7 @@ const handleCurrentChange = (val: number) => {
 
       </el-form>
       <div>
-        <router-link to="/designNew">
+        <router-link to="/design">
           <el-button type="primary" class="add" round>新建策略流程</el-button>
         </router-link>
       </div>

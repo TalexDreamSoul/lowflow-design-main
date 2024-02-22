@@ -2,7 +2,7 @@
 <template>
   <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :ellipsis="false" :popper-offset="0" @select="handleSelect">
     <img style="width: 169px; height: 39px; margin: 0 26px 0 17px;" :src="HeaderIcon" alt="" />
-    <el-sub-menu index="1">
+    <!-- <el-sub-menu index="1">
       <template #title>
         <div class="title">数据看板 <el-icon :size="12">
             <CaretBottom />
@@ -10,7 +10,7 @@
       </template>
       <el-menu-item class="pd-menu-item" index="/pinia">Service</el-menu-item>
       <el-menu-item class="pd-menu-item" index="/page">Service</el-menu-item>
-    </el-sub-menu>
+    </el-sub-menu> -->
     <el-sub-menu index="2">
       <template #title>
         <div class="title">营销制作 <el-icon :size="12">

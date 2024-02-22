@@ -107,29 +107,22 @@ const updateMaterialStatusData = async (row: any, status: String) => {
 };
 
 const detailsData = async (row: any) => {
-  value.value = row;
+  // value.value = row;
   // createTemplatePopover('新建企微模版', 'digital')
   // createTemplatePopover('新建站内信模版', 'znx', value)
-  console.log(`output->row`,row)
-  let name= `${materialTypeName}模版详情`
-  createTemplatePopover(
-    "模版详情",
-    row.type,
-    value,
-    "details"
-  );
+  const { content, ...rest } = row;
+  value.value = { ...content, ...rest };
+  console.log(`output->row`, row);
+  let name = `${materialTypeName.value}模版详情`;
+  createTemplatePopover(name, row.type, value, "details");
   // createTemplatePopover('新建APP Push模版', 'app')
   // createTemplatePopover('新建外呼模版', 'outbound')
 };
 
 const addData = async () => {
   value.value = "";
-  let name= '新建'+materialTypeName.value+'模版';
-  createTemplatePopover(
-    name,
-    route.params.type,
-    value
-  );
+  let name = "新建" + materialTypeName.value + "模版";
+  createTemplatePopover(name, route.params.type, value);
 };
 const updateData = async (row: any) => {
   ElMessageBox.alert(
@@ -143,8 +136,10 @@ const updateData = async (row: any) => {
       customClass: "delete-modal",
     }
   ).then(async () => {
-    value.value = row;
-    createTemplatePopover("编辑短信模版", "sms", value, "update");
+    const { content, ...rest } = row;
+    value.value = { ...content, ...rest };
+    let name = "编辑" + materialTypeName.value + "模版";
+    createTemplatePopover(name, route.params.type, value, "update");
   });
 };
 const handleSizeChange = (val: any) => {
@@ -156,76 +151,76 @@ const handleCurrentChange = (val: number) => {
 </script>
 
 <template>
-    <CustomEventComponent :title="route.params.type=='all'?`${materialTypeName}`:`${materialTypeName}模版列表`" :tableData="tableData" :total="total">
-      <template #search>
-        <div class="search">
-          <el-form :inline="true">
-            <el-form-item label="创建时间：">
-              <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="(val) => {
+  <CustomEventComponent :title="route.params.type=='all'?`${materialTypeName}`:`${materialTypeName}模版列表`" :tableData="tableData" :total="total">
+    <template #search>
+      <div class="search">
+        <el-form :inline="true">
+          <el-form-item label="创建时间：">
+            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="(val) => {
                   formInline.beginTime =  dayjs(val[0]).format('YYYY-MM-DD');
                   formInline.endTime = dayjs(val[1]).format('YYYY-MM-DD');val[0];
                 }" />
-            </el-form-item>
-            <el-form-item v-if="route.params.type=='all'">
-              <el-select v-model="formInline.type" clearable style="width:200px" placeholder="模板类型">
-                <el-option  v-for="item in materialType"  :label="item.name" :value="item.value" />
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-select v-model="formInline.status" clearable style="width:200px" placeholder="模板状态">
-                <el-option label="可用" value="available" />
-                <el-option label="下线" value="offline" />
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width:200px" :suffix-icon="Search" />
-            </el-form-item>
+          </el-form-item>
+          <el-form-item v-if="route.params.type=='all'">
+            <el-select v-model="formInline.type" clearable style="width:200px" placeholder="模板类型">
+              <el-option v-for="item in materialType" :label="item.name" :value="item.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-select v-model="formInline.status" clearable style="width:200px" placeholder="模板状态">
+              <el-option label="可用" value="available" />
+              <el-option label="下线" value="offline" />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width:200px" :suffix-icon="Search" />
+          </el-form-item>
 
-          </el-form>
-          <div v-if="route.params.type!='all'">
-            <el-button type="primary" class="add" @click="addData()" round>新建{{materialTypeName}}模版</el-button>
-          </div>
+        </el-form>
+        <div v-if="route.params.type!='all'">
+          <el-button type="primary" class="add" @click="addData()" round>新建{{materialTypeName}}模版</el-button>
         </div>
-      </template>
-      <template #table="{ tableData }">
+      </div>
+    </template>
+    <template #table="{ tableData }">
 
-        <el-table :data="tableData">
-          <el-table-column label="模版ID" prop="id" />
-          <el-table-column label="模版名称" prop="name" />
-          <el-table-column label="状态">
-            <template #default="scope">
-              <el-tag class="mx-1" :type="statusLabels[scope.row.status].type?statusLabels[scope.row.status].type:'info'" effect="light">
-                {{ statusLabels[scope.row.status].Text }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="更新时间" width="180" prop="updatedTime" />
-          <el-table-column label="创建时间" width="180" prop="createTime" />
-          <el-table-column label="创建人" prop="createBy" />
-          <el-table-column label="正在使用" prop="usedCount">
-            <template #default="scope">
-              <span :style="scope.row.usedCount > 0 ? 'color: #00C068' : 'color: #333'">{{scope.row.usedCount}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="280" fixed="right">
-            <template #default="scope">
-              <el-space wrap v-if="route.params.type!='all'">
-                <el-link type="primary" v-if="scope.row.status=='offline'" @click="updateMaterialStatusData(scope.row,'available')">上线</el-link>
-                <el-link type="primary" v-if="scope.row.status!=='offline'" @click="updateMaterialStatusData(scope.row,'offline')">下线</el-link>
-                <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
-                <el-link type="primary" @click="delData(scope.row)">删除</el-link>
-                <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
-              </el-space>
-              <el-link v-else type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+      <el-table :data="tableData">
+        <el-table-column label="模版ID" prop="id" />
+        <el-table-column label="模版名称" prop="name" />
+        <el-table-column label="状态">
+          <template #default="scope">
+            <el-tag class="mx-1" :type="statusLabels[scope.row.status].type?statusLabels[scope.row.status].type:'info'" effect="light">
+              {{ statusLabels[scope.row.status].Text }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="更新时间" width="180" prop="updatedTime" />
+        <el-table-column label="创建时间" width="180" prop="createTime" />
+        <el-table-column label="创建人" prop="createBy" />
+        <el-table-column label="正在使用" prop="usedCount">
+          <template #default="scope">
+            <span :style="scope.row.usedCount > 0 ? 'color: #00C068' : 'color: #333'">{{scope.row.usedCount}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="280" fixed="right">
+          <template #default="scope">
+            <el-space wrap v-if="route.params.type!='all'">
+              <el-link type="primary" v-if="scope.row.status=='offline'" @click="updateMaterialStatusData(scope.row,'available')">上线</el-link>
+              <el-link type="primary" v-if="scope.row.status!=='offline'" @click="updateMaterialStatusData(scope.row,'offline')">下线</el-link>
+              <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
+              <el-link type="primary" @click="delData(scope.row)">删除</el-link>
+              <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+            </el-space>
+            <el-link v-else type="primary" @click="detailsData(scope.row)">查看详情</el-link>
 
-            </template>
-          </el-table-column>
-        </el-table>
-      </template>
-      <template #pagination>
-        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, sizes, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
-      </template>
-    </CustomEventComponent>
+          </template>
+        </el-table-column>
+      </el-table>
+    </template>
+    <template #pagination>
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, sizes, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+    </template>
+  </CustomEventComponent>
 </template>
 
 
