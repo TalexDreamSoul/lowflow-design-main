@@ -8,9 +8,9 @@ import XFlow from './x/XFlow.vue'
 import { ArrowRight } from "@element-plus/icons-vue";
 import { useRouter } from 'vue-router'
 import { ElMessage } from "element-plus";
-import { createTemplatePopover } from '../utils/touch-templates'
+// import { createTemplatePopover } from '../utils/touch-templates'
 
-createTemplatePopover('新建外呼模版', 'outbound')
+// createTemplatePopover('新建外呼模版', 'digital')
 const props = defineProps<{
   modelValue?: Request;
   readonly?: boolean;
@@ -202,7 +202,7 @@ console.log("total flow", flowOptions);
   <div class="FlowPage">
     <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
       <el-header>
-        <FlowHeader v-if="!modelValue || !readonly" @submit-review="submitReview" :basic="flowOptions.basic" />
+        <FlowHeader v-if="!modelValue || !readonly" @submit-review="() => submitReview()" :basic="flowOptions.basic" />
         <div v-else class="FlowPage-ReadHeader">
           流程基础设置
           <el-button text type="primary" @click="dialogVisible = true">

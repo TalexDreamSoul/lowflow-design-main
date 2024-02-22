@@ -8,7 +8,7 @@ import MicroEnterpriseDrag from "./MicroEnterpriseDrag.vue";
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 
-const action = `api/uploadMaterialFile.do`
+const action = `api/uploadMaterialFile`
 
 const props = defineProps<{
   data: any
