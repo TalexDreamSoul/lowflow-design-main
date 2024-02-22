@@ -156,7 +156,6 @@ const handleCurrentChange = (val: number) => {
 </script>
 
 <template>
-  <div>
     <CustomEventComponent :title="route.params.type=='all'?`${materialTypeName}`:`${materialTypeName}模版列表`" :tableData="tableData" :total="total">
       <template #search>
         <div class="search">
@@ -227,7 +226,6 @@ const handleCurrentChange = (val: number) => {
         <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, sizes, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
       </template>
     </CustomEventComponent>
-  </div>
 </template>
 
 

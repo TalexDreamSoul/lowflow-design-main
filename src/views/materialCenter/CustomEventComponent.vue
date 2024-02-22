@@ -30,7 +30,7 @@ const props = defineProps({
   padding: 24px 40px;
   //background-color: #f8f9fa;
   overflow-y: auto;
-
+  height: 100%;
   > .title {
     font-size: 24px;
     line-height: 24px;
