@@ -83,7 +83,7 @@ const sizeForm = reactive({
   planB: false
 });
 
-watch(() => planB.value, (val: boolean) => props.p.triggerRuleContent.isDelayed = val)
+watch(() => sizeForm.planB, (val: boolean) => props.p.triggerRuleContent.isDelayed = val)
 
 const daysInMonth = computed(() => {
   const days = [];
