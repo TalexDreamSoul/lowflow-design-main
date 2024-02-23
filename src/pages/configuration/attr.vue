@@ -1,5 +1,5 @@
 <template>
-  <div class="attr">
+  <div class="attr list-layout">
     <div class="title">事件列表</div>
     <div class="search">
       <el-form :inline="true" :model="pageParams">
@@ -26,7 +26,7 @@
                   checkStringEqual(scope.row.status, ConfigStatus.Available) ? '可用' : '已下线' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" min-width="240">
             <template #default="scope">
               <el-button class="action-btn" @click="handleSetStatus(scope.row)" link type="primary">{{
                 checkStringEqual(scope.row.status,
@@ -40,7 +40,7 @@
         </el-table>
       </el-watermark>
       <el-pagination background layout="prev, pager, next, sizes, jumper" :total='total' :page-sizes="[10]"
-        v-model:current-page="pageParams.pageNum" />
+        v-model:current-page="pageNum" />
     </div>
     <el-dialog class="attr-modal" destroy-on-close :close-on-click-modal="false" v-model="modalVisible"
       :title='ModalTitleMap[modalType]'>
@@ -108,7 +108,6 @@ const ModalTitleMap: any = {
 
 const pageParams = reactive({
   fieldName: '',
-  pageNum: 1
 });
 
 const defaultFormValues = {
@@ -124,13 +123,18 @@ const tableData = ref<any[]>([]);
 const modalVisible = ref(false);
 const modalType = ref('');
 const attrFormRef = ref<FormInstance>();
+const pageNum = ref(1);
 
 watch(pageParams, debounce(() => {
-  getData(pageParams);
+  getData({...pageParams, pageNum: 1});
 }, 200));
 
+watch(pageNum, () => {
+  getData({...pageParams, pageNum: pageNum.value});
+});
+
 onMounted(() => {
-  getData(pageParams)
+  getData({...pageParams, pageNum: 1})
 });
 
 const getData = async (params: any) => {

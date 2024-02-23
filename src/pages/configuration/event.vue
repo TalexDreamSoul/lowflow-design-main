@@ -67,7 +67,7 @@
               >
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" min-width="211">
             <template #default="scope">
               <el-button
                 @click="handleSetStatus(scope.row)"
@@ -110,7 +110,7 @@
         layout="prev, pager, next, sizes, jumper"
         :total="total"
         :page-sizes="[10]"
-        v-model:current-page="pageParams.pageNum"
+        v-model:current-page="pageNum"
       />
     </div>
     <el-drawer
@@ -426,7 +426,6 @@ const ModalTitleMap: any = {
 const pageParams = reactive({
   eventName: "",
   eventType: "",
-  pageNum: 1,
 });
 
 const defaultFormValues = {
@@ -456,16 +455,21 @@ const drawerType = ref<any>(DrawerType.Create);
 const dialogFormVisible = ref(false);
 const modalType = ref<any>(DrawerType.Create);
 const editAttrIndex = ref(0);
+const pageNum = ref(1);
 
 watch(
   pageParams,
   debounce(() => {
-    getData(pageParams);
+    getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );
 
+watch(pageNum, () => {
+  getData({ ...pageParams, pageNum: pageNum.value });
+});
+
 onMounted(() => {
-  getData(pageParams);
+  getData({ ...pageParams, pageNum: 1 });
 });
 
 const getData = async (params: any) => {

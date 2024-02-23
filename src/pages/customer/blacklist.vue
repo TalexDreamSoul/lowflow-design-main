@@ -22,6 +22,11 @@
             :suffix-icon="Search"
           />
         </el-form-item>
+        <el-form-item>
+          <el-button class="pd-button" @click="handleModal(DrawerType.Create)"
+            >高级筛选</el-button
+          >
+        </el-form-item>
       </el-form>
       <el-button
         class="pd-button"
@@ -119,56 +124,20 @@
         layout="prev, pager, next, sizes, jumper"
         :total="total"
         :page-sizes="[10]"
-        v-model:current-page="pageParams.pageNum"
+        @current-change="currentChange"
       />
     </div>
-    <el-dialog
-      class="pd-modal"
-      destroy-on-close
-      :close-on-click-modal="false"
-      v-model="modalVisible"
-      :title="ModalTitleMap[modalType]"
-    >
-      
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button
-            v-if="modalType === DrawerType.Detail"
-            class="pd-button"
-            round
-            @click="modalVisible = false"
-            >返回</el-button
-          >
-          <el-button
-            v-if="modalType !== DrawerType.Detail"
-            class="pd-button"
-            round
-            @click="modalVisible = false"
-            >取消</el-button
-          >
-          <el-button
-            v-if="modalType !== DrawerType.Detail"
-            class="pd-button"
-            @click.prevent="onSubmit(formRef)"
-            round
-            type="primary"
-            >保存</el-button
-          >
-        </span>
-      </template>
-    </el-dialog>
+    <PdDrawer ref="drawerRef" :getData="() => getData(pageParams)" />
   </div>
 </template>
 <script lang="ts" setup>
 import { reactive, ref, watch, onMounted } from "vue";
-import {
-  ConfigStatus,
-  BLACK_LIST_TYPE,
-} from "~/constants";
+import { ConfigStatus, BLACK_LIST_TYPE } from "~/constants";
 import API from "~/api/customer";
 import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
-import { ElMessageBox, FormInstance } from "element-plus";
+import { ElMessageBox } from "element-plus";
+import PdDrawer from './drawer.vue';
 import "element-plus/theme-chalk/el-message-box.css";
 
 enum DrawerType {
@@ -177,43 +146,31 @@ enum DrawerType {
   Edit = "edit",
 }
 
-const ModalTitleMap: any = {
-  [DrawerType.Create]: "新建黑名单",
-  [DrawerType.Detail]: "编辑黑名单",
-  [DrawerType.Edit]: "黑名单详情",
-};
-
 const pageParams = reactive({
   blacklistName: "",
   labelSource: "",
   time: "",
-  pageNum: 1,
 });
 
-const defaultFormValues = {
-  blacklistName: "",
-  labelDesc: "",
-};
-let formValues = reactive({ ...defaultFormValues });
-let modalData = reactive<any>({});
-
-const formRef = ref<FormInstance>();
+const drawerRef = ref<any>();
 
 const total = ref(0);
 const tableData = ref<any[]>([]);
-const modalVisible = ref(false);
-const modalType = ref<any>(DrawerType.Create);
 
 watch(
   pageParams,
   debounce(() => {
-    getData(pageParams);
+    getData({...pageParams, pageNum: 1});
   }, 200)
 );
 
 onMounted(() => {
-  getData(pageParams);
+  getData({...pageParams, pageNum: 1});
 });
+
+const currentChange = (value: number) => {
+  getData({...pageParams, pageNum: value});
+}
 
 const getData = async (params: any) => {
   try {
@@ -240,9 +197,7 @@ const getData = async (params: any) => {
 };
 
 const handleModal = async (type: string, values?: any) => {
-
-  modalType.value = type;
-  modalVisible.value = true;
+  drawerRef.value?.handleModal?.(type, values)
 };
 
 const handleSetStatus = async (values: any) => {
@@ -272,20 +227,6 @@ const handleDelete = (values: any) => {
     }
   });
 };
-
-const onSubmit = async (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  try {
-    await formEl.validate();
-    let res = await API.updateCustomLabel(formValues);
-    if (checkStringEqual(res?.code, 0)) {
-      getData(pageParams);
-      modalVisible.value = false;
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
 </script>
 
 <style lang="scss">
@@ -297,6 +238,41 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
     > div {
       flex: 1;
+    }
+  }
+  .add-type-tabs {
+    width: 100%;
+    &.detail {
+      .el-tabs__header {
+        display: none;
+      }
+    }
+    .el-tabs__header {
+      border-bottom: none;
+      margin: 0;
+    }
+    .el-tabs__content {
+      padding-top: 24px;
+      background-color: #F2F4F8;
+    }
+    .el-tabs__item {
+      border-bottom: 1px solid #e4e7ed;
+      box-sizing: border-box;
+      &.is-active {
+        background: linear-gradient(180deg, #205ccb 0%, #598ff1 100%);
+        color: white;
+        border-bottom: none;
+      }
+      &:not(.is-active):hover {
+        color: #303133;
+      }
+    }
+    .el-table {
+      border-radius: 0;
+
+      .el-table__cell {
+        background-color: rgba(242, 244, 248, 1);
+      }
     }
   }
 }

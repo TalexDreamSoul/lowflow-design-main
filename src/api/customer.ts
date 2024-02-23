@@ -23,7 +23,7 @@ const customerAPI = {
     return request.post({ url: "/api/deleteCustomLabel.do", data });
   },
   downloadCustomLabelTemplate() {
-    return request.get({ url: "/api/downloadCustomLabelTemplate.do" });
+    return request.get({ url: "/api/downloadCustomLabelTemplate", responseType: 'blob', });
   },
   updateCustomLabel(data: any) {
     return request.post({ url: "/api/updateCustomLabel.do", data });
@@ -39,6 +39,18 @@ const customerAPI = {
   },
   deleteBlacklist(data: any) {
     return request.post({ url: "/api/deleteBlacklist.do", data });
+  },
+  addBlacklist(data: any) {
+    return request.post({ url: "/api/addBlacklist.do", data });
+  },
+  blacklistContainCustoms(data: any) {
+    return request.post({ url: "/api/blacklistContainCustoms.do", data });
+  },
+  blacklistDetail(data: any) {
+    return request.post({ url: "/api/blacklistDetail.do", data });
+  },
+  updateBlacklist(data: any) {
+    return request.post({ url: "/api/updateBlacklist.do", data });
   },
 };
 
