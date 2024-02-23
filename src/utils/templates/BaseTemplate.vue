@@ -2,7 +2,7 @@
 import { ElMessage } from "element-plus";
 import { ref, onMounted } from "vue";
 import { Close } from "@element-plus/icons-vue";
-import { addMaterial,updateMaterial } from "~/api/index";
+import { addMaterial, updateMaterial } from "~/api/index";
 import { useVModel } from "@vueuse/core";
 
 const props = defineProps<{
@@ -14,6 +14,7 @@ const props = defineProps<{
   success: Function;
 }>();
 
+const out = ref(false)
 const compRef = ref();
 async function saveData() {
   const { saveData: save } = compRef.value;
@@ -27,7 +28,7 @@ async function saveData() {
       _res = await updateMaterial(res);
       break;
     case "details":
-     // cancelButtonText.value = "返回";
+      // cancelButtonText.value = "返回";
       break;
     default:
       _res = await addMaterial(res);
@@ -48,25 +49,31 @@ async function saveData() {
     });
   }
 }
+
+function destroy() {
+  out.value = true
+
+  setTimeout(props.close, 500)
+}
 </script>
 
 <template>
-  <div class="BaseTemplate" >
+  <div class="BaseTemplate" :class="{ out }">
     <div class="BaseTemplate-Header">
       <p class="BaseTemplate-Title" v-text="title" />
 
-      <el-icon @click="close as any" style="cursor: pointer;font-size: 20px">
+      <el-icon @click="destroy" style="cursor: pointer;font-size: 20px">
         <Close />
       </el-icon>
     </div>
 
-    <div class="BaseTemplate-Content" contenteditable="false" >
-      <component :data="data" ref="compRef" :is="comp" :type="type"/>
+    <div class="BaseTemplate-Content" contenteditable="false">
+      <component :data="data" ref="compRef" :is="comp" :type="type" />
     </div>
 
     <div class="BaseTemplate-Footer">
-      <el-button @click="(close as any)" round>{{ type!=='details'?'取消':'返回' }}</el-button>
-      <el-button @click="saveData" round class="primaryStyle" v-if="type!=='details'">保存</el-button>
+      <el-button @click="destroy" round>{{ type !== 'details' ? '取消' : '返回' }}</el-button>
+      <el-button @click="saveData" round class="primaryStyle" v-if="type !== 'details'">保存</el-button>
     </div>
   </div>
 </template>
@@ -84,6 +91,11 @@ async function saveData() {
 }
 
 .BaseTemplate {
+  &.out {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+
   &-Footer {
     margin-top: 1rem;
 
@@ -130,5 +142,39 @@ async function saveData() {
 
   overflow: hidden;
   transform: translate(-50%, -50%);
+  transition: 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  animation: Popper 0.5s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+.Popper-outer {
+  animation: Popper-outer 0.55s forwards cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+.Popper-outer-reverse {
+  animation-direction: reverse;
+}
+
+@keyframes Popper-outer {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0.75;
+    transform: scale(1.25);
+  }
+}
+
+@keyframes Popper {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.25);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 </style>

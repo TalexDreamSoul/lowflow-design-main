@@ -151,6 +151,7 @@ watch(() => width.value + height.value, refreshCurves);
       }
     }
   }
+
   &+& {
     margin-bottom: 40px;
   }

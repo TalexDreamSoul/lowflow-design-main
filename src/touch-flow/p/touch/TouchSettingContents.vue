@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useVModel } from '@vueuse/core'
-import { ref, h, watch } from 'vue'
+import { ref, h, watch, watchEffect, nextTick } from 'vue'
 import { createFloatingPanel } from './floating-panel'
 import { getDictAnalyzedTree } from '../../flow-utils'
 import TouchSelectWrapper from './TouchSelectable.vue'
@@ -240,6 +240,64 @@ function variableDone() {
 }
 
 watch(() => _content.value, handleBlur)
+
+watchEffect(() => {
+  if (!props.modelValue?.id) return
+
+  const { modelValue, content, variables } = props
+
+  let __content: string = _content.value = modelValue[content]
+  const _variables = modelValue[variables]
+
+  const _preFuncs: any[] = []
+  let startsInd = -1
+  for (let variable of _variables) {
+    const { field, label } = variable
+    const text = field || label
+    const id = randomStr(6).replaceAll('.', '')
+
+    variableMap.set(id, {
+      field: id,
+      variables: [],
+      ...variable
+    })
+
+    const ind = __content.indexOf(text, startsInd + 1)
+    if (ind > -1) {
+      startsInd = ind
+
+      const condition = getCurrSelected({
+        field: text
+      })
+
+      _preFuncs.push(() => {
+        const e = document.getElementById(id)!
+        const valueDom: any = e.querySelector('.value')
+
+        valueDom.parentElement._condition = condition
+        valueDom.parentElement._value = text
+        valueDom.setAttribute('value', text)
+        valueDom.innerText = condition.label
+      })
+
+      const _ = `<button unselectable="on" data-id="${id}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">请选择</span>&nbsp;${settingSvg}</button>`
+
+      __content = __content.slice(0, ind) + _ + __content.slice(ind + text.length)
+    }
+  }
+
+  nextTick(() => {
+    const el = contentRef.value!
+
+    console.log(">", el)
+
+    el.innerHTML = __content
+
+    nextTick(() => _preFuncs.forEach(a => a()))
+  })
+
+  console.log("touch", _content, _variables)
+})
 </script>
 
 <template>

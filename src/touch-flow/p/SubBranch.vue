@@ -149,6 +149,16 @@ const pushTemplate = computed(() => {
   return obj
 })
 
+const delayedActionStr = computed(() => {
+  const action = data?.eventDelayed?.delayedAction
+  if ( !action ) return ''
+
+  if ( action === 'touch' ) return '发送触达'
+  if ( action === 'label' ) return '打上标签'
+  if ( action === 'touchAndLabel' ) return '发送触达并打上标签'
+  return '不执行动作'
+})
+
 provide('save', (regFunc: () => boolean) => {
   _saveFunc = regFunc
 })
@@ -164,7 +174,7 @@ provide('save', (regFunc: () => boolean) => {
       </span>
     </p>
     <div @click="openCondition" class="PBlock-Content theme">
-      <template v-if="data.diversionType || data.eventDelayed?.isDelayed">
+      <template v-if="data.diversionType || data.eventDelayed?.isDelayed || pushTemplate?.has">
         <div style="display: flex; flex-direction: column; gap: 1rem">
           <div style="--theme-color: #7DC757" class="PBlock-Section">
             <p>
@@ -172,7 +182,7 @@ provide('save', (regFunc: () => boolean) => {
             </p>
             <span v-if="data.eventDelayed?.isDelayed">
               符合该策略器 {{ data.eventDelayed.delayedTime }} {{ data.eventDelayed.delayedUnit }} 后 {{
-                data.eventDelayed.delayedAction }}
+                delayedActionStr }}
             </span>
             <span v-else>立即针对符合该策略器条件的客户发送触达</span>
           </div>
@@ -222,7 +232,7 @@ provide('save', (regFunc: () => boolean) => {
     </teleport>
   </el-card>
 
-  <el-button :class="{ display: data.diversionType || data.eventDelayed?.isDelayed, disabled: haveDiverse }" @click="dialogVisible = true" class="start-add"
+  <el-button :class="{ display: data.diversionType || data.eventDelayed?.isDelayed || pushTemplate?.has, disabled: haveDiverse }" @click="dialogVisible = true" class="start-add"
     type="primary" :icon="Plus" circle />
 </template>
 

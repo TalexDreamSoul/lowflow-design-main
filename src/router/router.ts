@@ -79,6 +79,46 @@ export const routes: RouterOptions["routes"] = [
       },
     ],
   },
+  {
+    path: "/channelManagement",
+    redirect: "/channelManagement/transactionList",
+    children: [
+      {
+        path: "transactionList",
+        component: () => import("../views/channelManagement/transactionList.vue"),
+      },
+      {
+        path: "reconciliationList",
+        component: () => import("../views/channelManagement/reconciliationList.vue"),
+      },
+      {
+        path: "equityManagement",
+        component: () => import("../views/channelManagement/equityManagement.vue"),
+      },
+      {
+        path: "channelDisturb",
+        component: () => import("../views/channelManagement/channelDisturb.vue"),
+      }
+    ],
+  },
+  {
+    path: "/userCenter",
+    redirect: "/userCenter/userManagement",
+    children: [
+      {
+        path: "userManagement",
+        component: () => import("../views/userCenter/userManagement.vue"),
+      },
+      {
+        path: "rolesManagement",
+        component: () => import("../views/userCenter/rolesManagement.vue"),
+      },
+      {
+        path: "personalInformation",
+        component: () => import("../views/userCenter/personalInformation.vue"),
+      }
+    ],
+  },
   // 添加需要隐藏 TopMenu 的页面，并设置 meta.hideTopMenu 为 true
 ];
 

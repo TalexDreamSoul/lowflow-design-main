@@ -10,7 +10,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from "element-plus";
 // import { createTemplatePopover } from '../utils/touch-templates'
 
-// createTemplatePopover('新建企微模版', '')
+// createTemplatePopover('新建外呼模版', 'digital')
 const props = defineProps<{
   modelValue?: Request;
   readonly?: boolean;
@@ -97,8 +97,6 @@ function targetReduction(data: Request) {
 function transformNodes(__nodes: Array<any>) {
   const res: Array<any> = [];
 
-  console.log(__nodes);
-
   [...__nodes].forEach((node: any) => {
     console.log("do have father", node.father)
 
@@ -107,6 +105,7 @@ function transformNodes(__nodes: Array<any>) {
       const fatherInd = [...node.father.children].indexOf((item: any) => item.nodeId === node.nodeId)
 
       node.preNodeId = (fatherInd < 1 ? node.father.nodeId : node.father.children[fatherInd - 1].nodeId)
+      node.nextNodeId = (fatherInd < node.father.children.length - 1 ? node.father.children[fatherInd + 1].nodeId : node.children?.[0]?.nodeId)
 
       // delete node.father
     }
@@ -125,6 +124,31 @@ function transformNodes(__nodes: Array<any>) {
   return res
 }
 
+function flatMaps(__nodes: Array<any>) {
+  // 铺平，然后删除每一项的children 记得浅拷贝
+  // 每一个node有一个children: [] 要铺平
+  const res: Array<any> = [];
+
+  const stack: any = [...__nodes]
+
+  while (stack.length) {
+    const node = stack.pop()
+
+    const obj = { ...node }
+
+    if (obj.children) {
+      stack.push(...node.children)
+
+      delete obj.children
+    }
+
+    res.push(obj)
+
+  }
+
+  return res
+}
+
 async function submitReview(status: string = 'approvalPending') {
   if (props.readonly) return
 
@@ -134,7 +158,7 @@ async function submitReview(status: string = 'approvalPending') {
 
   const _flowOptions: any = {
     ...flowOptions.p,
-    nodes: transformNodes([ ...flowOptions.p.children ]),
+    nodes: flatMaps(transformNodes([ ...flowOptions.p.children ])),
     touchName: flowOptions.basic.touchName,
     ...transformDisturb(flowOptions.basic.disturb),
     ...transformTarget(flowOptions.basic.target)
@@ -152,7 +176,7 @@ async function submitReview(status: string = 'approvalPending') {
 
   const res = await touchSubmitReview(data)
 
-  if (!+res.code) {
+  if (!+res?.code) {
     return ElMessage({
       message: res.msg,
       type: "success",
@@ -179,7 +203,7 @@ console.log("total flow", flowOptions);
   <div class="FlowPage">
     <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
       <el-header>
-        <FlowHeader v-if="!modelValue || !readonly" @submit-review="submitReview" :basic="flowOptions.basic" />
+        <FlowHeader v-if="!modelValue || !readonly" @submit-review="() => submitReview()" :basic="flowOptions.basic" />
         <div v-else class="FlowPage-ReadHeader">
           流程基础设置
           <el-button text type="primary" @click="dialogVisible = true">

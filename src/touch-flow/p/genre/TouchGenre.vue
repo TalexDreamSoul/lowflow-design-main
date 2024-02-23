@@ -8,7 +8,7 @@ import Trigger from "../../page/Trigger.vue";
 
 const props = defineProps<{
   condition: any;
-  index: number;
+  // index: number;
   dict: any;
 }>();
 
