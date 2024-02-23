@@ -8,11 +8,10 @@ import MicroEnterpriseDrag from "./MicroEnterpriseDrag.vue";
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 
-const action = `api/uploadMaterialFile`
-
+const action = `/api/uploadMaterialFile`;
 const props = defineProps<{
-  data: any
-}>()
+  data: any;
+}>();
 
 const origin = {
   id: "",
@@ -37,23 +36,22 @@ const origin = {
             compareValue: "",
             defaultValue: "",
             fieldOp: "",
-            fieldValue: ""
-          }
-        ]
-      }
-    ]
-  }
-
-}
+            fieldValue: "",
+          },
+        ],
+      },
+    ],
+  },
+};
 
 const data = reactive<typeof origin>(origin);
 
 watchEffect(() => {
-  const _data = props.data?.value
-  if (!_data) return
+  const _data = props.data?.value;
+  if (!_data) return;
 
-  Object.assign(data, _data)
-})
+  Object.assign(data, _data);
+});
 
 function saveData() {
   const { id, name, digitalTemplateDetails } = data;
@@ -86,23 +84,30 @@ const handleDownload = (file: UploadFile) => {
   console.log(file);
 };
 
-const list = ref<any>([])
-
-function addPic(response: any, uploadFile: UploadFile, uploadFiles: UploadFiles) {
+const list = ref<any>([]);
+function getCurrentDate() {
+  const currentDate = new Date().toISOString().split("T")[0];
+  return currentDate;
+}
+function addPic(
+  response: any,
+  uploadFile: UploadFile,
+  uploadFiles: UploadFiles
+) {
   list.value.push({
-    id: (Math.random() * 1000000) + '',
-    type: 'image',
-    imgUrl: uploadFile.url
-  })
+    id: Math.random() * 1000000 + "",
+    type: "image",
+    imgUrl: uploadFile.url,
+  });
 }
 
 function addMessage() {
   list.value.push({
-    id: (Math.random() * 1000000) + '',
-    type: 'content',
-    content: '',
-    variables: []
-  })
+    id: Math.random() * 1000000 + "",
+    type: "content",
+    content: "",
+    variables: [],
+  });
 }
 </script>
 
@@ -129,9 +134,10 @@ function addMessage() {
     <MicroEnterpriseDrag style="margin-bottom: 6.5rem" v-model="list" />
 
     <div class="FloatFixed">
-      <el-upload :action="action" :on-success="addPic" :auto-upload="true"
-      :show-file-list="false"
-        class="upload-demo button-groupupload">
+      <el-upload 
+      :action=action
+      
+      :on-success="addPic" :auto-upload="true" :data="{ type: 'material', date: getCurrentDate() }" :show-file-list="false" class="upload-demo button-groupupload">
         <el-text type="primary" style="cursor: pointer;">
           <el-icon size="14">
             <CirclePlusFilled />
