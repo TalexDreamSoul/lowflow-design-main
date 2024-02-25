@@ -50,8 +50,9 @@ const res = useDraggable(el, list, {
       class="flex flex-col gap-2 p-4 w-300px bg-gray-500/5 rounded">
       <li class="drag-item" draggable="true" :data-ind="item.name" :key="item.id" v-for="(item, index) in thisList">
         <div class="content-container">
-           <img v-if="item.type === 'image'" :src="item.imgUrl" alt="AddonPic" />
-           <TouchSettingContents content="content" variables="variables" v-model="thisList![index]"  v-else-if="item.type === 'content'" />
+          <img v-if="item.type === 'image'" :src="item.imgUrl" alt="AddonPic" />
+          <TouchSettingContents content="content" variables="variables" v-model="thisList![index]"
+            v-else-if="item.type === 'content'" />
           <span v-else>{{ item }} ERROR</span>
         </div>
         <div class="drag-trigger-area">
@@ -101,7 +102,7 @@ const res = useDraggable(el, list, {
       width: 20px;
       height: 50%;
 
-      right: 10%;
+      right: 2.5%;
       top: 50%;
 
       transform: translate(-50%, -50%);
@@ -152,13 +153,27 @@ const res = useDraggable(el, list, {
     }
 
     .content-container {
-      width: calc(100% - 30px)
+      position: relative;
+      width: calc(100% - 30px);
+      height: 100%;
+
+      .TouchSettingsContentWrapper {
+        height: 100%;
+      }
+
+      img {
+        position: relative;
+        // width: 100%;
+        height: 80px;
+
+        object-fit: contain;
+      }
     }
 
     position: relative;
-    padding: 1rem;
+    padding: .5rem;
 
-    height: 80px;
+    min-height: 80px;
     transition: .25s;
     list-style: none;
     border-radius: 8px;
@@ -175,5 +190,7 @@ const res = useDraggable(el, list, {
   }
 
   min-height: 60px;
+
+  overflow: hidden;
 }
 </style>

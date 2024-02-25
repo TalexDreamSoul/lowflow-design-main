@@ -236,13 +236,15 @@ function handleBlur() {
 function variableDone() {
   variableModal.value = false
 
-  model.value[props.variables] = [ ...variableMap.values() ]
+  model.value[props.variables] = [...variableMap.values()]
 }
 
 watch(() => _content.value, handleBlur)
 
+let doInit = false
 watchEffect(() => {
-  if (!props.modelValue?.id) return
+  if (doInit || !props.modelValue?.id) return
+  doInit = true
 
   const { modelValue, content, variables } = props
 
@@ -417,8 +419,11 @@ watchEffect(() => {
   }
 
   .el-button {
-    padding: 4px 12px;
+    position: absolute;
+    padding: 2px 10px;
     border: none;
+
+    bottom: 4px;
 
     height: 24px;
     font-size: 12px;
@@ -426,7 +431,10 @@ watchEffect(() => {
     background-color: #EDEFF4;
   }
 
-  &:active, &:focus, &:hover, &:focus-within {
+  &:active,
+  &:focus,
+  &:hover,
+  &:focus-within {
     --el-input-border-color: var(--el-color-primary)
   }
 
@@ -441,6 +449,8 @@ watchEffect(() => {
   padding: 0;
   outline: none;
   box-sizing: border-box;
+
+  min-height: 120px;
 
   padding: 1px 11px;
   background-color: var(--el-input-bg-color, var(--el-fill-color-blank));

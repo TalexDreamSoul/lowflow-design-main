@@ -94,10 +94,12 @@ function addPic(
   uploadFile: UploadFile,
   uploadFiles: UploadFiles
 ) {
+  // console.log("addPic", response, uploadFile, uploadFiles)
+
   list.value.push({
     id: Math.random() * 1000000 + "",
     type: "image",
-    imgUrl: uploadFile.url,
+    imgUrl: response.data,
   });
 }
 
@@ -128,16 +130,16 @@ function addMessage() {
     </el-form-item>
 
     <el-form-item label="消息内容">
-      <TouchSettingContents variables="variables" content="content" v-model="data.digitalTemplateDetails" buttonTitle="输入变量" />
+      <TouchSettingContents variables="variables" content="content" v-model="data.digitalTemplateDetails"
+        buttonTitle="输入变量" />
     </el-form-item>
 
     <MicroEnterpriseDrag style="margin-bottom: 6.5rem" v-model="list" />
 
     <div class="FloatFixed">
-      <el-upload 
-      :action=action
-      
-      :on-success="addPic" :auto-upload="true" :data="{ type: 'material', date: getCurrentDate() }" :show-file-list="false" class="upload-demo button-groupupload">
+      <el-upload :action=action :on-success="addPic" :auto-upload="true"
+        :data="{ type: 'material', date: getCurrentDate() }" :show-file-list="false"
+        class="upload-demo button-groupupload">
         <el-text type="primary" style="cursor: pointer;">
           <el-icon size="14">
             <CirclePlusFilled />
@@ -158,9 +160,10 @@ function addMessage() {
 </template>
 <style lang="scss" scoped>
 .FloatFixed {
-  & > div {
+  &>div {
     height: 40px;
   }
+
   position: absolute;
 
   width: calc(100% - 5rem);
