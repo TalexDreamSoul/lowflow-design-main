@@ -100,6 +100,7 @@ function addPic(
     id: Math.random() * 1000000 + "",
     type: "image",
     imgUrl: response.data,
+    name: uploadFile.name
   });
 }
 
@@ -109,7 +110,28 @@ function addMessage() {
     type: "content",
     content: "",
     variables: [],
+    name: "消息内容"
   });
+}
+
+function onDelete(item: any, index: number) {
+  list.value.splice(index, 1);
+}
+
+function onUpload(item: any, index: number) {
+  if ( index < 1 ) return
+
+  const temp = list.value[index];
+  list.value[index] = list.value[index - 1];
+  list.value[index - 1] = temp;
+}
+
+function onDownload(item: any, index: number) {
+  if ( index + 1 > list.value?.length || 1 ) return
+
+  const temp = list.value[index];
+  list.value[index] = list.value[index + 1];
+  list.value[index + 1] = temp;
 }
 </script>
 
@@ -134,7 +156,7 @@ function addMessage() {
         buttonTitle="输入变量" />
     </el-form-item>
 
-    <MicroEnterpriseDrag style="margin-bottom: 6.5rem" v-model="list" />
+    <MicroEnterpriseDrag @delete="onDelete" @upload="onUpload" @download="onDownload" style="margin-bottom: 6.5rem" v-model="list" />
 
     <div class="FloatFixed">
       <el-upload :action=action :on-success="addPic" :auto-upload="true"

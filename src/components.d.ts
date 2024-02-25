@@ -45,6 +45,7 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElText: typeof import('element-plus/es')['ElText']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
+    ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     ElWatermark: typeof import('element-plus/es')['ElWatermark']

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useVModel } from '@vueuse/core'
-import { ref, h, watch, watchEffect, nextTick } from 'vue'
+import { ref, h, watch, watchEffect, nextTick, computed } from 'vue'
 import { createFloatingPanel } from './floating-panel'
 import { getDictAnalyzedTree } from '../../flow-utils'
 import TouchSelectWrapper from './TouchSelectable.vue'
@@ -300,6 +300,10 @@ watchEffect(() => {
 
   console.log("touch", _content, _variables)
 })
+
+const contentLength = computed(() => {
+  return model.value[props.content]?.length ?? 0
+})
 </script>
 
 <template>
@@ -314,6 +318,10 @@ watchEffect(() => {
       </el-icon>
       &nbsp;&nbsp;&nbsp;{{ buttonTitle ?? "插入端口" }}
     </el-button>
+
+    <span class="placeholder-label">
+      共 {{ contentLength }} 字
+    </span>
   </div>
 
   <el-dialog append-to-body align-center v-model="variableModal" title="设置赋值">
@@ -416,6 +424,17 @@ watchEffect(() => {
     &:focus {
       outline: none;
     }
+  }
+
+  .placeholder-label {
+    position: absolute;
+    display: block;
+
+    right: 10px;
+    bottom: 0px;
+
+    opacity: .75;
+    font-size: 12px;
   }
 
   .el-button {

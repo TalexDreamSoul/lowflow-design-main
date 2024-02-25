@@ -4,12 +4,13 @@ import { ref, nextTick } from 'vue'
 import { useVModel } from '@vueuse/core';
 import TouchSettingContents from '~/touch-flow/p/touch/TouchSettingContents.vue';
 import { watchEffect } from 'vue';
+import { Delete, Upload, Download } from '@element-plus/icons-vue';
 
 const props = defineProps<{
   modelValue?: Array<any>,
 }>()
 
-const emits = defineEmits(['update:modelValue'])
+const emits = defineEmits(['update:modelValue', 'delete', 'upload', 'download'])
 
 const el = ref()
 const drag = ref(false)
@@ -29,19 +30,19 @@ const res = useDraggable(el, list, {
   onEnd: () => nextTick(() => drag.value = false),
 })
 
-// function generateReflexlyProxy(arr: typeof list, index: number) {
-//   return new Proxy(arr.value?.at(index), {
-//     set: (target: any, p: string | symbol, newValue: any, receiver: any) => {
+function generateReflexlyProxy(arr: typeof list, index: number) {
+  return new Proxy(arr.value?.at(index), {
+    set: (target: any, p: string | symbol, newValue: any, receiver: any) => {
 
-//       arr.value!.at(index)[p] = newValue
+      arr.value!.at(index)[p] = newValue
 
-//       return true
-//     },
-//     get: (target: any, p: string | symbol, receiver: any) => {
-//       return arr.value!.at(index)[p]
-//     }
-//   })
-// }
+      return true
+    },
+    get: (target: any, p: string | symbol, receiver: any) => {
+      return arr.value!.at(index)[p]
+    }
+  })
+}
 </script>
 
 <template>
@@ -49,6 +50,31 @@ const res = useDraggable(el, list, {
     <TransitionGroup ref="el" type="transition" tag="ul" :name="!drag ? 'fade' : undefined"
       class="flex flex-col gap-2 p-4 w-300px bg-gray-500/5 rounded">
       <li class="drag-item" draggable="true" :data-ind="item.name" :key="item.id" v-for="(item, index) in thisList">
+        <div class="drag-item-header">
+          <el-tooltip :content="item.name">
+            <span class="text-2xl name-label">{{ item.name }}</span>
+          </el-tooltip>
+
+          <div class="header-controller">
+          <el-button type="text" v-if="index !== 0" @click="emits('upload', item, index)">
+              <el-icon>
+                <Upload />
+              </el-icon>
+              上移
+            </el-button>
+            <el-button type="text" v-if="index + 1 < (thisList?.length ?? 0)" @click="emits('download', item, index)">
+              <el-icon>
+                <Download />
+              </el-icon>
+              下移
+            </el-button>
+            <el-button type="text" @click="emits('delete', item, index)">
+              <el-icon>
+                <Delete />
+              </el-icon>
+            </el-button>
+          </div>
+        </div>
         <div class="content-container">
           <img v-if="item.type === 'image'" :src="item.imgUrl" alt="AddonPic" />
           <TouchSettingContents content="content" variables="variables" v-model="thisList![index]"
@@ -83,11 +109,12 @@ const res = useDraggable(el, list, {
 .MicroEnterpriseDrag {
   .drag-trigger-area {
     position: absolute;
+    display: none;
 
     right: 0;
-    top: 0;
+    top: 30px;
 
-    height: 100%;
+    height: calc(100% - 30px);
 
     width: 10%;
     max-width: 5rem;
@@ -115,6 +142,43 @@ const res = useDraggable(el, list, {
   }
 
   .drag-item {
+    &-header {
+      .name-label {
+        position: relative;
+        max-width: 40%;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: .85rem;
+        overflow: hidden;
+      }
+
+      .header-controller {
+        height: 30px;
+        width: 100px;
+
+        text-align: right;
+
+        flex: 1;
+      }
+
+      position: relative;
+      display: flex;
+      padding: 0 .5rem;
+      // margin-bottom: .25rem;
+
+      justify-content: space-between;
+      align-items: center;
+
+      height: 30px;
+      // line-height: 30px;
+      width: 100%;
+
+      box-sizing: border-box;
+      border-radius: 4px 4px 0 0;
+      background-color: #ECF1FC;
+    }
+
     &.ghost {
       .drag-trigger-area {
         &::after {
@@ -154,11 +218,14 @@ const res = useDraggable(el, list, {
 
     .content-container {
       position: relative;
-      width: calc(100% - 30px);
+      // padding: .5rem;
+      width: calc(100% - 0px);
       height: 100%;
 
       .TouchSettingsContentWrapper {
         height: 100%;
+
+        box-shadow: none !important;
       }
 
       img {
@@ -171,13 +238,14 @@ const res = useDraggable(el, list, {
     }
 
     position: relative;
-    padding: .5rem;
+    // padding: .5rem;
 
     min-height: 80px;
     transition: .25s;
     list-style: none;
-    border-radius: 8px;
+    border-radius: 4px;
     box-sizing: border-box;
+    border: 1px solid #D4D4D4;
     background-color: #FAFAFA;
   }
 
