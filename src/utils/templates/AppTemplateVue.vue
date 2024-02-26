@@ -102,11 +102,11 @@ defineExpose({ saveData });
       <el-input :disabled="readonly" v-model="data.sceneCode" placeholder="请输入"></el-input>
     </el-form-item>
     <el-form-item label="推送标题">
-      <TouchSettingContents :disabled="readonly" variables="titleVariables" content="listTitle" v-model="data"
+      <TouchSettingContents :disabled="readonly" variables="titleVariables" content="title" v-model="data"
         buttonTitle="输入变量" />
     </el-form-item>
     <el-form-item label="推送内容">
-      <TouchSettingContents :disabled="readonly" variables="znxTitleVariables" content="znxTitle" v-model="data"
+      <TouchSettingContents :disabled="readonly" variables="contentVariables" content="content" v-model="data"
         buttonTitle="输入变量" />
     </el-form-item>
 

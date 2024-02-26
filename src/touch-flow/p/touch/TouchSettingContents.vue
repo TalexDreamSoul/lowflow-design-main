@@ -247,6 +247,7 @@ watchEffect(() => {
   doInit = true
 
   const { modelValue, content, variables } = props
+  console.log("tsc", props)
 
   let __content: string = _content.value = modelValue[content]
   const _variables = modelValue[variables]
