@@ -119,7 +119,7 @@ function handleSave() {
 
   Object.assign(__data, data)
 
-  window.$refreshLayout()
+  // window.$refreshLayout()
 
   dialogVisible.value = false
   drawerOptions.visible = false
