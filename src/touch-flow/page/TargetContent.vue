@@ -122,12 +122,12 @@ const attrs = computed(() => {
           <el-form :label-width="0" :inline="true" :model="target.conditions">
             <el-row v-for="(item, index) in target.targetRuleContent.customEvent.conditions"
               :key="`${item.field}-${index}`" :gutter="5" class="filter-item-rule">
-              <el-col :xs="24" :sm="7">
+              <el-col :xs="24" :sm="3">
                 <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
                   <trigger :readonly="readonly" v-model="item.field" :attrs="attrs" />
                 </el-form-item>
               </el-col>
-              <el-col :xs="24" :sm="5" v-if="item.field">
+              <el-col :xs="24" :sm="3" v-if="item.field">
                 <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
                   <operator :item="item" :attrs="attrs" :readonly="readonly" ref="operatorRef" v-model="item.operator" />
                 </el-form-item>
@@ -181,7 +181,7 @@ const attrs = computed(() => {
 
 .filter-wrap {
   padding: 24px;
-  width: 50%;
+  //width: 50%;
 
   .garyblock {
     margin-bottom: 16px;

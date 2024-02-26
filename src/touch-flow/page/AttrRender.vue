@@ -150,13 +150,17 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
           start-placeholder="开始时间" end-placeholder="结束时间" />
       </template>
       <template v-else-if="item.operator === '相对时间'">
-        在
-        <el-select :disabled="readonly" @change="onTimePointChange" v-model="timePointSection">
+        <!-- <el-text>
+          在
+        </el-text> -->
+        <el-select @change="onTimePointChange" v-model="timePointSection">
           <el-option value="past" label="过去" />
           <el-option value="future" label="未来" />
         </el-select>
-        <el-input :disabled="readonly" placeholder="输入字符" v-model="item.timeCondition.startDay" />
-        天
+        <el-input placeholder="输入字符" v-model="item.timeCondition.startDay" />
+        <!-- <el-text>
+          天
+        </el-text>  -->
         <template v-if="item.fieldOp === '相对当前时间点'">
           <el-select :disabled="readonly" @change="onTimeCastChange" v-model="timeCastSection">
             <el-option value="within" label="之内" />
@@ -164,9 +168,13 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
           </el-select>
         </template>
         <template v-else>
-          至未来
-          <el-input :disabled="readonly" placeholder="输入字符" v-model="item.timeCondition.endDay" />
-          天之内
+          <!-- <el-text>
+            至未来
+          </el-text>   -->
+          <el-input placeholder="输入字符" v-model="item.timeCondition.endDay" />
+          <!-- <el-text>
+            天之内
+          </el-text>    -->
         </template>
       </template>
     </template>
