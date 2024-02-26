@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useVModel } from '@vueuse/core'
-import { ref, h, watch, watchEffect, nextTick } from 'vue'
+import { ref, h, watch, watchEffect, nextTick, computed } from 'vue'
 import { createFloatingPanel } from './floating-panel'
 import { getDictAnalyzedTree } from '../../flow-utils'
 import TouchSelectWrapper from './TouchSelectable.vue'
@@ -236,13 +236,15 @@ function handleBlur() {
 function variableDone() {
   variableModal.value = false
 
-  model.value[props.variables] = [ ...variableMap.values() ]
+  model.value[props.variables] = [...variableMap.values()]
 }
 
 watch(() => _content.value, handleBlur)
 
+let doInit = false
 watchEffect(() => {
-  if (!props.modelValue?.id) return
+  if (doInit || !props.modelValue?.id) return
+  doInit = true
 
   const { modelValue, content, variables } = props
 
@@ -298,6 +300,10 @@ watchEffect(() => {
 
   console.log("touch", _content, _variables)
 })
+
+const contentLength = computed(() => {
+  return model.value[props.content]?.length ?? 0
+})
 </script>
 
 <template>
@@ -312,6 +318,10 @@ watchEffect(() => {
       </el-icon>
       &nbsp;&nbsp;&nbsp;{{ buttonTitle ?? "插入端口" }}
     </el-button>
+
+    <span class="placeholder-label">
+      共 {{ contentLength }} 字
+    </span>
   </div>
 
   <el-dialog append-to-body align-center v-model="variableModal" title="设置赋值">
@@ -416,9 +426,23 @@ watchEffect(() => {
     }
   }
 
+  .placeholder-label {
+    position: absolute;
+    display: block;
+
+    right: 10px;
+    bottom: 0px;
+
+    opacity: .75;
+    font-size: 12px;
+  }
+
   .el-button {
-    padding: 4px 12px;
+    position: absolute;
+    padding: 2px 10px;
     border: none;
+
+    bottom: 4px;
 
     height: 24px;
     font-size: 12px;
@@ -426,7 +450,10 @@ watchEffect(() => {
     background-color: #EDEFF4;
   }
 
-  &:active, &:focus, &:hover, &:focus-within {
+  &:active,
+  &:focus,
+  &:hover,
+  &:focus-within {
     --el-input-border-color: var(--el-color-primary)
   }
 
@@ -441,6 +468,8 @@ watchEffect(() => {
   padding: 0;
   outline: none;
   box-sizing: border-box;
+
+  min-height: 120px;
 
   padding: 1px 11px;
   background-color: var(--el-input-bg-color, var(--el-fill-color-blank));

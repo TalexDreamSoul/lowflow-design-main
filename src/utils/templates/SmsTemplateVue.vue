@@ -5,6 +5,7 @@ import { reactive, watchEffect } from "vue";
 const props = defineProps<{
   data?: any;
   type?: any;
+  readonly?: boolean;
 }>();
 
 const origin = {
@@ -72,13 +73,14 @@ defineExpose({ saveData });
 <template>
   <el-form label-position="top" :model="data" :disabled="type == 'details'">
     <el-form-item label="模板名称">
-      <el-input v-model="data.name"></el-input>
+      <el-input :disabled="readonly" v-model="data.name"></el-input>
     </el-form-item>
     <el-form-item label="场景码">
-      <el-input v-model="data.sceneCode" placeholder="请输入"></el-input>
+      <el-input :disabled="readonly" v-model="data.sceneCode" placeholder="请输入"></el-input>
     </el-form-item>
     <el-form-item label="短信内容">
-      <TouchSettingContents variables="variables" content="content" v-model="data" buttonTitle="输入变量" />
+      <TouchSettingContents :disabled="readonly" variables="variables" content="content" v-model="data"
+        buttonTitle="输入变量" />
     </el-form-item>
   </el-form>
 </template>

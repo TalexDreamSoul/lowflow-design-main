@@ -11,6 +11,7 @@ const dialogVisible = ref(false);
 const action = `/api/uploadMaterialFile`;
 const props = defineProps<{
   data: any;
+  readonly?: boolean;
 }>();
 
 const origin = {
@@ -94,10 +95,13 @@ function addPic(
   uploadFile: UploadFile,
   uploadFiles: UploadFiles
 ) {
+  // console.log("addPic", response, uploadFile, uploadFiles)
+
   list.value.push({
     id: Math.random() * 1000000 + "",
     type: "image",
-    imgUrl: uploadFile.url,
+    imgUrl: response.data,
+    name: uploadFile.name
   });
 }
 
@@ -107,17 +111,38 @@ function addMessage() {
     type: "content",
     content: "",
     variables: [],
+    name: "消息内容"
   });
+}
+
+function onDelete(item: any, index: number) {
+  list.value.splice(index, 1);
+}
+
+function onUpload(item: any, index: number) {
+  if (index < 1) return
+
+  const temp = list.value[index];
+  list.value[index] = list.value[index - 1];
+  list.value[index - 1] = temp;
+}
+
+function onDownload(item: any, index: number) {
+  if (index + 1 > list.value?.length || 1) return
+
+  const temp = list.value[index];
+  list.value[index] = list.value[index + 1];
+  list.value[index + 1] = temp;
 }
 </script>
 
 <template>
   <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input v-model="data.name" style="width: 50%;"></el-input>
+      <el-input :disabled="readonly" v-model="data.name" style="width: 50%;"></el-input>
     </el-form-item>
     <el-form-item label="企微触达方式">
-      <el-select v-model="data.sendtype" style="width: 50%;">
+      <el-select :disabled="readonly" placeholder="请选择" v-model="data.sendtype" style="width: 50%;">
         <!--
            sendMessage 发送消息
            addfriends 添加好友
@@ -128,16 +153,17 @@ function addMessage() {
     </el-form-item>
 
     <el-form-item label="消息内容">
-      <TouchSettingContents variables="variables" content="content" v-model="data.digitalTemplateDetails" buttonTitle="输入变量" />
+      <TouchSettingContents :disabled="readonly" variables="variables" content="content"
+        v-model="data.digitalTemplateDetails" buttonTitle="输入变量" />
     </el-form-item>
 
-    <MicroEnterpriseDrag style="margin-bottom: 6.5rem" v-model="list" />
+    <MicroEnterpriseDrag :disabled="readonly" @delete="onDelete" @upload="onUpload" @download="onDownload"
+      style="margin-bottom: 6.5rem" v-model="list" />
 
-    <div class="FloatFixed">
-      <el-upload 
-      :action=action
-      
-      :on-success="addPic" :auto-upload="true" :data="{ type: 'material', date: getCurrentDate() }" :show-file-list="false" class="upload-demo button-groupupload">
+    <div v-if="!readonly" class="FloatFixed">
+      <el-upload :action=action :on-success="addPic" :auto-upload="true"
+        :data="{ type: 'material', date: getCurrentDate() }" :show-file-list="false"
+        class="upload-demo button-groupupload">
         <el-text type="primary" style="cursor: pointer;">
           <el-icon size="14">
             <CirclePlusFilled />
@@ -158,9 +184,10 @@ function addMessage() {
 </template>
 <style lang="scss" scoped>
 .FloatFixed {
-  & > div {
+  &>div {
     height: 40px;
   }
+
   position: absolute;
 
   width: calc(100% - 5rem);

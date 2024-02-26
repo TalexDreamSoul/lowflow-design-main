@@ -4,10 +4,11 @@ import { useVModel } from "@vueuse/core";
 import { reactive, watchEffect } from "vue";
 
 const props = defineProps<{
-  data: any
+  data: any;
+  readonly?: boolean;
 }>()
 
-const origin ={
+const origin = {
   id: "",
   name: "",
   status: "",
@@ -68,7 +69,7 @@ watchEffect(() => {
 
 
 function saveData() {
-  const { id, name, content,contentVariables,jumpAppType,pageLink,sceneCode,title,titleVariables } = data;
+  const { id, name, content, contentVariables, jumpAppType, pageLink, sceneCode, title, titleVariables } = data;
   const appPushTemplate = {
     content,
     contentVariables,
@@ -95,16 +96,18 @@ defineExpose({ saveData });
 <template>
   <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input v-model="data.name"></el-input>
+      <el-input :disabled="readonly" v-model="data.name"></el-input>
     </el-form-item>
     <el-form-item label="场景码">
-      <el-input v-model="data.sceneCode" placeholder="请输入"></el-input>
+      <el-input :disabled="readonly" v-model="data.sceneCode" placeholder="请输入"></el-input>
     </el-form-item>
     <el-form-item label="推送标题">
-      <TouchSettingContents variables="titleVariables" content="listTitle" v-model="data" buttonTitle="输入变量" />
+      <TouchSettingContents :disabled="readonly" variables="titleVariables" content="listTitle" v-model="data"
+        buttonTitle="输入变量" />
     </el-form-item>
     <el-form-item label="推送内容">
-      <TouchSettingContents variables="znxTitleVariables" content="znxTitle" v-model="data" buttonTitle="输入变量" />
+      <TouchSettingContents :disabled="readonly" variables="znxTitleVariables" content="znxTitle" v-model="data"
+        buttonTitle="输入变量" />
     </el-form-item>
 
     <div style="font-size: 14px;
@@ -114,14 +117,14 @@ defineExpose({ saveData });
       <div>
         点击推送后&nbsp;&nbsp;&nbsp;
       </div>
-      <el-radio-group v-model="data.jumpAppType">
+      <el-radio-group :disabled="readonly" v-model="data.jumpAppType">
         <el-radio label="app">跳转App原生页面</el-radio>
         <el-radio label="booth">跳转App展位</el-radio>
       </el-radio-group>
     </div>
     <el-form-item label="跳转页面位置参数">
-      <el-input v-model="data.pageLink" placeholder="填写Code"></el-input>
+      <el-input :disabled="readonly" v-model="data.pageLink" placeholder="填写Code"></el-input>
     </el-form-item>
-    
+
   </el-form>
 </template>
