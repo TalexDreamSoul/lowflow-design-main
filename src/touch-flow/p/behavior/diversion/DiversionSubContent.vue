@@ -1,10 +1,10 @@
 <script setup lang="ts" name="BehaviorSubContent">
 import { computed } from "vue";
 import { Delete } from "@element-plus/icons-vue";
-import LogicalLine from "./LogicalLine.vue";
-import AttrRender from "../../page/AttrRender.vue";
-import Operator from "../../page/Operator.vue";
-import Trigger from "../../page/Trigger.vue";
+import LogicalLine from "../LogicalLine.vue";
+import AttrRender from "../../../page/AttrRender.vue";
+import Operator from "../../../page/Operator.vue";
+import Trigger from "../../../page/Trigger.vue";
 
 const props = defineProps<{
   condition: any;
@@ -14,7 +14,7 @@ const props = defineProps<{
 }>();
 
 function getConditions() {
-  return (props.condition.conditions = props.condition.conditions || []);
+  return (props.condition.conditions.conditions = props.condition.conditions.conditions || []);
 }
 
 const addCondition = () => {
@@ -38,7 +38,7 @@ const attrs = computed(() => {
 
   const flattedEvents = [...events].map((e: any) => e.events)
 
-  const targetEvent = flattedEvents.flat().find((item: any) => item.eventCode === props.condition.delayedAction)
+  const targetEvent = flattedEvents.flat().find((item: any) => item.eventCode === props.condition.action)
 
   return targetEvent?.eventAttr?.attrs;
 });
@@ -46,11 +46,11 @@ const attrs = computed(() => {
 
 <template>
   <div class="BehaviorSubContent">
-    <LogicalLine :title="title" :model-value="condition.logicalChar"
-      :display="condition.conditions ? !(condition.conditions.length > 1) : !0">
+    <LogicalLine :title="title" :model-value="condition.conditions.logicalChar"
+      :display="condition.conditions.conditions ? !(condition.conditions.conditions.length > 1) : !0">
       <div v-if="attrs" class="filter-option-content">
-        <el-form :label-width="0" :inline="true" :model="condition.conditions">
-          <el-row v-for="(item, index) in condition.conditions" :key="`${item.field}-${index}`" :gutter="5"
+        <el-form :label-width="0" :inline="true" :model="condition.conditions.conditions">
+          <el-row v-for="(item, index) in condition.conditions.conditions" :key="`${item.field}-${index}`" :gutter="5"
             class="filter-item-rule">
             <el-col :xs="24" :sm="7">
               <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
@@ -68,7 +68,8 @@ const attrs = computed(() => {
               </el-form-item>
             </el-col>
             <el-col class="add-filter__inner" :xs="24" :sm="3">
-              <el-text type="primary" style="cursor: pointer;zoom: 0.8;    display: inline-block;width: 100px;" @click="addCondition">
+              <el-text type="primary" style="cursor: pointer;zoom: 0.8;    display: inline-block;width: 100px;"
+                @click="addCondition">
                 <el-icon size="14">
                   <CirclePlusFilled />
                 </el-icon>
@@ -83,12 +84,6 @@ const attrs = computed(() => {
               </el-text>
             </el-col>
           </el-row>
-
-          <div v-if="!(
-            condition?.filterRules?.groups?.length |
-            condition?.filterRules?.conditions?.length
-          )
-            " class="filter-item-rule" />
         </el-form>
       </div>
     </LogicalLine>

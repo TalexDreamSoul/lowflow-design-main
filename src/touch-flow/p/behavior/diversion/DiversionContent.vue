@@ -1,7 +1,7 @@
 <script setup lang="ts" name="EventContent">
 import { computed, inject } from "vue";
 import { Delete } from "@element-plus/icons-vue";
-import BehaviorSubContent from "../BehaviorSubContent.vue";
+import BehaviorSubContent from "./DiversionSubContent.vue";
 import LogicalLine from "../LogicalLine.vue";
 
 const props = defineProps<{
@@ -52,7 +52,7 @@ const attrs = computed(() => {
                 <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
                   <el-select v-model="item.action">
                     <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
-                      <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
+                      <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
                     </el-option-group> </el-select>
                 </el-form-item>
               </el-col>
@@ -90,7 +90,7 @@ const attrs = computed(() => {
 
             </el-row>
 
-            <BehaviorSubContent title="并且满足" :index="index" :dict="dict" :condition="item.conditions" />
+            <BehaviorSubContent title="并且满足" :index="index" :dict="dict" :condition="item" />
           </div>
 
         </el-form>

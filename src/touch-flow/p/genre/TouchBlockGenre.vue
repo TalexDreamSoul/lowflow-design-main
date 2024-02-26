@@ -24,7 +24,7 @@ function delEvent(index: number) {
 
         <el-select v-model="event.action" style="width: 240px">
           <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
-            <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
+            <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
           </el-option-group> </el-select>&nbsp;
         <el-text type="primary" style="cursor: pointer" @click="addCondition(event)">
           <el-icon size="14">
