@@ -44,6 +44,10 @@ const customRuleContent = reactive<CustomSearchDTO>({
     logicalChar: "或",
   },
   logicalChar: "或",
+  blackList: {
+    _enable: 'no',
+    data: []
+  }
 });
 
 const props = defineProps<{
@@ -380,12 +384,16 @@ const blackList = ref()
       </div>
 
       <el-form-item label="过滤黑名单" label-class="custom-label">
-        <el-select v-model="customRuleContent.blackList" style="width: 100px">
+        <el-select v-model="customRuleContent.blackList._enable" style="width: 100px">
           <el-option value="no" label="不过滤">不过滤</el-option>
           <el-option value="yes" label="过滤">过滤</el-option>
         </el-select>
-        <el-select v-if="customRuleContent?.blackList === 'yes'" style="width: 100px">
-          <el-option v-for="item in blackList.records" :value="item.value" :label="item.label">{{ item }}</el-option>
+        &nbsp;
+        <el-select v-model="customRuleContent.blackList.data" multiple v-if="customRuleContent?.blackList?._enable === 'yes'" style="min-width: 100px">
+          <el-option placeholder="请选择" v-for="item in blackList.records" :value="item.id" :label="item.blacklistName">
+            <span>{{ item.blacklistName }}</span>
+            <!-- <p>{{ item.blacklistDesc }}</p> -->
+          </el-option>
         </el-select>
       </el-form-item>
     </el-form>
