@@ -98,7 +98,7 @@
         layout="prev, pager, next, sizes, jumper"
         :total="total"
         :page-sizes="[10]"
-        v-model:current-page="pageParams.pageNum"
+        @current-change="currentChange"
       />
     </div>
     <el-dialog
@@ -270,7 +270,11 @@
         <div class="tag">
           <div class="title">客户标签</div>
           <div class="tag-content">
-            <el-tag v-for="item of (modalData?.labels || [])">{{ item.labelName }}：{{ item.labelValue?.data?.join?.('、') }}</el-tag>
+            <el-tag v-for="item of modalData?.labels || []"
+              >{{ item.labelName }}：{{
+                item.labelValue?.data?.join?.("、")
+              }}</el-tag
+            >
           </div>
         </div>
         <div class="black-list">
@@ -335,7 +339,6 @@ const ModalTitleMap: any = {
 const pageParams = reactive({
   value: "",
   source: "",
-  pageNum: 1,
 });
 
 const defaultFormValues = {
@@ -360,13 +363,17 @@ const modalType = ref<any>(DrawerType.Create);
 watch(
   pageParams,
   debounce(() => {
-    getData(pageParams);
+    getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );
 
 onMounted(() => {
-  getData(pageParams);
+  getData({ ...pageParams, pageNum: 1 });
 });
+
+const currentChange = (value: number) => {
+  getData({ ...pageParams, pageNum: value });
+};
 
 const getData = async (params: any) => {
   try {
@@ -414,7 +421,6 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   try {
     await formEl.validate();
-    console.log({ ...formValues, source: peopleSourceEnum.Manual });
     let res = await API.addCustom({
       ...formValues,
       source: peopleSourceEnum.Manual,

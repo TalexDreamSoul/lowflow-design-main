@@ -151,7 +151,7 @@
         layout="prev, pager, next, sizes, jumper"
         :total="total"
         :page-sizes="[10]"
-        v-model:current-page="pageParams.pageNum"
+        @current-change="currentChange"
       />
     </div>
     <el-dialog
@@ -160,6 +160,7 @@
       :close-on-click-modal="false"
       v-model="modalVisible"
       :title="ModalTitleMap[modalType]"
+      :width="400"
     >
       <el-form
         v-if="checkStringEqual(modalType, DrawerType.Edit)"
@@ -186,7 +187,10 @@
           />
         </el-form-item>
       </el-form>
-      <div class="tag-detail" v-if="checkStringEqual(modalType, DrawerType.Detail)">
+      <div
+        class="tag-detail"
+        v-if="checkStringEqual(modalType, DrawerType.Detail)"
+      >
         <div class="desc">
           <div style="color: rgba(64, 120, 224, 1)">客户活跃度</div>
           <div>标签说明：根据客户启动APP的次数，对客户的活跃程度进行判断</div>
@@ -205,6 +209,27 @@
           >
         </el-table>
       </div>
+      <div class="create" v-if="checkStringEqual(modalType, DrawerType.Create)">
+        <el-upload
+          ref="upload"
+          class="upload-demo"
+          action="/api/uploadCustomLabel"
+          :limit="1"
+          :on-exceed="handleExceed"
+          :auto-upload="false"
+        >
+          <el-button style="width: 100%" type="primary">上传文件</el-button>
+          <template #tip>
+            <div class="el-upload__tip text-red">支持格式：csv xlsx</div>
+          </template>
+        </el-upload>
+        <el-button
+          @click="download"
+          size="large"
+          style="border-color: #4078e0; color: #4078e0"
+          >下载上传格式模版</el-button
+        >
+      </div>
       <template #footer>
         <span class="dialog-footer">
           <el-button
@@ -222,12 +247,20 @@
             >取消</el-button
           >
           <el-button
-            v-if="modalType !== DrawerType.Detail"
+            v-if="modalType === DrawerType.Edit"
             class="pd-button"
             @click.prevent="onSubmit(formRef)"
             round
             type="primary"
             >保存</el-button
+          >
+          <el-button
+            v-if="modalType === DrawerType.Create"
+            class="pd-button"
+            @click.prevent="submitUpload"
+            round
+            type="primary"
+            >上传</el-button
           >
         </span>
       </template>
@@ -245,7 +278,8 @@ import {
 import API from "~/api/customer";
 import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
-import { ElMessageBox, FormInstance } from "element-plus";
+import { ElMessageBox, FormInstance, genFileId } from "element-plus";
+import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
 
 enum DrawerType {
@@ -264,7 +298,6 @@ const pageParams = reactive({
   labelName: "",
   labelSource: "",
   time: "",
-  pageNum: 1,
 });
 
 const defaultFormValues = {
@@ -278,19 +311,35 @@ const formRef = ref<FormInstance>();
 
 const total = ref(0);
 const tableData = ref<any[]>([]);
-const modalVisible = ref(false);
+const modalVisible = ref(true);
 const modalType = ref<any>(DrawerType.Create);
+const upload = ref<UploadInstance>();
 
 watch(
   pageParams,
   debounce(() => {
-    getData(pageParams);
+    getData({...pageParams, pageNum: 1});
   }, 200)
 );
 
 onMounted(() => {
-  getData(pageParams);
+  getData({...pageParams, pageNum: 1});
 });
+
+const currentChange = (value: number) => {
+  getData({...pageParams, pageNum: value});
+}
+
+const handleExceed: UploadProps["onExceed"] = (files) => {
+  upload.value!.clearFiles();
+  const file = files[0] as UploadRawFile;
+  file.uid = genFileId();
+  upload.value!.handleStart(file);
+};
+
+const submitUpload = () => {
+  upload.value!.submit();
+};
 
 const getData = async (params: any) => {
   try {
@@ -318,7 +367,6 @@ const getData = async (params: any) => {
 
 const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Create) {
-    let res = await API.customLabelDetail({});
   } else if (type === DrawerType.Detail) {
     let res = await API.customLabelDetail({ id: values.id });
     if (checkStringEqual(res?.code, 0)) {
@@ -364,6 +412,18 @@ const handleDelete = (values: any) => {
   });
 };
 
+const download = async () => {
+  let res = await API.downloadCustomLabelTemplate();
+  let href = window.URL.createObjectURL(new Blob([res]));
+  let downloadElement = document.createElement("a");
+  downloadElement.href = href;
+  downloadElement.download = '客户标签模版.xlsx';
+  document.body.appendChild(downloadElement);
+  downloadElement.click();
+  document.body.removeChild(downloadElement);
+  window.URL.revokeObjectURL(href);
+};
+
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   try {
@@ -391,11 +451,11 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     }
   }
   .tag-detail {
-    background-color: rgba(144, 160, 184, .1);
+    background-color: rgba(144, 160, 184, 0.1);
     padding: 24px;
     .desc {
       margin-bottom: 8px;
-      >div {
+      > div {
         margin-bottom: 16px;
       }
     }
@@ -406,6 +466,9 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         background-color: rgba(242, 244, 248, 1);
       }
     }
+  }
+  .el-upload {
+    width: 100%;
   }
 }
 </style>
