@@ -61,7 +61,7 @@ watch(
     fetchDataApi();
   }
 );
-watch([currentPage, pageSize, formInline], () => {
+watch([currentPage, pageSize, formInline,value], () => {
   fetchDataApi();
 });
 const fetchDataApi = async () => {
@@ -114,7 +114,7 @@ const detailsData = async (row: any) => {
   value.value = { ...content, ...rest };
   console.log(`output->row`, row);
   let name = `${materialTypeName.value}模版详情`;
-  createTemplatePopover(name, row.type, value, "details");
+  createTemplatePopover(name, row.type, value, "details",true);
   // createTemplatePopover('新建APP Push模版', 'app')
   // createTemplatePopover('新建外呼模版', 'outbound')
 };
