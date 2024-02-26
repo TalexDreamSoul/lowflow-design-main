@@ -67,7 +67,7 @@
         </el-form-item>
         <el-form-item :rules="[
           { max: 40, message: '最多可输入40字' },
-        ]" label="属性说明" prop="describe">
+        ]" label="属性说明" prop="fieldValue">
           <el-input v-model="formValues.describe" :autosize="{ minRows: 4 }" type="textarea" :show-word-limit='true'
             placeholder="请输入" />
         </el-form-item>
