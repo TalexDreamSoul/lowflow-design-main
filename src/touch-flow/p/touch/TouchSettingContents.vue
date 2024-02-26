@@ -71,6 +71,7 @@ const props = defineProps<{
   buttonTitle?: string,
   content: string,
   variables: string
+  disabled?: boolean;
 }>()
 const emits = defineEmits(['update:modelValue'])
 
@@ -308,7 +309,7 @@ const contentLength = computed(() => {
 </script>
 
 <template>
-  <div @blur="handleBlur" tabindex="1" class="TouchSettingsContentWrapper">
+  <div @blur="handleBlur" :class="{ disabled }" tabindex="1" class="TouchSettingsContentWrapper">
     <div @click="handleClick" @input="handleBlur" ref="contentRef" class="TouchSettingsContent" contenteditable="true">
       {{ _content }}
     </div>
@@ -392,6 +393,13 @@ const contentLength = computed(() => {
 }
 
 .TouchSettingsContentWrapper {
+  &.disabled {
+    opacity: .75;
+    pointer-events: none;
+
+    background-color:  var(--el-disabled-bg-color);//#F5F7FA;
+  }
+
   .TouchLabel {
     svg {
       &:hover {
