@@ -36,20 +36,11 @@ const handleDel = (index: number) => {
 const attrs = computed(() => {
   const { events } = props.dict;
 
-  // const targetEvents =
-  //   [...events]
-  //     .map((e: any) => e.events)
-  //     .flat()
-  //     .find((e: any) => e.id === props.target.delayedAction)?.eventAttr
-  //     ?.attrs ?? null;
+  const flattedEvents = [...events].map((e: any) => e.events)
 
-  const targetEvents =
-    [...events]
-      .map((e: any) => e.events)
-      .find((_: any) => (_e: any) => _e.id === props.condition.delayedAction)?.[0]
-      ?.eventAttr?.attrs ?? null;
+  const targetEvent = flattedEvents.flat().find((item: any) => item.eventCode === props.condition.delayedAction)
 
-  return targetEvents;
+  return targetEvent?.eventAttr?.attrs;
 });
 </script>
 
@@ -69,12 +60,12 @@ const attrs = computed(() => {
             </el-col>
             <el-col :xs="24" :sm="4" v-if="item.field">
               <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                <operator ref="operatorRef" v-model="item.operator" />
+                <operator :attrs="attrs" :item="item" ref="operatorRef" v-model="item.operator" />
               </el-form-item>
             </el-col>
             <el-col :xs="24" :sm="6" v-if="item.field">
               <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <AttrRender :field="item.field" v-model="item.fieldValue" :attrs="attrs" />
+                <AttrRender :operator="item.operator" :field="item.field" v-model="item.fieldValue" :attrs="attrs" />
               </el-form-item>
             </el-col>
             <el-col class="add-filter__inner" :xs="24" :sm="3">

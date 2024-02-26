@@ -8,6 +8,7 @@ const props = defineProps<{
   modelValue: AttrType;
   field: string;
   attrs: any;
+  operator: string;
   selected?: string;
   readonly?: boolean
 }>();
@@ -23,6 +24,10 @@ const model = useVModel(props, "modelValue", emits);
   <div class="AttrRender">
     <el-input :disabled="readonly" v-if="type === 'num'" v-model.number="model" />
     <el-input :disabled="readonly" v-else-if="type === 'text'" v-model="model" />
+    <template v-else-if="type === 'date'">
+      {{operator}}
+    </template>
+    <span v-else-if="type === 'boolean'" />
     <span v-else>NULL</span>
   </div>
 </template>

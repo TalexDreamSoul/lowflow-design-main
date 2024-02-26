@@ -13,7 +13,7 @@ const props = defineProps<{
   readonly?: boolean
 }>();
 
-if ( !props.target.targetDelayed ) {
+if (!props.target.targetDelayed) {
   props.target.targetDelayed = {
     delayedAction: "",
     delayedTime: 0,
@@ -53,7 +53,7 @@ function getConditions() {
 const addCondition = () => {
   getConditions().push({
     field: null,
-    operator: "equal",
+    operator: "",
     fieldValue: null,
   });
 };
@@ -69,20 +69,11 @@ const handleDel = (index: number) => {
 const attrs = computed(() => {
   const { events } = props.dict;
 
-  // const targetEvents =
-  //   [...events]
-  //     .map((e: any) => e.events)
-  //     .flat()
-  //     .find((e: any) => e.id === props.target.delayedAction)?.eventAttr
-  //     ?.attrs ?? null;
+  const flattedEvents = [...events].map((e: any) => e.events)
 
-  const targetEvents =
-    [...events]
-      .map((e: any) => e.events)
-      .find((_: any) => (_e: any) => _e.id === props.target.targetDelayed.delayedAction)?.[0]
-      ?.eventAttr?.attrs ?? null;
+  const targetEvent = flattedEvents.flat().find((item: any) => item.eventCode === props.target.targetDelayed.delayedAction)
 
-  return targetEvents;
+  return targetEvent?.eventAttr?.attrs;
 });
 </script>
 
@@ -95,7 +86,8 @@ const attrs = computed(() => {
     <div class="filter-wrap">
       <div class="garyblock">
         <el-text>客户进入流程后，在</el-text>&nbsp;
-        <el-input :disabled="readonly" v-model="target.targetDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
+        <el-input :disabled="readonly" v-model="target.targetDelayed.delayedTime" type="number"
+          style="width: 100px" />&nbsp;
         <el-select :disabled="readonly" v-model="target.targetDelayed.delayedUnit" style="width: 150px">
           <el-option value="month" label="月份">分钟</el-option>
           <el-option value="week" label="周">小时</el-option>
@@ -103,9 +95,9 @@ const attrs = computed(() => {
         <el-text>内完成以下转化事件，则认为完成目标</el-text>
       </div>
       <div>
-        <el-select :disabled="readonly" v-model="target.delayedAction" style="width: 240px">
+        <el-select :disabled="readonly" v-model="target.targetDelayed.delayedAction" style="width: 240px">
           <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
-            <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.id" />
+            <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
           </el-option-group> </el-select>&nbsp;
         <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="addCondition">
           <el-icon size="14">
@@ -137,12 +129,13 @@ const attrs = computed(() => {
               </el-col>
               <el-col :xs="24" :sm="5" v-if="item.field">
                 <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                  <operator :readonly="readonly" ref="operatorRef" v-model="item.operator" />
+                  <operator :item="item" :attrs="attrs" :readonly="readonly" ref="operatorRef" v-model="item.operator" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="10" v-if="item.field">
                 <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                  <AttrRender :readonly="readonly" :field="item.field" v-model="item.fieldValue" :attrs="attrs" />&nbsp;
+                  <AttrRender :operator="item.operator" :readonly="readonly" :field="item.field" v-model="item.fieldValue"
+                    :attrs="attrs" />&nbsp;
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="2" style="

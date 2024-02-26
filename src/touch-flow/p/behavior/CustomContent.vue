@@ -86,12 +86,12 @@ const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([.
             </el-col>
             &nbsp;<el-col :xs="24" :sm="4" v-if="item.field">
               <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                <operator ref="operatorRef" v-model="item.operator" />
+                <operator :selected="getCurrSelected(item)" :attrs="attrs" :item="item" ref="operatorRef" v-model="item.operator" />
               </el-form-item>
             </el-col>
             &nbsp;<el-col :xs="24" :sm="6" v-if="getCurrSelected(item)">
               <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <AttrRender :selected="getCurrSelected(item)" :field="item.field" v-model="item.fieldValue"
+                <AttrRender :selected="getCurrSelected(item)" :operator="item.operator" field="item.field" v-model="item.fieldValue"
                   :attrs="attrs" />
               </el-form-item>
             </el-col>
