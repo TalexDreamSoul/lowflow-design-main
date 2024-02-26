@@ -311,7 +311,7 @@ const formRef = ref<FormInstance>();
 
 const total = ref(0);
 const tableData = ref<any[]>([]);
-const modalVisible = ref(true);
+const modalVisible = ref(false);
 const modalType = ref<any>(DrawerType.Create);
 const upload = ref<UploadInstance>();
 
