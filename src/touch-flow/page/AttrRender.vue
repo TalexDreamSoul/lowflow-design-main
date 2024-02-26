@@ -36,7 +36,7 @@ watchEffect(() => {
 })
 
 watchEffect(() => {
-  const { operator } = props.item
+  // const { operator } = props.item
 
   props.item.fieldOp = ''
 
@@ -128,36 +128,44 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
 
 <template>
   <div class="AttrRender" style="display: flex;gap: 1rem">
-    <el-input :disabled="readonly" v-if="type === 'num'" v-model.number="item.fieldValue" />
+    <template v-if="type === 'num'">
+      <template v-if="item.operator === '区间'">
+        <el-input :disabled="readonly" v-model.number="item.fieldValue" />
+        到
+        <el-input :disabled="readonly" v-model.number="item.fieldValue" />
+      </template>
+      <el-input v-else :disabled="readonly" v-model.number="item.fieldValue" />
+    </template>
     <el-input :disabled="readonly" v-else-if="type === 'text'" v-model="item.fieldValue" />
     <template v-else-if="type === 'date'">
-      <el-select @change="onOpChange" v-model="item.fieldOp" v-if="item.operator.indexOf('时间') !== -1">
+      <el-select @change="onOpChange" :disabled="readonly" v-model="item.fieldOp"
+        v-if="item.operator.indexOf('时间') !== -1">
         <el-option v-for="each in operatorOptions[item.operator]" :key="each.value" :label="each.label"
           :value="each.label" />
       </el-select>
       <template v-if="item.operator === '绝对时间'">
-        <el-date-picker v-if="item.timeCondition.timeType !== 'absoluteInterval'" v-model="timeInterval" type="date"
-          placeholder="选择时间" />
-        <el-date-picker v-else v-model="timeInterval" type="daterange" range-separator="至" start-placeholder="开始时间"
-          end-placeholder="结束时间" />
+        <el-date-picker :disabled="readonly" v-if="item.timeCondition.timeType !== 'absoluteInterval'"
+          v-model="timeInterval" type="date" placeholder="选择时间" />
+        <el-date-picker :disabled="readonly" v-else v-model="timeInterval" type="daterange" range-separator="至"
+          start-placeholder="开始时间" end-placeholder="结束时间" />
       </template>
       <template v-else-if="item.operator === '相对时间'">
         在
-        <el-select @change="onTimePointChange" v-model="timePointSection">
+        <el-select :disabled="readonly" @change="onTimePointChange" v-model="timePointSection">
           <el-option value="past" label="过去" />
           <el-option value="future" label="未来" />
         </el-select>
-        <el-input placeholder="输入字符" v-model="item.timeCondition.startDay" />
+        <el-input :disabled="readonly" placeholder="输入字符" v-model="item.timeCondition.startDay" />
         天
         <template v-if="item.fieldOp === '相对当前时间点'">
-          <el-select @change="onTimeCastChange" v-model="timeCastSection">
+          <el-select :disabled="readonly" @change="onTimeCastChange" v-model="timeCastSection">
             <el-option value="within" label="之内" />
             <el-option value="without" label="之外" />
           </el-select>
         </template>
         <template v-else>
           至未来
-          <el-input placeholder="输入字符" v-model="item.timeCondition.endDay" />
+          <el-input :disabled="readonly" placeholder="输入字符" v-model="item.timeCondition.endDay" />
           天之内
         </template>
       </template>
