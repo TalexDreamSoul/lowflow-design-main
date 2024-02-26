@@ -12,6 +12,7 @@ const props = defineProps<{
   data: any;
   type: any;
   success: Function;
+  readonly?: boolean;
 }>();
 
 const out = ref(false)
@@ -68,7 +69,7 @@ function destroy() {
     </div>
 
     <div class="BaseTemplate-Content" contenteditable="false">
-      <component :data="data" ref="compRef" :is="comp" :type="type" />
+      <component :readonly="readonly" :data="data" ref="compRef" :is="comp" :type="type" />
     </div>
 
     <div class="BaseTemplate-Footer">

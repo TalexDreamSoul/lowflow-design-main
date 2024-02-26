@@ -11,6 +11,7 @@ const dialogVisible = ref(false);
 const action = `/api/uploadMaterialFile`;
 const props = defineProps<{
   data: any;
+  readonly?: boolean;
 }>();
 
 const origin = {
@@ -119,7 +120,7 @@ function onDelete(item: any, index: number) {
 }
 
 function onUpload(item: any, index: number) {
-  if ( index < 1 ) return
+  if (index < 1) return
 
   const temp = list.value[index];
   list.value[index] = list.value[index - 1];
@@ -127,7 +128,7 @@ function onUpload(item: any, index: number) {
 }
 
 function onDownload(item: any, index: number) {
-  if ( index + 1 > list.value?.length || 1 ) return
+  if (index + 1 > list.value?.length || 1) return
 
   const temp = list.value[index];
   list.value[index] = list.value[index + 1];
@@ -138,10 +139,10 @@ function onDownload(item: any, index: number) {
 <template>
   <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input v-model="data.name" style="width: 50%;"></el-input>
+      <el-input :disabled="readonly" v-model="data.name" style="width: 50%;"></el-input>
     </el-form-item>
     <el-form-item label="企微触达方式">
-      <el-select v-model="data.sendtype" style="width: 50%;">
+      <el-select :disabled="readonly" placeholder="请选择" v-model="data.sendtype" style="width: 50%;">
         <!--
            sendMessage 发送消息
            addfriends 添加好友
@@ -152,13 +153,14 @@ function onDownload(item: any, index: number) {
     </el-form-item>
 
     <el-form-item label="消息内容">
-      <TouchSettingContents variables="variables" content="content" v-model="data.digitalTemplateDetails"
-        buttonTitle="输入变量" />
+      <TouchSettingContents :disabled="readonly" variables="variables" content="content"
+        v-model="data.digitalTemplateDetails" buttonTitle="输入变量" />
     </el-form-item>
 
-    <MicroEnterpriseDrag @delete="onDelete" @upload="onUpload" @download="onDownload" style="margin-bottom: 6.5rem" v-model="list" />
+    <MicroEnterpriseDrag :disabled="readonly" @delete="onDelete" @upload="onUpload" @download="onDownload"
+      style="margin-bottom: 6.5rem" v-model="list" />
 
-    <div class="FloatFixed">
+    <div v-if="!readonly" class="FloatFixed">
       <el-upload :action=action :on-success="addPic" :auto-upload="true"
         :data="{ type: 'material', date: getCurrentDate() }" :show-file-list="false"
         class="upload-demo button-groupupload">

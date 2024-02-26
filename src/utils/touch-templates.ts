@@ -30,7 +30,8 @@ export function createTemplatePopover(
   title: string,
   template: keyof typeof templates,
   data?: Ref<any>,
-  type?: String
+  type?: String,
+  readonly?: boolean
 ) {
   const comp = templates[template];
   if (!comp) throw new Error(`Template ${template} not found!`);
@@ -60,6 +61,7 @@ export function createTemplatePopover(
     close: resolve,
     data,
     type,
+    readonly,
     success: (val: any) => {
       Object.assign(data?.value, val);
     },

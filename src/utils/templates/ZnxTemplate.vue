@@ -3,7 +3,8 @@ import TouchSettingContents from '~/touch-flow/p/touch/TouchSettingContents.vue'
 import { reactive, watchEffect } from 'vue'
 
 const props = defineProps<{
-  data: any
+  data: any;
+  readonly?: boolean;
 }>()
 
 const origin =
@@ -83,22 +84,24 @@ defineExpose({ saveData })
 <template>
   <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input v-model="data.name"></el-input>
+      <el-input :disabled="readonly" v-model="data.name"></el-input>
     </el-form-item>
     <el-form-item label="模块ID">
-      <el-input v-model="data.moduleId"></el-input>
+      <el-input :disabled="readonly" v-model="data.moduleId"></el-input>
     </el-form-item>
     <el-form-item label="轮播图ID">
-      <el-input v-model="data.carouselId"></el-input>
+      <el-input :disabled="readonly" v-model="data.carouselId"></el-input>
     </el-form-item>
     <el-form-item label="列表标题">
-      <TouchSettingContents variables="titleVariables" content="listTitle" v-model="data" buttonTitle="输入变量" />
+      <TouchSettingContents :disabled="readonly" variables="titleVariables" content="listTitle" v-model="data"
+        buttonTitle="输入变量" />
     </el-form-item>
     <el-form-item label="站内信标题">
-      <TouchSettingContents variables="znxTitleVariables" content="znxTitle" v-model="data" buttonTitle="输入变量" />
+      <TouchSettingContents :disabled="readonly" variables="znxTitleVariables" content="znxTitle" v-model="data"
+        buttonTitle="输入变量" />
     </el-form-item>
     <el-form-item label="站内信简介">
-      <TouchSettingContents variables="znxContentVariables" content="znxContent" v-model="data" buttonTitle="输入变量" />
+      <TouchSettingContents :disabled="readonly" variables="znxContentVariables" content="znxContent" v-model="data"
+        buttonTitle="输入变量" />
     </el-form-item>
-  </el-form>
-</template>
+</el-form></template>
