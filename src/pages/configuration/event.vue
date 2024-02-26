@@ -5,7 +5,7 @@
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
           <el-select
-            size="large"
+            
             v-model="pageParams.eventType"
             placeholder="类别"
             clearable
@@ -19,7 +19,7 @@
         </el-form-item>
         <el-form-item>
           <el-input
-            size="large"
+            
             v-model="pageParams.eventName"
             placeholder="事件名称"
             clearable
@@ -143,7 +143,7 @@
             prop="eventCode"
           >
             <el-input
-              size="large"
+              
               v-model="formValues.eventCode"
               placeholder="请输入"
               clearable
@@ -161,7 +161,7 @@
             prop="eventName"
           >
             <el-input
-              size="large"
+              
               v-model="formValues.eventName"
               placeholder="请输入"
               clearable
@@ -173,7 +173,7 @@
             prop="eventType"
           >
             <el-select
-              size="large"
+              
               v-model="formValues.eventType"
               placeholder="请选择"
               clearable
@@ -311,7 +311,7 @@
           prop="field"
         >
           <el-input
-            size="large"
+            
             v-model="attrFormValues.field"
             placeholder="请输入"
             clearable
@@ -329,7 +329,7 @@
           prop="fieldName"
         >
           <el-input
-            size="large"
+            
             v-model="attrFormValues.fieldName"
             placeholder="请输入"
             clearable
@@ -341,7 +341,7 @@
           prop="fieldType"
         >
           <el-select
-            size="large"
+            
             v-model="attrFormValues.fieldType"
             placeholder="请选择"
             clearable

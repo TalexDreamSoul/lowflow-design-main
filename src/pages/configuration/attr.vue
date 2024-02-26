@@ -4,7 +4,7 @@
     <div class="search">
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
-          <el-input size='large' v-model="pageParams.fieldName" placeholder="属性名称" clearable :suffix-icon="Search" />
+          <el-input  v-model="pageParams.fieldName" placeholder="属性名称" clearable :suffix-icon="Search" />
         </el-form-item>
       </el-form>
     </div>
@@ -50,18 +50,18 @@
           { required: true, message: '请输入属性编码' },
           { pattern: /^[a-zA-Z0-9_]{1,18}$/, message: '仅支持数字、字母、下划线，不超过18个字符' },
         ]" label="属性编码" prop="field">
-          <el-input size='large' v-model="formValues.field" placeholder="请输入" clearable />
+          <el-input  v-model="formValues.field" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item :rules="[
           { required: true, message: '请输入属性名称' },
           { pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/, message: '仅支持数字、汉字、字母、下划线，不超过18个字符' },
         ]" label="属性名称" prop="fieldName">
-          <el-input size='large' v-model="formValues.fieldName" placeholder="请输入" clearable />
+          <el-input  v-model="formValues.fieldName" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item :rules="[
           { required: true, message: '请选择数据类别' },
         ]" label="数据类别" prop="fieldType">
-          <el-select size='large' v-model="formValues.fieldType" placeholder="请选择" clearable>
+          <el-select  v-model="formValues.fieldType" placeholder="请选择" clearable>
             <el-option v-for="item of ATTR_FIELD_TYPE" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
