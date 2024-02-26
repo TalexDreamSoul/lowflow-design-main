@@ -191,7 +191,7 @@ regSaveFunc(saveData);
 
 const estimation = async () => {
   // 请求示例
-  let data = {};
+  let data = { ...sizeForm.customRuleContent };
   let res = await getmarketingTouchEstimate(JSON.stringify(data));
   res = {
     data: {
