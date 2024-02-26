@@ -155,7 +155,7 @@ export const TAG_SOURCE = [
   },
 ];
 /**
- * 标签来源
+ * 黑名单类型
  */
 export const BLACK_LIST_TYPE = [
   {
@@ -167,6 +167,15 @@ export const BLACK_LIST_TYPE = [
     value: 'activity',
   },
 ];
+
+/**
+ * 黑名单添加类型
+ */
+export enum BlackAddTypeEnum {
+  Manual = "manual",
+  StaticRule = "staticRule",
+  RealtimeEvent = "realtimeEvent",
+}
 
 /**
  * 省市数据

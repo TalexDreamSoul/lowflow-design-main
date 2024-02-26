@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   padding: 24px 40px;
-  background-color: #f8f9fa;
+  background: #f8f9fa;
   overflow-y: auto;
 
   >.title {
@@ -21,6 +21,9 @@
     align-items: center;
 
     .el {
+      &-form {
+        width: 100%;
+      }
       &-select {
         width: 278px;
       }
@@ -37,7 +40,7 @@
 
   .content {
     flex: 1;
-    background-color: white;
+    background: white;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
