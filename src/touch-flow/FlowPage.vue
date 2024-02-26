@@ -8,6 +8,7 @@ import XFlow from './x/XFlow.vue'
 import { ArrowRight } from "@element-plus/icons-vue";
 import { useRouter } from 'vue-router'
 import { ElMessage } from "element-plus";
+import { flatConvert2Tree } from './flow-utils'
 // import { createTemplatePopover } from '../utils/touch-templates'
 
 // createTemplatePopover('新建外呼模版', 'digital')
@@ -34,7 +35,7 @@ const flowOptions = reactive({
     nodeId: randomStr(12),
     nodeType: "Start",
     height: 250,
-    children: [],
+    children: [] as any[],
   },
 });
 
@@ -50,7 +51,7 @@ watchEffect(() => {
       target: targetReduction(data),
     })
 
-    flowOptions.p.children = data.nodes as any
+    flowOptions.p.children = flatConvert2Tree([ ...data.nodes! ]) 
 
     //   touchName: flowOptions.basic.touchName,
     //   ...transformDisturb(flowOptions.basic.disturb),

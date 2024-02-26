@@ -159,7 +159,7 @@ function del(p: any) {
     <div class="PBlock-Content theme">
       <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">
         <div>
-          包含{{ data.branches.length }}个分支
+          包含{{ data.children.length }}个分支
         </div>
       </div>
     </div>

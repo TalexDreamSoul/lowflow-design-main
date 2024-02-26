@@ -124,3 +124,31 @@ export function genIdNodeReactive(p: any) {
     return null
   };
 }
+
+export function flatConvert2Tree(nodes: any[]) {
+  const map = new Map<String, any>();
+
+  const root: any[] = [];
+
+  [...nodes].forEach((item: any) => map.set(item.nodeId, item));
+
+  [...nodes].forEach((item: any) => {
+    const { preNodeId, nextNodeId } = item
+
+    if (preNodeId) {
+      const preNode = map.get(preNodeId)
+      if (preNode) {
+        console.log("__preNode", preNode, preNodeId)
+
+        preNode.children = [...(preNode.children || []), item]
+
+        return
+      }
+
+    }
+
+    root.push(item)
+  })
+
+  return root
+}

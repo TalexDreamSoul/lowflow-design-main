@@ -80,7 +80,7 @@ const layoutFn = () => {
 
       if ( data.diversionType || data.eventDelayed?.isDelayed ) {
         calcHeight = calcHeight - 200
-        if ( data.$template.has ) {
+        if ( data?.nodeContent?.data?.$template.has ) {
           calcHeight += 100
         }
       }

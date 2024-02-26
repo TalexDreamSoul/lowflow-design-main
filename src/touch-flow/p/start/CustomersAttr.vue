@@ -389,8 +389,8 @@ const blackList = ref()
           <el-option value="yes" label="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select v-model="customRuleContent.blackList.data" multiple v-if="customRuleContent?.blackList?._enable === 'yes'" style="min-width: 100px">
-          <el-option placeholder="请选择" v-for="item in blackList.records" :value="item.id" :label="item.blacklistName">
+        <el-select placeholder="请选择" v-model="customRuleContent.blackList.data" multiple v-if="customRuleContent?.blackList?._enable === 'yes'" style="min-width: 100px">
+          <el-option v-for="item in blackList.records" :value="item.blacklistName" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
             <!-- <p>{{ item.blacklistDesc }}</p> -->
           </el-option>

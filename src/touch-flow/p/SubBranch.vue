@@ -100,7 +100,11 @@ let _saveFunc: (() => boolean) | null = null
 function handleSave() {
   if (!_saveFunc || !_saveFunc()) return
 
-  data.$template = pushTemplate.value
+  data.nodeContent = {
+    data: {
+      $template: pushTemplate.value
+    }
+  }
 
   Object.assign(__data, data)
 
@@ -176,7 +180,7 @@ provide('save', (regFunc: () => boolean) => {
     <div @click="openCondition" class="PBlock-Content theme">
       <template v-if="data.diversionType || data.eventDelayed?.isDelayed || pushTemplate?.has">
         <div style="display: flex; flex-direction: column; gap: 1rem">
-          <div style="--theme-color: #7DC757" class="PBlock-Section">
+          <div v-if="data.eventDelayed?.isDelayed" style="--theme-color: #7DC757" class="PBlock-Section">
             <p>
               延迟设置
             </p>

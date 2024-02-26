@@ -20,6 +20,14 @@ const operatorOptions = [
   {
     label: '不包含',
     value: 'not_contain'
+  },
+  {
+    label: '为空',
+    value: 'is_empty'
+  },
+  {
+    label: '不为空',
+    value: 'is_not_empty'
   }
 ]
 const $emits = defineEmits<{
@@ -29,7 +37,7 @@ const data = useVModel($props, 'modelValue', $emits)
 </script>
 
 <template>
-  <el-select class="operator-container" v-model="data" filterable placeholder="筛选符">
+  <el-select class="operator-container" v-model="data" placeholder="筛选符">
     <el-option
         v-for="item in operatorOptions"
         :key="item.value"
