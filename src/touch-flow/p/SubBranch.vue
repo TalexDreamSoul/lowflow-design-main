@@ -117,7 +117,7 @@ function handleSave() {
 }
 
 const pushTemplate = computed(() => {
-  if ( !data.material || !data.touch ) {
+  if (!data.material || !data.touch) {
     return {
       has: false,
       val: ''
@@ -155,11 +155,11 @@ const pushTemplate = computed(() => {
 
 const delayedActionStr = computed(() => {
   const action = data?.eventDelayed?.delayedAction
-  if ( !action ) return ''
+  if (!action) return ''
 
-  if ( action === 'touch' ) return '发送触达'
-  if ( action === 'label' ) return '打上标签'
-  if ( action === 'touchAndLabel' ) return '发送触达并打上标签'
+  if (action === 'touch') return '发送触达'
+  if (action === 'label') return '打上标签'
+  if (action === 'touchAndLabel') return '发送触达并打上标签'
   return '不执行动作'
 })
 
@@ -211,7 +211,8 @@ provide('save', (regFunc: () => boolean) => {
     <teleport to="body">
       <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section" :class="{ disabled: item.disabled?.value }">
+          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section"
+            :class="{ disabled: item.disabled?.value }">
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
@@ -236,8 +237,9 @@ provide('save', (regFunc: () => boolean) => {
     </teleport>
   </el-card>
 
-  <el-button :class="{ display: data.diversionType || data.eventDelayed?.isDelayed || pushTemplate?.has, disabled: haveDiverse }" @click="dialogVisible = true" class="start-add"
-    type="primary" :icon="Plus" circle />
+  <el-button
+    :class="{ display: data.diversionType || data.eventDelayed?.isDelayed || pushTemplate?.has, disabled: haveDiverse }"
+    @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">

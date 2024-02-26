@@ -44,6 +44,9 @@ const origin = {
       name: '不使用模板'
     }]
   },
+  touchTemplateContent: {
+
+  },
   eventDelayed: {
     delayedAction: '',
     delayedTime: 0,
