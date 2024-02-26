@@ -80,19 +80,19 @@ const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([.
         <el-form :label-width="0" :inline="true" :model="condition.conditions">
           <el-row v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="filter-item-rule">
             <el-col :xs="24" :sm="6">
-              <el-form-item :prop="'conditions.' + index + '.field'"  style="width: 100%">
+              <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
                 <trigger multiple v-model="item.field" :attrs="attrs" placeholder="客户属性/标签" />
               </el-form-item>
             </el-col>
             &nbsp;<el-col :xs="24" :sm="4" v-if="item.field">
               <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                <operator :selected="getCurrSelected(item)" :attrs="attrs" :item="item" ref="operatorRef" v-model="item.operator" />
+                <operator :selected="getCurrSelected(item)" :attrs="attrs" :item="item" ref="operatorRef"
+                  v-model="item.operator" />
               </el-form-item>
             </el-col>
             &nbsp;<el-col :xs="24" :sm="6" v-if="getCurrSelected(item)">
               <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <AttrRender :selected="getCurrSelected(item)" :operator="item.operator" field="item.field" v-model="item.fieldValue"
-                  :attrs="attrs" />
+                <AttrRender :selected="getCurrSelected(item)" :item="item" :attrs="attrs" />
               </el-form-item>
             </el-col>
             &nbsp;
