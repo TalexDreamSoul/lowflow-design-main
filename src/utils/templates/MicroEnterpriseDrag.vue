@@ -51,12 +51,12 @@ function generateReflexlyProxy(arr: typeof list, index: number) {
       class="flex flex-col gap-2 p-4 w-300px bg-gray-500/5 rounded">
       <li class="drag-item" draggable="true" :data-ind="item.name" :key="item.id" v-for="(item, index) in thisList">
         <div class="drag-item-header">
-          <el-tooltip :content="item.name">
+          <el-tooltip placement="top" :content="item.name">
             <span class="text-2xl name-label">{{ item.name }}</span>
           </el-tooltip>
 
           <div class="header-controller">
-          <el-button type="text" v-if="index !== 0" @click="emits('upload', item, index)">
+            <el-button type="text" v-if="index !== 0" @click="emits('upload', item, index)">
               <el-icon>
                 <Upload />
               </el-icon>
@@ -252,6 +252,8 @@ function generateReflexlyProxy(arr: typeof list, index: number) {
   ul {
     padding: 0;
     display: flex;
+
+    width: 100%;
 
     gap: 1rem;
     flex-direction: column;
