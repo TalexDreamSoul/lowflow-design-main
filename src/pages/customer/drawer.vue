@@ -12,10 +12,10 @@
             message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
           },
         ]" label="黑名单名称" prop="blacklistName">
-          <el-input size="large" v-model="formValues.blacklistName" placeholder="请输入" clearable />
+          <el-input  v-model="formValues.blacklistName" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item :rules="[{ required: true, message: '请选择黑名单类型' }]" label="黑名单类型" prop="blacklistType">
-          <el-select size="large" v-model="formValues.blacklistType" placeholder="请选择" clearable>
+          <el-select  v-model="formValues.blacklistType" placeholder="请选择" clearable>
             <el-option v-for="item of BLACK_LIST_TYPE" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>

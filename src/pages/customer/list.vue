@@ -5,7 +5,7 @@
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
           <el-select
-            size="large"
+            
             v-model="pageParams.source"
             placeholder="类别"
             clearable
@@ -19,7 +19,7 @@
         </el-form-item>
         <el-form-item>
           <el-input
-            size="large"
+            
             v-model="pageParams.value"
             placeholder="请输入客户姓名或者手机号"
             clearable
@@ -129,7 +129,7 @@
           prop="name"
         >
           <el-input
-            size="large"
+            
             v-model="formValues.name"
             placeholder="请输入"
             clearable
@@ -141,7 +141,7 @@
           prop="phone"
         >
           <el-input
-            size="large"
+            
             v-model="formValues.phone"
             placeholder="请输入"
             clearable
@@ -153,7 +153,7 @@
           prop="itFinCode"
         >
           <el-input
-            size="large"
+            
             v-model="formValues.itFinCode"
             placeholder="请输入"
             clearable
@@ -162,7 +162,7 @@
         <div class="flex">
           <el-form-item label="性别" prop="sex">
             <el-select
-              size="large"
+              
               v-model="formValues.sex"
               placeholder="请选择"
               clearable
@@ -176,7 +176,7 @@
           </el-form-item>
           <el-form-item label="省份" prop="province">
             <el-select
-              size="large"
+              
               v-model="formValues.province"
               placeholder="请选择"
               clearable
@@ -190,7 +190,7 @@
           </el-form-item>
           <el-form-item label="城市" prop="city">
             <el-select
-              size="large"
+              
               v-model="formValues.city"
               placeholder="请选择"
               clearable
@@ -210,7 +210,7 @@
             v-model="formValues.birthday"
             type="date"
             placeholder="请选择"
-            size="large"
+            
             value-format="YYYY-MM-DD"
           />
         </el-form-item>

@@ -10,12 +10,12 @@
             range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            size="large"
+            
           />
         </el-form-item>
         <el-form-item>
           <el-select
-            size="large"
+            
             v-model="pageParams.labelSource"
             placeholder="来源"
             clearable
@@ -29,7 +29,7 @@
         </el-form-item>
         <el-form-item>
           <el-input
-            size="large"
+            
             v-model="pageParams.labelName"
             placeholder="标签名称"
             clearable
@@ -172,7 +172,7 @@
         <el-form-item label="标签名称" prop="labelName">
           <el-input
             :disabled="true"
-            size="large"
+            
             v-model="formValues.labelName"
             placeholder="请输入"
             clearable
@@ -180,7 +180,7 @@
         </el-form-item>
         <el-form-item label="标签说明" prop="labelDesc">
           <el-input
-            size="large"
+            
             v-model="formValues.labelDesc"
             placeholder="请输入"
             clearable
@@ -225,7 +225,7 @@
         </el-upload>
         <el-button
           @click="download"
-          size="large"
+          
           style="border-color: #4078e0; color: #4078e0"
           >下载上传格式模版</el-button
         >

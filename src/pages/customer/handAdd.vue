@@ -4,7 +4,7 @@
       <el-form :inline="true" :model="pageParams" style="margin-left: 10px">
         <el-form-item>
           <el-select
-            size="large"
+            
             v-model="pageParams.source"
             placeholder="类别"
             clearable
@@ -18,7 +18,7 @@
         </el-form-item>
         <el-form-item>
           <el-input
-            size="large"
+            
             v-model="pageParams.value"
             placeholder="请输入客户姓名或者手机号"
             clearable
