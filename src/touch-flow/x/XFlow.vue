@@ -78,9 +78,9 @@ const layoutFn = () => {
       const { data } = _data
       let calcHeight = height - 125
 
-      if ( data.diversionType || data.eventDelayed?.isDelayed ) {
+      if (data.diversionType || data.eventDelayed?.isDelayed) {
         calcHeight = calcHeight - 200
-        if ( data?.nodeContent?.data?.$template.has ) {
+        if (data?.nodeContent?.data?.$template.has) {
           calcHeight += 100
         }
       }
@@ -104,7 +104,7 @@ const layoutFn = () => {
       model.nodes?.push({
         id: `${data.id}`,
         x: data.x + 700,
-        y: data.y + 100,
+        y: data.y + 200,
         shape,
         data: { ...data, $d: getNodeReactive },
         width: 610,
