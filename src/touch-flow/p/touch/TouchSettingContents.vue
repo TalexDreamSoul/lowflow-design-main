@@ -427,6 +427,7 @@ const contentLength = computed(() => {
 
     border: none;
     cursor: pointer;
+    user-select: none;
     background: #EDEFF4;
   }
 

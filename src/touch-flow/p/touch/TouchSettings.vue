@@ -1,15 +1,18 @@
 <script setup lang="ts" name="TouchSettings">
 import TouchSettingContents from '../touch/TouchSettingContents.vue'
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { getQryMaterial } from "~/api";
-const origin = {
-  touch: {
-    type: -1,
-    content: "",
-    variables: []
-  },
+import { MaterialTemplateEditDTO } from './touch-types'
+
+import ZnxTemplateVue from "~/utils/templates/ZnxTemplate.vue";
+import SmsTemplateVue from "~/utils/templates/SmsTemplateVue.vue";
+import AppTemplateVue from "~/utils/templates/AppTemplateVue.vue";
+import DigitalTemplateVue from "~/utils/templates/DigitalTemplateVue.vue";
+import OutboundTemplateVue from "~/utils/templates/OutboundTemplateVue.vue";
+
+type TemplateComponents = typeof ZnxTemplateVue | typeof SmsTemplateVue | typeof AppTemplateVue | typeof DigitalTemplateVue | typeof OutboundTemplateVue
+const origin: MaterialTemplateEditDTO = {
   material: {
-    type: "",
     beginTime: "",
     endTime: "",
     name: "",
@@ -21,23 +24,26 @@ const origin = {
       name: '不使用模板'
     }]
   },
-  touchTemplateContent: {
-
-  },
+  type: ''
 };
 
 const props = defineProps<{
-  touch: any;
+  touch: MaterialTemplateEditDTO;
+  readonly?: boolean
 }>();
 
+const comp = ref<TemplateComponents>()
 const touchOptions = reactive<typeof origin>(origin);
 
 async function refreshMaterialTemplate() {
-  touchOptions.touch.type = -1
+  touchOptions.id = -1
 
   const { material } = touchOptions
 
-  let res = await getQryMaterial(material);
+  let res = await getQryMaterial({
+    ...material,
+    type: touchOptions.type
+  });
 
   if (res.data?.records) {
     touchOptions.material.templates = [{
@@ -47,21 +53,76 @@ async function refreshMaterialTemplate() {
   }
 }
 
-const platformOptions: any = {
-  'sms': "短信",
-  'appPush': "app消息",
-  'digital': "数字员工",
-  'outbound': "智能外呼",
-  'znx': "站内信",
+function updateData() {
+  const { saveData: save } = comp.value!;
+
+  const templateData = touchOptions[curPlatform.value.propKey]
+
+  Object.assign(templateData, save())
+
+  Object.assign(props.touch, touchOptions)
 }
 
+const platformOptions: Record<string, {
+  button: {
+    label: string,
+    click: Function
+  },
+  propKey: string,
+  template: TemplateComponents
+}> = {
+  'sms': {
+    button: {
+      label: "短信",
+      click: () => 1
+    },
+    propKey: "smsTemplate",
+    template: SmsTemplateVue
+  },
+  'appPush': {
+    button: {
+      label: "app消息",
+      click: () => 1
+    },
+    propKey: "appPushTemplate",
+    template: AppTemplateVue
+  },
+  'digital': {
+    button: {
+      label: "数字员工",
+      click: () => 1
+    },
+    propKey: "digitalTemplate",
+    template: DigitalTemplateVue
+  },
+  'outbound': {
+    button: {
+      label: "智能外呼",
+      click: () => 1
+    },
+    propKey: "outboundTemplate",
+    template: OutboundTemplateVue
+  },
+  'znx': {
+    button: {
+      label: "站内信",
+      click: () => 1
+    },
+    propKey: "znxTemplate",
+    template: ZnxTemplateVue
+  },
+}
+
+const curPlatform = computed(() => platformOptions[touchOptions.type!])
+
+defineExpose({ updateData  })
 </script>
 
 <template>
   <div>
     <el-form>
       <el-form-item label="触达通道">
-        <el-select placeholder="请选择通道" @change="refreshMaterialTemplate" v-model="touchOptions.material.type"
+        <el-select :disabled="readonly" placeholder="请选择通道" @change="refreshMaterialTemplate" v-model="touchOptions.type"
           style="width: 120px">
           <el-option value="sms" label="短信">手机短信</el-option>
           <el-option value="appPush" label="app消息">app消息</el-option>
@@ -70,8 +131,8 @@ const platformOptions: any = {
           <el-option value="znx" label="站内信">站内信</el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="选择模版">
-        <el-select v-model="touchOptions.touch.type" style="width: 120px">
+      <el-form-item v-if="touchOptions.type" label="选择模版">
+        <el-select :disabled="readonly" v-model="touchOptions.id" style="width: 120px">
           <el-option v-for="item in (touchOptions.material.templates)" :value="item.id" :label="item.name">
             <div class="template-option">
               <span>{{ item.name }}</span>
@@ -81,12 +142,13 @@ const platformOptions: any = {
             </div>
           </el-option>
         </el-select>
-        <el-button v-if="platformOptions[touchOptions.material.type]" ml-1rem type="primary" plain>
-          新增{{ platformOptions[touchOptions.material.type] }}模块版本</el-button>
+        <el-button :disabled="readonly" v-if="curPlatform" @click="curPlatform.button.click" ml-1rem type="primary" plain>
+          新增{{ curPlatform.button.label }}模块版本</el-button>
       </el-form-item>
-      <el-form-item label="触达内容">
-        <TouchSettingContents content="content" variables="variables" v-model="touchOptions.touch" />
-      </el-form-item>
+
+      <template v-if="curPlatform">
+        <component ref="comp" :disabled="readonly" :is="curPlatform.template" :data="touchOptions[curPlatform.propKey]" />
+      </template>
     </el-form>
   </div>
 </template>

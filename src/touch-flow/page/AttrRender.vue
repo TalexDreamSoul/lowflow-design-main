@@ -132,7 +132,7 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
       <template v-if="item.operator === '区间'">
         <el-input :disabled="readonly" v-model.number="item.fieldValue" />
         到
-        <el-input :disabled="readonly" v-model.number="item.fieldValue" />
+        <el-input :disabled="readonly" v-model.number="item.fieldRangeValue" />
       </template>
       <el-input v-else :disabled="readonly" v-model.number="item.fieldValue" />
     </template>

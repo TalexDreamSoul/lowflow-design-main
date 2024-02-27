@@ -106,6 +106,7 @@ const props = defineProps<{
   new?: boolean
 }>();
 
+const touchSettingsRef = ref()
 const sizeForm = reactive<typeof origin>(origin);
 
 console.log("here", sizeForm, props.p, props.new)
@@ -130,6 +131,8 @@ function saveData() {
 
     return false;
   }
+
+  touchSettingsRef.value.updateData()
 
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)
@@ -319,7 +322,7 @@ function sequenceAdd() {
       </BehaviorGroupPlus>
 
       <BehaviorGroupPlus title="触达设置" color="#FFD561">
-        <TouchSettings :touch="sizeForm.touchTemplateContent" />
+        <TouchSettings ref="touchSettingsRef" :touch="sizeForm.touchTemplateContent" />
       </BehaviorGroupPlus>
 
       <BehaviorGroupPlus

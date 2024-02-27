@@ -91,6 +91,9 @@ const origin = {
     }]
   },
   target: false,
+  touchTemplateContent: {
+
+  },
   eventDelayed: {
     delayedAction: '',
     delayedTime: 0,
@@ -118,6 +121,7 @@ const props = defineProps<{
   new?: boolean
 }>();
 
+const touchSettingsRef = ref()
 const sizeForm = reactive<typeof origin>(origin);
 
 console.log("分流器", sizeForm, props.p)
@@ -203,7 +207,7 @@ const estimation = async () => {
       </BehaviorGroupPlus>
 
       <BehaviorGroupPlus title="触达设置" color="#FFD561">
-        <TouchSettings :touch="sizeForm.touchTemplateContent" />
+        <TouchSettings ref="touchSettingsRef" :touch="sizeForm.touchTemplateContent" />
       </BehaviorGroupPlus>
 
       <BehaviorGroupPlus

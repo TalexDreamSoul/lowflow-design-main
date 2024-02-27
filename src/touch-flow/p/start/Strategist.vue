@@ -64,6 +64,7 @@ const props = defineProps<{
   new?: boolean
 }>();
 
+const touchSettingsRef = ref()
 const sizeForm = reactive<typeof origin>(origin);
 
 function reset() {
@@ -165,7 +166,7 @@ const estimation = async () => {
       </BehaviorGroupPlus>
 
       <BehaviorGroupPlus title="触达设置" color="#FFD561">
-        <TouchSettings :touch="sizeForm.touchTemplateContent" />
+        <TouchSettings ref="touchSettingsRef" :touch="sizeForm.touchTemplateContent" />
       </BehaviorGroupPlus>
 
       <BehaviorGroupPlus
