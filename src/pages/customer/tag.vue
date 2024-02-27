@@ -160,7 +160,7 @@
       :close-on-click-modal="false"
       v-model="modalVisible"
       :title="ModalTitleMap[modalType]"
-      :width="400"
+      :width="checkStringEqual(modalType, DrawerType.Detail) ? 800 : 400"
     >
       <el-form
         v-if="checkStringEqual(modalType, DrawerType.Edit)"
@@ -194,7 +194,7 @@
         <div class="desc">
           <div style="color: rgba(64, 120, 224, 1)">客户活跃度</div>
           <div>标签说明：根据客户启动APP的次数，对客户的活跃程度进行判断</div>
-          <div>覆盖度：{{ modalData?.coverRatio * 100 }}% 覆盖132名客户</div>
+          <div>覆盖度：{{ modalData?.coverRatio * 100 }}% 覆盖{{ modalData?.count }}名客户</div>
         </div>
         <el-table
           :data="modalData?.labelValueCoverRatios || []"
@@ -306,6 +306,7 @@ const defaultFormValues = {
 };
 let formValues = reactive({ ...defaultFormValues });
 let modalData = reactive<any>({});
+const pageNum = ref(1);
 
 const formRef = ref<FormInstance>();
 
@@ -327,6 +328,7 @@ onMounted(() => {
 });
 
 const currentChange = (value: number) => {
+  pageNum.value = value;
   getData({...pageParams, pageNum: value});
 }
 
@@ -393,7 +395,7 @@ const handleSetStatus = async (values: any) => {
         : ConfigStatus.Available,
   });
   if (checkStringEqual(res?.code, 0)) {
-    getData(pageParams);
+    getData({...pageParams, pageNum: pageNum.value});
   }
 };
 
@@ -407,21 +409,19 @@ const handleDelete = (values: any) => {
   }).then(async () => {
     let res = await API.deleteCustomLabel({ id: values.id });
     if (checkStringEqual(res?.code, 0)) {
-      getData(pageParams);
+      getData({...pageParams, pageNum: pageNum.value});
     }
   });
 };
 
 const download = async () => {
-  let res = await API.downloadCustomLabelTemplate();
-  let href = window.URL.createObjectURL(new Blob([res]));
-  let downloadElement = document.createElement("a");
-  downloadElement.href = href;
-  downloadElement.download = '客户标签模版.xlsx';
-  document.body.appendChild(downloadElement);
-  downloadElement.click();
-  document.body.removeChild(downloadElement);
-  window.URL.revokeObjectURL(href);
+  let a = document.createElement('a');
+  a.href = '/api/downloadCustomLabelTemplate';
+  a.download = '客户标签模版.xlsx';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 };
 
 const onSubmit = async (formEl: FormInstance | undefined) => {
@@ -430,7 +430,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     await formEl.validate();
     let res = await API.updateCustomLabel(formValues);
     if (checkStringEqual(res?.code, 0)) {
-      getData(pageParams);
+      getData({...pageParams, pageNum: pageNum.value});
       modalVisible.value = false;
     }
   } catch (error) {

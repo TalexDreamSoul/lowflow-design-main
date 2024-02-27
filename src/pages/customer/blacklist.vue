@@ -127,7 +127,7 @@
         @current-change="currentChange"
       />
     </div>
-    <PdDrawer ref="drawerRef" :getData="() => getData(pageParams)" />
+    <PdDrawer ref="drawerRef" :getData="() => getData({...pageParams, pageNum})" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -154,6 +154,7 @@ const pageParams = reactive({
 
 const drawerRef = ref<any>();
 
+const pageNum = ref(1);
 const total = ref(0);
 const tableData = ref<any[]>([]);
 
@@ -169,6 +170,7 @@ onMounted(() => {
 });
 
 const currentChange = (value: number) => {
+  pageNum.value = value;
   getData({...pageParams, pageNum: value});
 }
 
@@ -209,7 +211,7 @@ const handleSetStatus = async (values: any) => {
         : ConfigStatus.Available,
   });
   if (checkStringEqual(res?.code, 0)) {
-    getData(pageParams);
+    getData({...pageParams, pageNum: pageNum.value});
   }
 };
 
@@ -223,7 +225,7 @@ const handleDelete = (values: any) => {
   }).then(async () => {
     let res = await API.deleteBlacklist({ id: values.id });
     if (checkStringEqual(res?.code, 0)) {
-      getData(pageParams);
+      getData({...pageParams, pageNum: pageNum.value});
     }
   });
 };

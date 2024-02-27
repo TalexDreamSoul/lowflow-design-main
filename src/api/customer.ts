@@ -52,6 +52,12 @@ const customerAPI = {
   updateBlacklist(data: any) {
     return request.post({ url: "/api/updateBlacklist.do", data });
   },
+  addCustomBlacklistRelation(data: any) {
+    return request.post({ url: "/api/addCustomBlacklistRelation.do", data });
+  },
+  deleteCustomBlacklistRelation(data: any) {
+    return request.post({ url: "/api/deleteCustomBlacklistRelation.do", data });
+  },
 };
 
 export default customerAPI;

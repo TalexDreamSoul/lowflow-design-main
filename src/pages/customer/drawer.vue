@@ -183,16 +183,16 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   try {
     await formEl.validate();
     let res;
-    let customIds = null;
+    let customIds = handAddRef.value?.multipleSelection;;
     if (drawerType.value === DrawerType.Create) {
       res = await API.addBlacklist({
         ...formValues,
         customIds,
+        addType: BlackAddTypeEnum.Manual
       });
     } else {
       res = await API.updateBlacklist({
         ...formValues,
-        customIds,
       });
     }
     if (checkStringEqual(res?.code, 0)) {

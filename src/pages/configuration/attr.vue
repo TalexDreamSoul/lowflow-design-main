@@ -1,6 +1,6 @@
 <template>
   <div class="attr list-layout">
-    <div class="title">事件列表</div>
+    <div class="title">属性列表</div>
     <div class="search">
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
@@ -158,7 +158,7 @@ const handleSetStatus = async (values: any) => {
     status: ConfigStatus.Available === values.status ? ConfigStatus.Offline : ConfigStatus.Available
   });
   if (checkStringEqual(res?.code, 0)) {
-    getData(pageParams);
+    getData({...pageParams, pageNum: pageNum.value});
   }
 }
 
@@ -179,7 +179,7 @@ const onSubmitAttr = async (formEl: FormInstance | undefined) => {
     await formEl.validate();
     let res = await API.updateAttrDict(formValues);
     if (checkStringEqual(res?.code, 0)) {
-      getData(pageParams);
+      getData({...pageParams, pageNum: pageNum.value});
       modalVisible.value = false;
     }
   } catch (error) {
