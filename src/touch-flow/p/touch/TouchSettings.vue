@@ -25,6 +25,37 @@ const origin: MaterialTemplateEditDTO = {
       name: '不使用模板'
     }]
   },
+  appPushTemplate: {
+    content: "",
+    contentVariables: [],
+    jumpAppType: "app",
+    pageLink: "",
+    sceneCode: "",
+    title: "",
+    titleVariables: []
+  },
+  digitalTemplate: {
+    digitalTemplateDetails: []
+  },
+  outboundTemplate: {
+    outboundCode: "",
+    variables: []
+  },
+  znxTemplate: {
+    carouselId: "",
+    moduleId: "",
+    znxContent: "",
+    znxContentVariables: [],
+    znxTitle: "",
+    znxTitleVariables: [],
+    listTitle: "",
+    titleVariables: []
+  },
+  smsTemplate: {
+    content: "",
+    sceneCode: "",
+    variables: []
+  },
   type: ''
 };
 
@@ -34,7 +65,7 @@ const props = defineProps<{
 }>();
 
 const comp = ref<TemplateComponents>()
-const touchOptions = reactive<typeof origin>(origin);
+const touchOptions = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 
 async function refreshMaterialTemplate(clearStatus: boolean = true) {
   if ( clearStatus )
@@ -67,6 +98,20 @@ function updateData() {
 
 function handleAddDone() {
   refreshMaterialTemplate(false)
+}
+
+function assignData(val: any) {
+  let res;
+
+  if ( val === -1 ) {
+    res = origin[curPlatform.value.propKey]
+
+    res.name = ''
+  } else res = touchOptions.material.templates.find((item: any) => item.id === val)
+
+  // console.log('assign', res, touchOptions, curPlatform.value.propKey)
+
+  Object.assign(touchOptions[curPlatform.value.propKey], res)
 }
 
 const platformOptions: Record<string, {
@@ -138,7 +183,7 @@ defineExpose({ updateData  })
         </el-select>
       </el-form-item>
       <el-form-item v-if="touchOptions.type" label="选择模版">
-        <el-select :disabled="readonly" v-model="touchOptions.id" style="width: 120px">
+        <el-select @change="assignData" :disabled="readonly" v-model="touchOptions.id" style="width: 120px">
           <el-option v-for="item in (touchOptions.material.templates)" :value="item.id" :label="item.name">
             <div class="template-option">
               <span>{{ item.name }}</span>
