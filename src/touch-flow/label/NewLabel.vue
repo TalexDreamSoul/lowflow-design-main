@@ -19,7 +19,7 @@ const model = reactive<any>(origin)
 const visible = ref(false)
 const labelList = ref<any[]>([])
 
-const refreshLabelList = async() => {
+const refreshLabelList = async () => {
   const data = (await getLabelList())
 
   labelList.value = data.data.records
@@ -31,13 +31,13 @@ function addLabel() {
 }
 
 async function save() {
-  if ( model.labelName === '' || 
-  (model.labelValueType === 'text' && model.labelValue.data.filter((item: any) => !item.length)?.length)
+  if (model.labelName === '' ||
+    (model.labelValueType === 'text' && model.labelValue.data.filter((item: any) => !item.length)?.length)
   ) {
     return ElMessage({
-    type: 'error',
-    message: '不可以存在空标签名称或标签值为空'
-  })
+      type: 'error',
+      message: '不可以存在空标签名称或标签值为空'
+    })
 
   }
 
@@ -49,7 +49,7 @@ async function save() {
 
   visible.value = false
 
-  if ( !+res.code ) {
+  if (!+res.code) {
     ElMessage({
       type: 'success',
       message: '添加成功'
@@ -61,12 +61,12 @@ function handleDelete(index: number) {
   model.labelValue.data.splice(index, 1)
 }
 
-const selectItem = computed(() => [ ...labelList.value ].find((item: any) => item.labelName === props.p.labelContent.labelName))
+const selectItem = computed(() => [...labelList.value].find((item: any) => item.labelName === props.p.labelContent.labelName))
 
 watch(() => props.p.labelContent?.labelName, () => {
   const res = selectItem.value
 
-  if ( res ) {
+  if (res) {
     props.p.labelContent.labelId = res.id
   }
 })
@@ -77,11 +77,12 @@ watch(() => props.p.labelContent?.labelName, () => {
     <div class="NewLabel-Main">
       <el-text>
         符合该策略器条件的用户打上
-        <el-select v-model="p.labelContent.labelName" placeholder="标签名称" style="width: 150px">
+        <el-select @change="p.labelContent.labelValue = ''" v-model="p.labelContent.labelName" placeholder="标签名称" style="width: 150px">
           <el-option v-for="item in labelList" :key="item.labelName" :label="item.labelName" :value="item.labelName" />
         </el-select>
         &nbsp;
-        <el-select v-if="selectItem?.labelValue?.data?.[0]?.length" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px">
+        <el-select v-if="selectItem?.labelValue?.data?.[0]?.length" v-model="p.labelContent.labelValue" placeholder="标签值"
+          style="width: 150px">
           <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
         </el-select>
         标签
@@ -106,7 +107,8 @@ watch(() => props.p.labelContent?.labelName, () => {
           <el-form-item label="标签名称">
             <el-input v-model="model.labelName" />
           </el-form-item>
-          <el-form-item v-if="model.labelValueType === 'text'" v-for="(item, index) in model.labelValue.data" :label="`标签值${index + 1}`">
+          <el-form-item v-if="model.labelValueType === 'text'" v-for="(item, index) in model.labelValue.data"
+            :label="`标签值${index + 1}`">
             <div style="display: flex;width: 100%;">
               <el-input style="width: 100%" v-model="model.labelValue.data[index]" />
               <el-button @click="handleDelete(index)" plain text v-if="index" style="margin-left: 10px">
