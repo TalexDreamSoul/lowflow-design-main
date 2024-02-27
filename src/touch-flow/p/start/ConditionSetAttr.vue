@@ -211,7 +211,7 @@ function addEventB() {
             </el-text>
             <el-date-picker v-model="sizeForm.date1" type="date" label="选择日期" placeholder="选择日期"
               style="width: 150px" />&nbsp;
-            <el-time-picker v-model="sizeForm.date2" label="选择时间" placeholder="选择时间" style="width: 80px" />
+            <el-time-picker v-model="sizeForm.date2" label="选择时间" placeholder="选择时间" style="width: 120px" />
             <el-text>
               &nbsp;&nbsp;进入流程
             </el-text>
