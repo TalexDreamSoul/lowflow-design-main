@@ -4,10 +4,10 @@
     destroy-on-close
     :close-on-click-modal="false"
     v-model="modalVisible"
-    title="111"
+    title="请选择需要手动添加至黑名单的客户"
     :width="946"
   >
-    <HandAdd :drawer-type="DrawerType.Create" :form-values="{}" />
+    <HandAdd ref="handAddRef" :drawer-type="DrawerType.Create" :form-values="{}" />
     <template #footer>
       <span class="dialog-footer">
         <el-button  round @click="modalVisible = false"
@@ -24,11 +24,14 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { reactive, ref, defineExpose } from "vue";
-import { PEOPLE_SOURCE, PEOPLE_SEX, BlackAddTypeEnum } from "~/constants";
+import { ref, defineExpose, defineProps } from "vue";
 import API from "~/api/customer";
-import { checkStringEqual, debounce } from "~/utils/common";
 import HandAdd from "./handAdd.vue";
+import { checkStringEqual } from "~/utils/common";
+
+const props = defineProps(["formValues"]);
+
+const handAddRef = ref<any>();
 
 enum DrawerType {
   Create = "create",
@@ -38,6 +41,22 @@ enum DrawerType {
 
 const modalVisible = ref(false);
 
-const onSubmit = async () => {};
+const onSubmit = async () => {
+  let customIds = handAddRef.value?.multipleSelection;
+  if(customIds.length) {
+    let res = await API.addCustomBlacklistRelation({
+      blacklistId: props?.formValues?.id,
+      customIds
+    })
+    if(checkStringEqual(res?.code, 0)) {
+      setTimeout(() => {
+        handAddRef.value?.getSelectData({ pageNum: 1, id: props?.formValues?.id })
+      }, 100);
+      modalVisible.value = false;
+    }
+  } else {
+    modalVisible.value = false;
+  }
+};
 defineExpose({ modalVisible });
 </script>

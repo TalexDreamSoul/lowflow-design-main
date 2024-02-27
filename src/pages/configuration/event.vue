@@ -269,7 +269,7 @@ const handleSetStatus = async (values: any) => {
         : ConfigStatus.Available,
   });
   if (checkStringEqual(res?.code, 0)) {
-    getData(pageParams);
+    getData({...pageParams, pageNum: pageNum.value});
   }
 };
 
@@ -283,7 +283,7 @@ const handleDelete = (values: any) => {
   }).then(async () => {
     let res = await API.deleteEventDict({ id: values.id });
     if (checkStringEqual(res?.code, 0)) {
-      getData(pageParams);
+      getData({...pageParams, pageNum: pageNum.value});
     }
   });
 };
@@ -318,9 +318,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       },
     });
     if (checkStringEqual(res?.code, 0)) {
-    //  getData(pageParams);
-      getData({ ...pageParams, pageNum: 1 });
-
+      getData({ ...pageParams, pageNum: pageNum.value });
       drawer.value = false;
     }
   } catch (error) {
