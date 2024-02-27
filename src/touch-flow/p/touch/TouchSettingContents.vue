@@ -6,6 +6,7 @@ import { getDictAnalyzedTree } from '../../flow-utils'
 import TouchSelectWrapper from './TouchSelectable.vue'
 import Operator from '../../page/Operator.vue'
 import { randomStr } from '~/utils/common'
+import { CirclePlusFilled } from '@element-plus/icons-vue'
 
 /**
  * VariableTemplateDTO
