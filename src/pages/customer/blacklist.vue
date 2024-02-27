@@ -23,13 +23,13 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button class="pd-button" @click="handleModal(DrawerType.Create)"
+          <el-button  @click="handleModal(DrawerType.Create)"
             >高级筛选</el-button
           >
         </el-form-item>
       </el-form>
       <el-button
-        class="pd-button"
+        class="add"
         round
         type="primary"
         @click="handleModal(DrawerType.Create)"
@@ -275,5 +275,9 @@ const handleDelete = (values: any) => {
       }
     }
   }
+}
+.add {
+  background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
+  transition: 0.25s;
 }
 </style>

@@ -74,11 +74,11 @@
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button v-if="modalType === DrawerType.Detail" class="pd-button" round
+          <el-button v-if="modalType === DrawerType.Detail"  round
             @click="modalVisible = false">返回</el-button>
-          <el-button v-if="modalType !== DrawerType.Detail" class="pd-button" round
+          <el-button v-if="modalType !== DrawerType.Detail"  round
             @click="modalVisible = false">取消</el-button>
-          <el-button v-if="modalType !== DrawerType.Detail" class="pd-button" @click.prevent="onSubmitAttr(attrFormRef)"
+          <el-button v-if="modalType !== DrawerType.Detail"  @click.prevent="onSubmitAttr(attrFormRef)"
             round type="primary">保存</el-button>
         </span>
       </template>

@@ -38,7 +38,7 @@
         </el-form-item>
       </el-form>
       <el-button
-        class="pd-button"
+        class="add"
         round
         type="primary"
         @click="handleModal(DrawerType.Create)"
@@ -234,21 +234,21 @@
         <span class="dialog-footer">
           <el-button
             v-if="modalType === DrawerType.Detail"
-            class="pd-button"
+            
             round
             @click="modalVisible = false"
             >返回</el-button
           >
           <el-button
             v-if="modalType !== DrawerType.Detail"
-            class="pd-button"
+            
             round
             @click="modalVisible = false"
             >取消</el-button
           >
           <el-button
             v-if="modalType === DrawerType.Edit"
-            class="pd-button"
+            
             @click.prevent="onSubmit(formRef)"
             round
             type="primary"
@@ -256,7 +256,7 @@
           >
           <el-button
             v-if="modalType === DrawerType.Create"
-            class="pd-button"
+            
             @click.prevent="submitUpload"
             round
             type="primary"
@@ -470,5 +470,9 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   .el-upload {
     width: 100%;
   }
+}
+.add {
+  background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
+  transition: 0.25s;
 }
 </style>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ElTag } from "element-plus";
 import { ref, unref, reactive, onMounted, watch } from "vue";
 import {
   getqryMarketingTouch,
@@ -9,6 +8,8 @@ import {
   getpauseMarketingTouch,
 } from "~/api/index";
 import { useRouter, useRoute } from "vue-router";
+import { ElMessageBox, ElMessage, ElTag } from "element-plus";
+
 const formInline = reactive({
   touchName: "",
   executeType: "",
@@ -77,30 +78,41 @@ const getmarketingTouchNode = async () => {
   console.log(StatisticsList, "res");
 };
 
-
-
 const delData = async (row: any) => {
-  await deleteMarketingTouch({ id: row.id }).finally(() => {});
-  fetchDataApi();
+  ElMessageBox.alert("删除后将无法恢复", "确认删除", {
+    showCancelButton: true,
+    roundButton: true,
+    cancelButtonClass: "pd-button",
+    confirmButtonClass: "pd-button",
+    customClass: "delete-modal",
+  }).then(async () => {
+    let res = await deleteMarketingTouch({ id: row.id }).finally(() => {});
+    if (res?.code == 0) {
+      fetchDataApi();
+      getmarketingTouchNode();
+      ElMessage.success(res.message);
+    }
+  });
 };
 const startData = async (row: any) => {
   await getstartMarketingTouch({ id: row.id }).finally(() => {});
   fetchDataApi();
+  getmarketingTouchNode();
 };
 
 const pauseData = async (row: any) => {
   await getpauseMarketingTouch({ id: row.id }).finally(() => {});
   fetchDataApi();
+  getmarketingTouchNode();
 };
 
 const updateData = async (row: any) => {
   await getpauseMarketingTouch({ id: row.id }).finally(() => {});
+  getmarketingTouchNode();
   fetchDataApi();
 };
 const detailsData = async (row: any) => {
   router.push(`/strategyProcess/details/${row.id}`);
-
-  // await getpauseMarketingTouch({ id: row.id }).finally(() => {});
 };
 const copyData = async (row: any) => {
   // await getcopyMarketingTouch({ id: row.id }).finally(() => {});
@@ -273,7 +285,6 @@ const handleCurrentChange = (val: number) => {
 </template>
 <style lang="scss" scoped>
 .warp {
-
   padding: 24px 40px;
 }
 
