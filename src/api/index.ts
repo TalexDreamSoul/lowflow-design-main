@@ -26,6 +26,10 @@ export const deleteMarketingTouch = (data: any) => {
 export const getqryTouchStatusCount = () => {
   return request.post({ url: "/api/qryTouchStatusCount.do" });
 };
+// 营销触达节点统计
+export const marketingTouchStatistics = (data: any) => {
+  return request.post({ url: "/api/marketingTouchStatistics.do", data });
+};
 
 // 营销触达暂停
 export const getpauseMarketingTouch = (data: any) => {

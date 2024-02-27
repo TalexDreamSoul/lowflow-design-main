@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, unref, reactive, onMounted, watch } from "vue";
-import { getmarketingTouchDetail, getqryTouchStatusCount } from "~/api/index";
+import { getmarketingTouchDetail,marketingTouchStatistics } from "~/api/index";
 import dayjs from "dayjs";
 import { useRoute, Router, useRouter } from "vue-router";
 import * as echarts from "echarts";
@@ -33,15 +33,10 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 
 const StatisticsList = ref({
-  suspend: 0,
-  running: 0,
-  total: 0,
-  waitStart: 0,
-  draft: 0,
-  approvalPending: 0,
-  approvalSuccess: 0,
-  approvalRefuse: 0,
-  done: 0,
+  accumulateEntryCount: 0,
+  accumulateTouchCount: 0,
+  completeTargetCount1: 0,
+  completeTargetCount2: 0,
 });
 
 onMounted(async () => {
@@ -59,7 +54,9 @@ const fetchDataDetails = async () => {
   console.log(`output->res.data`, res.data);
 };
 const getmarketingTouchNode = async () => {
-  const res = await getqryTouchStatusCount();
+  const res = await marketingTouchStatistics({
+    id: route.params.id,
+  });
   StatisticsList.value = res.data;
   console.log(StatisticsList, "res");
 };
@@ -94,20 +91,19 @@ onMounted(() => {
   const options = {
     xAxis: {
       type: "category",
-      data: ["累计进入", "累计触达", "完成目标1", "完成目标2"],
+      data: ["累计进入", "累计触达", "完成目标一", "完成目标二"],
     },
     yAxis: {
       type: "value",
     },
     series: [
       {
-        data: [150, 230, 224, 218],
+        data: [StatisticsList.value.accumulateEntryCount, StatisticsList.value.accumulateTouchCount, StatisticsList.value.completeTargetCount1, StatisticsList.value.completeTargetCount2],
         type: "bar",
         barWidth: 30, // 设置柱体宽度
       },
     ],
   };
-
   chart.value.setOption(options);
 });
 </script>
@@ -168,13 +164,13 @@ onMounted(() => {
             </div>
             <div class="showCount">
               <div class="topcount">
-                {{ StatisticsList.suspend !== undefined ? StatisticsList.suspend : '--' }}
+                {{ StatisticsList.accumulateEntryCount !== undefined ? StatisticsList.accumulateEntryCount : '--' }}
               </div>
               <div class="undercount">累计进入</div>
             </div>
             <div class="showCount">
               <div class="topcount">
-                {{ StatisticsList.approvalPending !== undefined ? StatisticsList.approvalPending : '--' }}
+                {{ StatisticsList.accumulateTouchCount !== undefined ? StatisticsList.accumulateTouchCount : '--' }}
               </div>
               <div class="undercount">累计触达</div>
             </div>
@@ -182,22 +178,14 @@ onMounted(() => {
           <div class="countCardblock">
             <div class="showCount">
               <div class="topcount">
-                {{ StatisticsList.done !== undefined ? StatisticsList.done : '--' }}</div>
+                {{ StatisticsList.done !== undefined ? StatisticsList.completeTargetCount1 : '--' }}</div>
               <div class="undercount">完成目标{{ num2character(1) }}</div>
             </div>
             <div class="showCount">
               <div class="topcount">
-                {{ StatisticsList.draft !== undefined ? StatisticsList.draft : '--' }}
+                {{ StatisticsList.draft !== undefined ? StatisticsList.completeTargetCount2 : '--' }}
               </div>
               <div class="undercount">完成目标{{ num2character(2) }}</div>
-            </div>
-            <div class="showCount">
-              <div class="topcount">
-                {{ StatisticsList.approvalRefuse !== undefined ? StatisticsList.approvalRefuse : '--' }}
-              </div>
-              <div class="undercount">完成目标
-                <!-- {{ num2character(index + 1) }} -->
-              </div>
             </div>
           </div>
         </div>
