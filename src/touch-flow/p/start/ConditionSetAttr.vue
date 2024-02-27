@@ -342,15 +342,15 @@ function addEventB() {
             justify-content: space-between;">
               <div>
                 <el-text>且在</el-text>&nbsp;
-                <el-input v-model="p.triggerRuleContent.delayedTime" type="number" style="width: 100px" />&nbsp;
-                <el-select v-model="p.triggerRuleContent.delayedUnit" style="width: 150px">
+                <el-input placeholder="输入值" v-model="p.triggerRuleContent.delayedTime" type="number" style="width: 100px" />&nbsp;
+                <el-select placeholder="选择单位" v-model="p.triggerRuleContent.delayedUnit" style="width: 150px">
                   <el-option value="month" label="月份">分钟</el-option>
                   <el-option value="week" label="周">小时</el-option>
                   <el-option value="day" label="天">天</el-option>
                 </el-select>&nbsp;
                 <el-text>后立即判断</el-text>
                 &nbsp;
-                <el-select v-model="p.triggerRuleContent.delayedAction" style="width: 150px">
+                <el-select placeholder="是否做过" v-model="p.triggerRuleContent.delayedAction" style="width: 150px">
                   <el-option value="=" label="月份">做过</el-option>
                   <el-option value="!=" label="周">未做过</el-option>
                 </el-select>&nbsp;

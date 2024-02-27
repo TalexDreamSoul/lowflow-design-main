@@ -22,7 +22,7 @@ function delEvent(index: number) {
     <LogicalLine v-model="condition.logicalChar">
       <div class="EventA-Wrapper" v-for="(event, index) in condition.conditions">
 
-        <el-select v-model="event.action" style="width: 240px">
+        <el-select placeholder="选择事件" v-model="event.action" style="width: 240px">
           <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
             <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
           </el-option-group> </el-select>&nbsp;
