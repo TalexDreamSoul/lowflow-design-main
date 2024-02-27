@@ -3,6 +3,7 @@ import TouchSettingContents from '../touch/TouchSettingContents.vue'
 import { reactive, ref, computed } from 'vue'
 import { getQryMaterial } from "~/api";
 import { MaterialTemplateEditDTO } from './touch-types'
+import { createTemplatePopover } from '~/utils/touch-templates'
 
 import ZnxTemplateVue from "~/utils/templates/ZnxTemplate.vue";
 import SmsTemplateVue from "~/utils/templates/SmsTemplateVue.vue";
@@ -35,8 +36,9 @@ const props = defineProps<{
 const comp = ref<TemplateComponents>()
 const touchOptions = reactive<typeof origin>(origin);
 
-async function refreshMaterialTemplate() {
-  touchOptions.id = -1
+async function refreshMaterialTemplate(clearStatus: boolean = true) {
+  if ( clearStatus )
+    touchOptions.id = -1
 
   const { material } = touchOptions
 
@@ -63,6 +65,10 @@ function updateData() {
   Object.assign(props.touch, touchOptions)
 }
 
+function handleAddDone() {
+  refreshMaterialTemplate(false)
+}
+
 const platformOptions: Record<string, {
   button: {
     label: string,
@@ -74,7 +80,7 @@ const platformOptions: Record<string, {
   'sms': {
     button: {
       label: "短信",
-      click: () => 1
+      click: () => createTemplatePopover("新建短信模板", "sms", undefined, undefined, props.readonly).then(handleAddDone)
     },
     propKey: "smsTemplate",
     template: SmsTemplateVue
@@ -82,7 +88,7 @@ const platformOptions: Record<string, {
   'appPush': {
     button: {
       label: "app消息",
-      click: () => 1
+      click: () => createTemplatePopover("新建App消息模板", "appPush", undefined, undefined, props.readonly).then(handleAddDone)
     },
     propKey: "appPushTemplate",
     template: AppTemplateVue
@@ -90,7 +96,7 @@ const platformOptions: Record<string, {
   'digital': {
     button: {
       label: "数字员工",
-      click: () => 1
+      click: () => createTemplatePopover("新建数字员工模板", "digital", undefined, undefined, props.readonly).then(handleAddDone)
     },
     propKey: "digitalTemplate",
     template: DigitalTemplateVue
@@ -98,7 +104,7 @@ const platformOptions: Record<string, {
   'outbound': {
     button: {
       label: "智能外呼",
-      click: () => 1
+      click: () => createTemplatePopover("新建智能外呼模板", "outbound", undefined, undefined, props.readonly).then(handleAddDone)
     },
     propKey: "outboundTemplate",
     template: OutboundTemplateVue
@@ -106,7 +112,7 @@ const platformOptions: Record<string, {
   'znx': {
     button: {
       label: "站内信",
-      click: () => 1
+      click: () => createTemplatePopover("新建站内信模板", "znx", undefined, undefined, props.readonly).then(handleAddDone)
     },
     propKey: "znxTemplate",
     template: ZnxTemplateVue
