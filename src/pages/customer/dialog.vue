@@ -10,11 +10,10 @@
     <HandAdd :drawer-type="DrawerType.Create" :form-values="{}" />
     <template #footer>
       <span class="dialog-footer">
-        <el-button class="pd-button" round @click="modalVisible = false"
+        <el-button  round @click="modalVisible = false"
           >取消</el-button
         >
         <el-button
-          class="pd-button"
           @click.prevent="onSubmit"
           round
           type="primary"

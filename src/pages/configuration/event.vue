@@ -12,7 +12,7 @@
           <el-input v-model="pageParams.eventName" placeholder="事件名称" clearable :suffix-icon="Search" />
         </el-form-item>
       </el-form>
-      <el-button class="pd-button" round type="primary" @click="handleDrawer(DrawerType.Create)">新建事件</el-button>
+      <el-button  class="add" round type="primary" @click="handleDrawer(DrawerType.Create)">新建事件</el-button>
     </div>
     <div class="content">
       <el-watermark content="11111" :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
@@ -98,7 +98,7 @@
             <el-table :data="formValues.attrTableData" style="width: 100%">
               <el-table-column prop="field" label="属性编码" width="109" />
               <el-table-column prop="fieldName" label="属性名称" width="200" />
-              <el-table-column prop="fieldValue" label="属性说明" width="360" />
+              <el-table-column prop="describe" label="属性说明" width="360" />
               <el-table-column prop="fieldType" label="数据类别">
                 <template #default="scope">
                   {{
@@ -125,9 +125,9 @@
         </div>
       </div>
       <div class="pd-drawer-footer">
-        <el-button v-if="drawerType === DrawerType.Detail" class="pd-button" @click="drawer = false" round>返回</el-button>
-        <el-button v-if="drawerType !== DrawerType.Detail" class="pd-button" @click="drawer = false" round>取消</el-button>
-        <el-button v-if="drawerType !== DrawerType.Detail" class="pd-button" @click.prevent="onSubmit(formRef)" round type="primary">保存</el-button>
+        <el-button v-if="drawerType === DrawerType.Detail"  @click="drawer = false" round>返回</el-button>
+        <el-button v-if="drawerType !== DrawerType.Detail"  @click="drawer = false" round>取消</el-button>
+        <el-button v-if="drawerType !== DrawerType.Detail"  @click.prevent="onSubmit(formRef)" round type="primary">保存</el-button>
       </div>
     </el-drawer>
     <el-dialog class="pd-modal" destroy-on-close :close-on-click-modal="false" v-model="dialogFormVisible" :title="ModalTitleMap[modalType]">
@@ -155,15 +155,15 @@
             <el-option v-for="item of ATTR_FIELD_TYPE" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item :rules="[{ max: 40, message: '最多可输入40字' }]" label="属性说明" prop="fieldValue">
-          <el-input v-model="attrFormValues.fieldValue" :autosize="{ minRows: 4 }" type="textarea" :show-word-limit="true" placeholder="请输入" />
+        <el-form-item :rules="[{ max: 40, message: '最多可输入40字' }]" label="属性说明" prop="describe">
+          <el-input v-model="attrFormValues.describe" :autosize="{ minRows: 4 }" type="textarea" :show-word-limit="true" placeholder="请输入" />
         </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
-          <el-button v-if="modalType === DrawerType.Detail" class="pd-button" round @click="dialogFormVisible = false">返回</el-button>
-          <el-button v-if="modalType !== DrawerType.Detail" class="pd-button" round @click="dialogFormVisible = false">取消</el-button>
-          <el-button v-if="modalType !== DrawerType.Detail" class="pd-button" @click.prevent="onSubmitAttr(attrFormRef)" round type="primary">保存</el-button>
+          <el-button v-if="modalType === DrawerType.Detail"  round @click="dialogFormVisible = false">返回</el-button>
+          <el-button v-if="modalType !== DrawerType.Detail"  round @click="dialogFormVisible = false">取消</el-button>
+          <el-button v-if="modalType !== DrawerType.Detail"  @click.prevent="onSubmitAttr(attrFormRef)" round type="primary">保存</el-button>
         </span>
       </template>
     </el-dialog>
@@ -213,7 +213,7 @@ const formValues: any = reactive({ ...defaultFormValues });
 const defaultAttrFormValues = {
   field: "",
   fieldName: "",
-  fieldValue: "",
+  describe: "",
   fieldType: "",
 };
 let attrFormValues = reactive({ ...defaultAttrFormValues });
@@ -371,7 +371,7 @@ const handleAttrDelete = (index: number) => {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" >
 @import "~/styles/list-layout.scss";
 
 .event {
@@ -399,5 +399,9 @@ const handleAttrDelete = (index: number) => {
       }
     }
   }
+}
+.add {
+  background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
+  transition: 0.25s;
 }
 </style>

@@ -5,6 +5,7 @@ import LogicalLine from "./LogicalLine.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
 const props = defineProps<{
   custom: any;
+  readonly?: boolean;
 }>();
 
 const dict = ref<any>();
@@ -33,7 +34,7 @@ provide("refreshTree", refreshTree);
       <div v-if="dict && custom.conditions?.length" class="Target-Block">
         <LogicalLine :display="!custom.conditions?.length" v-model="custom.LogicalLine">
           <div v-for="condition in custom.conditions" :key="condition.id">
-            <BehaviorContent v-if="condition?.conditions?.length" :condition="condition" :dict="dict">
+            <BehaviorContent :readonly="readonly" v-if="condition?.conditions?.length" :condition="condition" :dict="dict">
               <slot :condition="condition" :dict="dict" />
             </BehaviorContent>
           </div>

@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { inject, ref, reactive, onMounted, watchEffect } from "vue";
+import { inject, ref, reactive, watchEffect } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
-import { getQryMaterial, getmarketingTouchEstimate } from "~/api";
+import { getmarketingTouchEstimate } from "~/api";
 import BehaviorGroup from "../behavior/BehaviorGroup.vue";
 import CustomAttr from "../behavior/CustomAttr.vue";
 import CustomBehavior from "../behavior/CustomBehavior.vue";
 import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
-import TouchSettingContents from '../touch/TouchSettingContents.vue'
 import LogicalLine from "../behavior/LogicalLine.vue";
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import EventBehavior from "../behavior/EventBehavior.vue";
 import NewLabel from '../../label/NewLabel.vue'
 import { markRaw } from "vue";
+import TouchSettings from "../touch/TouchSettings.vue";
 
 const origin = {
   nodeId: "",
@@ -106,6 +106,7 @@ const props = defineProps<{
   new?: boolean
 }>();
 
+const touchSettingsRef = ref()
 const sizeForm = reactive<typeof origin>(origin);
 
 console.log("here", sizeForm, props.p, props.new)
@@ -122,21 +123,6 @@ watchEffect(() => {
   }
 })
 
-async function refreshMaterialTemplate() {
-  sizeForm.touch.type = -1
-
-  const { material } = sizeForm
-
-  let res = await getQryMaterial(material);
-
-  if (res.data?.records) {
-    sizeForm.material.templates = [{
-      id: -1,
-      name: "不使用模板"
-    }, ...res.data.records];
-  }
-}
-
 function saveData() {
   if (!sizeForm.nodeName) {
     ElMessage.warning({
@@ -145,6 +131,8 @@ function saveData() {
 
     return false;
   }
+
+  touchSettingsRef.value.updateData()
 
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)
@@ -250,14 +238,6 @@ function sequenceAdd() {
     logicalChar: "或",
   });
 }
-
-const platformOptions: any = {
-  'sms': "短信",
-  'appPush': "app消息",
-  'digital': "数字员工",
-  'outbound': "智能外呼",
-  'znx': "站内信",
-}
 </script>
 
 <template>
@@ -315,7 +295,7 @@ const platformOptions: any = {
         <el-form-item label="">
           <div class="pannel">
             <!-- <LogicalLine v-model="sizeForm.eventRuleContent.logicalChar"> -->
-              <EventBehavior :custom="sizeForm.eventRuleContent!.customEvent" />
+            <EventBehavior :custom="sizeForm.eventRuleContent!.customEvent" />
             <!-- </LogicalLine> -->
           </div>
         </el-form-item>
@@ -342,43 +322,13 @@ const platformOptions: any = {
       </BehaviorGroupPlus>
 
       <BehaviorGroupPlus title="触达设置" color="#FFD561">
-        <div class="BlockBackground-Under">
-          <el-form-item label="触达通道">
-            <el-select @change="refreshMaterialTemplate" v-model="sizeForm.material.type" style="width: 120px">
-              <el-option value="sms" label="短信">手机短信</el-option>
-              <el-option value="appPush" label="app消息">app消息</el-option>
-              <el-option value="digital" label="数字员工">数字员工</el-option>
-              <el-option value="outbound" label="智能外呼">智能外呼</el-option>
-              <el-option value="znx" label="站内信">站内信</el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="选择模版">
-            <el-select v-model="sizeForm.touch.type" style="width: 120px">
-              <el-option v-for="item in (sizeForm.material.templates)" :value="item.id" :label="item.name">
-                <div class="template-option">
-                  <span>{{ item.name }}</span>
-                  <span class="template-desc" v-if="(item as any)?.content?.content">
-                    {{ (item as any).content.content }}
-                  </span>
-                </div>
-              </el-option>
-            </el-select>
-            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>
-              新增{{ platformOptions[sizeForm.material.type] }}模块版本</el-button>
-          </el-form-item>
-          <el-form-item label="触达内容">
-            <TouchSettingContents content="content" variables="variables" v-model="sizeForm.touch" />
-          </el-form-item>
-        </div>
+        <TouchSettings ref="touchSettingsRef" :touch="sizeForm.touchTemplateContent" />
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus v-if="sizeForm.eventDelayed.isDelayed && String(sizeForm.eventDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1" title="标签设置" color="#277AE7">
+      <BehaviorGroupPlus
+        v-if="sizeForm.eventDelayed.isDelayed && String(sizeForm.eventDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1"
+        title="标签设置" color="#277AE7">
         <NewLabel :p="sizeForm" />
-        <!-- <div class="BlockBackground-Under">
-          符合该策略器条件的用户打上 &nbsp;
-          <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />
-
-        </div> -->
       </BehaviorGroupPlus>
 
       <div class="BlockBackground">
@@ -535,84 +485,9 @@ li:has(.template-option):has(.template-desc) {
   height: 12px;
 }
 
-.filter-filter-item__add {
-  position: absolute;
-  right: 12px;
-}
-
 :deep(.el-form-item) {
   margin-right: 0;
   margin-bottom: 0;
-}
-
-.el-collapse {
-  border: none !important;
-}
-
-.custom-collapse-item .el-collapse-item__header {
-  border-bottom: none !important;
-  background-color: #f5f8fc !important;
-}
-
-.filter-container {
-  border-radius: 3px;
-  display: flex;
-
-  .logical-operator {
-    position: relative;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    min-width: 35px;
-
-    .logical-operator__line {
-      position: absolute;
-      left: calc(35% - 1px);
-      border-width: 1px 0 1px 1px;
-      border-top-style: solid;
-      border-bottom-style: solid;
-      border-left-style: solid;
-      border-left-color: #4078e0;
-      border-image: initial;
-      border-right-style: initial;
-      border-right-color: initial;
-      border-radius: 5px 0 0 5px;
-      height: calc(100% - 22px);
-    }
-  }
-
-  .filter-option-content {
-    position: relative;
-    width: 100%;
-
-    .filter-item-rule {
-      display: flex;
-      align-items: center;
-      min-height: 48px;
-    }
-
-    .filter-filter-item__add {
-      border-style: dashed;
-      width: 100%;
-    }
-  }
-
-  .custom-switch {
-    border: 1px solid #4078e0;
-    color: #fff;
-    width: 24px;
-    height: 24px;
-    background: #fff;
-    font-weight: 500;
-    color: #4078e0;
-    font-size: 14px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 1;
-  }
 }
 
 .BlockBackground {
@@ -715,15 +590,5 @@ li:has(.template-option):has(.template-desc) {
     color: rgba(0, 0, 0, 0.6);
     margin-bottom: 8px;
   }
-}
-
-.inputValue {
-  background: #fff;
-  height: 150px;
-  width: 480px;
-  border: 1px solid #dbdbdb;
-  border-radius: 4px;
-  padding: 12px;
-  color: #333;
 }
 </style>

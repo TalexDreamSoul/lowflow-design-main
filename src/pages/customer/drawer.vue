@@ -52,11 +52,11 @@
       </el-tabs>
     </div>
     <div class="pd-drawer-footer">
-      <el-button v-if="drawerType === DrawerType.Detail" class="pd-button" @click="modalVisible = false"
+      <el-button v-if="drawerType === DrawerType.Detail" @click="modalVisible = false"
         round>返回</el-button>
-      <el-button v-if="drawerType !== DrawerType.Detail" class="pd-button" @click="modalVisible = false"
+      <el-button v-if="drawerType !== DrawerType.Detail"  @click="modalVisible = false"
         round>取消</el-button>
-      <el-button v-if="drawerType !== DrawerType.Detail" class="pd-button" @click.prevent="onSubmit(formRef)" round
+      <el-button v-if="drawerType !== DrawerType.Detail"  @click.prevent="onSubmit(formRef)" round
         type="primary">保存</el-button>
     </div>
   </el-drawer>

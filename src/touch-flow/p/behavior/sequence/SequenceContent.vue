@@ -6,6 +6,7 @@ import { Delete } from "@element-plus/icons-vue";
 const props = defineProps<{
   condition: any;
   dict: any;
+  readonly?: boolean
 }>();
 
 const refreshTree: Function = inject("refreshTree")!;
@@ -41,7 +42,7 @@ function handleSubAdd(item: any) {
           <el-row class="filter-item-rule">
             <el-col :xs="24" :sm="10">
               <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                <el-date-picker v-model="condition.timeRange" type="daterange" range-separator="-"
+                <el-date-picker :disabled="readonly" v-model="condition.timeRange" type="daterange" range-separator="-"
                   start-placeholder="开始日期" end-placeholder="结束日期" />
               </el-form-item>
             </el-col>
@@ -53,13 +54,13 @@ function handleSubAdd(item: any) {
                 align-items: center;
                 flex-direction: row-reverse;
               ">
-              <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
+              <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="handleDel(index)">
                 <el-icon size="14">
                   <Delete />
                 </el-icon>
               </el-text>
               &nbsp;&nbsp;&nbsp;
-              <el-text type="primary" style="cursor: pointer" @click="handleAdd(item)">
+              <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="handleAdd(item)">
                 <el-icon size="14">
                   <CirclePlus />
                 </el-icon>
@@ -72,7 +73,7 @@ function handleSubAdd(item: any) {
             <el-row class="filter-item-rule">
               <el-col :xs="24" :sm="5">
                 <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                  <el-select v-model="event.delayedAction">
+                  <el-select :disabled="readonly" placeholder="选择事件" v-model="event.delayedAction">
                     <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
                       <el-option v-for="item in group.events" :key="item.id" :label="item.eventName"
                         :value="item.eventCode" />
@@ -93,12 +94,6 @@ function handleSubAdd(item: any) {
             <SequenceSubContent :index="_index" :dict="dict" :condition="event" />
           </div>
         </div>
-
-        <div v-if="!(
-          condition?.filterRules?.groups?.length |
-          condition?.filterRules?.conditions?.length
-        )
-          " class="filter-item-rule" />
       </el-form>
     </div>
   </div>

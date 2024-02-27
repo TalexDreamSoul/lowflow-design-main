@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 import TargetContent from "./TargetContent.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
 const props = defineProps<{
@@ -26,6 +26,20 @@ function addTarget() {
   let arr = (props.target.list = props.target.list || []);
 
   arr.push({})
+
+  const ind = arr.length - 1;
+  const id = `touch-target-${ind}`
+
+  nextTick(() => {
+
+    const el = document.getElementById(id)
+
+    el!.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+
+  })
 }
 </script>
 
@@ -35,7 +49,8 @@ function addTarget() {
       <span>目标设置</span>
       <el-switch :disabled="readonly" inline-prompt v-model="target.enable" style="--el-switch-on-color: #4078e0" />
       &nbsp;&nbsp;&nbsp;
-      <el-button :disabled="readonly" @click="addTarget" type="primary" text plain style="color: #4078e0">
+      <el-button v-if="target.enable" :disabled="readonly" @click="addTarget" type="primary" text plain
+        style="color: #4078e0">
         <el-icon>
           <CirclePlusFilled />
         </el-icon>
@@ -43,8 +58,8 @@ function addTarget() {
       </el-button>
     </p>
     <div :class="{ disabled: !target.enable }" class="Basic-Block-Content" v-if="target.enable || readonly">
-      <div class="Target-Block">
-        <TargetContent :readonly="readonly" v-for="(item, index) in target.list" :key="item.id" :index="index" :target="item" :dict="dict" />
+      <div :id="`touch-target-${index}`" v-for="(item, index) in target.list" :key="item.id" class="Target-Block">
+        <TargetContent :readonly="readonly" :index="index" :target="item" :dict="dict" />
       </div>
     </div>
   </div>

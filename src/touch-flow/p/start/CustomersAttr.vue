@@ -52,6 +52,7 @@ const customRuleContent = reactive<CustomSearchDTO>({
 
 const props = defineProps<{
   p: MarketingTouchEditDTO;
+  readonly?: boolean
 }>();
 
 Object.assign(customRuleContent, props.p.customRuleContent)
@@ -179,13 +180,13 @@ const blackList = ref()
             </div>
             <div class="filter-option-content">
               <BehaviorGroup @add="attrsAdd" title="客户属性满足">
-                <CustomAttr :custom="customRuleContent.customAttr" />
+                <CustomAttr :readonly="readonly" :custom="customRuleContent.customAttr" />
               </BehaviorGroup>
               <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-                <CustomBehavior :custom="customRuleContent.customEvent" />
+                <CustomBehavior :readonly="readonly" :custom="customRuleContent.customEvent" />
               </BehaviorGroup>
               <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-                <CustomBehaviorSequence :custom="customRuleContent.eventSequence" />
+                <CustomBehaviorSequence :readonly="readonly" :custom="customRuleContent.eventSequence" />
               </BehaviorGroup>
             </div>
           </div>
