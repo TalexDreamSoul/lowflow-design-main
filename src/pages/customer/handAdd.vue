@@ -28,7 +28,7 @@
         <el-form-item>
           <el-button
             v-if="drawerType === DrawerType.Edit"
-            class="pd-button"
+            
             @click.prevent="handleAdd"
             type="primary"
             >保存</el-button
