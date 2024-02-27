@@ -162,7 +162,7 @@ const handleCurrentChange = (val: number) => {
                 }" />
           </el-form-item>
           <el-form-item v-if="route.params.type=='all'">
-            <el-select v-model="formInline.type" clearable style="width:200px" placeholder="模板类型">
+            <el-select v-model="formInline.type"  style="width:200px" placeholder="模板类型">
               <el-option v-for="item in materialType" :label="item.name" :value="item.value" />
             </el-select>
           </el-form-item>
