@@ -35,7 +35,7 @@ function addTarget() {
       <span>目标设置</span>
       <el-switch :disabled="readonly" inline-prompt v-model="target.enable" style="--el-switch-on-color: #4078e0" />
       &nbsp;&nbsp;&nbsp;
-      <el-button :disabled="readonly" @click="addTarget" type="primary" text plain style="color: #4078e0">
+      <el-button v-if="target.enable" :disabled="readonly" @click="addTarget" type="primary" text plain style="color: #4078e0">
         <el-icon>
           <CirclePlusFilled />
         </el-icon>
