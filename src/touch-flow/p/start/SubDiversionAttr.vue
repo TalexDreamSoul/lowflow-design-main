@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ElMessage } from "element-plus";
-import { inject, toRaw, reactive, ref, watchEffect } from "vue";
-import { getQryMaterial, getmarketingTouchEstimate } from "~/api";
+import { inject, reactive, ref } from "vue";
+import { getmarketingTouchEstimate } from "~/api";
 import NewLabel from '../../label/NewLabel.vue';
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import DiversionBehavior from "../behavior/diversion/DiversionBehavior.vue";
-import TouchSettingContents from '../touch/TouchSettingContents.vue';
+import TouchSettings from "../touch/TouchSettings.vue";
 
 const origin = {
   nodeId: "",
@@ -130,21 +130,6 @@ if (!props.new && nodeType === 'subDiversion') {
   }
 }
 
-async function refreshMaterialTemplate() {
-  sizeForm.touch.type = -1
-
-  const { material } = sizeForm
-
-  let res = await getQryMaterial(material);
-
-  if (res.data?.records) {
-    sizeForm.material.templates = [{
-      id: -1,
-      name: "不使用模板"
-    }, ...res.data.records];
-  }
-}
-
 function saveData() {
   if (!sizeForm.nodeName) {
     ElMessage.warning({
@@ -188,13 +173,6 @@ const estimation = async () => {
   console.log("Mounted", res);
 };
 
-const platformOptions: any = {
-  'sms': "短信",
-  'appPush': "app消息",
-  'digital': "数字员工",
-  'outbound': "智能外呼",
-  'znx': "站内信",
-}
 </script>
 
 <template>
@@ -225,37 +203,12 @@ const platformOptions: any = {
       </BehaviorGroupPlus>
 
       <BehaviorGroupPlus title="触达设置" color="#FFD561">
-        <div class="BlockBackground-Under">
-          <el-form-item label="触达通道">
-            <el-select @change="refreshMaterialTemplate" v-model="sizeForm.material.type" style="width: 120px">
-              <el-option value="sms" label="短信">手机短信</el-option>
-              <el-option value="appPush" label="app消息">app消息</el-option>
-              <el-option value="digital" label="数字员工">数字员工</el-option>
-              <el-option value="outbound" label="智能外呼">智能外呼</el-option>
-              <el-option value="znx" label="站内信">站内信</el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="选择模版">
-            <el-select v-model="sizeForm.touch.type" style="width: 120px">
-              <el-option v-for="item in (sizeForm.material.templates)" :value="item.id" :label="item.name">
-                <div class="template-option">
-                  <span>{{ item.name }}</span>
-                  <span class="template-desc" v-if="(item as any)?.content?.content">
-                    {{ (item as any).content.content }}
-                  </span>
-                </div>
-              </el-option>
-            </el-select>
-            <el-button v-if="platformOptions[sizeForm.material.type]" ml-1rem type="primary" plain>
-              新增{{ platformOptions[sizeForm.material.type] }}模块版本</el-button>
-          </el-form-item>
-          <el-form-item label="触达内容">
-            <TouchSettingContents content="content" variables="variables" v-model="sizeForm.touch" />
-          </el-form-item>
-        </div>
+        <TouchSettings :touch="sizeForm.touchTemplateContent" />
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus v-if="sizeForm.eventDelayed.isDelayed && String(sizeForm.eventDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1" title="标签设置" color="#277AE7">
+      <BehaviorGroupPlus
+        v-if="sizeForm.eventDelayed.isDelayed && String(sizeForm.eventDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1"
+        title="标签设置" color="#277AE7">
         <NewLabel :p="sizeForm" />
         <!-- <div class="BlockBackground-Under">
           符合该策略器条件的用户打上 &nbsp;
