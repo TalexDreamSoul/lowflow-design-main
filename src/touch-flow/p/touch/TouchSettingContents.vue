@@ -6,7 +6,7 @@ import { getDictAnalyzedTree } from '../../flow-utils'
 import TouchSelectWrapper from './TouchSelectable.vue'
 import Operator from '../../page/Operator.vue'
 import { randomStr } from '~/utils/common'
-import { CirclePlusFilled } from '@element-plus/icons-vue'
+import { CirclePlusFilled, Plus } from '@element-plus/icons-vue'
 
 /**
  * VariableTemplateDTO
@@ -398,7 +398,7 @@ const contentLength = computed(() => {
     opacity: .75;
     pointer-events: none;
 
-    background-color:  var(--el-disabled-bg-color);//#F5F7FA;
+    background-color: var(--el-disabled-bg-color); //#F5F7FA;
   }
 
   .TouchLabel {
@@ -434,13 +434,26 @@ const contentLength = computed(() => {
     &:focus {
       outline: none;
     }
+
+    position: absolute;
+
+    top: .2rem;
+    left: .2rem;
+
+    height: calc(100% - .4rem);
+    width: calc(100% - .4rem);
+
+    line-height: 20px;
+    border-radius: 4px;
+
+    overflow-y: auto;
   }
 
   .placeholder-label {
     position: absolute;
     display: block;
 
-    right: 10px;
+    right: 30px;
     bottom: 0px;
 
     opacity: .75;
@@ -489,5 +502,7 @@ const contentLength = computed(() => {
   transition: var(--el-transition-box-shadow);
   transform: translate3d(0, 0, 0);
   box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color)) inset;
+
+  overflow: hidden;
 }
 </style>
