@@ -48,22 +48,22 @@ function getNameByValue(data: any[], val: string) {
 const materialTypeName = ref(getNameByValue(materialType, route.params.type));
 
 console.log(materialTypeName); // 输出：短信
-onMounted(async () => {
-  fetchDataApi();
-});
+// onMounted(async () => {
+//   fetchDataApi();
+// });
 
-watch(
-  () => route.fullPath,
-  (val) => {
-    console.log(`output->val`, val);
-    materialTypeName.value = getNameByValue(materialType, route.params.type);
-    formInline.type = route.params.type;
-    fetchDataApi();
-  }
-);
-watch([currentPage, pageSize, formInline], () => {
-  fetchDataApi();
-});
+// watch(
+//   () => route.fullPath,
+//   (val) => {
+//     console.log(`output->val`, val);
+//     materialTypeName.value = getNameByValue(materialType, route.params.type);
+//     formInline.type = route.params.type;
+//     fetchDataApi();
+//   }
+// );
+// watch([currentPage, pageSize, formInline], () => {
+//   fetchDataApi();
+// });
 const fetchDataApi = async () => {
   const res = await getQryMaterial({
     pageNum: unref(currentPage),
