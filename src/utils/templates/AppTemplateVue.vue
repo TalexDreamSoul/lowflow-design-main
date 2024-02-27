@@ -61,12 +61,11 @@ const origin = {
 const data = reactive<typeof origin>(origin);
 
 watchEffect(() => {
-  const _data = props.data?.value
+  const _data = props.data || props.data?.value
   if (!_data) return
 
   Object.assign(data, _data)
 })
-
 
 function saveData() {
   const { id, name, content, contentVariables, jumpAppType, pageLink, sceneCode, title, titleVariables } = data;

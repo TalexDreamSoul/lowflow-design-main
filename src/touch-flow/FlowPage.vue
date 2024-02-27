@@ -1,4 +1,6 @@
 <script setup lang="ts" name="FlowPage">
+import zhCn from "element-plus/dist/locale/zh-cn.mjs";
+
 import { watchEffect, onMounted, reactive, ref } from "vue";
 import FlowHeader from "../touch-flow/page/FlowHeader.vue";
 // import TouchFlow from "./TouchFlow.vue";
@@ -51,7 +53,7 @@ watchEffect(() => {
       target: targetReduction(data),
     })
 
-    flowOptions.p.children = flatConvert2Tree([ ...data.nodes! ]) 
+    flowOptions.p.children = flatConvert2Tree([...data.nodes!])
 
     //   touchName: flowOptions.basic.touchName,
     //   ...transformDisturb(flowOptions.basic.disturb),
@@ -163,7 +165,7 @@ async function submitReview(status: string = 'approvalPending') {
 
   const _flowOptions: any = {
     ...flowOptions.p,
-    nodes: flatMaps(transformNodes([ ...flowOptions.p.children ])),
+    nodes: flatMaps(transformNodes([...flowOptions.p.children])),
     touchName: flowOptions.basic.touchName,
     ...transformDisturb(flowOptions.basic.disturb),
     ...transformTarget(flowOptions.basic.target)
@@ -206,25 +208,28 @@ console.log("total flow", flowOptions);
 
 <template>
   <div class="FlowPage">
-    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
-      <el-header>
-        <FlowHeader v-if="!modelValue || !readonly" @submit-review="() => submitReview()" :basic="flowOptions.basic" />
-        <div v-else class="FlowPage-ReadHeader">
-          流程基础设置
-          <el-button text type="primary" @click="dialogVisible = true">
-            查看设置<el-icon>
-              <ArrowRight />
-            </el-icon>
-          </el-button>
-        </div>
-      </el-header>
-      <el-main>
-        <el-scrollbar>
-          <XFlow :p="flowOptions.p as any" />
-          <!-- <TouchFlow :p="flowOptions.p" /> -->
-        </el-scrollbar>
-      </el-main>
-    </el-container>
+    <el-config-provider :locale="zhCn">
+      <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }"
+        class="FlowPage-Container">
+        <el-header>
+          <FlowHeader v-if="!modelValue || !readonly" @submit-review="() => submitReview()" :basic="flowOptions.basic" />
+          <div v-else class="FlowPage-ReadHeader">
+            流程基础设置
+            <el-button text type="primary" @click="dialogVisible = true">
+              查看设置<el-icon>
+                <ArrowRight />
+              </el-icon>
+            </el-button>
+          </div>
+        </el-header>
+        <el-main>
+          <el-scrollbar>
+            <XFlow :p="flowOptions.p as any" />
+            <!-- <TouchFlow :p="flowOptions.p" /> -->
+          </el-scrollbar>
+        </el-main>
+      </el-container>
+    </el-config-provider>
   </div>
 
   <teleport to="body">

@@ -206,15 +206,15 @@ function addEventB() {
 
         <el-form-item label="流程开始时间（任务开始时间）：" label-class="custom-label">
           <div class="flex-column">
-            <div>
+            <el-text>
               客户在&nbsp;&nbsp;
-            </div>
+            </el-text>
             <el-date-picker v-model="sizeForm.date1" type="date" label="选择日期" placeholder="选择日期"
               style="width: 150px" />&nbsp;
-            <el-time-picker v-model="sizeForm.date2" label="选择时间" placeholder="选择时间" style="width: 80px" />
-            <div>
+            <el-time-picker v-model="sizeForm.date2" label="选择时间" placeholder="选择时间" style="width: 120px" />
+            <el-text>
               &nbsp;&nbsp;进入流程
-            </div>
+            </el-text>
           </div>
         </el-form-item>
       </div>
@@ -233,27 +233,23 @@ function addEventB() {
           <div class="flex-column">
             <el-text> 客户在&nbsp;
             </el-text>
-            <el-select v-model="sizeForm.selectedType" style="width: 100px">
+            <el-select @change="sizeForm.timenine = ''" v-model="sizeForm.selectedType" style="width: 100px">
               <el-option value="month" label="月份">月</el-option>
               <el-option value="week" label="周">周</el-option>
               <el-option value="day" label="天">天</el-option>
             </el-select>
-            &nbsp;
 
             <el-select v-if="sizeForm.selectedType === 'month'" v-model="sizeForm.monthday" placeholder="选择月份的天数"
               style="width: 150px" multiple collapse-tags>
               <el-option v-for="day in daysInMonth" :key="day" :label="`${day}号`" :value="day"></el-option>
             </el-select>
-            &nbsp;
 
             <el-select v-if="sizeForm.selectedType === 'week'" v-model="sizeForm.weekday" placeholder="选择星期几"
               style="width: 150px" multiple collapse-tags>
               <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="day"></el-option>
             </el-select>
-            &nbsp;
 
             <el-time-picker v-model="sizeForm.timenine" placeholder="选择时间" style="width: 120px"></el-time-picker>
-            &nbsp;
             <el-text>进入流程(启动任务)
             </el-text>
 
@@ -342,7 +338,8 @@ function addEventB() {
             justify-content: space-between;">
               <div>
                 <el-text>且在</el-text>&nbsp;
-                <el-input placeholder="输入值" v-model="p.triggerRuleContent.delayedTime" type="number" style="width: 100px" />&nbsp;
+                <el-input placeholder="输入值" v-model="p.triggerRuleContent.delayedTime" type="number"
+                  style="width: 100px" />&nbsp;
                 <el-select placeholder="选择单位" v-model="p.triggerRuleContent.delayedUnit" style="width: 150px">
                   <el-option value="month" label="月份">分钟</el-option>
                   <el-option value="week" label="周">小时</el-option>
@@ -397,9 +394,9 @@ function addEventB() {
 
 <style scoped lang="scss">
 .flex-column {
-  display: -webkit-inline-box !important;
-  align-items: flex-start !important;
-  flex-direction: column !important;
+  display: flex;
+
+  gap: .5rem;
 }
 
 .pannel {
