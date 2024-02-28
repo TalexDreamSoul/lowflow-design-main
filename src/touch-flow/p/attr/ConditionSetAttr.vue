@@ -147,7 +147,7 @@ function saveData() {
   // 判断流程开始时间
   const { repeatTime } = sizeForm;
   console.log("rt", repeatTime);
-  if (!validatePropValue(repeatTime)) {
+  if (lp !== 'immediately' && !validatePropValue(repeatTime)) {
     ElMessage({
       message: "请正确填写流程开始时间！",
       type: "error",
