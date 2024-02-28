@@ -33,21 +33,21 @@
         </el-tab-pane>
         <el-tab-pane label="规则添加（每天11点更新数据）" :name="BlackAddTypeEnum.StaticRule">
           <div class="pannel">
-            <LogicalLine v-model="customRuleContent.logicalChar">
+            <LogicalLine v-model="ruleContent.logicalChar">
               <BehaviorGroup @add="attrsAdd" title="客户属性满足">
-                <CustomAttr :custom="customRuleContent.customAttr" />
+                <CustomAttr :custom="ruleContent.customAttr" />
               </BehaviorGroup>
               <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-                <CustomBehavior :custom="customRuleContent.customEvent" />
+                <CustomBehavior :custom="ruleContent.customEvent" />
               </BehaviorGroup>
               <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-                <CustomBehaviorSequence :custom="customRuleContent.eventSequence" />
+                <CustomBehaviorSequence :custom="ruleContent.eventSequence" />
               </BehaviorGroup>
             </LogicalLine>
           </div>
         </el-tab-pane>
         <el-tab-pane label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
-          <section-group :trigger-rule-content="triggerRuleContent" />
+          <section-group :trigger-rule-content="eventContent" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -86,7 +86,7 @@ enum DrawerType {
   Edit = "edit",
 }
 
-const triggerRuleContent = reactive({
+const eventContent = reactive({
       "eventA": {
         "customEvent": {
           "conditions": [{
@@ -109,7 +109,7 @@ const triggerRuleContent = reactive({
       }
     })
 
-const customRuleContent = reactive<CustomSearchDTO>({
+const ruleContent = reactive<CustomSearchDTO>({
   customAttr: {
     conditions: [
       {
@@ -205,7 +205,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 };
 
 function attrsAdd() {
-  let attr = customRuleContent.customAttr!.conditions!;
+  let attr = ruleContent.customAttr!.conditions!;
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -219,7 +219,7 @@ function attrsAdd() {
 }
 
 function behaviorAdd() {
-  let attr = customRuleContent.customEvent!.conditions!;
+  let attr = ruleContent.customEvent!.conditions!;
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -233,7 +233,7 @@ function behaviorAdd() {
 }
 
 function sequenceAdd() {
-  let attr = customRuleContent.eventSequence!.conditions!;
+  let attr = ruleContent.eventSequence!.conditions!;
 
   const obj = {
     conditions: [{ conditions: [{}] }],
