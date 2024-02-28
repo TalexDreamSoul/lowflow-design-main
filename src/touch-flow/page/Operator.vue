@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, watch, watchEffect } from 'vue'
 import { useVModel } from '@vueuse/core'
 
 const $props = defineProps<{
@@ -76,7 +76,8 @@ const operators = computed(() => operatorOptions.filter((item) => item.type.incl
 
 //   data.value = ''
 // })
-watch(() => $props.item, () => {
+watch($props.item, (old, newVal) => {
+  if ( JSON.stringify(old) === JSON.stringify(newVal) ) return
   $_ignored: $props
 
   data.value = ''
