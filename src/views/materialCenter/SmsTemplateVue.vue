@@ -83,7 +83,9 @@ const fetchDataApi = async () => {
 const delData = async (row: any) => {
   console.log('row', row)
 
-  ElMessageBox.alert("删除后将无法恢复", "确认删除", {
+  ElMessageBox.alert(
+    (row.useCount ? `当前有${ row.usedCount }个策略流程正在使用该模版（流程${row.usedTouchNames?.join('、')}正在使用），确认后该修改内容会更新至正在使用的流程中` : "删除后将无法恢复，是否确认删除？")
+  , "确认删除", {
     showCancelButton: true,
     roundButton: true,
     cancelButtonClass: "pd-button",
