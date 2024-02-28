@@ -173,6 +173,8 @@ function handleClick(e: Event) {
       const _val = parent._value
 
       const variable = variableMap.get(id!)!
+      
+      console.log("condition", condition, variable)
 
       Object.assign(variable, {
         index: id,
@@ -206,8 +208,6 @@ function handleClick(e: Event) {
                 field: val
               })
 
-              console.log("condition", condition)
-
               const valueDom = e.querySelector('.value')
 
               e._condition = condition
@@ -215,6 +215,8 @@ function handleClick(e: Event) {
 
               valueDom.setAttribute('value', val)
               valueDom.innerText = condition.label
+
+              model.value[props.variables] = [...variableMap.values()]
 
               if (_floating) _floating()
             }
@@ -320,6 +322,25 @@ watchEffect(() => {
 const contentLength = computed(() => {
   return model.value[props.content]?.length ?? 0
 })
+
+function handleAdd() {
+  dialogVariable.value!.variables?.push({ fieldOp: '', compareValue: '', fieldValue: '', defaultValue: '', field: dialogVariable.value.field, type: dialogVariable.value.type })
+
+  const index = dialogVariable.value!.variables?.length
+  const id = `variable-item-${index - 1}`
+
+  nextTick(() => {
+    const el = document.getElementById(id)
+
+    console.log("s el", el)
+
+  el.scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+    inline: "center"
+  })
+  })
+}
 </script>
 
 <template>
@@ -338,25 +359,27 @@ const contentLength = computed(() => {
     </span>
   </div>
 
-  <el-dialog :z-index="2026" append-to-body align-center v-model="variableModal" title="设置赋值">
+  <!-- :z-index="2026" -->
+  <el-dialog append-to-body align-center v-model="variableModal" title="设置赋值">
     <template #footer>
       <el-button round @click="variableModal = false">取消</el-button>
       <el-button round class="primaryStyle" type="primary" @click="variableDone">确定</el-button>
     </template>
 
-    <div v-for="(item, index) in dialogVariable?.variables" class="TouchFloatingContent">
-      <Operator :item="dialogVariable" :attrs="attrs.attrs" v-model="item.fieldOp as string" />
-      <AttrRender :item="item" :attrs="attrs.attrs" />
+    <div class="DialogWrapper">
+      <div :id="`variable-item-${index}`" v-for="(item, index) in dialogVariable?.variables" class="TouchFloatingContent">
+      <Operator style="width: 100px" :item="item" :attrs="attrs.attrs" v-model="item.fieldOp" />
+      <AttrRender style="width: 300px" :item="item" :attrs="attrs.attrs" />
       <div class="ContentSingleLine">
         <span>赋值为</span>
         <el-input v-model="item.fieldValue" />
       </div>
-      <el-icon v-if="index > 1">
+      <el-icon @click="dialogVariable?.variables?.splice(index, 1)" :style="!index ? `opacity: 0;pointer-events: none` : ''">
         <Delete />
       </el-icon>
     </div>
 
-    <el-text @click="dialogVariable?.variables?.push({ fieldOp: '', compareValue: '', fieldValue: '' })" type="primary"
+    <el-text @click="handleAdd" type="primary"
       style="cursor: pointer">
       <el-icon size="14">
         <CirclePlusFilled />
@@ -367,10 +390,22 @@ const contentLength = computed(() => {
     <div style="margin-top: 1rem" class="ContentSingleLine">
       该属性空值或无法匹配时显示 <el-input style="width: 30%" placeholder="属性值" v-model="dialogVariable!.defaultValue" />
     </div>
+    </div>
   </el-dialog>
 </template>
 
 <style lang="scss">
+.el-dialog {
+  border-radius: 8px;
+}
+
+.DialogWrapper {
+  padding-right: .5rem;
+  height: 400px;
+
+  overflow-y: scroll;
+}
+
 .ContentSingleLine {
   span {
     flex-shrink: 0;
@@ -385,12 +420,24 @@ const contentLength = computed(() => {
 }
 
 .TouchFloatingContent {
-
+  .el-icon {
+    &:hover {
+      color: #277AE7;
+      cursor: pointer;
+    }
+  }
+  position: relative;
   margin: .5rem 0 1rem;
-  display: grid;
+  display: flex;
 
-  gap: 1rem;
-  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  gap: 4px;
+
+  align-items: center;
+  // display: grid;
+
+  // gap: 1rem;
+  // grid-template-columns: repeat(3, 1fr);
 }
 
 .TouchFloating {

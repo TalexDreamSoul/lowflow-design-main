@@ -110,7 +110,7 @@ const operatorOptions: Record<string, { label: string, type: string, value: stri
 function onOpChange(val: any) {
   timeInterval.value = null
 
-  const arr = operatorOptions[props.item.operator]
+  const arr = operatorOptions[props.item.fieldOp]
 
   const item = arr.find((item: any) => item.label === val)
 
@@ -129,9 +129,9 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
 <template>
   <div class="AttrRender" style="display: flex;gap: 1rem">
     <template v-if="type === 'num'">
-      <template v-if="item.operator === '区间'">
+      <template v-if="item.fieldOp === '区间'">
         <el-input :disabled="readonly" v-model.number="item.fieldValue" />
-        到
+        <el-text>到</el-text>
         <el-input :disabled="readonly" v-model.number="item.fieldRangeValue" />
       </template>
       <el-input v-else :disabled="readonly" v-model.number="item.fieldValue" />
@@ -139,17 +139,17 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
     <el-input :disabled="readonly" v-else-if="type === 'text'" v-model="item.fieldValue" />
     <template v-else-if="type === 'date'">
       <el-select @change="onOpChange" :disabled="readonly" v-model="item.fieldOp"
-        v-if="item.operator.indexOf('时间') !== -1">
-        <el-option v-for="each in operatorOptions[item.operator]" :key="each.value" :label="each.label"
+        v-if="item.fieldOp.indexOf('时间') !== -1">
+        <el-option v-for="each in operatorOptions[item.fieldOp]" :key="each.value" :label="each.label"
           :value="each.label" />
       </el-select>
-      <template v-if="item.operator === '绝对时间'">
+      <template v-if="item.fieldOp === '绝对时间'">
         <el-date-picker :disabled="readonly" v-if="item.timeCondition.timeType !== 'absoluteInterval'"
           v-model="timeInterval" type="date" placeholder="选择时间" />
         <el-date-picker :disabled="readonly" v-else v-model="timeInterval" type="daterange" range-separator="至"
           start-placeholder="开始时间" end-placeholder="结束时间" />
       </template>
-      <template v-else-if="item.operator === '相对时间'">
+      <template v-else-if="item.fieldOp === '相对时间'">
         <el-select @change="onTimePointChange" v-model="timePointSection">
           <template #prefix>
             <span class="pseudo-text">在</span>

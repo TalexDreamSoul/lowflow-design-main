@@ -129,7 +129,7 @@ const attrs = computed(() => {
               </el-col>
               <el-col :xs="24" :sm="3" v-if="item.field">
                 <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                  <operator :item="item" :attrs="attrs" :readonly="readonly" ref="operatorRef" v-model="item.operator" />
+                  <operator :item="item" :attrs="attrs" :readonly="readonly" ref="operatorRef" v-model="item.fieldOp" />
                 </el-form-item>
               </el-col>
               <el-col :xs="24" :sm="10" v-if="item.field">

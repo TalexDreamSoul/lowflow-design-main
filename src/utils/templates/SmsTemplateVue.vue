@@ -1,6 +1,7 @@
 <script setup lang="ts" name="ZnxTemplate">
 import TouchSettingContents from "~/touch-flow/p/touch/TouchSettingContents.vue";
 import { reactive, watchEffect } from "vue";
+import { ElMessage } from "element-plus";
 
 const props = defineProps<{
   data?: any;
@@ -73,10 +74,12 @@ defineExpose({ saveData });
 <template>
   <el-form label-position="top" :model="data" :disabled="type == 'details'">
     <el-form-item label="模板名称">
+    <!-- placeholder="请输入模板名" -->
       <el-input :disabled="readonly" v-model="data.name"></el-input>
     </el-form-item>
     <el-form-item label="场景码">
-      <el-input :disabled="readonly" v-model="data.sceneCode" placeholder="请输入"></el-input>
+     <!-- placeholder="请输入场景码" -->
+      <el-input :disabled="readonly" v-model="data.sceneCode"></el-input>
     </el-form-item>
     <el-form-item label="短信内容">
       <TouchSettingContents :disabled="readonly" variables="variables" content="content" v-model="data"
