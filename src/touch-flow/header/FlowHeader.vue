@@ -140,6 +140,8 @@ defineExpose({
   margin-top: -1rem;
 
   height: calc(100% - 60px);
+
+  overflow: hidden;
 }
 
 .TouchFlow-Header {
@@ -169,5 +171,7 @@ defineExpose({
 
   // width: 100%;
   height: 80px;
+
+  overflow: hidden;
 }
 </style>
