@@ -24,7 +24,7 @@ defineExpose({
 </script>
 
 <template>
-  <BehaviorGroupPlus title="延迟设置" color="#62C943">
+  <BehaviorGroupPlus :default-expand="true" title="延迟设置" color="#62C943">
     &nbsp;
     <el-select v-model="sizeForm.nodeDelayed.isDelayed" style="width: 100px">
       <el-option :value="true" label="延迟">延迟</el-option>

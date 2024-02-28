@@ -154,7 +154,7 @@ const pushTemplate = computed(() => {
 })
 
 const delayedActionStr = computed(() => {
-  const action = data?.eventDelayed?.delayedAction
+  const action = data?.nodeDelayed?.delayedAction
   if (!action) return ''
 
   if (action === 'touch') return '发送触达'
@@ -178,17 +178,21 @@ provide('save', (regFunc: () => boolean) => {
       </span>
     </p>
     <div @click="openCondition" class="PBlock-Content theme">
-      <template v-if="data.diversionType || data.eventDelayed?.isDelayed || pushTemplate?.has">
+      <template v-if="data.nodeDelayed?.delayedAction || pushTemplate?.has">
         <div style="display: flex; flex-direction: column; gap: 1rem">
-          <div v-if="data.eventDelayed?.isDelayed" style="--theme-color: #7DC757" class="PBlock-Section">
+          <!-- v-if="data.nodeDelayed?.isDelayed" -->
+          <div style="--theme-color: #7DC757" class="PBlock-Section">
             <p>
               延迟设置
             </p>
-            <span v-if="data.eventDelayed?.isDelayed">
-              符合该策略器 {{ data.eventDelayed.delayedTime }} {{ data.eventDelayed.delayedUnit }} 后 {{
+            <span v-if="data.nodeDelayed?.isDelayed">
+              符合该策略器 {{ data.nodeDelayed.delayedTime }} {{ data.nodeDelayed.delayedUnit }} 后 {{
                 delayedActionStr }}
             </span>
-            <span v-else>立即针对符合该策略器条件的客户发送触达</span>
+            <span v-else>
+              <span v-if="data.nodeDelayed.delayedAction === 'nothing'">不执行任何动作</span>
+              <span v-else>立即针对符合该策略器条件的客户发送触达</span>
+            </span>
           </div>
           <div v-if="pushTemplate.has" style="--theme-color: #FFB858" class="PBlock-Section">
             <p>
@@ -238,7 +242,7 @@ provide('save', (regFunc: () => boolean) => {
   </el-card>
 
   <el-button
-    :class="{ display: data.diversionType || data.eventDelayed?.isDelayed || pushTemplate?.has, disabled: haveDiverse }"
+    :class="{ display: data.diversionType || data.nodeDelayed?.isDelayed || pushTemplate?.has, disabled: haveDiverse }"
     @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 
