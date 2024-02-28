@@ -130,7 +130,12 @@ provide('save', (regFunc: () => boolean) => {
 })
 
 const pushTemplate = computed(() => {
-  const { type } = data.material
+
+  const { type } = data?.touchTemplateContent || {}
+  if (!type) return {
+    has: false,
+    val: ""
+  }
 
   let val;
 
@@ -210,8 +215,8 @@ function del(p: any) {
         <p>
           延迟设置
         </p>
-        <span v-if="data.eventDelayed.isDelayed">
-          符合该策略器 {{ data.eventDelayed.delayedTime }} {{ data.eventDelayed.delayedUnit }} 后 {{ delayedActionStr }}
+        <span v-if="data.nodeDelayed?.isDelayed">
+          符合该策略器 {{ data.nodeDelayed.delayedTime }} {{ data.nodeDelayed.delayedUnit }} 后 {{ delayedActionStr }}
         </span>
         <span v-else>立即针对符合该策略器条件的客户发送触达</span>
       </div>
@@ -252,7 +257,7 @@ function del(p: any) {
   </el-card>
 
   <el-button @click="dialogVisible = true"
-    :class="{ display: data.diversionType && data.eventDelayed.isDelayed !== undefined && pushTemplate }" class="start-add"
+    :class="{ display: data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate }" class="start-add"
     type="primary" :icon="Plus" circle />
 </template>
 
