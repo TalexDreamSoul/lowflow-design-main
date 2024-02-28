@@ -272,7 +272,7 @@ function addEventB() {
             <el-text>当前流程，同一客户</el-text>&nbsp;
             <el-input style="width: 100px" v-model="sizeForm.enterDay" placeholder="天数" />
             <el-text>&nbsp;天内，最多进入</el-text>&nbsp;
-            <el-input style="width: 100px" v-model="sizeForm.enterCount" placeholder="次数" />
+            <el-input  style="width: 100px" v-model="sizeForm.enterCount" placeholder="次数" />
             <el-text> &nbsp;次
             </el-text>
 

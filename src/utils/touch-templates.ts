@@ -63,6 +63,8 @@ export function createTemplatePopover(
     type,
     readonly,
     success: (val: any) => {
+      if (!data && !data?.value) return
+
       Object.assign(data?.value, val);
     },
   });
@@ -72,7 +74,7 @@ export function createTemplatePopover(
   }
 
   Object.assign(dom.style, {
-    zIndex: "100000",
+    zIndex: "2025",
     position: "absolute",
     width: "100%",
     height: "100%",

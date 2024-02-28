@@ -106,12 +106,14 @@ function assignData(val: any) {
   if ( val === -1 ) {
     res = origin[curPlatform.value.propKey]
 
+    res.content = {}
     res.name = ''
+    res.sceneCode = ''
   } else res = touchOptions.material.templates.find((item: any) => item.id === val)
 
-  // console.log('assign', res, touchOptions, curPlatform.value.propKey)
+  console.log('assign', res, touchOptions, curPlatform.value.propKey)
 
-  Object.assign(touchOptions[curPlatform.value.propKey], res)
+  Object.assign(touchOptions[curPlatform.value.propKey], { ...res.content , id: res.id, name: res.name, status: res.status })
 }
 
 const platformOptions: Record<string, {

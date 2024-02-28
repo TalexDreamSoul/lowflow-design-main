@@ -24,7 +24,7 @@ export function createFloatingPanel(reference: HTMLElement, render: any) {
   document.body.addEventListener('click', handleClick)
 
   Object.assign(wrapper.style, {
-    zIndex: '10000',
+    zIndex: '1000000',
     position: 'absolute',
     transition: '.15s',
     opacity: '0',

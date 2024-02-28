@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useVModel } from '@vueuse/core'
-import { ref, h, watch, watchEffect, nextTick, computed } from 'vue'
+import { ref, h, reactive, watchEffect, nextTick, computed } from 'vue'
 import { createFloatingPanel } from './floating-panel'
 import { getDictAnalyzedTree } from '../../flow-utils'
 import TouchSelectWrapper from './TouchSelectable.vue'
 import Operator from '../../page/Operator.vue'
+import AttrRender from '~/touch-flow/page/AttrRender.vue'
 import { randomStr } from '~/utils/common'
 import { CirclePlusFilled, Plus } from '@element-plus/icons-vue'
 
@@ -66,7 +67,6 @@ export type VariableDTO = {
   [property: string]: any;
 }
 
-
 const props = defineProps<{
   modelValue?: any,
   buttonTitle?: string,
@@ -76,21 +76,21 @@ const props = defineProps<{
 }>()
 const emits = defineEmits(['update:modelValue'])
 
-const _content = ref<string>()
+// const _content = ref<string>()
 const contentRef = ref<HTMLElement>()
 const variableMap = new Map<string, VariableTemplateDTO>()
 const model = useVModel(props, 'modelValue', emits)
 const dialogVariable = ref<VariableTemplateDTO>()
 
 const dictTree = ref()
-const attrs = ref()
+const attrs = ref();
 
-  ; (async () => {
-    const [tree, _attrs] = await getDictAnalyzedTree()
+(async () => {
+  const [tree, _attrs] = await getDictAnalyzedTree()
 
-    attrs.value = _attrs
-    dictTree.value = tree
-  })()
+  attrs.value = _attrs.data
+  dictTree.value = tree
+})()
 
 const settingSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L21.5 6.5V17.5L12 23L2.5 17.5V6.5L12 1ZM12 3.311L4.5 7.65311V16.3469L12 20.689L19.5 16.3469V7.65311L12 3.311ZM12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12C16 14.2091 14.2091 16 12 16ZM12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"></path></svg>`
 
@@ -99,10 +99,10 @@ function addLabel() {
 
   const id = randomStr(6).replaceAll('.', '')
 
-  variableMap.set(id, {
+  variableMap.set(id, reactive({
     field: id,
     variables: []
-  })
+  }))
 
 // ${first.label}
 
@@ -149,6 +149,7 @@ function insertNode(htmlX: string) {
 
 }
 
+// 根据获得的value查询dict item
 const getCurrSelected = (condition: any) => [...dictTree.value].map((_: any) => ([..._.children].map((__: any) => __.children?.length ? __.children : [__]))).flat(2).find((_: any) => _.field === condition.field || _.label === condition.field)
 
 let _floating: any
@@ -193,6 +194,7 @@ function handleClick(e: Event) {
 
   // e path iterator
   e.composedPath().forEach((e: any) => {
+
     if (e.className === 'TouchLabel') {
 
       _floating = createFloatingPanel(e, {
@@ -204,10 +206,13 @@ function handleClick(e: Event) {
                 field: val
               })
 
+              console.log("condition", condition)
+
               const valueDom = e.querySelector('.value')
 
-              valueDom.parentElement._condition = condition
-              valueDom.parentElement._value = val
+              e._condition = condition
+              e._value = val
+
               valueDom.setAttribute('value', val)
               valueDom.innerText = condition.label
 
@@ -241,17 +246,19 @@ function variableDone() {
   model.value[props.variables] = [...variableMap.values()]
 }
 
-watch(() => _content.value, handleBlur)
+// watch(() => _content.value, handleBlur)
 
 let doInit = false
 watchEffect(() => {
   if (doInit || !props.modelValue?.id) return
-  doInit = true
+  console.groupCollapsed('TouchSettingContents')
+
+  // doInit = true
 
   const { modelValue, content, variables } = props
-  console.log("tsc", props)
+  console.log("tsc props", props, model.value, modelValue[content])
 
-  let __content: string = _content.value = modelValue[content]
+  let __content: string /* = _content.value */ = modelValue[content]
   const _variables = modelValue[variables]
 
   const _preFuncs: any[] = []
@@ -294,14 +301,20 @@ watchEffect(() => {
   nextTick(() => {
     const el = contentRef.value!
 
-    console.log(">", el)
+    console.log(">", el, __content, _preFuncs)
+
+    if (el.innerHTML === __content) return
 
     el.innerHTML = __content
+
+    // _content.value = __content
 
     nextTick(() => _preFuncs.forEach(a => a()))
   })
 
-  console.log("touch", _content, _variables)
+  console.log("touch", __content, _variables)
+
+  console.groupEnd()
 })
 
 const contentLength = computed(() => {
@@ -311,9 +324,7 @@ const contentLength = computed(() => {
 
 <template>
   <div @blur="handleBlur" :class="{ disabled }" tabindex="1" class="TouchSettingsContentWrapper">
-    <div @click="handleClick" @input="handleBlur" ref="contentRef" class="TouchSettingsContent" contenteditable="true">
-      {{ _content }}
-    </div>
+    <div @click="handleClick" @input="handleBlur" ref="contentRef" class="TouchSettingsContent" contenteditable="true" />
 
     <el-button @click="addLabel">
       <el-icon color="#326DD7">
@@ -327,19 +338,22 @@ const contentLength = computed(() => {
     </span>
   </div>
 
-  <el-dialog append-to-body align-center v-model="variableModal" title="设置赋值">
+  <el-dialog :z-index="2026" append-to-body align-center v-model="variableModal" title="设置赋值">
     <template #footer>
       <el-button round @click="variableModal = false">取消</el-button>
       <el-button round class="primaryStyle" type="primary" @click="variableDone">确定</el-button>
     </template>
 
-    <div v-for="item in dialogVariable?.variables" class="TouchFloatingContent">
-      <Operator v-model="item.fieldOp as string" />
-      <Operator v-model="item.compareValue as string" />
+    <div v-for="(item, index) in dialogVariable?.variables" class="TouchFloatingContent">
+      <Operator :item="dialogVariable" :attrs="attrs.attrs" v-model="item.fieldOp as string" />
+      <AttrRender :item="item" :attrs="attrs.attrs" />
       <div class="ContentSingleLine">
         <span>赋值为</span>
         <el-input v-model="item.fieldValue" />
       </div>
+      <el-icon v-if="index > 1">
+        <Delete />
+      </el-icon>
     </div>
 
     <el-text @click="dialogVariable?.variables?.push({ fieldOp: '', compareValue: '', fieldValue: '' })" type="primary"

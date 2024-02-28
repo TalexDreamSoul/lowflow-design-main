@@ -41,7 +41,7 @@ watchEffect(() => {
   const _data = props.data || props.data?.value
   if (!_data) return
 
-  console.log("sms", data, origin,);
+  console.log("sms", data, origin, _data);
   Object.assign(data, _data);
 });
 function saveData() {
