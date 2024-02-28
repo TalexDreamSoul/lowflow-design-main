@@ -45,7 +45,7 @@ defineExpose({
     <el-scrollbar>
       <el-form ref="headerRef" :rules="rules" status-icon :model="basic" label-position="top">
         <el-form-item style="--t-delay: .1s" prop="touchName" class="transition-item" :class="{ expand: basic._expand }" label="策略流程名称">
-          <el-input v-model="basic.touchName" maxlength="18" :disabled="readonly" placeholder="策略流程名称"
+          <el-input :show-word-limit="true" v-model="basic.touchName" maxlength="18" :disabled="readonly" placeholder="策略流程名称"
             :style="{ width: '400px', height: '40px' }" />
         </el-form-item>
         <br />
