@@ -277,10 +277,13 @@ div.el-dialog {
     height: 80px;
     max-height: 500px;
     overflow: hidden;
+    perspective: 100px;
     transition: height 0.25s;
     background-color: #FFFFFF;
     box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02),
       0 2px 4px rgba(0, 0, 0, 0.125);
+
+    animation: header-join .5s;
   }
 
   & .expand .el-header {
@@ -320,5 +323,14 @@ div.el-dialog {
   height: 100%;
 
   overflow: hidden;
+}
+
+@keyframes header-join {
+  from {
+    transform: translateY(-50%) rotate3d(1, 0, 0, -90deg);
+  }
+  to {
+    transform: translateY(0) rotate3d(1, 0, 0, 0deg);
+  }
 }
 </style>
