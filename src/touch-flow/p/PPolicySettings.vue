@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, provide, computed, inject } from 'vue'
 import { Stamp, Plus, Delete } from '@element-plus/icons-vue'
-import PolicySettingsAttr from './start/PolicySettingsAttr.vue'
+import PolicySettingsAttr from './attr/PolicySettingsAttr.vue'
 import DeliverySettingsAttr from "./start/DeliverySettingsAttr.vue";
 import { delChild } from '../flow-utils'
 import Strategist from './start/Strategist.vue'

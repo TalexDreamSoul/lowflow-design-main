@@ -11,7 +11,8 @@ import LogicalLine from "../behavior/LogicalLine.vue";
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import EventBehavior from "../behavior/EventBehavior.vue";
 import { markRaw } from "vue";
-import CommonAttr from "./CommonAttr.vue";
+import CommonAttr from "../start/CommonAttr.vue";
+import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
 
 const origin = {
   nodeId: "",
@@ -24,53 +25,45 @@ const origin = {
   cascaderLabel: "sms",
   do: false,
   num: 1,
-  diversionType: 'noDiversion',
-  touchTemplateContent: {
-
-  },
+  diversionType: "noDiversion",
+  touchTemplateContent: {},
   nodeDelayed: {
-    delayedAction: 'nothing',
+    delayedAction: "nothing",
     delayedTime: 0,
-    delayedUnit: '',
-    isDelayed: false
+    delayedUnit: "",
+    isDelayed: false,
   },
   customRuleContent: {
     customAttr: {
-      conditions: [
-
-      ],
-      logicalChar: '或'
+      conditions: [],
+      logicalChar: "或",
     },
     customEvent: {
-      conditions: [
-
-      ],
-      logicalChar: '或'
+      conditions: [],
+      logicalChar: "或",
     },
     eventSequence: {
-      conditions: [
-
-      ],
-      logicalChar: '或'
+      conditions: [],
+      logicalChar: "或",
     },
-    logicalChar: '或'
+    logicalChar: "或",
   },
   eventRuleContent: {
     customEvent: {
       conditions: [
         {
-          conditions: [{}]
-        }
+          conditions: [{}],
+        },
       ],
-      logicalChar: '或'
+      logicalChar: "或",
     },
-    logicalChar: '或'
+    logicalChar: "或",
   },
   labelContent: {
     labelId: -1,
-    labelName: '',
-    labelValue: []
-  }
+    labelName: "",
+    labelValue: [],
+  },
 };
 
 const marketingTouchNode = ref({
@@ -84,25 +77,26 @@ const marketingTouchNode = ref({
 
 const props = defineProps<{
   p: any;
-  new?: boolean
+  new?: boolean;
+  readonly?: boolean;
 }>();
 
-const touchSettingsRef = ref()
+const touchSettingsRef = ref();
 const sizeForm = reactive<typeof origin>(origin);
 
-console.log("here", sizeForm, props.p, props.new)
+console.log("here", sizeForm, props.p, props.new);
 
 watchEffect(() => {
-  const { nodeType, nodeId } = props.p
+  const { nodeType, nodeId } = props.p;
 
-  if (props.new || nodeType !== 'strategy') return
+  if (props.new || nodeType !== "strategy") return;
 
   if (nodeId) {
     Object.assign(sizeForm, props.p);
 
     sizeForm.nodeId = nodeId;
   }
-})
+});
 
 function saveData() {
   if (!sizeForm.nodeName) {
@@ -113,23 +107,20 @@ function saveData() {
     return false;
   }
 
-  touchSettingsRef.value.updateData()
+  touchSettingsRef.value.updateData();
 
   const _: any = { nodeId: "", children: [] };
-  Object.assign(_, sizeForm)
+  Object.assign(_, sizeForm);
 
-  Object.defineProperty(_, 'father', {
+  Object.defineProperty(_, "father", {
     value: markRaw(props.p),
-    enumerable: false
-  })
+    enumerable: false,
+  });
 
   // 修改 Modify Edit
   if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {
-
-    Object.assign(props.p, _)
-
+    Object.assign(props.p, _);
   } else {
-
     const arr = [...props.p.children];
 
     while (arr.length) {
@@ -142,13 +133,11 @@ function saveData() {
 
         return false;
       }
-
     }
 
-    _.nodeId = randomStr(12)
+    _.nodeId = randomStr(12);
 
     props.p.children.push(_);
-
   }
 
   return true;
@@ -179,7 +168,8 @@ const estimation = async () => {
 };
 
 function attrsAdd() {
-  let attr: any = sizeForm.customRuleContent!.customAttr!.conditions! = (sizeForm.customRuleContent!.customAttr!.conditions! || []);
+  let attr: any = (sizeForm.customRuleContent!.customAttr!.conditions! =
+    sizeForm.customRuleContent!.customAttr!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -193,7 +183,8 @@ function attrsAdd() {
 }
 
 function behaviorAdd() {
-  let attr: any = sizeForm.customRuleContent!.customEvent!.conditions! = (sizeForm.customRuleContent!.customEvent!.conditions! || []);
+  let attr: any = (sizeForm.customRuleContent!.customEvent!.conditions! =
+    sizeForm.customRuleContent!.customEvent!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -207,7 +198,8 @@ function behaviorAdd() {
 }
 
 function sequenceAdd() {
-  let attr: any = sizeForm.customRuleContent!.eventSequence!.conditions! = (sizeForm.customRuleContent!.eventSequence!.conditions! || []);
+  let attr: any = (sizeForm.customRuleContent!.eventSequence!.conditions! =
+    sizeForm.customRuleContent!.eventSequence!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: [{}] }],
@@ -235,7 +227,11 @@ function sequenceAdd() {
         </el-radio-group>
       </el-form-item>
 
-      <BehaviorGroupPlus title="用户属性行为分流" color="#333333" v-if="sizeForm.diversionType === 'attr'">
+      <BehaviorGroupPlus
+        title="用户属性行为分流"
+        color="#333333"
+        :class="{ animation: true, display: sizeForm.diversionType === 'attr' }"
+      >
         <div class="titleCondition">进入该策略期的用户需要满足以下条件：</div>
         <el-form-item label="">
           <div class="pannel">
@@ -247,31 +243,35 @@ function sequenceAdd() {
                 <CustomBehavior :custom="sizeForm.customRuleContent!.customEvent" />
               </BehaviorGroup>
               <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-                <CustomBehaviorSequence :custom="sizeForm.customRuleContent!.eventSequence" />
+                <CustomBehaviorSequence
+                  :custom="sizeForm.customRuleContent!.eventSequence"
+                />
               </BehaviorGroup>
             </LogicalLine>
           </div>
         </el-form-item>
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus title="触发事件分流" color="#333333" v-if="sizeForm.diversionType === 'event'">
+      <BehaviorGroupPlus
+        title="触发事件分流"
+        color="#333333"
+        :class="{ animation: true, display: sizeForm.diversionType === 'event' }"
+      >
         <div class="flex-column titleCondition">
-          <div>
-            进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;
-          </div>
+          <div>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</div>
           <el-input v-model="sizeForm.num" type="number" style="width: 100px" />&nbsp;
           <el-select v-model="sizeForm.selectedType" style="width: 100px">
             <el-option value="month" label="月份">分钟</el-option>
             <el-option value="week" label="周">小时</el-option>
-            <el-option value="day" label="天">天</el-option>
-          </el-select>&nbsp;
-          <div>后判断客户
+            <el-option value="day" label="天">天</el-option> </el-select
+          >&nbsp;
+          <div>
+            后判断客户
             <el-select v-model="sizeForm.do" style="width: 100px">
               <el-option :value="true" label="做过">做过</el-option>
               <el-option :value="false" label="没做过">没做过</el-option>
             </el-select>
           </div>
-
         </div>
         <el-form-item label="">
           <div class="pannel">
@@ -305,8 +305,8 @@ function sequenceAdd() {
                   <div>
                     {{
                       marketingTouchNode.appPushCount != undefined
-                      ? marketingTouchNode.appPushCount
-                      : "-"
+                        ? marketingTouchNode.appPushCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -317,8 +317,8 @@ function sequenceAdd() {
                   <div>
                     {{
                       marketingTouchNode.znxCount != undefined
-                      ? marketingTouchNode.znxCount
-                      : "-"
+                        ? marketingTouchNode.znxCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -329,8 +329,8 @@ function sequenceAdd() {
                   <div>
                     {{
                       marketingTouchNode.digitalCount != undefined
-                      ? marketingTouchNode.digitalCount
-                      : "-"
+                        ? marketingTouchNode.digitalCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -341,8 +341,8 @@ function sequenceAdd() {
                   <div>
                     {{
                       marketingTouchNode.outboundCount != undefined
-                      ? marketingTouchNode.outboundCount
-                      : "-"
+                        ? marketingTouchNode.outboundCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -353,27 +353,37 @@ function sequenceAdd() {
                   <div>
                     {{
                       marketingTouchNode.smsCount != undefined
-                      ? marketingTouchNode.smsCount
-                      : "-"
+                        ? marketingTouchNode.smsCount
+                        : "-"
                     }}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="yugu_flex">
-            <div class="title">策略器目标设置 &nbsp;</div>
-            <el-switch v-model="sizeForm.value1" />
-          </div>
         </div>
+
+        <StrategistTargetAttr :readonly="readonly" :size-form="sizeForm" />
       </div>
     </el-form>
   </div>
 </template>
 
 <style lang="scss">
-li:has(.template-option):has(.template-desc) {
+.BehaviorGroupPlus.animation {
+  &.display {
+    opacity: 1;
+    pointer-events: auto;
 
+    margin-bottom: 0;
+  }
+  opacity: 0;
+  pointer-events: none;
+
+  margin-bottom: -50px;
+}
+
+li:has(.template-option):has(.template-desc) {
   height: 50px;
 }
 
@@ -383,7 +393,7 @@ li:has(.template-option):has(.template-desc) {
   display: block;
 
   color: #000;
-  opacity: .4;
+  opacity: 0.4;
 
   max-width: 100px;
   white-space: nowrap;
@@ -461,7 +471,7 @@ li:has(.template-option):has(.template-desc) {
   }
 
   .pg2 {
-    border-left: 4px solid #A053CD;
+    border-left: 4px solid #a053cd;
   }
 
   .pg3 {
