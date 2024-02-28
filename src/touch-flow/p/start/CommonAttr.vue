@@ -2,11 +2,25 @@
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import TouchSettings from "../touch/TouchSettings.vue";
 import NewLabel from '../../label/NewLabel.vue'
+import { ref } from 'vue'
 
 const props = defineProps<{
   sizeForm: any;
 }>();
 
+const touchSettingsRef = ref()
+
+defineExpose({
+  updateData: () => {
+
+    if (!touchSettingsRef.value) {
+      return
+    }
+
+     return touchSettingsRef.value.updateData()
+
+  }
+})
 </script>
 
 <template>

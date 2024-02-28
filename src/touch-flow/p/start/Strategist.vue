@@ -22,7 +22,7 @@ const origin = {
 
   },
   nodeDelayed: {
-    delayedAction: '',
+    delayedAction: 'nothing',
     delayedTime: 0,
     delayedUnit: '',
     isDelayed: false
@@ -124,7 +124,7 @@ const estimation = async () => {
 <template>
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
-      <CommonAttr :size-form="sizeForm" />
+      <CommonAttr ref="touchSettingsRef" :size-form="sizeForm" />
 
       <div class="BlockBackground">
         <div class="BlockBackground-Under">

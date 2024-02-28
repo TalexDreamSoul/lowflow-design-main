@@ -75,7 +75,7 @@ const origin = {
 
   },
   nodeDelayed: {
-    delayedAction: '',
+    delayedAction: 'nothing',
     delayedTime: 0,
     delayedUnit: '',
     isDelayed: false
@@ -166,7 +166,7 @@ const estimation = async () => {
         <el-input v-model="sizeForm.nodeName" placeholder="填写名称" />
       </el-form-item>
 
-      <CommonAttr :size-form="sizeForm" />
+      <CommonAttr ref="touchSettingsRef" :size-form="sizeForm" />
 
       <div class="BlockBackground">
         <div class="BlockBackground-Under">

@@ -29,7 +29,7 @@ const origin = {
 
   },
   nodeDelayed: {
-    delayedAction: '',
+    delayedAction: 'nothing',
     delayedTime: 0,
     delayedUnit: '',
     isDelayed: false
@@ -282,7 +282,7 @@ function sequenceAdd() {
         </el-form-item>
       </BehaviorGroupPlus>
 
-      <CommonAttr :sizeForm="sizeForm" />
+      <CommonAttr ref="touchSettingsRef" :sizeForm="sizeForm" />
 
       <div class="BlockBackground">
         <div class="BlockBackground-Under">
