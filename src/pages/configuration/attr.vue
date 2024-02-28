@@ -39,7 +39,7 @@
           </el-table-column>
         </el-table>
       </el-watermark>
-      <el-pagination background layout="prev, pager, next, sizes, jumper" :total='total' :page-sizes="[10]"
+      <el-pagination background layout="prev, pager, next, jumper" :total='total' :page-sizes="[10]"
         v-model:current-page="pageNum" />
     </div>
     <el-dialog class="attr-modal" destroy-on-close :close-on-click-modal="false" v-model="modalVisible"
@@ -50,7 +50,7 @@
           { required: true, message: '请输入属性编码' },
           { pattern: /^[a-zA-Z0-9_]{1,18}$/, message: '仅支持数字、字母、下划线，不超过18个字符' },
         ]" label="属性编码" prop="field">
-          <el-input  v-model="formValues.field" placeholder="请输入" clearable />
+          <el-input :disabled="true"  v-model="formValues.field" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item :rules="[
           { required: true, message: '请输入属性名称' },
@@ -61,7 +61,7 @@
         <el-form-item :rules="[
           { required: true, message: '请选择数据类别' },
         ]" label="数据类别" prop="fieldType">
-          <el-select  v-model="formValues.fieldType" placeholder="请选择" clearable>
+          <el-select :disabled="true" v-model="formValues.fieldType" placeholder="请选择" clearable>
             <el-option v-for="item of ATTR_FIELD_TYPE" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>

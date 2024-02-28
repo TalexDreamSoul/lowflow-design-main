@@ -56,7 +56,7 @@
           </el-table-column>
         </el-table>
       </el-watermark>
-      <el-pagination background layout="prev, pager, next, sizes, jumper" :total="total" :page-sizes="[10]" v-model:current-page="pageNum" />
+      <el-pagination background layout="prev, pager, next, jumper" :total="total" :page-sizes="[10]" v-model:current-page="pageNum" />
     </div>
     <el-drawer :destroy-on-close="true" :close-on-click-modal="false" :size="946" v-model="drawer" :with-header="false" class="pd-drawer">
       <div class="pd-drawer-header">{{ DrawerTitleMap[drawerType] }}</div>

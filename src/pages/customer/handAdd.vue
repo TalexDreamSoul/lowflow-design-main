@@ -97,7 +97,7 @@
       </el-table>
       <el-pagination
         background
-        layout="prev, pager, next, sizes, jumper"
+        layout="prev, pager, next, jumper"
         :total="total"
         :page-sizes="[5]"
         :default-page-size="5"
