@@ -270,7 +270,9 @@ div.el-dialog {
 .FlowPage {
   .el-header {
     z-index: 100;
-    position: sticky;
+    position: absolute;
+
+    width: 100%;
 
     height: 80px;
     max-height: 500px;
@@ -279,14 +281,10 @@ div.el-dialog {
     background-color: #FFFFFF;
     box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02),
       0 2px 4px rgba(0, 0, 0, 0.125);
-
-    border-radius: 0 0 18px 18px;
   }
 
-  .el-header {
-    position: absolute;
-
-    width: 100%;
+  & .expand .el-header {
+    border-radius: 0 0 18px 18px;
   }
 
   .el-main {
