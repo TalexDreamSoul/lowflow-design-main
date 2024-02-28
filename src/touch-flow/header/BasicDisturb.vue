@@ -68,5 +68,7 @@ const disturbOptions = [
   :deep(.el-form-item) {
     margin: 0 !important;
   }
+
+  --t-delay: .2s;
 }
 </style>

@@ -279,6 +279,8 @@ div.el-dialog {
     background-color: #FFFFFF;
     box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02),
       0 2px 4px rgba(0, 0, 0, 0.125);
+
+    border-radius: 0 0 18px 18px;
   }
 
   .el-header {

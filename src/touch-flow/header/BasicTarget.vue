@@ -109,5 +109,7 @@ function addTarget() {
   :deep(.el-form-item) {
     margin: 0 !important;
   }
+
+  --t-delay: .3s;
 }
 </style>
