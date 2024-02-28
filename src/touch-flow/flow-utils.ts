@@ -1,5 +1,6 @@
 import { toRefs } from "vue";
 import { dictFilterTree } from "~/api/index";
+import { AttrDTO, CustomSearchDTO, LabelDTO, SearchCondition } from "./touch-total";
 
 export async function getDictAnalyzedTree() {
   const dict = await dictFilterTree();
@@ -71,13 +72,38 @@ export interface IFlowUtils {
   delChild: (child: any) => boolean;
 }
 
-export function validateSingleCondition(condition: object) {
-  const res = JSON.stringify(condition)?.length > 5;
+function validateAttr(data: AttrDTO) {
+  const { field, fieldName, fieldOp, fieldType, fieldValue, timeCondition } = data
 
-  if (!res) {
-    console.log(condition, "none");
+  if (!validatePropValue([field, fieldName, fieldOp, fieldType, fieldValue])) return false;
+
+  if (fieldType === 'date') return validatePropValue(timeCondition)
+
+  return true;
+}
+
+function validateLabel(data: LabelDTO) {
+  return validatePropValue(data);
+}
+
+export function validateSingleCondition(condition: SearchCondition) {
+  const { attr, label, type } = condition
+
+  switch (type) {
+    case '1':
+      return validateAttr(attr!);
+    case '2':
+      return validateLabel(label!);
   }
-  return res;
+
+  return false;
+
+  // const res = JSON.stringify(condition)?.length > 5;
+
+  // if (!res) {
+  //   console.log(condition, "none");
+  // }
+  // return res;
 }
 
 export function validateConditions(conditions: Array<any>): boolean {
@@ -218,4 +244,37 @@ export function commonValidate(rule: any, value: any, callback: any) {
   }
 
   callback()
+}
+
+/**
+ * 验证经典的 customAttr, customEvent, eventSequence (AES) 三件套模型
+ * 判断规则：
+ * 1. 只要下一层还存在 condition 就会走 conditionValidate
+ * 2. 任意一项都可以直接或者间接为空
+ */
+export function validateAES(data: CustomSearchDTO) {
+  const { customAttr, customEvent, eventSequence } = data;
+
+  if (!validateObjConditions(customAttr)) {
+    return false;
+  }
+
+  if (!validateObjConditions(customEvent)) {
+    return false;
+  }
+
+  if (!validateObjConditions(eventSequence)) {
+    return false;
+  }
+
+  return true;
+}
+
+export function validateCommonDays(num: number, unit: 'min' | 'hour' | 'day') {
+  let time = 30
+  if (unit === 'min') return num <= time
+  time *= 24
+  if (unit === 'hour') return num <= time
+  time *= 60
+  return num <= time
 }

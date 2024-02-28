@@ -333,4 +333,6 @@ div.el-dialog {
     transform: translateY(0) rotate3d(1, 0, 0, 0deg);
   }
 }
+
+@import './flow-style.scss';
 </style>

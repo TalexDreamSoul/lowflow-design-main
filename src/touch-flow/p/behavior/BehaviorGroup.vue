@@ -1,6 +1,6 @@
 <script setup lang="ts" name="BehaviorGroup">
 import { ref } from "vue";
-import { CirclePlusFilled } from "@element-plus/icons-vue"
+import { CirclePlusFilled } from "@element-plus/icons-vue";
 
 defineProps<{
   title: string;
@@ -47,7 +47,7 @@ const expand = ref(false);
 
     cursor: pointer;
     user-select: none;
-    background-color: var(--el-fill-color-light);
+    background-color: #f7f8fb;
   }
 
   &.expand {
@@ -69,7 +69,7 @@ const expand = ref(false);
     opacity: 0;
     transform: translateX(10%);
 
-    transition: cubic-bezier(0.68, -0.55, 0.265, 1.55) .25s;
+    transition: cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.25s;
   }
 
   .toggle-icon {
@@ -114,6 +114,6 @@ const expand = ref(false);
   overflow: hidden;
   border-radius: 4px;
   transition: 0.2s;
-  background-color: var(--el-fill-color-lighter);
+  background-color: #f7f8fb;
 }
 </style>

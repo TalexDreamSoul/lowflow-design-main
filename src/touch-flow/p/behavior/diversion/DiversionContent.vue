@@ -24,13 +24,13 @@ function handleAdd() {
 }
 
 function handleSubAdd(item: any) {
-  console.log("----", item.conditions, conditionArr.value)
+  console.log("----", item.conditions, conditionArr.value);
   const arr = (item.conditions.conditions = item.conditions.conditions || []);
 
   arr.push({
-    attr: '',
-    label: '',
-    type: ''
+    attr: "",
+    label: "",
+    type: "",
   });
 }
 
@@ -43,37 +43,58 @@ const attrs = computed(() => {
 
 <template>
   <div class="CustomContent">
-    <LogicalLine :display="conditionArr?.length" v-model="condition.logicalChar">
+    <LogicalLine :display="!conditionArr?.length" v-model="condition.logicalChar">
       <div v-if="conditionArr" class="filter-option-content">
         <el-form :label-width="0" :inline="true" :model="condition.conditions">
-          <div v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="CustomBehavior-Main">
+          <div
+            v-for="(item, index) in conditionArr"
+            :key="`${item.field}-${index}`"
+            class="CustomBehavior-Main"
+          >
             <el-row class="filter-item-rule">
               &nbsp;<el-col :xs="24" :sm="6">
-                <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                  <el-select v-model="item.action">
-                    <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
-                      <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
-                    </el-option-group> </el-select>
+                <el-form-item
+                  :prop="'conditions.' + index + '.value'"
+                  style="width: 100%"
+                >
+                  <el-select placeholder="请选择" v-model="item.action">
+                    <el-option-group
+                      v-for="group in dict?.events"
+                      :key="group.eventType"
+                      :label="group.eventTypeName"
+                    >
+                      <el-option
+                        v-for="item in group.events"
+                        :key="item.id"
+                        :label="item.eventName"
+                        :value="item.eventCode"
+                      />
+                    </el-option-group>
+                  </el-select>
                 </el-form-item>
               </el-col>
 
               &nbsp;
-              <el-col :xs="24" :sm="3" >
-
-                <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="handleSubAdd(item)">
+              <el-col :xs="24" :sm="3">
+                <el-text
+                  type="primary"
+                  style="cursor: pointer; zoom: 0.8"
+                  @click="handleSubAdd(item)"
+                >
                   <el-icon size="12">
                     <Plus />
                   </el-icon>
                   添加筛选
-                </el-text> &nbsp;
+                </el-text>
+                &nbsp;
               </el-col>
               &nbsp;&nbsp;
-              <el-col :xs="24" :sm="1" style="
-                display: flex;
-                align-items: center;
-                flex-direction: row-reverse;
-              ">
-              <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
+              <el-col
+                :xs="24"
+                :sm="1"
+                style="display: flex; align-items: center; flex-direction: row-reverse"
+              >
+                <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
                   <el-icon size="14">
                     <Delete />
                   </el-icon>
@@ -85,14 +106,16 @@ const attrs = computed(() => {
                   </el-icon>
                 </el-text>
                 &nbsp;&nbsp;
-
               </el-col>
-
             </el-row>
 
-            <BehaviorSubContent title="并且满足" :index="index" :dict="dict" :condition="item" />
+            <BehaviorSubContent
+              title="并且满足"
+              :index="index"
+              :dict="dict"
+              :condition="item"
+            />
           </div>
-
         </el-form>
       </div>
     </LogicalLine>
