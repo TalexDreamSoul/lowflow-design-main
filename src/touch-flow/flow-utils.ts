@@ -211,3 +211,11 @@ export function flatConvert2Tree(nodes: any[]) {
 
   return root
 }
+
+export function commonValidate(rule: any, value: any, callback: any) {
+  if (!validatePropValue(value)) {
+    callback(new Error(rule.message))
+  }
+
+  callback()
+}

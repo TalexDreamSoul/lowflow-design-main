@@ -92,7 +92,7 @@ watch($props.item, (old, newVal) => {
 
 <style scoped lang="scss">
 .operator-container {
-  width: 100%;
+  // width: 100%;
   flex-shrink: 0;
 }
 </style>

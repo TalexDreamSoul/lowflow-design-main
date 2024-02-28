@@ -136,9 +136,11 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
       </template>
       <el-input v-else :disabled="readonly" v-model.number="item.fieldValue" />
     </template>
+
     <el-input :disabled="readonly" v-else-if="type === 'text'" v-model="item.fieldValue" />
+
     <template v-else-if="type === 'date'">
-      <el-select @change="onOpChange" :disabled="readonly" v-model="item.fieldOp"
+      <el-select style="width: 193px" @change="onOpChange" :disabled="readonly" v-model="item.timeCondition.timeType"
         v-if="item.fieldOp.indexOf('时间') !== -1">
         <el-option v-for="each in operatorOptions[item.fieldOp]" :key="each.value" :label="each.label"
           :value="each.label" />
@@ -150,18 +152,18 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
           start-placeholder="开始时间" end-placeholder="结束时间" />
       </template>
       <template v-else-if="item.fieldOp === '相对时间'">
-        <el-select @change="onTimePointChange" v-model="timePointSection">
+        <el-select style="width: 120px" @change="onTimePointChange" v-model="timePointSection">
           <template #prefix>
             <span class="pseudo-text">在</span>
           </template>
           <el-option value="past" label="过去" />
           <el-option value="future" label="未来" />
         </el-select>
-        <el-input placeholder="输入字符" v-model="item.timeCondition.startDay" >
+        <el-input style="width: 100px" placeholder="输入字符" v-model="item.timeCondition.startDay">
           <template #suffix>
             <span class="pseudo-text">天</span>
           </template>
-          </el-input>
+        </el-input>
         <template v-if="item.fieldOp === '相对当前时间点'">
           <el-select :disabled="readonly" @change="onTimeCastChange" v-model="timeCastSection">
             <el-option value="within" label="之内" />
@@ -169,18 +171,27 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
           </el-select>
         </template>
         <template v-else>
-          <el-input placeholder="输入字符" v-model="item.timeCondition.endDay" >
+          <el-input style="width: 150px" placeholder="输入字符" v-model="item.timeCondition.endDay">
             <template #prefix>
               <span class="pseudo-text">至未来</span>
             </template>
             <template #suffix>
               <span class="pseudo-text">天之内</span>
             </template>
-            </el-input>
+          </el-input>
         </template>
       </template>
     </template>
+
     <span v-else-if="type === 'boolean'" />
     <span v-else>NULL</span>
   </div>
 </template>
+
+<style lang="scss">
+.AttrRender {
+  height: max-content;
+
+  line-height: 30px;
+}
+</style>

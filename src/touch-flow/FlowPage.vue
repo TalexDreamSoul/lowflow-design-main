@@ -1,36 +1,36 @@
 <script setup lang="ts" name="FlowPage">
-import zhCn from "element-plus/dist/locale/zh-cn.mjs";
-
-import { watchEffect, onMounted, reactive, ref } from "vue";
-import FlowHeader from "../touch-flow/page/FlowHeader.vue";
-// import TouchFlow from "./TouchFlow.vue";
+import { watchEffect, reactive, ref } from "vue";
+import FlowHeader from "./header/FlowHeader.vue";
 import { randomStr } from "~/utils/common";
-import { touchSubmitReview, type Request, type MarketingTouchNodeEditDTO } from './touch-total'
+import { touchSubmitReview, type Request } from './touch-total'
 import XFlow from './x/XFlow.vue'
 import { ArrowRight } from "@element-plus/icons-vue";
 import { useRouter } from 'vue-router'
 import { ElMessage } from "element-plus";
 import { flatConvert2Tree } from './flow-utils'
-// import { createTemplatePopover } from '../utils/touch-templates'
+import { IFlowHeader } from "./flow-types";
 
-// createTemplatePopover('新建外呼模版', 'digital')
 const props = defineProps<{
   modelValue?: Request;
   readonly?: boolean;
 }>();
 
-const flowOptions = reactive({
+const flowOptions = reactive<{
+  basic: IFlowHeader
+} & { p: any }>({
   basic: {
     _expand: false,
     touchName: "",
     disturb: {
       enable: false,
       time: [],
-      action: 0,
+      action: "quit",
     },
     target: {
       enable: false,
-      list: [],
+      targetRuleContent: {
+        data: []
+      },
     },
   },
   p: {
@@ -54,11 +54,6 @@ watchEffect(() => {
     })
 
     flowOptions.p.children = flatConvert2Tree([...data.nodes!])
-
-    //   touchName: flowOptions.basic.touchName,
-    //   ...transformDisturb(flowOptions.basic.disturb),
-    // ...transformTarget(flowOptions.basic.target)
-
 
     console.log('FlowPage updated!', props.modelValue)
   }
@@ -84,16 +79,14 @@ function disturbReduction(data: Request) {
 function transformTarget(target: typeof flowOptions.basic.target) {
   return {
     containTarget: target.enable,
-    targetRuleContent: {
-      data: target.list
-    },
+    targetRuleContent: target.targetRuleContent,
   }
 }
 
 function targetReduction(data: Request) {
   return {
     enable: data.containTarget ?? props.readonly,
-    list: data.targetRuleContent?.data || [],
+    targetRuleContent: data.targetRuleContent || [],
   }
 }
 
@@ -203,33 +196,41 @@ const router = useRouter();
 
 const dialogVisible = ref()
 
-console.log("total flow", flowOptions);
+console.log("total flow", flowOptions);;
+
+const goBack = () => {
+  router.go(-1);
+};
 </script>
 
 <template>
   <div class="FlowPage">
-    <el-config-provider :locale="zhCn">
-      <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }"
-        class="FlowPage-Container">
-        <el-header>
-          <FlowHeader v-if="!modelValue || !readonly" @submit-review="() => submitReview()" :basic="flowOptions.basic" />
-          <div v-else class="FlowPage-ReadHeader">
-            流程基础设置
-            <el-button text type="primary" @click="dialogVisible = true">
-              查看设置<el-icon>
-                <ArrowRight />
-              </el-icon>
-            </el-button>
-          </div>
-        </el-header>
-        <el-main>
-          <el-scrollbar>
-            <XFlow :p="flowOptions.p as any" />
-            <!-- <TouchFlow :p="flowOptions.p" /> -->
-          </el-scrollbar>
-        </el-main>
-      </el-container>
-    </el-config-provider>
+    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
+      <el-header>
+        <FlowHeader v-if="!modelValue || !readonly" :basic="flowOptions.basic">
+          <template #controller>
+            <div>
+              <el-button @click="goBack" round>返回</el-button>
+              <el-button @click="submitReview('draft')" round>保存草稿</el-button>
+              <el-button round type="primary" @click="submitReview('')" primaryStyle>提交审核</el-button>
+            </div>
+          </template>
+        </FlowHeader>
+        <div v-else class="FlowPage-ReadHeader">
+          流程基础设置
+          <el-button text type="primary" @click="dialogVisible = true">
+            查看设置<el-icon>
+              <ArrowRight />
+            </el-icon>
+          </el-button>
+        </div>
+      </el-header>
+      <el-main>
+        <el-scrollbar>
+          <XFlow :p="flowOptions.p as any" />
+        </el-scrollbar>
+      </el-main>
+    </el-container>
   </div>
 
   <teleport to="body">
@@ -247,7 +248,8 @@ div.el-dialog {
 
 .FlowPage-Container.expand {
   .el-header {
-    height: auto;
+
+    height: 60%;
   }
 }
 
@@ -274,9 +276,15 @@ div.el-dialog {
     max-height: 500px;
     overflow: hidden;
     transition: height 0.25s;
-    background-color: var(--el-fill-color-lighter);
+    background-color: #FFFFFF;
     box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02),
       0 2px 4px rgba(0, 0, 0, 0.125);
+  }
+
+  .el-header {
+    position: absolute;
+
+    width: 100%;
   }
 
   .el-main {
@@ -301,6 +309,8 @@ div.el-dialog {
     background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
     background-size: 30px 30px;
+
+    transform: translateY(80px)
   }
 
   position: absolute;
