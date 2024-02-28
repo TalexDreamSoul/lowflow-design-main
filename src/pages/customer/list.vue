@@ -89,7 +89,7 @@
       </el-table>
       <el-pagination
         background
-        layout="prev, pager, next, sizes, jumper"
+        layout="prev, pager, next, jumper"
         :total="total"
         :page-sizes="[10]"
         @current-change="currentChange"
