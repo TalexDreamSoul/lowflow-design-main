@@ -169,7 +169,7 @@ export function validatePropValue(val: any, configuration?: {
   // 判断是否是对象
   if (typeof val === "object") {
     return Object.getOwnPropertyNames(val).filter(key => {
-      const res = configuration?.ignores?.[key]?.validate?.(key, val[key]) ?? true
+      const res = configuration?.ignores?.[key]?.validate?.(key, val[key]) ?? false
 
       if (res) return false;
 
