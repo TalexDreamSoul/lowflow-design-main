@@ -173,7 +173,7 @@ function handleClick(e: Event) {
       const _val = parent._value
 
       const variable = variableMap.get(id!)!
-      
+
       console.log("condition", condition, variable)
 
       Object.assign(variable, {
@@ -265,38 +265,40 @@ watchEffect(() => {
 
   const _preFuncs: any[] = []
   let startsInd = -1
-  for (let variable of _variables) {
-    const { field, label } = variable
-    const text = field || label
-    const id = randomStr(6).replaceAll('.', '')
+  if (_variables) {
+    for (let variable of _variables) {
+      const { field, label } = variable
+      const text = field || label
+      const id = randomStr(6).replaceAll('.', '')
 
-    variableMap.set(id, {
-      field: id,
-      variables: [],
-      ...variable
-    })
-
-    const ind = __content.indexOf(text, startsInd + 1)
-    if (ind > -1) {
-      startsInd = ind
-
-      const condition = getCurrSelected({
-        field: text
+      variableMap.set(id, {
+        field: id,
+        variables: [],
+        ...variable
       })
 
-      _preFuncs.push(() => {
-        const e = document.getElementById(id)!
-        const valueDom: any = e.querySelector('.value')
+      const ind = __content.indexOf(text, startsInd + 1)
+      if (ind > -1) {
+        startsInd = ind
 
-        valueDom.parentElement._condition = condition
-        valueDom.parentElement._value = text
-        valueDom.setAttribute('value', text)
-        valueDom.innerText = condition.label
-      })
+        const condition = getCurrSelected({
+          field: text
+        })
 
-      const _ = `<button unselectable="on" data-id="${id}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">请选择</span>&nbsp;${settingSvg}</button>`
+        _preFuncs.push(() => {
+          const e = document.getElementById(id)!
+          const valueDom: any = e.querySelector('.value')
 
-      __content = __content.slice(0, ind) + _ + __content.slice(ind + text.length)
+          valueDom.parentElement._condition = condition
+          valueDom.parentElement._value = text
+          valueDom.setAttribute('value', text)
+          valueDom.innerText = condition.label
+        })
+
+        const _ = `<button unselectable="on" data-id="${id}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">请选择</span>&nbsp;${settingSvg}</button>`
+
+        __content = __content.slice(0, ind) + _ + __content.slice(ind + text.length)
+      }
     }
   }
 
@@ -334,11 +336,11 @@ function handleAdd() {
 
     console.log("s el", el)
 
-  el.scrollIntoView({
-    behavior: "smooth",
-    block: "center",
-    inline: "center"
-  })
+    el.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+      inline: "center"
+    })
   })
 }
 </script>
@@ -368,28 +370,28 @@ function handleAdd() {
 
     <div class="DialogWrapper">
       <div :id="`variable-item-${index}`" v-for="(item, index) in dialogVariable?.variables" class="TouchFloatingContent">
-      <Operator style="width: 100px" :item="item" :attrs="attrs.attrs" v-model="item.fieldOp" />
-      <AttrRender style="width: 300px" :item="item" :attrs="attrs.attrs" />
-      <div class="ContentSingleLine">
-        <span>赋值为</span>
-        <el-input v-model="item.fieldValue" />
+        <Operator style="width: 100px" :item="item" :attrs="attrs.attrs" v-model="item.fieldOp" />
+        <AttrRender style="width: 300px" :item="item" :attrs="attrs.attrs" />
+        <div class="ContentSingleLine">
+          <span>赋值为</span>
+          <el-input v-model="item.fieldValue" />
+        </div>
+        <el-icon @click="dialogVariable?.variables?.splice(index, 1)"
+          :style="!index ? `opacity: 0;pointer-events: none` : ''">
+          <Delete />
+        </el-icon>
       </div>
-      <el-icon @click="dialogVariable?.variables?.splice(index, 1)" :style="!index ? `opacity: 0;pointer-events: none` : ''">
-        <Delete />
-      </el-icon>
-    </div>
 
-    <el-text @click="handleAdd" type="primary"
-      style="cursor: pointer">
-      <el-icon size="14">
-        <CirclePlusFilled />
-      </el-icon>
-      筛选条件
-    </el-text>
+      <el-text @click="handleAdd" type="primary" style="cursor: pointer">
+        <el-icon size="14">
+          <CirclePlusFilled />
+        </el-icon>
+        筛选条件
+      </el-text>
 
-    <div style="margin-top: 1rem" class="ContentSingleLine">
-      该属性空值或无法匹配时显示 <el-input style="width: 30%" placeholder="属性值" v-model="dialogVariable!.defaultValue" />
-    </div>
+      <div style="margin-top: 1rem" class="ContentSingleLine">
+        该属性空值或无法匹配时显示 <el-input style="width: 30%" placeholder="属性值" v-model="dialogVariable!.defaultValue" />
+      </div>
     </div>
   </el-dialog>
 </template>
@@ -426,6 +428,7 @@ function handleAdd() {
       cursor: pointer;
     }
   }
+
   position: relative;
   margin: .5rem 0 1rem;
   display: flex;

@@ -4,6 +4,7 @@ import { ref, onMounted } from "vue";
 import { Close } from "@element-plus/icons-vue";
 import { addMaterial, updateMaterial } from "~/api/index";
 import { useVModel } from "@vueuse/core";
+import { validatePropValue } from '~/touch-flow/flow-utils'
 
 const props = defineProps<{
   title: string;
@@ -21,6 +22,28 @@ async function saveData() {
   const { saveData: save } = compRef.value;
 
   const res = save();
+
+  // 获得 res 中每一个key 判断是否为空
+  console.log(res)
+  if (!validatePropValue(res, {
+    ignores: {
+      variables: {
+        validate(key, val) {
+          if ( Array.isArray(val) ) {
+            return [ ...val ].filter(item => !item.fieldName && !item.labelName)?.length < 1
+          }
+
+          console.log("___", key, val)
+            return true
+        },
+      }
+    }
+  }) ) {
+
+    return ElMessage.error({
+      message: "请完整填写信息！",
+    });
+  }
 
   let _res: any;
   // 根据传入类型判断

@@ -17,27 +17,27 @@ const origin = {
 
   content: "",
   sceneCode: "",
-  variables: [
-    {
-      field: "",
-      fieldName: "",
-      labelId: 0,
-      labelName: "",
-      labelValue: [],
-      type: "",
-      variables: [
-        {
-          compareValue: "",
-          defaultValue: "",
-          fieldOp: "",
-          fieldValue: "",
-        },
-      ],
-    },
-  ],
+  // variables: [
+    // {
+    //   field: "",
+    //   fieldName: "",
+    //   labelId: 0,
+    //   labelName: "",
+    //   labelValue: [],
+    //   type: "",
+    //   variables: [
+    //     {
+    //       compareValue: "",
+    //       defaultValue: "",
+    //       fieldOp: "",
+    //       fieldValue: "",
+    //     },
+    //   ],
+    // },
+  // ],
 };
 
-const data = reactive<typeof origin>(origin);
+const data = reactive<typeof origin & { variables?: Array<any> }>(origin);
 watchEffect(() => {
   const _data = props.data?.value || props.data
   if (!_data) return
@@ -47,12 +47,14 @@ watchEffect(() => {
 });
 function saveData() {
   const { id, name, content, sceneCode, variables } = data;
-  const smsTemplate = {
+  const smsTemplate: any = {
     content,
     sceneCode,
-    variables,
     type: "sms",
   };
+
+  if ( variables?.length ) 
+    smsTemplate.variables = variables
 
   return props.type == 'details' || props.type == 'update' ? {
     id,

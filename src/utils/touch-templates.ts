@@ -30,7 +30,7 @@ export function createTemplatePopover(
   title: string,
   template: keyof typeof templates,
   data?: Ref<any>,
-  type?: String,
+  type?: "update" | "details" | undefined,
   readonly?: boolean
 ) {
   const comp = templates[template];
