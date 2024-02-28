@@ -105,7 +105,7 @@ const expand = ref(false);
   }
 
   &-Main {
-    padding: 0.5rem;
+    // padding: 0.5rem;
   }
 
   margin: 0.8rem 0;

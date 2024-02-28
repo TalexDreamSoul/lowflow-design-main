@@ -72,7 +72,7 @@ const goBack = () => {
 
   &-Content {
     position: relative;
-    padding: 12px 0;
+    // padding: 12px 0;
     line-height: 2.5rem;
 
     background-color: var(--el-fill-color);

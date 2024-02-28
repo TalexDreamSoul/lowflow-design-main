@@ -180,13 +180,16 @@ const blackList = ref()
             </div>
             <div class="filter-option-content">
               <BehaviorGroup @add="attrsAdd" title="客户属性满足">
-                <CustomAttr :readonly="readonly" :custom="customRuleContent.customAttr" />
+                <CustomAttr v-if="customRuleContent.customAttr?.conditions?.length" :readonly="readonly"
+                  :custom="customRuleContent.customAttr" />
               </BehaviorGroup>
               <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-                <CustomBehavior :readonly="readonly" :custom="customRuleContent.customEvent" />
+                <CustomBehavior v-if="customRuleContent.customEvent?.conditions?.length" :readonly="readonly"
+                  :custom="customRuleContent.customEvent" />
               </BehaviorGroup>
               <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-                <CustomBehaviorSequence :readonly="readonly" :custom="customRuleContent.eventSequence" />
+                <CustomBehaviorSequence v-if="customRuleContent.eventSequence?.conditions?.length" :readonly="readonly"
+                  :custom="customRuleContent.eventSequence" />
               </BehaviorGroup>
             </div>
           </div>
@@ -279,7 +282,8 @@ const blackList = ref()
           <el-option value="yes" label="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select placeholder="请选择" v-model="customRuleContent.blackList.data" multiple v-if="customRuleContent?.blackList?._enable === 'yes'" style="min-width: 100px">
+        <el-select placeholder="请选择" v-model="customRuleContent.blackList.data" multiple
+          v-if="customRuleContent?.blackList?._enable === 'yes'" style="min-width: 100px">
           <el-option v-for="item in blackList.records" :value="item.blacklistName" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
             <!-- <p>{{ item.blacklistDesc }}</p> -->
