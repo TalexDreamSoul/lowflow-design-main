@@ -2,7 +2,7 @@
 import { ref, reactive, provide, inject, computed, watchEffect } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import SubDiversionAttr from './start/SubDiversionAttr.vue';
-import CustomersAttr from "../p/start/CustomersAttr.vue";
+import CustomersAttr from "./attr/CustomersAttr.vue";
 import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
 import Strategist from "./start/Strategist.vue";
