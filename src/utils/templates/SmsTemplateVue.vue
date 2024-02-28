@@ -38,7 +38,7 @@ const origin = {
 
 const data = reactive<typeof origin>(origin);
 watchEffect(() => {
-  const _data = props.data || props.data?.value
+  const _data = props.data?.value || props.data
   if (!_data) return
 
   console.log("sms", data, origin, _data);

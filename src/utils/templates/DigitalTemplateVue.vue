@@ -48,7 +48,7 @@ const origin = {
 const data = reactive<typeof origin>(origin);
 
 watchEffect(() => {
-  const _data = props.data || props.data?.value;
+  const _data = props.data?.value || props.data
   if (!_data) return;
 
   Object.assign(data, _data);

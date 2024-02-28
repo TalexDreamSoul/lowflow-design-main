@@ -122,7 +122,7 @@ const detailsData = async (row: any) => {
 const addData = async () => {
   value.value = "";
   let name = "新建" + materialTypeName.value + "模版";
-  createTemplatePopover(name, route.params.type, value);
+  createTemplatePopover(name, route.params.type);
 };
 const updateData = async (row: any) => {
   ElMessageBox.alert(

@@ -452,11 +452,11 @@ const contentLength = computed(() => {
 
     position: absolute;
 
-    top: .2rem;
-    left: .2rem;
+    top: .4rem;
+    left: .6rem;
 
-    height: calc(100% - .4rem);
-    width: calc(100% - .4rem);
+    height: calc(100% - .8rem);
+    width: calc(100% - .12rem);
 
     line-height: 20px;
     border-radius: 4px;
