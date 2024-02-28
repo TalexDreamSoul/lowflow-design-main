@@ -1,41 +1,43 @@
 <script setup lang="ts">
 import BasicDisturb from "./BasicDisturb.vue";
 import BasicTarget from "./BasicTarget.vue";
-import { IFlowHeader, IHeaderDisturb } from '../flow-types'
+import { IFlowHeader, IHeaderDisturb } from "../flow-types";
 import HeaderToggleButton from "./HeaderToggleButton.vue";
 import HeaderTitle from "./HeaderTitle.vue";
-import { ref, reactive } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
+import { ref, reactive } from "vue";
+import type { FormInstance, FormRules } from "element-plus";
 import { commonValidate } from "../flow-utils";
 
 interface IHeaderProp {
-  basic: IFlowHeader
+  basic: IFlowHeader;
   /**
    * 当需要展示数据时，启用此属性让所有选项强制启用（避免下面有展示但是开关显示没有打开）
    */
-  expandAll?: boolean
-  readonly?: boolean
+  expandAll?: boolean;
+  readonly?: boolean;
 }
 
 defineProps<IHeaderProp>();
 
-const headerRef = ref<FormInstance>()
+const headerRef = ref<FormInstance>();
 
 const rules = reactive<FormRules<IFlowHeader>>({
-  touchName: [{ validator: commonValidate, message: "请输入触达名称", trigger: 'blur' }],
-})
+  touchName: [{ validator: commonValidate, message: "请输入触达名称", trigger: "blur" }],
+});
 
 defineExpose({
-  validateHeaderForm: () => {
-
-  }
-})
+  validateHeaderForm: () => {},
+});
 </script>
 
 <template>
-  <div class="TouchFlow-Header">
+  <div v-if="!expandAll" class="TouchFlow-Header">
     <div class="TouchFlow-Header-Start">
-      <HeaderTitle v-model="basic.touchName" :expand="basic._expand" :readonly="readonly" />
+      <HeaderTitle
+        v-model="basic.touchName"
+        :expand="basic._expand"
+        :readonly="readonly"
+      />
     </div>
     <slot name="controller" />
   </div>
@@ -43,14 +45,40 @@ defineExpose({
   <div :class="{ expandAll }" class="TouchFlow-Addon">
     <el-divider />
     <el-scrollbar>
-      <el-form ref="headerRef" :rules="rules" status-icon :model="basic" label-position="top">
-        <el-form-item style="--t-delay: .1s" prop="touchName" class="transition-item" :class="{ expand: basic._expand }" label="策略流程名称">
-          <el-input :show-word-limit="true" v-model="basic.touchName" maxlength="18" :disabled="readonly" placeholder="策略流程名称"
-            :style="{ width: '400px', height: '40px' }" />
+      <el-form
+        ref="headerRef"
+        :rules="rules"
+        status-icon
+        :model="basic"
+        label-position="top"
+      >
+        <el-form-item
+          style="--t-delay: 0.1s"
+          prop="touchName"
+          class="transition-item"
+          :class="{ expand: basic._expand || expandAll }"
+          label="策略流程名称"
+        >
+          <el-input
+            :show-word-limit="true"
+            v-model="basic.touchName"
+            maxlength="18"
+            :disabled="readonly"
+            placeholder="策略流程名称"
+            :style="{ width: '400px', height: '40px' }"
+          />
         </el-form-item>
         <br />
-        <BasicDisturb :expand="basic._expand" :readonly="readonly" :disturb="basic.disturb" />
-        <BasicTarget :expand="basic._expand" :readonly="readonly" :target="basic.target" />
+        <BasicDisturb
+          :expand="basic._expand || expandAll!"
+          :readonly="readonly"
+          :disturb="basic.disturb"
+        />
+        <BasicTarget
+          :expand="basic._expand || expandAll!"
+          :readonly="readonly"
+          :target="basic.target"
+        />
       </el-form>
     </el-scrollbar>
   </div>
@@ -61,7 +89,7 @@ defineExpose({
 <style lang="scss">
 .Basic-Block {
   &-Head {
-    >span {
+    > span {
       margin-right: 0.5rem;
       line-height: 30px;
       color: #666;
@@ -78,7 +106,7 @@ defineExpose({
     // padding: 12px 0;
     line-height: 2.5rem;
 
-    background-color: #F7F8FB;
+    background-color: #f7f8fb;
     font-size: 14px;
     color: #333;
 
@@ -116,7 +144,7 @@ defineExpose({
     pointer-events: none;
     transform: translateX(-5%);
 
-    transition: cubic-bezier(0.215, 0.610, 0.355, 1) .5s;
+    transition: cubic-bezier(0.215, 0.61, 0.355, 1) 0.5s;
   }
 
   .transition-item.expand {
@@ -125,7 +153,7 @@ defineExpose({
 
     transform: translateX(0%);
 
-    transition: cubic-bezier(0.215, 0.610, 0.355, 1) .5s var(--t-delay, 0s);
+    transition: cubic-bezier(0.215, 0.61, 0.355, 1) 0.5s var(--t-delay, 0s);
   }
 
   label.el-form-item__label {
@@ -134,6 +162,9 @@ defineExpose({
   }
 
   &.expandAll {
+    .el-scrollbar {
+      height: calc(100% - 0px);
+    }
     height: 400px;
   }
 

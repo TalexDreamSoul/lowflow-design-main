@@ -37,7 +37,7 @@ const disturbOptions = [
     </template>
     <div class="Basic-Block-Content" v-show="disturb.enable">
       <el-form-item>
-        <el-date-picker :disabled="readonly" v-model="disturb.time" type="daterange" unlink-panels range-separator="-"
+        <el-date-picker :style="readonly ? `width: 200px` : ''" :disabled="readonly" v-model="disturb.time" type="daterange" unlink-panels range-separator="-"
           start-placeholder="开始日期" end-placeholder="结束日期" />
       </el-form-item>
       <el-text>为客户勿扰时间段，勿扰时间内触达则</el-text>

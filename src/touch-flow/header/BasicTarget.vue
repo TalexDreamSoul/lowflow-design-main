@@ -12,7 +12,7 @@ interface ITargetProp {
 
 const props = defineProps<ITargetProp>();
 
-if ( !props.target.targetRuleContent.data.length ) {
+if ( !props.readonly && !props.target.targetRuleContent.data.length ) {
   addTarget()
 }
 

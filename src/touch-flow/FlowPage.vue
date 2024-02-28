@@ -234,7 +234,7 @@ const goBack = () => {
   </div>
 
   <teleport to="body">
-    <el-dialog v-model="dialogVisible">
+    <el-dialog title="流程基础设置" v-model="dialogVisible">
       <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview"
         :basic="flowOptions.basic" />
     </el-dialog>
