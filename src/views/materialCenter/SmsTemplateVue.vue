@@ -81,6 +81,8 @@ const fetchDataApi = async () => {
   console.log(`output->tabledata`, tableData.value);
 };
 const delData = async (row: any) => {
+  console.log('row', row)
+
   ElMessageBox.alert("删除后将无法恢复", "确认删除", {
     showCancelButton: true,
     roundButton: true,

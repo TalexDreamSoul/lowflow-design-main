@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue'
+import { computed, watch } from 'vue'
 import { useVModel } from '@vueuse/core'
 
 const $props = defineProps<{
@@ -71,11 +71,16 @@ const data = useVModel($props, 'modelValue', $emits)
 const type = computed(() => $props.selected ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected) : ($props.attrs.filter((attr: any) => attr.field === $props.item.field)?.[0]?.fieldType ?? "none"));
 const operators = computed(() => operatorOptions.filter((item) => item.type.includes(type.value)))
 
-watchEffect(() => {
+// watchEffect(() => {
+//   $_ignored: $props
+
+//   data.value = ''
+// })
+watch(() => $props.item, () => {
   $_ignored: $props
 
   data.value = ''
-})
+}, { deep: true })
 </script>
 
 <template>

@@ -2,12 +2,13 @@
 import { useVModel } from '@vueuse/core'
 import { ref, h, reactive, watchEffect, nextTick, computed } from 'vue'
 import { createFloatingPanel } from './floating-panel'
-import { getDictAnalyzedTree } from '../../flow-utils'
+import { getDictAnalyzedTree, validatePropValue } from '../../flow-utils'
 import TouchSelectWrapper from './TouchSelectable.vue'
 import Operator from '../../page/Operator.vue'
 import AttrRender from '~/touch-flow/page/AttrRender.vue'
 import { randomStr } from '~/utils/common'
 import { CirclePlusFilled, Plus } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 
 /**
  * VariableTemplateDTO
@@ -98,7 +99,7 @@ const attrs = ref();
     // doInit = true
 
     const { modelValue, content, variables } = props
-    console.log("tsc props", props, model.value, modelValue[content])
+    console.log("tsc props", props, model.value, modelValue[content], modelValue[variables])
 
     let __content: string /* = _content.value */ = modelValue[content]
     const _variables = modelValue[variables]
@@ -107,14 +108,32 @@ const attrs = ref();
     let startsInd = -1
     if (_variables) {
       for (let variable of _variables) {
-        const { index, field, label } = variable
-        const text = field || label
+        const { index, field, fieldName, label, type } = variable
+        const text = fieldName || label
         const id = `$$${index}$$`
 
+        let __subVariables = [...variable.variables];
+
+        console.log("variables__", __subVariables)
+
+        __subVariables = __subVariables.map((item: any) => item = {
+          compareValue: item.compareValue,
+          defaultValue: item.defaultValue,
+          fieldOp: item.fieldOp,
+          fieldValue: item.fieldValue,
+          field,
+          type
+        })
+
+        console.log("__subVariables", __subVariables)
+
         variableMap.set(index, {
-          field: index,
-          variables: [],
-          ...variable
+          field,
+          fieldName: variable.fieldName,
+          index,
+          labelId: variable.labelId,
+          type,
+          variables: __subVariables
         })
 
         const ind = __content.indexOf(id, startsInd + 1)
@@ -145,7 +164,7 @@ const attrs = ref();
     nextTick(() => {
       const el = contentRef.value!
 
-      console.log(">", el, __content, _preFuncs)
+      // console.log(">", el, __content, _preFuncs)
 
       if (el.innerHTML === __content) return
 
@@ -239,6 +258,8 @@ function handleClick(e: Event) {
     const { id } = parent!.dataset
 
     const condition = parent._condition
+    // console.log("click svg condition", condition, variableMap)
+    // console.dir(parent)
     if (condition) {
       const _val = parent._value
 
@@ -256,8 +277,8 @@ function handleClick(e: Event) {
         type: condition.labelValue?.data ? '2' : '1',
       })
 
-      variableModal.value = true
       dialogVariable.value = variable
+      variableModal.value = true
 
       return
     }
@@ -325,6 +346,50 @@ function handleBlur() {
 }
 
 function variableDone() {
+  const data = dialogVariable.value!
+
+  if (!validatePropValue(data.defaultValue)) {
+    return ElMessage({
+      type: 'error',
+      message: '空值或无法匹配值不能为空'
+    })
+  }
+
+  const { variables } = data
+  if (!variables || variables.length < 1) {
+    return ElMessage({
+      type: 'error',
+      message: '筛选条件必须至少存在一条'
+    })
+  }
+
+  let ind = 0
+  for (let variable of variables) {
+
+    if (!(validatePropValue(variable.fieldOp)) /* || !(validatePropValue(variable.fieldValue)) */ || !(validatePropValue(variable.compareValue))) {
+
+      const id = `variable-item-${ind}`
+
+      nextTick(() => {
+        const el = document.getElementById(id)!
+
+        el.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center"
+        })
+      })
+
+      return ElMessage({
+        type: 'error',
+        message: '筛选条件必须填写完整'
+      })
+    }
+
+    ind++;
+
+  }
+
   variableModal.value = false
 
   model.value[props.variables] = [...variableMap.values()]
@@ -382,7 +447,8 @@ function handleAdd() {
     <div class="DialogWrapper">
       <div :id="`variable-item-${index}`" v-for="(item, index) in dialogVariable?.variables" class="TouchFloatingContent">
         <Operator style="width: 100px" :item="item" :attrs="attrs.attrs" v-model="item.fieldOp" />
-        <AttrRender v-if="item.fieldOp?.indexOf('空') === -1 && item.fieldOp?.indexOf('等于') === -1" style="width: 300px" :item="item" :attrs="attrs.attrs" />
+        <AttrRender v-if="item.fieldOp?.indexOf('空') === -1 && item.fieldOp?.indexOf('等于') === -1" style="width: 300px"
+          :item="item" :attrs="attrs.attrs" />
         <div class="ContentSingleLine">
           <span>赋值为</span>
           <el-input v-model="item.compareValue" />
