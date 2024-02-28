@@ -81,11 +81,12 @@ const fetchDataApi = async () => {
   console.log(`output->tabledata`, tableData.value);
 };
 const delData = async (row: any) => {
-  console.log('row', row)
-
-  ElMessageBox.alert(
-    (row.useCount ? `当前有${ row.usedCount }个策略流程正在使用该模版（流程${row.usedTouchNames?.join('、')}正在使用），确认后该修改内容会更新至正在使用的流程中` : "删除后将无法恢复，是否确认删除？")
-  , "确认删除", {
+  console.log("row", row);
+  let describeMessage = "删除后将无法恢复，是否确认删除？";
+  if (row.usedCount > 0) {
+    describeMessage = `当前有${row.usedCount}个策略流程正在使用该模版（流程${row.usedTouchNames}正在使用）`;
+  }
+  ElMessageBox.alert(describeMessage, "确认删除", {
     showCancelButton: true,
     roundButton: true,
     cancelButtonClass: "pd-button",
@@ -137,22 +138,29 @@ const addData = async () => {
   createTemplatePopover(name, route.params.type).then(fetchDataApi);
 };
 const updateData = (row: any) => {
-  ElMessageBox.alert(
-    `当前有${row.usedCount}个策略流程正在使用该模版（流程LC1、LC5、LC22正在使用），确认后该修改内容会更新至正在使用的流程中`,
-    "确认编辑",
-    {
-      showCancelButton: true,
-      roundButton: true,
-      cancelButtonClass: "pd-button",
-      confirmButtonClass: "pd-button",
-      customClass: "delete-modal",
-    }
-  ).then(async () => {
+  if (row.usedCount > 0) {
+    ElMessageBox.alert(
+      `当前有${row.usedCount}个策略流程正在使用该模版（流程${row.usedTouchNames}正在使用），确认后该修改内容会更新至正在使用的流程中`,
+      "确认编辑",
+      {
+        showCancelButton: true,
+        roundButton: true,
+        cancelButtonClass: "pd-button",
+        confirmButtonClass: "pd-button",
+        customClass: "delete-modal",
+      }
+    ).then(async () => {
+      const { content, ...rest } = row;
+      value.value = { ...content, ...rest };
+      let name = "编辑" + materialTypeName.value + "模版";
+      createTemplatePopover(name, route.params.type, value, "update");
+    });
+  } else {
     const { content, ...rest } = row;
     value.value = { ...content, ...rest };
     let name = "编辑" + materialTypeName.value + "模版";
     createTemplatePopover(name, route.params.type, value, "update");
-  });
+  }
 };
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);
@@ -163,14 +171,12 @@ const handleCurrentChange = (val: number) => {
 </script>
 
 <template>
-  <CustomEventComponent :title="route.params.type == 'all' ? `${materialTypeName}` : `${materialTypeName}模版列表`"
-    :tableData="tableData" :total="total">
+  <CustomEventComponent :title="route.params.type == 'all' ? `${materialTypeName}` : `${materialTypeName}模版列表`" :tableData="tableData" :total="total">
     <template #search>
       <div class="search">
         <el-form :inline="true">
           <el-form-item label="创建时间：">
-            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期"
-              end-placeholder="结束日期" :size="size" @change="(val) => {
+            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="(val) => {
                 formInline.beginTime = dayjs(val[0]).format('YYYY-MM-DD');
                 formInline.endTime = dayjs(val[1]).format('YYYY-MM-DD'); val[0];
               }" />
@@ -187,8 +193,7 @@ const handleCurrentChange = (val: number) => {
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width:200px"
-              :suffix-icon="Search" />
+            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width:200px" :suffix-icon="Search" />
           </el-form-item>
 
         </el-form>
@@ -204,8 +209,7 @@ const handleCurrentChange = (val: number) => {
         <el-table-column label="模版名称" prop="name" />
         <el-table-column label="状态">
           <template #default="scope">
-            <el-tag class="mx-1"
-              :type="statusLabels[scope.row.status].type ? statusLabels[scope.row.status].type : 'info'" effect="light">
+            <el-tag class="mx-1" :type="statusLabels[scope.row.status].type ? statusLabels[scope.row.status].type : 'info'" effect="light">
               {{ statusLabels[scope.row.status].Text }}
             </el-tag>
           </template>
@@ -221,10 +225,8 @@ const handleCurrentChange = (val: number) => {
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-space wrap v-if="route.params.type != 'all'">
-              <el-link type="primary" v-if="scope.row.status == 'offline'"
-                @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
-              <el-link type="primary" v-if="scope.row.status !== 'offline'"
-                @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
+              <el-link type="primary" v-if="scope.row.status == 'offline'" @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
+              <el-link type="primary" v-if="scope.row.status !== 'offline'" @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
               <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
               <el-link type="primary" @click="delData(scope.row)">删除</el-link>
 
@@ -237,9 +239,7 @@ const handleCurrentChange = (val: number) => {
       </el-table>
     </template>
     <template #pagination>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background
-        layout="prev, pager, next, sizes, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total"
-        @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, sizes, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </template>
   </CustomEventComponent>
 </template>
