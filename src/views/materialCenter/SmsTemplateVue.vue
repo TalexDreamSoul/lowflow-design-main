@@ -81,25 +81,23 @@ const fetchDataApi = async () => {
   console.log(`output->tabledata`, tableData.value);
 };
 const delData = async (row: any) => {
-  let res = await setDeleteMaterial({
-    id: row.id,
-    status: row.status,
-    type: formInline.type,
+  ElMessageBox.alert("删除后将无法恢复", "确认删除", {
+    showCancelButton: true,
+    roundButton: true,
+    cancelButtonClass: "pd-button",
+    confirmButtonClass: "pd-button",
+    customClass: "delete-modal",
+  }).then(async () => {
+    let res = await setDeleteMaterial({
+      id: row.id,
+      status: row.status,
+      type: formInline.type,
+    });
+    if (res?.code == 0) {
+      fetchDataApi();
+      ElMessage.success(res.message);
+    }
   });
-  if (res?.code == 0) {
-    fetchDataApi();
-    ElMessage.success(res.message);
-  }
-
-  // ElMessageBox.alert("删除后将无法恢复", "确认删除", {
-  //   showCancelButton: true,
-  //   roundButton: true,
-  //   cancelButtonClass: "pd-button",
-  //   confirmButtonClass: "pd-button",
-  //   customClass: "delete-modal",
-  // }).then(async () => {
-
-  // });
 };
 // 上线素材
 const updateMaterialStatusData = async (row: any, status: String) => {
@@ -224,16 +222,7 @@ const handleCurrentChange = (val: number) => {
               <el-link type="primary" v-if="scope.row.status !== 'offline'"
                 @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
               <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
-              <el-popover trigger="click" :visible="scope.delete" placement="top" :width="160">
-                <p>是否确认删除？</p>
-                <div @click="scope.delete = false" style="text-align: right; margin: 0">
-                  <!-- <el-button size="small" @click="scope.delete = false" text >取消</el-button> -->
-                  <el-button size="small" type="primary" @click="delData(scope.row)" primaryStyle>确认</el-button>
-                </div>
-                <template #reference>
-                  <el-link type="primary" @click="scope.delete = true">删除</el-link>
-                </template>
-              </el-popover>
+              <el-link type="primary" @click="delData(scope.row)">删除</el-link>
 
               <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
             </el-space>
