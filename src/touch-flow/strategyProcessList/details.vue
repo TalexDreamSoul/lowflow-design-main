@@ -33,6 +33,7 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 
 const StatisticsList = ref({
+  accumulateCompleteCount: 0,
   accumulateEntryCount: 0,
   accumulateTouchCount: 0,
   completeTargetCount1: 0,
@@ -158,19 +159,19 @@ onMounted(() => {
           <div class="countCardblock" style="    margin-top: 24px;">
             <div class="showCount">
               <div class="topcount">
-                {{ StatisticsList.running !== undefined ? StatisticsList.running : '--' }}%
+                {{ StatisticsList.accumulateCompleteCount !== null  ? `${StatisticsList.accumulateCompleteCount}%` : '-' }}
               </div>
               <div class="undercount">总目标完成率</div>
             </div>
             <div class="showCount">
               <div class="topcount">
-                {{ StatisticsList.accumulateEntryCount !== undefined ? StatisticsList.accumulateEntryCount : '--' }}
+                {{ StatisticsList.accumulateEntryCount !== null ? StatisticsList.accumulateEntryCount : '-' }}
               </div>
               <div class="undercount">累计进入</div>
             </div>
             <div class="showCount">
               <div class="topcount">
-                {{ StatisticsList.accumulateTouchCount !== undefined ? StatisticsList.accumulateTouchCount : '--' }}
+                {{ StatisticsList.accumulateTouchCount !== null ? StatisticsList.accumulateTouchCount : '-' }}
               </div>
               <div class="undercount">累计触达</div>
             </div>
@@ -178,12 +179,12 @@ onMounted(() => {
           <div class="countCardblock">
             <div class="showCount">
               <div class="topcount">
-                {{ StatisticsList.done !== undefined ? StatisticsList.completeTargetCount1 : '--' }}</div>
+                {{ StatisticsList.completeTargetCount1 !== null ? StatisticsList.completeTargetCount1 : '-' }}</div>
               <div class="undercount">完成目标{{ num2character(1) }}</div>
             </div>
             <div class="showCount">
               <div class="topcount">
-                {{ StatisticsList.draft !== undefined ? StatisticsList.completeTargetCount2 : '--' }}
+                {{ StatisticsList.completeTargetCount2 !== null ? StatisticsList.completeTargetCount2 : '-' }}
               </div>
               <div class="undercount">完成目标{{ num2character(2) }}</div>
             </div>

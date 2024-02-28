@@ -20,6 +20,12 @@
             :suffix-icon="Search"
           />
         </el-form-item>
+
+        <el-form-item>
+          <el-button  @click="handleModaldrawer(DrawerType.Serach)"
+            >高级筛选</el-button
+          >
+        </el-form-item>
       </el-form>
       <el-button
         round
@@ -282,6 +288,8 @@
         </span>
       </template>
     </el-dialog>
+    <DrawerSerach ref="drawerRef" :getData="(filtering: any) => getData({...pageParams, pageNum},filtering)" />
+
   </div>
 </template>
 <script lang="ts" setup>
@@ -297,11 +305,13 @@ import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
+import DrawerSerach from './drawerSerach.vue';
 
 enum DrawerType {
   Create = "create",
   Detail = "detail",
   Edit = "edit",
+  
 }
 
 const ModalTitleMap: any = {
@@ -315,6 +325,15 @@ const pageParams = reactive({
   source: "",
 });
 
+const filtering = reactive({
+	"customAttr": {
+	},
+	"customEvent": {
+	},
+	"eventSequence": {
+	},
+	"logicalChar": "",
+});
 const defaultFormValues = {
   name: "",
   phone: "",
@@ -351,9 +370,10 @@ const currentChange = (value: number) => {
   getData({ ...pageParams, pageNum: value });
 };
 
-const getData = async (params: any) => {
+const getData = async (params: any,filtering?: any) => {
   try {
     let res = await API.qryCustomList({
+      ...filtering,
       ...params,
       pageNum: 1,
       pageSize: 10,
@@ -378,7 +398,11 @@ const handleModal = async (type: string, values?: any) => {
   modalType.value = type;
   modalVisible.value = true;
 };
+const drawerRef = ref<any>();
 
+const handleModaldrawer = async (type: string, values?: any) => {
+  drawerRef.value?.handleModal?.(type, values)
+};
 const handleDelete = (values: any) => {
   ElMessageBox.alert("删除后将无法恢复", "确认删除", {
     showCancelButton: true,
@@ -410,6 +434,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     console.error(error);
   }
 };
+
 </script>
 
 <style lang="scss">
