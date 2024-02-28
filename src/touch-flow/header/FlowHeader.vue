@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import BasicDisturb from "./BasicDisturb.vue";
 import BasicTarget from "./BasicTarget.vue";
-import { IFlowHeader, IHeaderDisturb } from "../flow-types";
+import { IFlowHeader } from "../flow-types";
 import HeaderToggleButton from "./HeaderToggleButton.vue";
 import HeaderTitle from "./HeaderTitle.vue";
 import { ref, reactive } from "vue";
