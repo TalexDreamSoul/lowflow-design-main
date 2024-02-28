@@ -29,12 +29,15 @@ async function saveData() {
     ignores: {
       variables: {
         validate(key, val) {
-          if ( Array.isArray(val) ) {
+          if (Array.isArray(val)) {
+            console.log('array validate', key, val)
+            
+            if ( !val.length ) return true;
+            else if ( !validatePropValue(val[0]?.field) ) return true;
             return [ ...val ].filter(item => !item.fieldName && !item.labelName)?.length < 1
           }
 
-          console.log("___", key, val)
-            return true
+          return true
         },
       }
     }

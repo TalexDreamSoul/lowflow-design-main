@@ -90,6 +90,76 @@ const attrs = ref();
 
   attrs.value = _attrs.data
   dictTree.value = tree
+
+  watchEffect(() => {
+    if (doInit || !props.modelValue?.id) return
+    console.groupCollapsed('TouchSettingContents')
+
+    // doInit = true
+
+    const { modelValue, content, variables } = props
+    console.log("tsc props", props, model.value, modelValue[content])
+
+    let __content: string /* = _content.value */ = modelValue[content]
+    const _variables = modelValue[variables]
+
+    const _preFuncs: any[] = []
+    let startsInd = -1
+    if (_variables) {
+      for (let variable of _variables) {
+        const { index, field, label } = variable
+        const text = field || label
+        const id = `$$${index}$$`
+
+        variableMap.set(index, {
+          field: index,
+          variables: [],
+          ...variable
+        })
+
+        const ind = __content.indexOf(id, startsInd + 1)
+        if (ind > -1) {
+          startsInd = ind
+
+          const condition = getCurrSelected({
+            field: text
+          })
+
+          _preFuncs.push(() => {
+            const e = document.getElementById(index)!
+            const valueDom: any = e.querySelector('.value')
+
+            valueDom.parentElement._condition = condition
+            valueDom.parentElement._value = text
+            valueDom.setAttribute('value', text)
+            valueDom.innerText = condition.label
+          })
+
+          const _ = `<button unselectable="on" id="${index}" data-id="${index}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">${text}</span>&nbsp;${settingSvg}</button>`
+
+          __content = __content.slice(0, ind) + _ + __content.slice(ind + id.length)
+        }
+      }
+    }
+
+    nextTick(() => {
+      const el = contentRef.value!
+
+      console.log(">", el, __content, _preFuncs)
+
+      if (el.innerHTML === __content) return
+
+      el.innerHTML = __content
+
+      // _content.value = __content
+
+      nextTick(() => _preFuncs.forEach(a => a()))
+    })
+
+    console.log("touch", __content, _variables)
+
+    console.groupEnd()
+  })
 })()
 
 const settingSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L21.5 6.5V17.5L12 23L2.5 17.5V6.5L12 1ZM12 3.311L4.5 7.65311V16.3469L12 20.689L19.5 16.3469V7.65311L12 3.311ZM12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12C16 14.2091 14.2091 16 12 16ZM12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"></path></svg>`
@@ -106,7 +176,7 @@ function addLabel() {
 
 // ${first.label}
 
-  /* const el =  */insertNode(`<button unselectable="on" data-id="${id}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">请选择</span>&nbsp;${settingSvg}</button>`)
+  /* const el =  */insertNode(`<button unselectable="on" id="${id}" data-id="${id}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">请选择</span>&nbsp;${settingSvg}</button>`)
 
   // console.log('insert', el)
 }
@@ -208,6 +278,18 @@ function handleClick(e: Event) {
                 field: val
               })
 
+              const { id } = e!.dataset
+              const variable = variableMap.get(id!)!
+              Object.assign(variable, {
+                index: id,
+                field: condition.field,
+                fieldName: condition.fieldName,
+                labelId: condition.id,
+                labelName: condition.labelName,
+                labelValue: val,
+                type: condition.labelValue?.data ? '2' : '1',
+              })
+
               const valueDom = e.querySelector('.value')
 
               e._condition = condition
@@ -251,90 +333,19 @@ function variableDone() {
 // watch(() => _content.value, handleBlur)
 
 let doInit = false
-watchEffect(() => {
-  if (doInit || !props.modelValue?.id) return
-  console.groupCollapsed('TouchSettingContents')
-
-  // doInit = true
-
-  const { modelValue, content, variables } = props
-  console.log("tsc props", props, model.value, modelValue[content])
-
-  let __content: string /* = _content.value */ = modelValue[content]
-  const _variables = modelValue[variables]
-
-  const _preFuncs: any[] = []
-  let startsInd = -1
-  if (_variables) {
-    for (let variable of _variables) {
-      const { field, label } = variable
-      const text = field || label
-      const id = randomStr(6).replaceAll('.', '')
-
-      variableMap.set(id, {
-        field: id,
-        variables: [],
-        ...variable
-      })
-
-      const ind = __content.indexOf(text, startsInd + 1)
-      if (ind > -1) {
-        startsInd = ind
-
-        const condition = getCurrSelected({
-          field: text
-        })
-
-        _preFuncs.push(() => {
-          const e = document.getElementById(id)!
-          const valueDom: any = e.querySelector('.value')
-
-          valueDom.parentElement._condition = condition
-          valueDom.parentElement._value = text
-          valueDom.setAttribute('value', text)
-          valueDom.innerText = condition.label
-        })
-
-        const _ = `<button unselectable="on" data-id="${id}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">请选择</span>&nbsp;${settingSvg}</button>`
-
-        __content = __content.slice(0, ind) + _ + __content.slice(ind + text.length)
-      }
-    }
-  }
-
-  nextTick(() => {
-    const el = contentRef.value!
-
-    console.log(">", el, __content, _preFuncs)
-
-    if (el.innerHTML === __content) return
-
-    el.innerHTML = __content
-
-    // _content.value = __content
-
-    nextTick(() => _preFuncs.forEach(a => a()))
-  })
-
-  console.log("touch", __content, _variables)
-
-  console.groupEnd()
-})
 
 const contentLength = computed(() => {
   return model.value[props.content]?.length ?? 0
 })
 
 function handleAdd() {
-  dialogVariable.value!.variables?.push({ fieldOp: '', compareValue: '', fieldValue: '', defaultValue: '', field: dialogVariable.value.field, type: dialogVariable.value.type })
+  dialogVariable.value!.variables?.push({ fieldOp: '', compareValue: '', fieldValue: '', defaultValue: '', field: dialogVariable.value!.field, type: dialogVariable.value!.type })
 
   const index = dialogVariable.value!.variables?.length
-  const id = `variable-item-${index - 1}`
+  const id = `variable-item-${index! - 1}`
 
   nextTick(() => {
-    const el = document.getElementById(id)
-
-    console.log("s el", el)
+    const el = document.getElementById(id)!
 
     el.scrollIntoView({
       behavior: "smooth",
@@ -371,10 +382,10 @@ function handleAdd() {
     <div class="DialogWrapper">
       <div :id="`variable-item-${index}`" v-for="(item, index) in dialogVariable?.variables" class="TouchFloatingContent">
         <Operator style="width: 100px" :item="item" :attrs="attrs.attrs" v-model="item.fieldOp" />
-        <AttrRender style="width: 300px" :item="item" :attrs="attrs.attrs" />
+        <AttrRender v-if="item.fieldOp?.indexOf('空') === -1 && item.fieldOp?.indexOf('等于') === -1" style="width: 300px" :item="item" :attrs="attrs.attrs" />
         <div class="ContentSingleLine">
           <span>赋值为</span>
-          <el-input v-model="item.fieldValue" />
+          <el-input v-model="item.compareValue" />
         </div>
         <el-icon @click="dialogVariable?.variables?.splice(index, 1)"
           :style="!index ? `opacity: 0;pointer-events: none` : ''">
@@ -488,6 +499,8 @@ function handleAdd() {
     padding: 2px 8px;
     color: #409eff;
     border-radius: 15px;
+
+    align-items: center;
 
     border: none;
     cursor: pointer;

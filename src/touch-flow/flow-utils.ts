@@ -145,10 +145,9 @@ export function validatePropValue(val: any, configuration?: {
     return Object.getOwnPropertyNames(val).filter(key => {
       const res = configuration?.ignores?.[key]?.validate?.(key, val[key]) ?? true
 
-      if ( key !== undefined )
-      console.log("key", key, res)
+      if (res) return false;
 
-      return !res || !validatePropValue(val[key], configuration)
+      return !validatePropValue(val[key], configuration)
     })?.length < 1;
   }
 
