@@ -373,12 +373,16 @@ function sequenceAdd() {
 .BehaviorGroupPlus.animation {
   &.display {
     opacity: 1;
-    pointer-events: auto;
+    pointer-events: auto;;
+
+    height: unset;
 
     margin-bottom: 0;
   }
   opacity: 0;
   pointer-events: none;
+
+  height: 36px;
 
   margin-bottom: -50px;
 }
