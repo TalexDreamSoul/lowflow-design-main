@@ -19,7 +19,7 @@ const origin = {
   id: "",
   name: "",
   status: "",
-  type: "digital",
+  type: "message",
   digitalTemplateDetails: []
 
   // digitalTemplateDetails: {
@@ -64,7 +64,6 @@ function saveData() {
   const { id, name } = data;
   const digitalTemplate: any = {
     digitalTemplateDetails: list.value,
-    type: "digital",
   };
 
   // if ( digitalTemplateDetails?.length ) {
@@ -164,8 +163,8 @@ function onDownload(item: any, index: number) {
            sendMessage 发送消息
            addfriends 添加好友
    -->
-        <el-option label="发送消息" value="sendMessage" />
-        <el-option label="添加好友" value="addfriends" />
+        <el-option label="发送消息" value="message" />
+        <el-option label="添加好友" value="addFriend" />
       </el-select>
     </el-form-item>
 
