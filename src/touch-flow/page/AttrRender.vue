@@ -17,7 +17,7 @@ const emits = defineEmits<{
 const timeInterval = ref<any>()
 const timePointSection = ref<'past' | 'future'>('past')
 const timeCastSection = ref<'within' | 'without'>('within')
-const type = computed(() => props.selected ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)(props.selected) : (props.attrs.filter((attr: any) => attr.field === props.item.field)?.[0]?.fieldType ?? "none"));
+const type = computed(() => props.selected ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)(props.selected) : (props.attrs.filter((attr: any) => (attr.field === props.item.field) || (attr.labelName === props.item.labelName))?.[0]?.fieldType ?? "none"));
 
 watchEffect(() => {
   if (!timeInterval.value) {
@@ -38,7 +38,7 @@ watchEffect(() => {
 watchEffect(() => {
   // const { operator } = props.item
 
-  props.item.fieldOp = ''
+  // props.item.fieldOp = ''
 
   // if (operator.indexOf('时间') === -1) return
 

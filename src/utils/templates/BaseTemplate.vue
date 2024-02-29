@@ -4,7 +4,7 @@ import { ref, onMounted } from "vue";
 import { Close } from "@element-plus/icons-vue";
 import { addMaterial, updateMaterial } from "~/api/index";
 import { useVModel } from "@vueuse/core";
-import { validatePropValue } from '~/touch-flow/flow-utils'
+import { validatePropValue } from "~/touch-flow/flow-utils";
 
 const props = defineProps<{
   title: string;
@@ -16,33 +16,45 @@ const props = defineProps<{
   readonly?: boolean;
 }>();
 
-const out = ref(false)
+const out = ref(false);
 const compRef = ref();
 async function saveData() {
   const { saveData: save } = compRef.value;
 
   const res = save();
 
-  // 获得 res 中每一个key 判断是否为空
-  console.log(res)
-  if (!validatePropValue(res, {
-    ignores: {
-      variables: {
-        validate(key, val) {
-          if (Array.isArray(val)) {
-            console.log('array validate', key, val)
-            
-            if ( !val.length ) return true;
-            else if ( !validatePropValue(val[0]?.field) ) return true;
-            return [ ...val ].filter(item => !item.fieldName && !item.labelName)?.length < 1
-          }
+  function _(key: string, val: any) {
+    if (Array.isArray(val)) {
+      console.log("array validate", key, val);
 
-          return true
-        },
-      }
+      if (!val.length) return true;
+      else if (!validatePropValue(val[0]?.field)) return true;
+      return [...val].filter((item) => !item.fieldName && !item.labelName)?.length < 1;
     }
-  }) ) {
 
+    return true;
+  }
+
+  // 获得 res 中每一个key 判断是否为空
+  console.log(res);
+  if (
+    !validatePropValue(res, {
+      ignores: {
+        variables: {
+          validate: _,
+        },
+        titleVariables: {
+          validate: _,
+        },
+        znxContentVariables: {
+          validate: _,
+        },
+        znxTitleVariables: {
+          validate: _,
+        },
+      },
+    })
+  ) {
     return ElMessage.error({
       message: "请完整填写信息！",
     });
@@ -78,9 +90,9 @@ async function saveData() {
 }
 
 function destroy() {
-  out.value = true
+  out.value = true;
 
-  setTimeout(props.close, 500)
+  setTimeout(props.close, 500);
 }
 </script>
 
@@ -89,18 +101,28 @@ function destroy() {
     <div class="BaseTemplate-Header">
       <p class="BaseTemplate-Title" v-text="title" />
 
-      <el-icon @click="destroy" style="cursor: pointer;font-size: 20px">
+      <el-icon @click="destroy" style="cursor: pointer; font-size: 20px">
         <Close />
       </el-icon>
     </div>
 
     <div class="BaseTemplate-Content" contenteditable="false">
-      <component :readonly="readonly" :data="data" ref="compRef" :is="comp" :type="type" />
+      <component
+        :readonly="readonly"
+        :data="data"
+        ref="compRef"
+        :is="comp"
+        :type="type"
+      />
     </div>
 
     <div class="BaseTemplate-Footer">
-      <el-button @click="destroy" round>{{ type !== 'details' ? '取消' : '返回' }}</el-button>
-      <el-button @click="saveData" round class="primaryStyle" v-if="type !== 'details'">保存</el-button>
+      <el-button @click="destroy" round>{{
+        type !== "details" ? "取消" : "返回"
+      }}</el-button>
+      <el-button @click="saveData" round class="primaryStyle" v-if="type !== 'details'"
+        >保存</el-button
+      >
     </div>
   </div>
 </template>

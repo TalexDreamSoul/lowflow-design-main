@@ -1,14 +1,15 @@
 <script setup lang="ts" name="ZnxTemplate">
-import TouchSettingContents from '~/touch-flow/p/touch/TouchSettingContents.vue';
-import { reactive, watchEffect } from 'vue'
+import TouchSettingContents from "~/touch-flow/p/touch/TouchSettingContents.vue";
+import { reactive, watchEffect } from "vue";
+import { title } from "process";
 
 const props = defineProps<{
   data: any;
+  type?: any;
   readonly?: boolean;
-}>()
+}>();
 
-const origin =
-{
+const origin = {
   id: "",
   name: "",
   status: "",
@@ -16,49 +17,31 @@ const origin =
   carouselId: "",
   listTitle: "",
   moduleId: "",
-  titleVariables: [
-    {
-      defaultValue: "",
-      field: "",
-      fieldName: "",
-      fieldValue: "",
-    }
-  ],
   znxContent: "",
-  znxContentVariables: [
-    {
-      defaultValue: "",
-      field: "",
-      fieldName: "",
-      fieldValue: ""
-    }
-  ],
   znxTitle: "",
-  znxTitleVariables: [
-    {
-      defaultValue: "",
-      field: "",
-      fieldName: "",
-      fieldValue: "",
-    }
-  ],
-}
+};
 
-const data = reactive<typeof origin>(origin)
+const data = reactive<
+  typeof origin & {
+    titleVariables?: Array<any>;
+    znxContentVariables?: Array<any>;
+    znxTitleVariables?: Array<any>;
+  }
+>(origin);
 
 watchEffect(() => {
-  const _data = props.data?.value || props.data
-  if (!_data) return
+  const _data = props.data?.value || props.data;
+  if (!_data) return;
 
   console.log("znx", data, origin, props);
 
-  Object.assign(data, _data)
-})
+  Object.assign(data, _data);
+});
 
 function saveData() {
-  const { id, name, carouselId, listTitle, moduleId, titleVariables, znxContent, znxTitle, znxTitleVariables } = data
-
-  const znxTemplate = {
+  const {
+    id,
+    name,
     carouselId,
     listTitle,
     moduleId,
@@ -66,19 +49,47 @@ function saveData() {
     znxContent,
     znxTitle,
     znxTitleVariables,
+    znxContentVariables,
+  } = data;
+
+  const znxTemplate: any = {
+    carouselId,
+    listTitle,
+    moduleId,
+    znxContent,
+    znxTitle,
     type: "znx",
+  };
+
+  if (titleVariables?.length) {
+    znxTemplate.titleVariables = titleVariables;
   }
 
-  return {
-    id,
-    name,
-    type: data.type,
-    status: 'available',
-    znxTemplate: znxTemplate,
+  if (znxTitleVariables?.length) {
+    znxTemplate.znxTitleVariables = znxTitleVariables;
   }
+
+  if (znxContentVariables?.length) {
+    znxTemplate.znxContentVariables = znxContentVariables;
+  }
+
+  return props.type == "details" || props.type == "update"
+    ? {
+        id,
+        name,
+        type: data.type,
+        status: "available",
+        znxTemplate: znxTemplate,
+      }
+    : {
+        name,
+        type: data.type,
+        status: "available",
+        znxTemplate: znxTemplate,
+      };
 }
 
-defineExpose({ saveData })
+defineExpose({ saveData });
 </script>
 
 <template>
@@ -93,15 +104,31 @@ defineExpose({ saveData })
       <el-input :disabled="readonly" v-model="data.carouselId"></el-input>
     </el-form-item>
     <el-form-item label="列表标题">
-      <TouchSettingContents :disabled="readonly" variables="titleVariables" content="listTitle" v-model="data"
-        buttonTitle="输入变量" />
+      <TouchSettingContents
+        :disabled="readonly"
+        variables="titleVariables"
+        content="listTitle"
+        v-model="data"
+        buttonTitle="输入变量"
+      />
     </el-form-item>
     <el-form-item label="站内信标题">
-      <TouchSettingContents :disabled="readonly" variables="znxTitleVariables" content="znxTitle" v-model="data"
-        buttonTitle="输入变量" />
+      <TouchSettingContents
+        :disabled="readonly"
+        variables="znxTitleVariables"
+        content="znxTitle"
+        v-model="data"
+        buttonTitle="输入变量"
+      />
     </el-form-item>
     <el-form-item label="站内信简介">
-      <TouchSettingContents :disabled="readonly" variables="znxContentVariables" content="znxContent" v-model="data"
-        buttonTitle="输入变量" />
+      <TouchSettingContents
+        :disabled="readonly"
+        variables="znxContentVariables"
+        content="znxContent"
+        v-model="data"
+        buttonTitle="输入变量"
+      />
     </el-form-item>
-</el-form></template>
+  </el-form>
+</template>

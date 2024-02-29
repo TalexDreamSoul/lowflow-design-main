@@ -179,6 +179,7 @@ export function validatePropValue(val: any, configuration?: {
 
   // 判断是否是函数
   if (typeof val === "function") {
+    // TODO 异步函数判断
     return validatePropValue(val(), configuration);
   }
 
