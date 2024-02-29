@@ -5,6 +5,7 @@ import { reactive, watchEffect } from "vue";
 
 const props = defineProps<{
   data: any;
+  type?: any;
   readonly?: boolean;
 }>()
 
@@ -15,50 +16,13 @@ const origin = {
   type: "appPush",
 
   content: "",
-  contentVariables: [
-    {
-      field: "",
-      fieldName: "",
-      labelId: 0,
-      labelName: "",
-      labelValue: [],
-      type: "",
-      variables: [
-        {
-          compareValue: "",
-          defaultValue: "",
-          fieldOp: "",
-          fieldValue: ""
-        }
-      ]
-    }
-  ],
   jumpAppType: "",
   pageLink: "",
   sceneCode: "",
   title: "",
-  titleVariables: [
-    {
-      field: "",
-      fieldName: "",
-      labelId: 0,
-      labelName: "",
-      labelValue: [],
-      type: "",
-      variables: [
-        {
-          compareValue: "",
-          defaultValue: "",
-          fieldOp: "",
-          fieldValue: ""
-        }
-      ]
-    }
-  ]
-
 }
 
-const data = reactive<typeof origin>(origin);
+const data = reactive<typeof origin & { contentVariables?: Array<any>, titleVariables?: Array<any> }>(origin);
 
 watchEffect(() => {
   const _data = props.data?.value || props.data
@@ -69,19 +33,30 @@ watchEffect(() => {
 
 function saveData() {
   const { id, name, content, contentVariables, jumpAppType, pageLink, sceneCode, title, titleVariables } = data;
-  const appPushTemplate = {
+  const appPushTemplate: any = {
     content,
-    contentVariables,
     jumpAppType,
     pageLink,
     sceneCode,
     title,
-    titleVariables,
     type: "appPush",
   };
 
-  return {
+  if ( contentVariables?.length ) {
+    appPushTemplate.contentVariables = contentVariables
+  }
+
+  if ( titleVariables?.length ) {
+    appPushTemplate.titleVariables = titleVariables
+  }
+
+  return props.type == "details" || props.type == "update" ? {
     id,
+    name,
+    type: data.type,
+    status: "available",
+    appPushTemplate,
+  } : {
     name,
     type: data.type,
     status: "available",
