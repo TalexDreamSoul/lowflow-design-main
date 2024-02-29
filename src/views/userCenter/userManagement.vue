@@ -107,6 +107,20 @@ const updateMaterialStatusData = async (row: any, status: String) => {
 };
 
 const detailsData = async (row: any) => {
+  ElMessageBox.alert(
+    `确认重制该用户密码为初始密码（初始密码为：12345678）`,
+    "确认编辑",
+    {
+      showCancelButton: true,
+      roundButton: true,
+      cancelButtonClass: "pd-button",
+      confirmButtonClass: "pd-button",
+      customClass: "delete-modal",
+    }
+  ).then(async () => {
+    value.value = row;
+    createTemplatePopover("编辑短信模版", "sms", value, "update");
+  });
   value.value = row;
   // createTemplatePopover('新建企微模版', 'digital')
   // createTemplatePopover('新建站内信模版', 'znx', value)
