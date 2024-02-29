@@ -43,16 +43,31 @@ function generateReflexlyProxy(arr: typeof list, index: number) {
     }
   })
 }
+
+function getBlockSectionName(item: any) {
+  if ( item.name ) return item.name
+
+  if ( item.type === 'image' ) {
+    const url = new URL(item.imgUrl)
+
+    // console.log("url", url)
+
+    return url.pathname.split('/').at(-1)
+  }
+
+  return "消息内容"
+}
 </script>
 
 <template>
   <div class="MicroEnterpriseDrag">
     <TransitionGroup ref="el" type="transition" tag="ul" :name="!drag ? 'fade' : undefined"
       class="flex flex-col gap-2 p-4 w-300px bg-gray-500/5 rounded">
-      <li class="drag-item" draggable="true" :data-ind="item.name" :key="item.id" v-for="(item, index) in thisList">
+      <!-- draggable="true" -->
+      <li class="drag-item" :data-ind="item.name" :key="item.id" v-for="(item, index) in thisList">
         <div class="drag-item-header">
-          <el-tooltip placement="top" :content="item.name">
-            <span class="text-2xl name-label">{{ item.name }}</span>
+          <el-tooltip placement="top" :content="getBlockSectionName(item)">
+            <span class="text-2xl name-label">{{ getBlockSectionName(item) }}</span>
           </el-tooltip>
 
           <div class="header-controller">
@@ -77,7 +92,7 @@ function generateReflexlyProxy(arr: typeof list, index: number) {
         </div>
         <div class="content-container">
           <img v-if="item.type === 'image'" :src="item.imgUrl" alt="AddonPic" />
-          <TouchSettingContents content="content" variables="variables" v-model="thisList![index]"
+          <TouchSettingContents content="content" variables="variables" :modelValue="item"
             v-else-if="item.type === 'content'" />
           <span v-else>{{ item }} ERROR</span>
         </div>

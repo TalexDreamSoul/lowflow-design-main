@@ -138,7 +138,7 @@ const pushTemplate = computed(() => {
   } else if (type === 'appPush') {
     val = 'APP消息模板：'
   } else if (type === 'digital') {
-    val = '数字员工模板：'
+    val = '企微模板：'
   } else if (type === 'outbound') {
     val = '智能外呼模板：'
   }

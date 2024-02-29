@@ -142,8 +142,8 @@ const platformOptions: Record<string, {
   },
   'digital': {
     button: {
-      label: "数字员工",
-      click: () => createTemplatePopover("新建数字员工模板", "digital", undefined, undefined, props.readonly).then(handleAddDone)
+      label: "企微",
+      click: () => createTemplatePopover("新建企微模板", "digital", undefined, undefined, props.readonly).then(handleAddDone)
     },
     propKey: "digitalTemplate",
     template: DigitalTemplateVue
@@ -179,7 +179,7 @@ defineExpose({ updateData  })
           style="width: 120px">
           <el-option value="sms" label="短信">手机短信</el-option>
           <el-option value="appPush" label="app消息">app消息</el-option>
-          <el-option value="digital" label="数字员工">数字员工</el-option>
+          <el-option value="digital" label="企微">企微</el-option>
           <el-option value="outbound" label="智能外呼">智能外呼</el-option>
           <el-option value="znx" label="站内信">站内信</el-option>
         </el-select>
