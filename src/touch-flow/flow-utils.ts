@@ -90,9 +90,9 @@ export function validateSingleCondition(condition: SearchCondition) {
   const { attr, label, type } = condition
 
   switch (type) {
-    case '1':
+    case 'event':
       return validateAttr(attr!);
-    case '2':
+    case 'label':
       return validateLabel(label!);
   }
 
@@ -270,7 +270,10 @@ export function validateAES(data: CustomSearchDTO) {
   return true;
 }
 
-export function validateCommonDays(num: number, unit: 'min' | 'hour' | 'day') {
+/**
+ * 验证时间单位总和是否超过30day
+ */
+export function validateCommonDays(num: number, unit: 'minute' | 'hour' | 'day') {
   let time = 30
   if (unit === 'min') return num <= time
   time *= 24
