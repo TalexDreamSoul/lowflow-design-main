@@ -153,13 +153,13 @@ const updateData = (row: any) => {
       const { content, ...rest } = row;
       value.value = { ...content, ...rest };
       let name = "编辑" + materialTypeName.value + "模版";
-      createTemplatePopover(name, route.params.type, value, "update");
+      createTemplatePopover(name, route.params.type, value, "update").then(fetchDataApi);
     });
   } else {
     const { content, ...rest } = row;
     value.value = { ...content, ...rest };
     let name = "编辑" + materialTypeName.value + "模版";
-    createTemplatePopover(name, route.params.type, value, "update");
+    createTemplatePopover(name, route.params.type, value, "update").then(fetchDataApi);
   }
 };
 const handleSizeChange = (val: any) => {
