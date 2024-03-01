@@ -136,16 +136,10 @@
       </div>
     </div>
     <div class="pd-drawer-footer">
-      <el-button
-        v-if="drawerType === DrawerType.Detail"
-        @click="modalVisible = false"
-        round
+      <el-button v-if="drawerType === DrawerType.Detail" @click="onCancel" round
         >返回</el-button
       >
-      <el-button
-        v-if="drawerType !== DrawerType.Detail"
-        @click="modalVisible = false"
-        round
+      <el-button v-if="drawerType !== DrawerType.Detail" @click="onCancel" round
         >取消</el-button
       >
       <el-button
@@ -182,8 +176,7 @@ enum DrawerType {
   Detail = "detail",
   Edit = "edit",
 }
-
-const eventContent = reactive({
+const defaultEventContent = {
   eventA: {
     customEvent: {
       conditions: [
@@ -208,9 +201,9 @@ const eventContent = reactive({
     },
     logicalChar: "或",
   },
-});
-
-const ruleContent = reactive<CustomSearchDTO>({
+};
+const eventContent = reactive({ ...defaultEventContent });
+const defaultRuleContent = {
   customAttr: {
     conditions: [
       {
@@ -245,7 +238,8 @@ const ruleContent = reactive<CustomSearchDTO>({
     logicalChar: "或",
   },
   logicalChar: "或",
-});
+};
+const ruleContent = reactive<CustomSearchDTO>({ ...defaultRuleContent });
 
 const DrawerTitleMap: any = {
   [DrawerType.Create]: "新建黑名单",
@@ -266,17 +260,25 @@ const modalVisible = ref(false);
 const drawerType = ref<string>(DrawerType.Create);
 const addType = ref(BlackAddTypeEnum.Manual);
 
+const onCancel = () => {
+  for (const key in formValues) {
+    formValues[key] = null;
+  }
+  Object.assign(eventContent, defaultEventContent);
+  Object.assign(ruleContent, defaultRuleContent);
+  modalVisible.value = false;
+};
+
 const handleModal = async (type: string, values?: any) => {
   addType.value = BlackAddTypeEnum.Manual;
   if (type === DrawerType.Create) {
-    for (const key in formValues) {
-      formValues[key] = null;
-    }
     Object.assign(formValues, defaultFormValues);
   } else {
     let res = await API.blacklistDetail({ id: values?.id });
     if (!checkStringEqual(res?.code, 0)) return;
     Object.assign(formValues, res?.data);
+    Object.assign(eventContent, res?.data?.eventContent);
+    Object.assign(ruleContent, res?.data?.ruleContent);
   }
   drawerType.value = type;
   modalVisible.value = true;
@@ -304,7 +306,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     }
     if (checkStringEqual(res?.code, 0)) {
       await props?.getData?.();
-      modalVisible.value = false;
+      onCancel();
     }
   } catch (error) {
     console.error(error);
