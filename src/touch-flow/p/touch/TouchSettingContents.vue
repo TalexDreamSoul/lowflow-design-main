@@ -50,7 +50,7 @@ function _displayRender() {
   const _variables = modelValue[variables];
 
   const _preFuncs: any[] = [];
-  let startsInd = -1;
+  let startsInd = 0;
   if (_variables) {
     for (let variable of _variables) {
       const { index, field, fieldName, label, type } = variable;
