@@ -116,7 +116,7 @@ const defaultFormValues = {
   describe: '',
   fieldType: '',
 };
-const formValues: any = reactive({ ...defaultFormValues });
+const formValues: any = reactive<any>({ ...defaultFormValues });
 
 const total = ref(0);
 const tableData = ref<any[]>([]);
@@ -164,6 +164,9 @@ const handleSetStatus = async (values: any) => {
 
 const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Create) {
+    for (const key in formValues) {
+      formValues[key] = null;
+    }
     Object.assign(formValues, defaultFormValues);
   } else {
     let { eventAttr, ...params } = values;
