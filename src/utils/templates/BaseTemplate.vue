@@ -52,6 +52,9 @@ async function saveData() {
         znxTitleVariables: {
           validate: _,
         },
+        contentVariables: {
+          validate: _,
+        },
       },
     })
   ) {
