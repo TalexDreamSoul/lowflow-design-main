@@ -43,7 +43,7 @@ watchEffect(() => {
   if (!_data) return;
 
   setTimeout(() => {
-    console.log("sms", data, origin, _data);
+    console.log("sms", data, _data);
     Object.assign(data, _data);
   });
 });

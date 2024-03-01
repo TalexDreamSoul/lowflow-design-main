@@ -78,7 +78,7 @@ function attrsAdd() {
   let attr = customRuleContent.customAttr!.conditions!;
 
   const obj = {
-    conditions: [{ conditions: [] }],
+    conditions: [],
     logicalChar: "或",
   };
 
@@ -89,22 +89,28 @@ function behaviorAdd() {
   let attr = customRuleContent.customEvent!.conditions!;
 
   const obj = {
-    conditions: [{ conditions: [] }],
+    conditions: [{ conditions: {} }],
     logicalChar: "或",
   };
 
-  attr.push(obj);
+  attr.push({
+    conditions: [obj],
+    logicalChar: "或",
+  });
 }
 
 function sequenceAdd() {
   let attr = customRuleContent.eventSequence!.conditions!;
 
   const obj = {
-    conditions: [{ conditions: [] }],
+    conditions: [{ conditions: [{}] }],
     logicalChar: "或",
   };
 
-  attr.push(obj);
+  attr.push({
+    conditions: [obj],
+    logicalChar: "或",
+  });
 }
 
 defineExpose({ handleModal });

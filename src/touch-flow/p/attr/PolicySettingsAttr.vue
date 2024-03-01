@@ -13,8 +13,10 @@ import EventBehavior from "../behavior/EventBehavior.vue";
 import { markRaw } from "vue";
 import CommonAttr from "../start/CommonAttr.vue";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
+import { validateCommonDays } from "~/touch-flow/flow-utils";
+import { MarketingTouchNodeEditDTO } from "~/touch-flow/touch-total";
 
-const origin = {
+const origin: MarketingTouchNodeEditDTO = {
   nodeId: "",
   nodeType: "strategy",
   nodeName: "",
@@ -30,7 +32,7 @@ const origin = {
   nodeDelayed: {
     delayedAction: "nothing",
     delayedTime: 0,
-    delayedUnit: "",
+    delayedUnit: "day",
     isDelayed: false,
   },
   customRuleContent: {
@@ -107,6 +109,19 @@ function saveData() {
     return false;
   }
 
+  if (
+    !validateCommonDays(
+      sizeForm.nodeDelayed.delayedTime,
+      sizeForm.nodeDelayed.delayedUnit
+    )
+  ) {
+    ElMessage.warning({
+      message: "延迟设置折算时间不可超过30天！",
+    });
+
+    return false;
+  }
+
   touchSettingsRef.value.updateData();
 
   const _: any = { nodeId: "", children: [] };
@@ -118,7 +133,7 @@ function saveData() {
   });
 
   // 修改 Modify Edit
-  if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {
+  if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId!.length) {
     Object.assign(props.p, _);
   } else {
     const arr = [...props.p.children];
@@ -373,7 +388,7 @@ function sequenceAdd() {
 .BehaviorGroupPlus.animation {
   &.display {
     opacity: 1;
-    pointer-events: auto;;
+    pointer-events: auto;
 
     height: unset;
 

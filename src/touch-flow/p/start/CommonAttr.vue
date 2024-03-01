@@ -30,10 +30,10 @@ defineExpose({
       <el-option :value="true" label="延迟">延迟</el-option>
       <el-option :value="false" label="立即">立即</el-option> </el-select>&nbsp;
     <template v-if="sizeForm.nodeDelayed.isDelayed">
-      <el-input v-model="sizeForm.nodeDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
+      <el-input-number :min="1" v-model="sizeForm.nodeDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
       <el-select placeholder="请选择" v-model="sizeForm.nodeDelayed.delayedUnit" style="width: 100px">
-        <el-option value="month" label="月份">分钟</el-option>
-        <el-option value="week" label="周">小时</el-option>
+        <el-option value="minute" label="分钟">分钟</el-option>
+        <el-option value="hour" label="小时">小时</el-option>
         <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
     </template>
     <el-text>针对符合该装置策略条件的客户</el-text>

@@ -28,22 +28,14 @@
           label="黑名单名称"
           prop="blacklistName"
         >
-          <el-input
-            v-model="formValues.blacklistName"
-            placeholder="请输入"
-            clearable
-          />
+          <el-input v-model="formValues.blacklistName" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择黑名单类型' }]"
           label="黑名单类型"
           prop="blacklistType"
         >
-          <el-select
-            v-model="formValues.blacklistType"
-            placeholder="请选择"
-            clearable
-          >
+          <el-select v-model="formValues.blacklistType" placeholder="请选择" clearable>
             <el-option
               v-for="item of BLACK_LIST_TYPE"
               :label="item.label"
@@ -70,17 +62,11 @@
         type="card"
         v-if="drawerType !== DrawerType.Detail"
         :class="
-          drawerType !== DrawerType.Detail
-            ? 'add-type-tabs'
-            : 'add-type-tabs detail'
+          drawerType !== DrawerType.Detail ? 'add-type-tabs' : 'add-type-tabs detail'
         "
       >
         <el-tab-pane label="手动添加" :name="BlackAddTypeEnum.Manual">
-          <HandAdd
-            ref="handAddRef"
-            :drawerType="drawerType"
-            :formValues="formValues"
-          />
+          <HandAdd ref="handAddRef" :drawerType="drawerType" :formValues="formValues" />
         </el-tab-pane>
         <el-tab-pane
           label="规则添加（每天11点更新数据）"
@@ -100,10 +86,7 @@
             </LogicalLine>
           </div>
         </el-tab-pane>
-        <el-tab-pane
-          label="客户事件添加"
-          :name="BlackAddTypeEnum.RealtimeEvent"
-        >
+        <el-tab-pane label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
           <section-group :trigger-rule-content="eventContent" />
         </el-tab-pane>
       </el-tabs>
@@ -127,11 +110,7 @@
           <section-group :trigger-rule-content="eventContent" />
         </div>
         <div class="item">
-          <HandAdd
-            ref="handAddRef"
-            :drawerType="drawerType"
-            :formValues="formValues"
-          />
+          <HandAdd ref="handAddRef" :drawerType="drawerType" :formValues="formValues" />
         </div>
       </div>
     </div>
@@ -317,14 +296,11 @@ function attrsAdd() {
   let attr = ruleContent.customAttr!.conditions!;
 
   const obj = {
-    conditions: [{ conditions: {} }],
+    conditions: [],
     logicalChar: "或",
   };
 
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
+  attr.push(obj);
 }
 
 function behaviorAdd() {

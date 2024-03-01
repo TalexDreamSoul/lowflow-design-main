@@ -276,7 +276,7 @@ export function validateAES(data: CustomSearchDTO) {
  */
 export function validateCommonDays(num: number, unit: 'minute' | 'hour' | 'day') {
   let time = 30
-  if (unit === 'minute') return num <= time
+  if (unit === 'day') return num <= time
   time *= 24
   if (unit === 'hour') return num <= time
   time *= 60

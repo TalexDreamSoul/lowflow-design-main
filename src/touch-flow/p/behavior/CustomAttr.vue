@@ -18,9 +18,8 @@ onMounted(async () => {
 });
 
 const refreshTree = () => {
-  [...props.custom.conditions].forEach(
-    (condition, index) =>
-      !condition.conditions.length && props.custom.conditions.splice(index, 1)
+  [...props.custom].forEach(
+    (condition, index) => !condition.conditions.length && props.custom.splice(index, 1)
   );
 };
 
@@ -30,12 +29,11 @@ provide("refreshTree", refreshTree);
 <template>
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
-      <div v-if="dict && custom.conditions?.length" class="Target-Block">
-        <LogicalLine :display="custom.conditions?.length" v-model="custom.LogicalLine">
+      <div v-if="dict && custom?.conditions?.length" class="Target-Block">
+        <LogicalLine :display="!custom?.conditions?.length" v-model="custom.LogicalLine">
           <div v-for="condition in custom.conditions" :key="condition.id">
-            <CustomContent v-if="condition?.conditions?.length" :condition="condition" :dict="dict">
-              <slot :condition="condition" :dict="dict" />
-            </CustomContent>
+            {{ condition }}
+            <CustomContent v-if="condition?.length" :condition="condition" :dict="dict" />
           </div>
         </LogicalLine>
       </div>

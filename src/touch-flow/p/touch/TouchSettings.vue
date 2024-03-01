@@ -65,6 +65,7 @@ const props = defineProps<{
 }>();
 
 const comp = ref<TemplateComponents>()
+const showComp = ref<boolean>(false)
 const touchOptions = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 
 async function refreshMaterialTemplate(clearStatus: boolean = true) {
@@ -101,6 +102,8 @@ function handleAddDone() {
 }
 
 function assignData(val: any) {
+  showComp.value = false
+
   let res;
 
   if ( val === -1 ) {
@@ -114,6 +117,8 @@ function assignData(val: any) {
   console.log('assign', res, touchOptions, curPlatform.value.propKey)
 
   Object.assign(touchOptions[curPlatform.value.propKey], { ...res.content , id: res.id, name: res.name, status: res.status })
+
+  setTimeout(() => showComp.value = true, 10)
 }
 
 const platformOptions: Record<string, {
@@ -199,7 +204,7 @@ defineExpose({ updateData  })
           新增{{ curPlatform.button.label }}模块版本</el-button>
       </el-form-item>
 
-      <template v-if="curPlatform">
+      <template v-if="curPlatform && showComp">
         <component ref="comp" :disabled="readonly" :is="curPlatform.template" :data="touchOptions[curPlatform.propKey]" />
       </template>
     </el-form>

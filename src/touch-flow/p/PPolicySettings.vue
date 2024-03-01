@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { ref, reactive, provide, computed, inject } from 'vue'
-import { Stamp, Plus, Delete } from '@element-plus/icons-vue'
-import PolicySettingsAttr from './attr/PolicySettingsAttr.vue'
+import { ref, reactive, provide, computed, inject } from "vue";
+import { Stamp, Plus, Delete } from "@element-plus/icons-vue";
+import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "./start/DeliverySettingsAttr.vue";
-import { delChild } from '../flow-utils'
-import Strategist from './start/Strategist.vue'
+import { delChild } from "../flow-utils";
+import Strategist from "./start/Strategist.vue";
 
-const getNode: Function = inject('getNode')!
-const { data: _data } = getNode()
-const __data = _data.$d(_data.id)
-const data = reactive(_data.data)
+const getNode: Function = inject("getNode")!;
+const { data: _data } = getNode();
+const __data = _data.$d(_data.id);
+const data = reactive(_data.data);
 
-const dialogVisible = ref(false)
+const dialogVisible = ref(false);
 const drawerOptions = reactive<any>({
   visible: false,
-  new: false
-})
+  new: false,
+});
 
 const doDiverse = computed(() => {
   const { children } = data;
 
   if (!children?.length) return false;
 
-  return [...children].find((child) => "strategy" === child?.nodeType) ?? true
+  return [...children].find((child) => "strategy" === child?.nodeType) ?? true;
 });
 
 const haveDiverse = computed(() => {
@@ -33,29 +33,32 @@ const haveDiverse = computed(() => {
   if (!children?.length) return false;
 
   return [...children].find((child) => "diversion" === child?.nodeType);
-})
+});
 
 const haveReveal = computed(() => {
   const { children } = data;
 
   if (!children?.length) return false;
 
-  return [...children].find((child) => "strategy" === child?.nodeType && child?.reveal) ?? false
-})
+  return (
+    [...children].find((child) => "strategy" === child?.nodeType && child?.reveal) ??
+    false
+  );
+});
 
 const customerConditioned = computed(() => {
-  const { customAttr, customEvent } = (data?.customRuleContent ?? {})
+  const { customAttr, customEvent } = data?.customRuleContent ?? {};
 
   const _obj = {
     customAttr: customAttr?.conditions?.length ?? 0,
     customEvent: customEvent?.conditions?.length ?? 0,
-  }
+  };
 
   return {
     display: _obj.customAttr && _obj.customEvent,
-    ..._obj
-  }
-})
+    ..._obj,
+  };
+});
 
 const _comps = [
   {
@@ -93,87 +96,86 @@ const _comps = [
 const comps = computed(() => _comps.filter((comp) => comp?.show?.() ?? true));
 
 function openCondition() {
-  const { nodeName } = data
+  const { nodeName } = data;
 
   openDrawer({
-    title: nodeName,
-    comp: nodeName === '兜底策略器' ? Strategist : PolicySettingsAttr
-  })
+    title: nodeName !== "兜底策略器" ? "选择策略器" : "兜底策略器",
+    comp: nodeName === "兜底策略器" ? Strategist : PolicySettingsAttr,
+  });
 }
 
 function openDrawer(comp: any, doNew: boolean = false) {
-  dialogVisible.value = false
+  dialogVisible.value = false;
 
-  Object.assign(drawerOptions, { ...comp, new: doNew })
+  Object.assign(drawerOptions, { ...comp, new: doNew });
 
-  if (!data.executeType)
-    data.executeType = "immediately";
+  if (!data.executeType) data.executeType = "immediately";
 
-  drawerOptions.visible = true
+  drawerOptions.visible = true;
 }
 
-let _saveFunc: (() => boolean) | null = null
+let _saveFunc: (() => boolean) | null = null;
 
 function handleSave() {
-  if (!_saveFunc || !_saveFunc()) return
+  if (!_saveFunc || !_saveFunc()) return;
 
-  Object.assign(__data, data)
+  Object.assign(__data, data);
 
   // window.$refreshLayout()
 
-  dialogVisible.value = false
-  drawerOptions.visible = false
+  dialogVisible.value = false;
+  drawerOptions.visible = false;
 }
 
-provide('save', (regFunc: () => boolean) => {
-  _saveFunc = regFunc
-})
+provide("save", (regFunc: () => boolean) => {
+  _saveFunc = regFunc;
+});
 
 const pushTemplate = computed(() => {
-
-  const { type } = data?.touchTemplateContent || {}
-  if (!type) return {
-    has: false,
-    val: ""
-  }
+  const { type } = data?.touchTemplateContent || {};
+  if (!type)
+    return {
+      has: false,
+      val: "",
+    };
 
   let val;
 
-  if (type === 'sms') {
-    val = '短信模板：'
-  } else if (type === 'znx') {
-    val = '站内信模板：'
-  } else if (type === 'appPush') {
-    val = 'APP消息模板：'
-  } else if (type === 'digital') {
-    val = '企微模板：'
-  } else if (type === 'outbound') {
-    val = '智能外呼模板：'
+  if (type === "sms") {
+    val = "短信模板：";
+  } else if (type === "znx") {
+    val = "站内信模板：";
+  } else if (type === "appPush") {
+    val = "APP消息模板：";
+  } else if (type === "digital") {
+    val = "企微模板：";
+  } else if (type === "outbound") {
+    val = "智能外呼模板：";
   }
 
   return {
     has: type?.length,
-    val
-  }
-})
+    val,
+  };
+});
 
 const delayedActionStr = computed(() => {
-  const action = data?.eventDelayed?.delayedAction
-  if (!action) return ''
+  const action = data?.eventDelayed?.delayedAction;
+  if (!action) return "";
 
-  if (action === 'touch') return '发送触达'
-  if (action === 'label') return '打上标签'
-  if (action === 'touchAndLabel') return '发送触达并打上标签'
-  return '不执行动作'
-})
+  if (action === "touch") return "发送触达";
+  if (action === "label") return "打上标签";
+  if (action === "touchAndLabel") return "发送触达并打上标签";
+  return "不执行动作";
+});
 
-const visible = ref(false)
+const visible = ref(false);
 function del(p: any) {
-  delChild(p)
+  delChild(p);
 
-  window.$refreshLayout()
+  window.$refreshLayout();
 
-  visible.value = false
+  visible.value = false;
 }
 </script>
 
@@ -199,31 +201,31 @@ function del(p: any) {
       </el-popover>
     </p>
     <div class="PBlock-Content theme" @click="openCondition">
-      <div v-if="data.nodeName !== '兜底策略器'" style="--theme-color: #90A0B8" class="PBlock-Section">
-        <p>
-          客户属性行为分流
-        </p>
-        <span v-if="data.diversionType === 'noDiversion'">
-          不分流
-        </span>
-        <span v-else-if="data.diversionType === 'attr'">
-          按属性用户行为分流
-        </span>
+      <div
+        v-if="data.nodeName !== '兜底策略器'"
+        style="--theme-color: #90a0b8"
+        class="PBlock-Section"
+      >
+        <p>客户属性行为分流</p>
+        <span v-if="data.diversionType === 'noDiversion'"> 不分流 </span>
+        <span v-else-if="data.diversionType === 'attr'"> 按属性用户行为分流 </span>
         <span v-else-if="data.diversionType === 'event'">按触发事件分流</span>
       </div>
-      <div style="--theme-color: #7DC757" class="PBlock-Section">
-        <p>
-          延迟设置
-        </p>
+      <div style="--theme-color: #7dc757" class="PBlock-Section">
+        <p>延迟设置</p>
         <span v-if="data.nodeDelayed?.isDelayed">
-          符合该策略器 {{ data.nodeDelayed.delayedTime }} {{ data.nodeDelayed.delayedUnit }} 后 {{ delayedActionStr }}
+          符合该策略器 {{ data.nodeDelayed.delayedTime }}
+          <span>
+            <span v-if="data.nodeDelayed.delayedUnit === 'day'"> 天 </span>
+            <span v-else-if="data.nodeDelayed.delayedUnit === 'hour'"> 小时 </span>
+            <span v-else-if="data.nodeDelayed.delayedUnit === 'minute'"> 分钟 </span>
+          </span>
+          后 {{ delayedActionStr }}
         </span>
         <span v-else>立即针对符合该策略器条件的客户发送触达</span>
       </div>
-      <div v-if="pushTemplate.has" style="--theme-color: #FFB858" class="PBlock-Section">
-        <p>
-          APP推送
-        </p>
+      <div v-if="pushTemplate.has" style="--theme-color: #ffb858" class="PBlock-Section">
+        <p>APP推送</p>
         <span>{{ pushTemplate.val }}</span>
       </div>
     </div>
@@ -231,7 +233,12 @@ function del(p: any) {
     <teleport to="body">
       <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div @click="openDrawer(item, true)" v-for="item in comps" class="PBlock-Section" :class="{ disabled: item.disabled?.value }">
+          <div
+            @click="openDrawer(item, true)"
+            v-for="item in comps"
+            class="PBlock-Section"
+            :class="{ disabled: item.disabled?.value }"
+          >
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
@@ -256,16 +263,24 @@ function del(p: any) {
     </teleport>
   </el-card>
 
-  <el-button @click="dialogVisible = true"
-    :class="{ display: data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate }" class="start-add"
-    type="primary" :icon="Plus" circle />
+  <el-button
+    @click="dialogVisible = true"
+    :class="{
+      display:
+        data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate,
+    }"
+    class="start-add"
+    type="primary"
+    :icon="Plus"
+    circle
+  />
 </template>
 
 <style lang="scss">
 .Dialog-Sections {
   display: flex;
 
-  gap: .5rem;
+  gap: 0.5rem;
 }
 
 .PBlock-Section {
@@ -281,8 +296,8 @@ function del(p: any) {
 }
 
 .PBlock-Section .el-icon {
-  top: .125rem;
+  top: 0.125rem;
 
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 </style>

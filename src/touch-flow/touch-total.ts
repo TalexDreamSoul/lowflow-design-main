@@ -1,3 +1,5 @@
+import { addMarketingTouch } from "~/api";
+
 /**
  * MarketingTouchEditDTO
  */
@@ -115,7 +117,7 @@ export type CustomSearchDTO = {
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
+  logicalChar: string;
   [property: string]: any;
 }
 
@@ -376,7 +378,7 @@ export type MarketingTouchNodeEditDTO = {
    * 是否包含目标
    */
   containTarget?: boolean;
-  customRuleContent?: CustomSearchDTO;
+  customRuleContent: CustomSearchDTO;
   diversionRuleContent?: JsonStructListDiversionRuleDTO;
   /**
    * 执行类型：noDiversion:不分流，event:按事件，attr：按属性, safeguard: 兜底
@@ -391,7 +393,7 @@ export type MarketingTouchNodeEditDTO = {
   labelContent?: LabelRuleDTO;
   nextNodeId?: JsonStructListString;
   nodeContent?: JsonStructObject;
-  nodeDelayed?: DelayedDTO;
+  nodeDelayed: DelayedDTO;
   /**
    * 节点ID
    */
@@ -463,11 +465,11 @@ export type DelayedDTO = {
   /**
    * 延时动作
    */
-  delayedAction?: string;
+  delayedAction: string;
   /**
    * 延时时间
    */
-  delayedTime?: number;
+  delayedTime: number;
   /**
    * 延时类别
    */
@@ -475,11 +477,11 @@ export type DelayedDTO = {
   /**
    * 延时单位
    */
-  delayedUnit?: string;
+  delayedUnit: "day" | "hour" | "minute";
   /**
    * 是否延时
    */
-  isDelayed?: boolean;
+  isDelayed: boolean;
   [property: string]: any;
 }
 
@@ -809,4 +811,8 @@ export type EventTriggerConditionDTO = {
   eventA?: CustomSearchDTO;
   eventB?: CustomSearchDTO;
   [property: string]: any;
+}
+
+export function touchSubmitReview(touchPageFlow: MarketingTouchNodeEditDTO) {
+  return addMarketingTouch(touchPageFlow)
 }
