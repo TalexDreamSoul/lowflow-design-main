@@ -38,7 +38,7 @@ const attrs = computed(() => {
 
   const flattedEvents = [...events].map((e: any) => e.events)
 
-  const targetEvent = flattedEvents.flat().find((item: any) => item.eventCode === props.condition.delayedAction)
+  const targetEvent = flattedEvents.flat().find((item: any) => item.eventCode === props.condition.eventCode)
 
   return targetEvent?.eventAttr?.attrs;
 });
