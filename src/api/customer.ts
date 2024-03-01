@@ -58,6 +58,9 @@ const customerAPI = {
   deleteCustomBlacklistRelation(data: any) {
     return request.post({ url: "/api/deleteCustomBlacklistRelation.do", data });
   },
+  updateCustom(data: any) {
+    return request.post({ url: "/api/updateCustom.do", data });
+  },
 };
 
 export default customerAPI;

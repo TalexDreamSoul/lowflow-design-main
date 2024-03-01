@@ -10,12 +10,10 @@
             range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            
           />
         </el-form-item>
         <el-form-item>
           <el-input
-            
             v-model="pageParams.blacklistName"
             placeholder="标签名称"
             clearable
@@ -23,7 +21,7 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-button  @click="handleModal(DrawerType.Create)"
+          <el-button @click="handleModal(DrawerType.Create)"
             >高级筛选</el-button
           >
         </el-form-item>
@@ -127,7 +125,10 @@
         @current-change="currentChange"
       />
     </div>
-    <PdDrawer ref="drawerRef" :getData="() => getData({...pageParams, pageNum})" />
+    <PdDrawer
+      ref="drawerRef"
+      :getData="() => getData({ ...pageParams, pageNum })"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -137,7 +138,7 @@ import API from "~/api/customer";
 import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
-import PdDrawer from './drawer.vue';
+import PdDrawer from "./drawer.vue";
 import "element-plus/theme-chalk/el-message-box.css";
 
 enum DrawerType {
@@ -161,18 +162,18 @@ const tableData = ref<any[]>([]);
 watch(
   pageParams,
   debounce(() => {
-    getData({...pageParams, pageNum: 1});
+    getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );
 
 onMounted(() => {
-  getData({...pageParams, pageNum: 1});
+  getData({ ...pageParams, pageNum: 1 });
 });
 
 const currentChange = (value: number) => {
   pageNum.value = value;
-  getData({...pageParams, pageNum: value});
-}
+  getData({ ...pageParams, pageNum: value });
+};
 
 const getData = async (params: any) => {
   try {
@@ -199,7 +200,7 @@ const getData = async (params: any) => {
 };
 
 const handleModal = async (type: string, values?: any) => {
-  drawerRef.value?.handleModal?.(type, values)
+  drawerRef.value?.handleModal?.(type, values);
 };
 
 const handleSetStatus = async (values: any) => {
@@ -211,7 +212,7 @@ const handleSetStatus = async (values: any) => {
         : ConfigStatus.Available,
   });
   if (checkStringEqual(res?.code, 0)) {
-    getData({...pageParams, pageNum: pageNum.value});
+    getData({ ...pageParams, pageNum: pageNum.value });
   }
 };
 
@@ -225,7 +226,7 @@ const handleDelete = (values: any) => {
   }).then(async () => {
     let res = await API.deleteBlacklist({ id: values.id });
     if (checkStringEqual(res?.code, 0)) {
-      getData({...pageParams, pageNum: pageNum.value});
+      getData({ ...pageParams, pageNum: pageNum.value });
     }
   });
 };
@@ -255,7 +256,7 @@ const handleDelete = (values: any) => {
     }
     .el-tabs__content {
       padding-top: 24px;
-      background-color: #F2F4F8;
+      background-color: #f2f4f8;
     }
     .el-tabs__item {
       border-bottom: 1px solid #e4e7ed;
@@ -269,12 +270,17 @@ const handleDelete = (values: any) => {
         color: #303133;
       }
     }
-    .el-table {
-      border-radius: 0;
+  }
+  .item {
+    padding: 24px 16px 0;
+    background-color: #f2f4f8;
+    margin-bottom: 16px;
+  }
+  .el-table {
+    border-radius: 0;
 
-      .el-table__cell {
-        background-color: rgba(242, 244, 248, 1);
-      }
+    .el-table__cell {
+      background-color: rgba(242, 244, 248, 1);
     }
   }
 }

@@ -149,7 +149,7 @@ const pageNum = ref(1);
 watch(
   pageParams,
   debounce(() => {
-    if ("id" in props.formValues) {
+    if ("id" in props.formValues && props.formValues?.id !== null) {
       getSelectData({ ...pageParams, pageNum: 1 });
     } else {
       getData({ ...pageParams, pageNum: 1 });
@@ -158,7 +158,7 @@ watch(
 );
 
 onMounted(() => {
-  if ("id" in props.formValues) {
+  if ("id" in props.formValues && props.formValues?.id !== null) {
     getSelectData({ ...pageParams, pageNum: 1 });
   } else {
     getData({ ...pageParams, pageNum: 1 });
@@ -167,7 +167,7 @@ onMounted(() => {
 
 const currentChange = (value: number) => {
   pageNum.value = value;
-  if ("id" in props.formValues) {
+  if ("id" in props.formValues && props.formValues?.id !== null) {
     getSelectData({ ...pageParams, pageNum: value });
   } else {
     getData({ ...pageParams, pageNum: value });

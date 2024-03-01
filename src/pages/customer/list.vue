@@ -22,7 +22,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button  @click="handleModaldrawer(DrawerType.Serach)"
+          <el-button @click="handleModaldrawer(DrawerType.Serach)"
             >高级筛选</el-button
           >
         </el-form-item>
@@ -75,6 +75,14 @@
         </el-table-column>
         <el-table-column label="操作" min-width="158">
           <template #default="scope">
+            <el-button
+              v-if="scope.row.source === peopleSourceEnum.Manual"
+              link
+              type="primary"
+              class="action-btn"
+              @click="handleModal(DrawerType.Edit, scope.row)"
+              >编辑</el-button
+            >
             <el-button
               :disabled="scope.row.source !== peopleSourceEnum.Manual"
               link
@@ -257,9 +265,9 @@
         <div class="black-list">
           <div class="title">所在黑名单</div>
           <div class="tag-content">
-            <el-tag v-for="item of (modalData?.blacklists || [])"
-              >{{ item.blacklistName }}</el-tag
-            >
+            <el-tag v-for="item of modalData?.blacklists || []">{{
+              item.blacklistName
+            }}</el-tag>
             <a v-if="!modalData?.blacklists">无</a>
           </div>
         </div>
@@ -288,8 +296,12 @@
         </span>
       </template>
     </el-dialog>
-    <DrawerSerach ref="drawerRef" :getData="(filtering: any) => getData({...pageParams, pageNum},filtering)" />
-
+    <DrawerSerach
+      ref="drawerRef"
+      :getData="
+        (filtering: any) => getData({ ...pageParams, pageNum }, filtering)
+      "
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -305,13 +317,12 @@ import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
-import DrawerSerach from './drawerSerach.vue';
+import DrawerSerach from "./drawerSerach.vue";
 
 enum DrawerType {
   Create = "create",
   Detail = "detail",
   Edit = "edit",
-  
 }
 
 const ModalTitleMap: any = {
@@ -326,13 +337,10 @@ const pageParams = reactive({
 });
 
 const filtering = reactive({
-	"customAttr": {
-	},
-	"customEvent": {
-	},
-	"eventSequence": {
-	},
-	"logicalChar": "",
+  customAttr: {},
+  customEvent: {},
+  eventSequence: {},
+  logicalChar: "",
 });
 const defaultFormValues = {
   name: "",
@@ -343,7 +351,7 @@ const defaultFormValues = {
   birthday: "",
   itFinCode: "",
 };
-let formValues = reactive({ ...defaultFormValues });
+let formValues = reactive<any>({ ...defaultFormValues });
 let modalData = reactive<any>({});
 
 const formRef = ref<FormInstance>();
@@ -370,7 +378,7 @@ const currentChange = (value: number) => {
   getData({ ...pageParams, pageNum: value });
 };
 
-const getData = async (params: any,filtering?: any) => {
+const getData = async (params: any, filtering?: any) => {
   try {
     let res = await API.qryCustomList({
       ...filtering,
@@ -389,7 +397,12 @@ const getData = async (params: any,filtering?: any) => {
 
 const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Create) {
+    for (const key in formValues) {
+      formValues[key] = null;
+    }
     Object.assign(formValues, defaultFormValues);
+  } else if (type === DrawerType.Edit) {
+    Object.assign(formValues, values);
   } else {
     let res = await API.customDetail({ id: values?.id });
     if (!checkStringEqual(res?.code, 0)) return;
@@ -401,7 +414,7 @@ const handleModal = async (type: string, values?: any) => {
 const drawerRef = ref<any>();
 
 const handleModaldrawer = async (type: string, values?: any) => {
-  drawerRef.value?.handleModal?.(type, values)
+  drawerRef.value?.handleModal?.(type, values);
 };
 const handleDelete = (values: any) => {
   ElMessageBox.alert("删除后将无法恢复", "确认删除", {
@@ -422,10 +435,16 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   try {
     await formEl.validate();
-    let res = await API.addCustom({
+    let res = { code: '0000' };
+    let values = {
       ...formValues,
       source: peopleSourceEnum.Manual,
-    });
+    };
+    if (modalType.value === DrawerType.Create) {
+      res = await API.addCustom(values);
+    } else {
+      res = await API.updateCustom(values)
+    }
     if (checkStringEqual(res?.code, 0)) {
       getData(pageParams);
       modalVisible.value = false;
@@ -434,7 +453,6 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     console.error(error);
   }
 };
-
 </script>
 
 <style lang="scss">

@@ -208,7 +208,7 @@ const defaultFormValues = {
   describe: "",
   attrTableData: [],
 };
-const formValues: any = reactive({ ...defaultFormValues });
+const formValues: any = reactive<any>({ ...defaultFormValues });
 
 const defaultAttrFormValues = {
   field: "",
@@ -290,6 +290,9 @@ const handleDelete = (values: any) => {
 
 const handleDrawer = (type: string, values?: any) => {
   if (type === DrawerType.Create) {
+    for (const key in formValues) {
+      formValues[key] = null;
+    }
     Object.assign(formValues, defaultFormValues);
   } else {
     let { eventAttr, ...params } = values;
