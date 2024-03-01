@@ -129,7 +129,7 @@ function destroy() {
 
 <style lang="scss">
 .primaryStyle {
-  &:hover {
+  &:hover, &:focus {
     color: #eee;
   }
 

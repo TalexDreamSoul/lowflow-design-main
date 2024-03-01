@@ -55,16 +55,12 @@ const list = ref<any>([]);
 const data = reactive<typeof origin>(origin);
 
 watchEffect(() => {
-  setTimeout(() => assignData('addFriend'), 200)
-
   const _data = props.data?.value || props.data;
-  if (!_data) return;
+  if (!_data) return setTimeout(() => assignData('addFriend'), 200);
 
-  console.log("digital template", data, _data);
   Object.assign(data, _data);
   list.value = data.digitalTemplate;
   data.digitalTemplate.type = _data?.content.type;
-  console.log("digital list", data.digitalTemplate.type);
 });
 
 function saveData() {
