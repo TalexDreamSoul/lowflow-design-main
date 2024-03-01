@@ -1,4 +1,4 @@
-import { toRefs } from "vue";
+import { customRef, toRefs } from "vue";
 import { dictFilterTree } from "~/api/index";
 import { AttrDTO, CustomSearchDTO, LabelDTO, SearchCondition } from "./touch-total";
 
@@ -276,9 +276,67 @@ export function validateAES(data: CustomSearchDTO) {
  */
 export function validateCommonDays(num: number, unit: 'minute' | 'hour' | 'day') {
   let time = 30
-  if (unit === 'min') return num <= time
+  if (unit === 'minute') return num <= time
   time *= 24
   if (unit === 'hour') return num <= time
   time *= 60
   return num <= time
+}
+
+export function throttleRef(value: any, time: number) {
+
+  let ts = 0
+
+  return customRef((track, trigger) => {
+    return {
+      get() {
+        track()
+        return value
+      },
+      set(newValue) {
+
+        if (new Date().getTime() - ts < time) return
+
+        value = newValue
+        track()
+        trigger()
+        ts = new Date().getTime()
+      }
+    }
+  })
+
+}
+
+export function debounceRef(value: any, delay: number) {
+
+  let timer: any
+
+  return customRef((track, trigger) => {
+    return {
+      get() {
+        track()
+        return value
+      },
+      set(newValue) {
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+          value = newValue
+          track()
+          trigger()
+        }, delay)
+      }
+    }
+  })
+
+}
+
+export function debounceFunc(func: Function, time: number = 1000) {
+  let timer: NodeJS.Timeout
+  return function (...args: any[]) {
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      // @ts-ignore
+      func.apply(this, args)
+    }, time)
+  }
 }

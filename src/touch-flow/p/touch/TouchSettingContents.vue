@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useVModel } from "@vueuse/core";
+import { useDebounceFn, useVModel } from "@vueuse/core";
 import { ref, h, reactive, watchEffect, nextTick, computed, onBeforeMount } from "vue";
 import { createFloatingPanel } from "./floating-panel";
 import { getDictAnalyzedTree, validatePropValue } from "../../flow-utils";
@@ -9,64 +9,7 @@ import AttrRender from "~/touch-flow/page/AttrRender.vue";
 import { randomStr } from "~/utils/common";
 import { CirclePlusFilled, Plus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-
-/**
- * VariableTemplateDTO
- */
-export type VariableTemplateDTO = {
-  /**
-   * 字段
-   */
-  field?: string;
-  /**
-   * 字段名
-   */
-  fieldName?: string;
-  /**
-   * 标签id
-   */
-  labelId?: number;
-  /**
-   * 标签名
-   */
-  labelName?: string;
-  /**
-   * 标签值
-   */
-  labelValue?: { [key: string]: any }[];
-  /**
-   * 类型 1：基础属性 2：客户标签
-   */
-  type?: string;
-  /**
-   * 变量值
-   */
-  variables?: VariableDTO[];
-  [property: string]: any;
-};
-
-/**
- * VariableDTO
- */
-export type VariableDTO = {
-  /**
-   * 比较值
-   */
-  compareValue?: string;
-  /**
-   * 默认值
-   */
-  defaultValue?: string;
-  /**
-   * 关系
-   */
-  fieldOp?: string;
-  /**
-   * 设置值
-   */
-  fieldValue?: string;
-  [property: string]: any;
-};
+import { VariableTemplateDTO } from "../../touch-total";
 
 const props = defineProps<{
   modelValue?: any;
@@ -75,16 +18,15 @@ const props = defineProps<{
   variables: string;
   disabled?: boolean;
 }>();
-const emits = defineEmits(["update:modelValue"]);
 
-// const _content = ref<string>()
 const contentRef = ref<HTMLElement>();
 const variableMap = new Map<string, VariableTemplateDTO>();
-const model = useVModel(props, "modelValue", emits);
 const dialogVariable = ref<VariableTemplateDTO>();
 
 const dictTree = ref();
 const attrs = ref();
+
+const displayRender = useDebounceFn(_displayRender, 100);
 
 (async () => {
   const [tree, _attrs] = await getDictAnalyzedTree();
@@ -92,147 +34,104 @@ const attrs = ref();
   attrs.value = _attrs.data;
   dictTree.value = tree;
 
-  // _time = setInterval(() => handleBlur(), 500);
-
-  watchEffect(() => {
-    if (doInit || !props.modelValue?.id) return;
-    console.groupCollapsed("TouchSettingContents");
-
-    // doInit = true
-
-    const { modelValue, content, variables } = props;
-    console.log(
-      "tsc props",
-      props,
-      model.value,
-      modelValue[content],
-      modelValue[variables]
-    );
-
-    let __content: string /* = _content.value */ = modelValue[content];
-    const _variables = modelValue[variables];
-
-    const _preFuncs: any[] = [];
-    let startsInd = -1;
-    if (_variables) {
-      for (let variable of _variables) {
-        const { index, field, fieldName, label, type } = variable;
-        const text = fieldName || label;
-        const id = `$$${index}$$`;
-
-        const __subVariables = [];
-
-        for (let subVariable of variable.variables) {
-          console.log("__sub variable", subVariable)
-
-          __subVariables.push({
-            compareValue: subVariable.compareValue,
-            defaultValue: subVariable.defaultValue,
-            fieldOp: subVariable.fieldOp,
-            fieldValue: subVariable.fieldValue,
-            field,
-            type,
-          });
-        }
-
-        // let __subVariables = [...variable.variables];
-
-        // console.log("variables__", __subVariables);
-
-        // __subVariables = __subVariables.map(
-        //   (item: any) =>
-        //     ({
-        //       compareValue: item.compareValue,
-        //       defaultValue: item.defaultValue,
-        //       fieldOp: item.fieldOp,
-        //       fieldValue: item.fieldValue,
-        //       field,
-        //       type,
-        //     })
-        // );
-
-        console.log("__subVariables", __subVariables);
-
-        variableMap.set(index, {
-          field,
-          fieldName: variable.fieldName,
-          defaultValue: variable.defaultValue,
-          index,
-          labelId: variable.labelId,
-          labelName: variable.labelName,
-          type,
-          variables: __subVariables,
-        });
-
-        console.log("variableMap", variableMap);
-
-        const ind = __content.indexOf(id, startsInd);
-        if (ind > -1) {
-          startsInd = ind;
-
-          const condition = getCurrSelected({
-            field: text,
-          });
-
-          _preFuncs.push(() => {
-            const e = document.getElementById(index)!;
-            const valueDom: any = e.querySelector(".value");
-
-            valueDom.parentElement._condition = condition;
-            valueDom.parentElement._value = text;
-            valueDom.setAttribute("value", text);
-            valueDom.innerText = condition.label;
-          });
-
-          const _ = `<button unselectable="on" id="${index}" data-id="${index}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">${text}</span>&nbsp;${settingSvg}</button>`;
-
-          __content = __content.slice(0, ind) + _ + __content.slice(ind + id.length);
-        }
-      }
-    }
-
-    nextTick(() => {
-      const el = contentRef.value!;
-
-      console.log(">", el, __content, _preFuncs)
-
-      if (el.innerHTML === __content) return;
-
-      el.innerHTML = __content;
-
-      // _content.value = __content
-
-      nextTick(() => _preFuncs.forEach((a) => a()));
-    });
-
-    console.log("touch", __content, _variables);
-
-    console.groupEnd();
-  });
+  watchEffect(displayRender);
 })();
 
 const settingSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L21.5 6.5V17.5L12 23L2.5 17.5V6.5L12 1ZM12 3.311L4.5 7.65311V16.3469L12 20.689L19.5 16.3469V7.65311L12 3.311ZM12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12C16 14.2091 14.2091 16 12 16ZM12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"></path></svg>`;
 
-function addLabel() {
-  // const first = dictTree.value[0].children[0]
+function _displayRender() {
+  if (!props.modelValue?.id) return;
+  console.groupCollapsed("TouchSettingContents");
 
-  const id = randomStr(6).replaceAll(".", "");
+  const { modelValue, content, variables } = props;
+  console.log("tsc props", props, modelValue[content], modelValue[variables]);
 
-  variableMap.set(
-    id,
-    reactive({
-      field: id,
-      variables: [],
-    })
-  );
+  let __content: string = modelValue[content];
+  const _variables = modelValue[variables];
 
-  // ${first.label}
+  const _preFuncs: any[] = [];
+  let startsInd = -1;
+  if (_variables) {
+    for (let variable of _variables) {
+      const { index, field, fieldName, label, type } = variable;
+      const text = fieldName || label;
+      const id = `$$${index}$$`;
 
-  /* const el =  */ insertNode(
-    `<button unselectable="on" id="${id}" data-id="${id}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">请选择</span>&nbsp;${settingSvg}</button>`
-  );
+      const __subVariables = [];
 
-  // console.log('insert', el)
+      for (let subVariable of variable.variables) {
+        console.log("__sub variable", subVariable);
+
+        __subVariables.push({
+          compareValue: subVariable.compareValue,
+          defaultValue: subVariable.defaultValue,
+          fieldOp: subVariable.fieldOp,
+          fieldValue: subVariable.fieldValue,
+          field,
+          type,
+        });
+      }
+
+      console.log("__subVariables", __subVariables);
+
+      variableMap.set(index, {
+        field,
+        fieldName: variable.fieldName,
+        defaultValue: variable.defaultValue,
+        index,
+        labelId: variable.labelId,
+        labelName: variable.labelName,
+        type,
+        variables: __subVariables,
+      });
+
+      console.log("variableMap", variableMap);
+
+      const ind = __content.indexOf(id, startsInd);
+      if (ind > -1) {
+        startsInd = ind;
+
+        const condition = getCurrSelected({
+          field: text,
+        });
+
+        _preFuncs.push(() => {
+          const e = document.getElementById(index)!;
+          const valueDom: any = e.querySelector(".value");
+
+          valueDom.parentElement._condition = condition;
+          valueDom.parentElement._value = text;
+          valueDom.setAttribute("value", text);
+          valueDom.innerText = condition.label;
+        });
+
+        const _ = `<button unselectable="on" id="${index}" data-id="${index}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">${text}</span>&nbsp;${settingSvg}</button>`;
+
+        __content = __content.slice(0, ind) + _ + __content.slice(ind + id.length);
+      }
+    }
+  }
+
+  nextTick(() => {
+    const el = contentRef.value;
+    if (!el) return;
+
+    const html = el.innerHTML.replaceAll("&nbsp;", " ");
+
+    // console.log(">", el, { __content, html, innerText: el.innerText, validateContent });
+
+    if (html === __content) return;
+
+    console.log("content updated");
+
+    el.innerHTML = __content;
+
+    nextTick(() => _preFuncs.forEach((a) => a()));
+  });
+
+  console.log("touch", __content, _variables);
+
+  console.groupEnd();
 }
 
 const variableModal = ref(false);
@@ -283,15 +182,28 @@ const getCurrSelected = (condition: any) =>
     .find((_: any) => _.field === condition.field || _.label === condition.field);
 
 let _floating: any;
-let _time: NodeJS.Timeout;
 
 onBeforeMount(() => {
   console.log("disposed unmounted");
 
-  // clearTimeout(_time);
-
   _floating?.();
 });
+
+function addLabel() {
+  const id = randomStr(6).replaceAll(".", "");
+
+  variableMap.set(
+    id,
+    reactive({
+      field: id,
+      variables: [],
+    })
+  );
+
+  insertNode(
+    `<button unselectable="on" id="${id}" data-id="${id}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">请选择</span>&nbsp;${settingSvg}</button>`
+  );
+}
 
 function handleClick(e: Event) {
   e.preventDefault();
@@ -308,8 +220,7 @@ function handleClick(e: Event) {
     const { id } = parent!.dataset;
 
     const condition = parent._condition;
-    // console.log("click svg condition", condition, variableMap)
-    // console.dir(parent)
+
     if (condition) {
       const _val = parent._value;
 
@@ -368,11 +279,9 @@ function handleClick(e: Event) {
               valueDom.setAttribute("value", val);
               valueDom.innerText = condition.label;
 
-              model.value[props.variables] = [...variableMap.values()];
+              props.modelValue[props.variables] = [...variableMap.values()];
 
-              handleBlur()
-
-              // setTimeout(handleBlur, 1000)
+              handleBlur();
 
               if (_floating) _floating();
             },
@@ -383,8 +292,8 @@ function handleClick(e: Event) {
   });
 }
 
-function handleBlur() {
-  const contentDom = contentRef.value;
+function _handleBlur() {
+  const contentDom = contentRef.value!;
 
   let content = "";
 
@@ -395,8 +304,14 @@ function handleBlur() {
     } else content += node.nodeValue;
   });
 
-  model.value[props.content] = content;
+  props.modelValue[props.content] = content;
+
+  console.log("____", content, contentDom.innerText);
+
+  console.log("blur", props, Object.freeze(JSON.stringify(content)));
 }
+
+const handleBlur = useDebounceFn(_handleBlur, 200);
 
 function variableDone() {
   const data = dialogVariable.value!;
@@ -447,15 +362,11 @@ function variableDone() {
 
   variableModal.value = false;
 
-  model.value[props.variables] = [...variableMap.values()];
+  props.modelValue[props.variables] = [...variableMap.values()];
 }
 
-// watch(() => _content.value, handleBlur)
-
-let doInit = false;
-
 const contentLength = computed(() => {
-  return model.value[props.content]?.length ?? 0;
+  return props.modelValue[props.content]?.length ?? 0;
 });
 
 function handleAdd() {
@@ -484,12 +395,7 @@ function handleAdd() {
 </script>
 
 <template>
-  <div
-    @blur="handleBlur"
-    :class="{ disabled }"
-    tabindex="1"
-    class="TouchSettingsContentWrapper"
-  >
+  <div :class="{ disabled }" tabindex="1" class="TouchSettingsContentWrapper">
     <div
       @click="handleClick"
       @input="handleBlur"

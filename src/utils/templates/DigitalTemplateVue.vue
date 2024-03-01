@@ -55,6 +55,8 @@ const list = ref<any>([]);
 const data = reactive<typeof origin>(origin);
 
 watchEffect(() => {
+  setTimeout(() => assignData('addFriend'), 200)
+
   const _data = props.data?.value || props.data;
   if (!_data) return;
 
@@ -111,15 +113,11 @@ function getCurrentDate() {
   const currentDate = new Date().toISOString().split("T")[0];
   return currentDate;
 }
-function addPic(
-  response: any,
-  uploadFile: UploadFile,
-  uploadFiles: UploadFiles
-) {
+function addPic(response: any, uploadFile: UploadFile, uploadFiles: UploadFiles) {
   // console.log("addPic", response, uploadFile, uploadFiles)
 
   list.value.push({
-    id: Math.random() * 1000000 + "",
+    // id: Math.random() * 1000000 + "",
     type: "image",
     imgUrl: response.data,
     name: uploadFile.name,
@@ -128,7 +126,7 @@ function addPic(
 
 function addMessage() {
   list.value.push({
-    id: Math.random() * 1000000 + "",
+    // id: Math.random() * 1000000 + "",
     type: "content",
     content: "",
     variables: [],
@@ -156,11 +154,11 @@ function onDownload(item: any, index: number) {
   list.value[index + 1] = temp;
 }
 function assignData(val: any) {
-  data.digitalTemplate.type=val
+  data.digitalTemplate.type = val;
   if (val == "addFriend") {
     list.value = [
       {
-        id: Math.random() * 1000000 + "",
+        // id: Math.random() * 1000000 + "",
         type: "content",
         content: "",
         variables: [],
@@ -179,16 +177,37 @@ function assignData(val: any) {
       <el-input :disabled="readonly" v-model="data.name" style="width: 50%"></el-input>
     </el-form-item>
     <el-form-item label="企微触达方式">
-      <el-select :disabled="readonly" @change="assignData" placeholder="请选择" v-model="data.digitalTemplate.type" style="width: 50%">
+      <el-select
+        :disabled="readonly"
+        @change="assignData"
+        placeholder="请选择"
+        v-model="data.digitalTemplate.type"
+        style="width: 50%"
+      >
         <el-option label="发送消息" value="message" />
         <el-option label="添加好友" value="addFriend" />
       </el-select>
     </el-form-item>
 
-    <MicroEnterpriseDrag :disabled="readonly" @delete="onDelete" @upload="onUpload" @download="onDownload" style="margin-bottom: 6.5rem" v-model="list" />
-    <div v-if="data.digitalTemplate.type!='addFriend'">
+    <MicroEnterpriseDrag
+      :disabled="readonly"
+      @delete="onDelete"
+      @upload="onUpload"
+      @download="onDownload"
+      style="margin-bottom: 6.5rem"
+      v-model="list"
+    />
+
+    <div v-if="data.digitalTemplate.type != 'addFriend'">
       <div v-if="!readonly" class="FloatFixed">
-        <el-upload :action="action" :on-success="addPic" :auto-upload="true" :data="{ type: 'material', date: getCurrentDate() }" :show-file-list="false" class="upload-demo button-groupupload">
+        <el-upload
+          :action="action"
+          :on-success="addPic"
+          :auto-upload="true"
+          :data="{ type: 'material', date: getCurrentDate() }"
+          :show-file-list="false"
+          class="upload-demo button-groupupload"
+        >
           <el-text type="primary" style="cursor: pointer">
             <el-icon size="14">
               <CirclePlusFilled />

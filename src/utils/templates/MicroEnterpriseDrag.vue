@@ -64,7 +64,7 @@ function getBlockSectionName(item: any) {
     <TransitionGroup ref="el" type="transition" tag="ul" :name="!drag ? 'fade' : undefined"
       class="flex flex-col gap-2 p-4 w-300px bg-gray-500/5 rounded">
       <!-- draggable="true" -->
-      <li class="drag-item" :data-ind="item.name" :key="item.id" v-for="(item, index) in thisList">
+      <li class="drag-item" :data-ind="item.name" :key="index" v-for="(item, index) in thisList">
         <div class="drag-item-header">
           <el-tooltip placement="top" :content="getBlockSectionName(item)">
             <span class="text-2xl name-label">{{ getBlockSectionName(item) }}</span>
@@ -91,6 +91,7 @@ function getBlockSectionName(item: any) {
           </div>
         </div>
         <div class="content-container">
+        <!-- {{ item }} -->
           <img v-if="item.type === 'image'" :src="item.imgUrl" alt="AddonPic" />
           <TouchSettingContents content="content" variables="variables" :modelValue="item"
             v-else-if="item.type === 'content'" />
