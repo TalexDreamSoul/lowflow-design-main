@@ -20,7 +20,7 @@ function getConditions() {
 const addCondition = () => {
   getConditions().push({
     field: null,
-    operator: "equal",
+    fieldOp: "equal",
     fieldValue: null,
   });
 };
@@ -38,7 +38,7 @@ const attrs = computed(() => {
 
   const flattedEvents = [...events].map((e: any) => e.events)
 
-  const targetEvent = flattedEvents.flat().find((item: any) => item.eventCode === props.condition.delayedAction)
+  const targetEvent = flattedEvents.flat().find((item: any) => item.eventCode === props.condition.eventCode)
 
   return targetEvent?.eventAttr?.attrs;
 });
@@ -59,7 +59,7 @@ const attrs = computed(() => {
             </el-col>
             <el-col :xs="24" :sm="4" v-if="item.field">
               <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                <operator :attrs="attrs" :item="item" ref="operatorRef" v-model="item.operator" />
+                <operator :attrs="attrs" :item="item" ref="operatorRef" v-model="item.fieldOp" />
               </el-form-item>
             </el-col>
             <el-col :xs="24" :sm="6" v-if="item.field">

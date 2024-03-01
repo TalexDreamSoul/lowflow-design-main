@@ -27,6 +27,8 @@ const meta = computed(() => route.meta)
 <style lang="scss">
 html, body, #app {
   height: 100%;
+
+  --el-color-danger: #FF5050 !important;
 }
 div {
   box-sizing: border-box;

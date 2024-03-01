@@ -9,10 +9,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, toRefs, provide, watchEffect } from 'vue';
-import Hierarchy from '@antv/hierarchy';
-import initGraph from './graph';
-import { genIdNodeReactive } from './../flow-utils'
+import { onMounted, ref, toRefs, provide, watchEffect } from "vue";
+import Hierarchy from "@antv/hierarchy";
+import initGraph from "./graph";
+import { genIdNodeReactive } from "./../flow-utils";
 
 interface IGraphData {
   id: string;
@@ -30,33 +30,43 @@ let _Graph: any;
 
 let treeMap = props.p;
 
-const getNodeReactive = genIdNodeReactive(props.p)
+const getNodeReactive = genIdNodeReactive(props.p);
 
 const layoutFn = () => {
-  console.groupCollapsed('layoutFn');
+  console.groupCollapsed("layoutFn");
 
   const result = Hierarchy.compactBox(treeMap, {
-    direction: 'TB',
+    direction: "TB",
     getWidth() {
       return 680;
     },
     getHeight(d: any) {
-      const { nodeType } = d
-      console.log("__d", d, nodeType)
-      if (nodeType === 'subDiversion') {
-        console.log("__subDiversion")
-        return 450
+      const { nodeType } = d;
+      console.log("__d", d, nodeType);
+      if (nodeType === "subDiversion") {
+        console.log("__subDiversion");
+        return 450;
       }
       return d.height ? parseInt(d.height) : 280;
     },
     getHGap() {
-      return 0;
+      const k = 0.07692307692307693;
+      const b = 157.3076923076923;
+
+      const width = window.innerWidth;
+      if (width === 1920) return -150;
+      if (width === 2560) return 30;
+      if (Math.abs(width - 1445) <= 50) return -50;
+      if (Math.abs(width - 1600) <= 50) return -80;
+
+      console.log("width", width);
+      return k * width - b;
     },
     getVGap() {
       return 30;
     },
     getSide: () => {
-      return 'bottom';
+      return "bottom";
     },
   });
   const model: {
@@ -65,41 +75,41 @@ const layoutFn = () => {
   } = { nodes: [], edges: [] };
 
   const _: any = {
-    'Start': (height: number) => height - 95,
-    'strategy': (height: number, data: any) => {
-      console.log("@@@---", data.data)
-      if (data.data?.father?.nodeType === 'subDiversion') return height - 40
-      if (data.data.nodeName === '兜底策略器') return height - 155
+    Start: (height: number) => height - 95,
+    strategy: (height: number, data: any) => {
+      console.log("@@@---", data.data);
+      if (data.data?.father?.nodeType === "subDiversion") return height - 40;
+      if (data.data.nodeName === "兜底策略器") return height - 155;
 
-      return height - 40
+      return height - 40;
     },
-    'diversion': (height: number) => height - 132,
-    'subDiversion': (height: number, _data: any) => {
-      const { data } = _data
-      let calcHeight = height - 125
+    diversion: (height: number) => height - 132,
+    subDiversion: (height: number, _data: any) => {
+      const { data } = _data;
+      let calcHeight = height - 125;
 
       if (data.diversionType || data.eventDelayed?.isDelayed) {
-        calcHeight = calcHeight - 200
+        calcHeight = calcHeight - 200;
         if (data?.nodeContent?.data?.$template.has) {
-          calcHeight += 100
+          calcHeight += 100;
         }
       }
 
-      console.log("><", data)
+      console.log("><", data);
 
-      return calcHeight
+      return calcHeight;
     },
-  }
+  };
 
   const traverse = (data: any) => {
     if (data) {
-      console.log("data", data)
-      data.id = data.data.id = data.data.nodeId
+      console.log("data", data);
+      data.id = data.data.id = data.data.nodeId;
 
       const shape = `${data.data.nodeType}`;
-      const calc = _[shape]
+      const calc = _[shape];
 
-      console.log("calc-height", data.height, calc(data.height, data))
+      console.log("calc-height", data.height, calc(data.height, data));
 
       model.nodes?.push({
         id: `${data.id}`,
@@ -112,23 +122,23 @@ const layoutFn = () => {
         ports: {
           groups: {
             bottom: {
-              position: 'bottom',
+              position: "bottom",
               attrs: {
                 circle: {
-                  stroke: 'transparent',
+                  stroke: "transparent",
                   strokeWidth: 1,
-                  fill: 'transparent',
+                  fill: "transparent",
                 },
               },
             },
 
             top: {
-              position: 'top',
+              position: "top",
               attrs: {
                 circle: {
-                  stroke: 'transparent;',
+                  stroke: "transparent;",
                   strokeWidth: 1,
-                  fill: 'transparent',
+                  fill: "transparent",
                 },
               },
             },
@@ -136,11 +146,11 @@ const layoutFn = () => {
           items: [
             {
               id: `bottom-${data.id}`,
-              group: 'bottom', // 指定分组名称
+              group: "bottom", // 指定分组名称
             },
             {
               id: `top-${data.id}`,
-              group: 'top', // 指定分组名称
+              group: "top", // 指定分组名称
             },
           ],
         },
@@ -152,29 +162,28 @@ const layoutFn = () => {
         traverse(item);
 
         model.edges?.push({
-          source: { cell: data.id, port: 'bottom-' + data.id },
-          target: { cell: item.id, port: 'top-' + item.id },
-          shape: 'dag-edge',
+          source: { cell: data.id, port: "bottom-" + data.id },
+          target: { cell: item.id, port: "top-" + item.id },
+          shape: "dag-edge",
           labels: [
             {
               attrs: {
                 line: {
-                  stroke: '#73d13d',
+                  stroke: "#73d13d",
                 },
                 text: {
-                  text: item.data.lineLabel || '',
+                  text: item.data.lineLabel || "",
                 },
               },
             },
           ],
         });
-
       });
     }
   };
   traverse(result);
 
-  console.log(model)
+  console.log(model);
 
   console.groupEnd();
 
@@ -188,12 +197,12 @@ onMounted(() => {
   watchEffect(() => {
     const { p } = toRefs(props);
 
-    layoutFn()
-    layoutFn()
-  })
+    layoutFn();
+    layoutFn();
+  });
 });
 
-window.$refreshLayout = layoutFn
+window.$refreshLayout = layoutFn;
 </script>
 
 <style lang="scss">
@@ -280,8 +289,8 @@ window.$refreshLayout = layoutFn
   }
 
   &.disabled {
-    opacity: .85;
-    filter: invert(.1) brightness(95%);
+    opacity: 0.85;
+    filter: invert(0.1) brightness(95%);
 
     pointer-events: none;
   }
@@ -345,9 +354,8 @@ div.PBlock {
 
     padding: 16px;
     width: 280px;
-    background: linear-gradient(180deg,
-      #f2f4f8 0%,
-      rgba(242, 244, 248, 0.4) 100%) rgba(255, 255, 255, 0.4);
+    background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%)
+      rgba(255, 255, 255, 0.4);
     border-radius: 8px 8px 8px 8px;
     opacity: 1;
   }

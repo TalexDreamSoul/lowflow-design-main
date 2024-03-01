@@ -3,12 +3,7 @@
     <div class="search">
       <el-form :inline="true" :model="pageParams" style="margin-left: 10px">
         <el-form-item>
-          <el-select
-            
-            v-model="pageParams.source"
-            placeholder="类别"
-            clearable
-          >
+          <el-select v-model="pageParams.source" placeholder="类别" clearable>
             <el-option
               v-for="item of PEOPLE_SOURCE"
               :label="item.label"
@@ -18,7 +13,6 @@
         </el-form-item>
         <el-form-item>
           <el-input
-            
             v-model="pageParams.value"
             placeholder="请输入客户姓名或者手机号"
             clearable
@@ -28,10 +22,9 @@
         <el-form-item>
           <el-button
             v-if="drawerType === DrawerType.Edit"
-            
             @click.prevent="handleAdd"
             type="primary"
-            >保存</el-button
+            >手动添加</el-button
           >
         </el-form-item>
       </el-form>
@@ -86,17 +79,36 @@
             }}
           </template>
         </el-table-column>
+        <el-table-column
+          v-if="drawerType === DrawerType.Edit"
+          label="操作"
+          width="77"
+        >
+          <template #default="scope">
+            <el-button
+              link
+              type="primary"
+              class="action-btn"
+              @click="handleDelete(scope.row)"
+              >移除</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
       <el-pagination
         background
-        layout="prev, pager, next, sizes, jumper"
+        layout="prev, pager, next, jumper"
         :total="total"
         :page-sizes="[5]"
         :default-page-size="5"
         @current-change="currentChange"
       />
     </div>
-    <Dialog v-if="drawerType === DrawerType.Edit" ref="dialogRef" />
+    <Dialog
+      v-if="drawerType === DrawerType.Edit"
+      ref="dialogRef"
+      :form-values="{ ...formValues }"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -132,11 +144,12 @@ const tableData = ref<any[]>([]);
 const multipleTableRef = ref<any>();
 const multipleSelection = ref<any[]>([]);
 const dialogRef = ref<any>();
+const pageNum = ref(1);
 
 watch(
   pageParams,
   debounce(() => {
-    if ("id" in props.formValues) {
+    if ("id" in props.formValues && props.formValues?.id !== null) {
       getSelectData({ ...pageParams, pageNum: 1 });
     } else {
       getData({ ...pageParams, pageNum: 1 });
@@ -145,7 +158,7 @@ watch(
 );
 
 onMounted(() => {
-  if ("id" in props.formValues) {
+  if ("id" in props.formValues && props.formValues?.id !== null) {
     getSelectData({ ...pageParams, pageNum: 1 });
   } else {
     getData({ ...pageParams, pageNum: 1 });
@@ -153,11 +166,21 @@ onMounted(() => {
 });
 
 const currentChange = (value: number) => {
-  console.log(value);
-  if ("id" in props.formValues) {
+  pageNum.value = value;
+  if ("id" in props.formValues && props.formValues?.id !== null) {
     getSelectData({ ...pageParams, pageNum: value });
   } else {
     getData({ ...pageParams, pageNum: value });
+  }
+};
+
+const handleDelete = async (row: any) => {
+  let res = await API.deleteCustomBlacklistRelation({
+    blacklistId: props.formValues?.id,
+    customId: row.id,
+  });
+  if (checkStringEqual(res?.code, 0)) {
+    getSelectData({ pageNum: pageNum.value, id: props?.formValues?.id, pageParams });
   }
 };
 
@@ -198,6 +221,7 @@ const getSelectData = async (params: any) => {
     addType: BlackAddTypeEnum.Manual,
   });
   if (checkStringEqual(res?.code, 0)) {
+    console.log(res);
     total.value = res?.data?.total;
     tableData.value = res?.data?.records;
   }
@@ -221,5 +245,5 @@ const getData = async (params: any) => {
     console.error(error);
   }
 };
-defineExpose({ multipleSelection });
+defineExpose({ multipleSelection, getSelectData });
 </script>

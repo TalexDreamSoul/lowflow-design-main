@@ -2,12 +2,13 @@
 import { ref } from "vue";
 import { DArrowRight } from '@element-plus/icons-vue'
 
-defineProps<{
+const props = defineProps<{
   title: string;
-  color: string
+  color: string;
+  defaultExpand?: boolean
 }>();
 
-const expand = ref(false);
+const expand = ref(props.defaultExpand !== undefined ? props.defaultExpand : false);
 </script>
 
 <template>

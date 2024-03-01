@@ -12,6 +12,24 @@ const props = defineProps<{
   dict: any;
 }>();
 
+const dataObj = Object.freeze({
+  attr: {
+    field: "",
+    fieldMultiValue: [],
+    fieldName: "",
+    fieldOp: "",
+    fieldRangeValue: "",
+    fieldType: "",
+    fieldValue: "",
+  },
+  label: {
+    labelId: 0,
+    labelName: "",
+    labelValue: [],
+  },
+  type: "event",
+});
+
 const refreshTree: Function = inject("refreshTree")!;
 
 const handleDel = (index: number) => {
@@ -20,10 +38,14 @@ const handleDel = (index: number) => {
   refreshTree();
 };
 
+if (!props.condition.type) {
+  Object.assign(props.condition, { ...dataObj });
+}
+
 const conditionArr = computed(() => props.condition.conditions);
 
 function handleAdd() {
-  props.condition.conditions.push({});
+  props.condition.conditions.push({ ...dataObj });
 }
 
 const attrs = computed(() => {
@@ -33,28 +55,28 @@ const attrs = computed(() => {
     return {
       label: attr.fieldName,
       value: attr.field,
-      ...attr
-    }
-  })
+      ...attr,
+    };
+  });
 
   const _labels = labels.map((label: any) => {
-    const children: any = []
+    const children: any = [];
     if (label.labelValue) {
-      [...label.labelValue.data].forEach(item => {
+      [...label.labelValue.data].forEach((item) => {
         children.push({
           label: item,
           value: item,
-          ...label
-        })
-      })
+          ...label,
+        });
+      });
     }
 
     return {
       label: label.labelName,
       children,
-      ...label
-    }
-  })
+      ...label,
+    };
+  });
 
   return [
     {
@@ -70,7 +92,13 @@ const attrs = computed(() => {
   ];
 });
 
-const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([..._.children].map((__: any) => __.children?.length ? __.children : [__]))).flat(2).find((_: any) => _.field === condition.field || _.label === condition.field)
+const getCurrSelected = (condition: any) =>
+  [...attrs.value]
+    .map((_: any) =>
+      [..._.children].map((__: any) => (__.children?.length ? __.children : [__]))
+    )
+    .flat(2)
+    .find((_: any) => _.field === condition.field || _.label === condition.field);
 </script>
 
 <template>
@@ -78,29 +106,51 @@ const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([.
     <LogicalLine :display="!conditionArr?.length" v-model="condition.logicalChar">
       <div v-if="conditionArr" class="filter-option-content">
         <el-form :label-width="0" :inline="true" :model="condition.conditions">
-          <el-row v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="filter-item-rule">
+          <el-row
+            v-if="false"
+            v-for="(item, index) in conditionArr"
+            :key="`${item.field}-${index}`"
+            class="filter-item-rule"
+          >
             <el-col :xs="24" :sm="6">
               <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                <trigger multiple v-model="item.field" :attrs="attrs" placeholder="客户属性/标签" />
+                <trigger
+                  multiple
+                  v-model="item.attr.field"
+                  :attrs="attrs"
+                  placeholder="客户属性/标签"
+                />
               </el-form-item>
             </el-col>
-            &nbsp;<el-col :xs="24" :sm="4" v-if="item.field">
-              <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                <operator :selected="getCurrSelected(item)" :attrs="attrs" :item="item" ref="operatorRef"
-                  v-model="item.operator" />
+            &nbsp;<el-col :xs="24" :sm="4" v-if="item.attr.field">
+              <el-form-item
+                :prop="'conditions.' + index + '.operator'"
+                style="width: 100%"
+              >
+                <operator
+                  :selected="getCurrSelected(item)"
+                  :attrs="attrs"
+                  :item="item.attr"
+                  ref="operatorRef"
+                  v-model="item.attr.fieldOp"
+                />
               </el-form-item>
             </el-col>
             &nbsp;<el-col :xs="24" :sm="6" v-if="getCurrSelected(item)">
               <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <AttrRender :selected="getCurrSelected(item)" :item="item" :attrs="attrs" />
+                <AttrRender
+                  :selected="getCurrSelected(item)"
+                  :item="item.attr"
+                  :attrs="attrs"
+                />
               </el-form-item>
             </el-col>
             &nbsp;
-            <el-col :xs="24" :sm="2" style="
-                display: flex;
-                align-items: center;
-                flex-direction: row-reverse;
-              ">
+            <el-col
+              :xs="24"
+              :sm="2"
+              style="display: flex; align-items: center; flex-direction: row-reverse"
+            >
               <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
                 <el-icon size="14">
                   <Delete />
@@ -114,12 +164,6 @@ const getCurrSelected = (condition: any) => [...attrs.value].map((_: any) => ([.
               </el-text>
             </el-col>
           </el-row>
-
-          <div v-if="!(
-            condition?.filterRules?.groups?.length |
-            condition?.filterRules?.conditions?.length
-          )
-            " class="filter-item-rule" />
         </el-form>
       </div>
     </LogicalLine>

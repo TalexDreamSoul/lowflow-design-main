@@ -56,7 +56,7 @@
           </el-table-column>
         </el-table>
       </el-watermark>
-      <el-pagination background layout="prev, pager, next, sizes, jumper" :total="total" :page-sizes="[10]" v-model:current-page="pageNum" />
+      <el-pagination background layout="prev, pager, next, jumper" :total="total" :page-sizes="[10]" v-model:current-page="pageNum" />
     </div>
     <el-drawer :destroy-on-close="true" :close-on-click-modal="false" :size="946" v-model="drawer" :with-header="false" class="pd-drawer">
       <div class="pd-drawer-header">{{ DrawerTitleMap[drawerType] }}</div>
@@ -208,7 +208,7 @@ const defaultFormValues = {
   describe: "",
   attrTableData: [],
 };
-const formValues: any = reactive({ ...defaultFormValues });
+const formValues: any = reactive<any>({ ...defaultFormValues });
 
 const defaultAttrFormValues = {
   field: "",
@@ -269,7 +269,7 @@ const handleSetStatus = async (values: any) => {
         : ConfigStatus.Available,
   });
   if (checkStringEqual(res?.code, 0)) {
-    getData(pageParams);
+    getData({...pageParams, pageNum: pageNum.value});
   }
 };
 
@@ -283,13 +283,16 @@ const handleDelete = (values: any) => {
   }).then(async () => {
     let res = await API.deleteEventDict({ id: values.id });
     if (checkStringEqual(res?.code, 0)) {
-      getData(pageParams);
+      getData({...pageParams, pageNum: pageNum.value});
     }
   });
 };
 
 const handleDrawer = (type: string, values?: any) => {
   if (type === DrawerType.Create) {
+    for (const key in formValues) {
+      formValues[key] = null;
+    }
     Object.assign(formValues, defaultFormValues);
   } else {
     let { eventAttr, ...params } = values;
@@ -318,9 +321,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       },
     });
     if (checkStringEqual(res?.code, 0)) {
-    //  getData(pageParams);
-      getData({ ...pageParams, pageNum: 1 });
-
+      getData({ ...pageParams, pageNum: pageNum.value });
       drawer.value = false;
     }
   } catch (error) {

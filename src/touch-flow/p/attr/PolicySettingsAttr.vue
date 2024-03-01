@@ -10,14 +10,16 @@ import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.
 import LogicalLine from "../behavior/LogicalLine.vue";
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import EventBehavior from "../behavior/EventBehavior.vue";
-import NewLabel from '../../label/NewLabel.vue'
 import { markRaw } from "vue";
-import TouchSettings from "../touch/TouchSettings.vue";
+import CommonAttr from "../start/CommonAttr.vue";
+import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
+import { validateCommonDays } from "~/touch-flow/flow-utils";
+import { MarketingTouchNodeEditDTO } from "~/touch-flow/touch-total";
 
-const origin = {
+const origin: MarketingTouchNodeEditDTO = {
   nodeId: "",
   nodeType: "strategy",
-  nodeName: "test",
+  nodeName: "",
   value1: false,
   isDelayed: false,
   selectedType: "day",
@@ -25,71 +27,45 @@ const origin = {
   cascaderLabel: "sms",
   do: false,
   num: 1,
-  diversionType: 'noDiversion',
-  touch: {
-    type: -1,
-    content: "",
-    variables: []
-  },
-  material: {
-    type: "",
-    beginTime: "",
-    endTime: "",
-    name: "",
-    pageNum: 10,
-    pageSize: -1,
-    status: "available",
-    templates: [{
-      id: -1,
-      name: '不使用模板'
-    }]
-  },
-  touchTemplateContent: {
-
-  },
-  eventDelayed: {
-    delayedAction: '',
+  diversionType: "noDiversion",
+  touchTemplateContent: {},
+  nodeDelayed: {
+    delayedAction: "nothing",
     delayedTime: 0,
-    delayedUnit: '',
-    isDelayed: false
+    delayedUnit: "day",
+    isDelayed: false,
   },
   customRuleContent: {
     customAttr: {
-      conditions: [
-
-      ],
-      logicalChar: '或'
+      conditions: [],
+      logicalChar: "或",
     },
     customEvent: {
-      conditions: [
-
-      ],
-      logicalChar: '或'
+      conditions: [],
+      logicalChar: "或",
     },
     eventSequence: {
-      conditions: [
-
-      ],
-      logicalChar: '或'
+      conditions: [],
+      logicalChar: "或",
     },
-    logicalChar: '或'
+    logicalChar: "或",
   },
   eventRuleContent: {
     customEvent: {
       conditions: [
         {
-          conditions: [{}]
-        }
+          conditions: [{}],
+        },
       ],
-      logicalChar: '或'
+      logicalChar: "或",
     },
-    logicalChar: '或'
+    logicalChar: "或",
   },
   labelContent: {
     labelId: -1,
-    labelName: '',
-    labelValue: []
-  }
+    labelName: "",
+    labelValue: [],
+  },
 };
 
 const marketingTouchNode = ref({
@@ -103,25 +79,26 @@ const marketingTouchNode = ref({
 
 const props = defineProps<{
   p: any;
-  new?: boolean
+  new?: boolean;
+  readonly?: boolean;
 }>();
 
-const touchSettingsRef = ref()
+const touchSettingsRef = ref();
 const sizeForm = reactive<typeof origin>(origin);
 
-console.log("here", sizeForm, props.p, props.new)
+console.log("here", sizeForm, props.p, props.new);
 
 watchEffect(() => {
-  const { nodeType, nodeId } = props.p
+  const { nodeType, nodeId } = props.p;
 
-  if (props.new || nodeType !== 'strategy') return
+  if (props.new || nodeType !== "strategy") return;
 
   if (nodeId) {
     Object.assign(sizeForm, props.p);
 
     sizeForm.nodeId = nodeId;
   }
-})
+});
 
 function saveData() {
   if (!sizeForm.nodeName) {
@@ -132,23 +109,33 @@ function saveData() {
     return false;
   }
 
-  touchSettingsRef.value.updateData()
+  if (
+    !validateCommonDays(
+      sizeForm.nodeDelayed.delayedTime,
+      sizeForm.nodeDelayed.delayedUnit
+    )
+  ) {
+    ElMessage.warning({
+      message: "延迟设置折算时间不可超过30天！",
+    });
+
+    return false;
+  }
+
+  touchSettingsRef.value.updateData();
 
   const _: any = { nodeId: "", children: [] };
-  Object.assign(_, sizeForm)
+  Object.assign(_, sizeForm);
 
-  Object.defineProperty(_, 'father', {
+  Object.defineProperty(_, "father", {
     value: markRaw(props.p),
-    enumerable: false
-  })
+    enumerable: false,
+  });
 
   // 修改 Modify Edit
-  if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {
-
-    Object.assign(props.p, _)
-
+  if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId!.length) {
+    Object.assign(props.p, _);
   } else {
-
     const arr = [...props.p.children];
 
     while (arr.length) {
@@ -161,13 +148,11 @@ function saveData() {
 
         return false;
       }
-
     }
 
-    _.nodeId = randomStr(12)
+    _.nodeId = randomStr(12);
 
     props.p.children.push(_);
-
   }
 
   return true;
@@ -198,7 +183,8 @@ const estimation = async () => {
 };
 
 function attrsAdd() {
-  let attr: any = sizeForm.customRuleContent!.customAttr!.conditions! = (sizeForm.customRuleContent!.customAttr!.conditions! || []);
+  let attr: any = (sizeForm.customRuleContent!.customAttr!.conditions! =
+    sizeForm.customRuleContent!.customAttr!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -212,7 +198,8 @@ function attrsAdd() {
 }
 
 function behaviorAdd() {
-  let attr: any = sizeForm.customRuleContent!.customEvent!.conditions! = (sizeForm.customRuleContent!.customEvent!.conditions! || []);
+  let attr: any = (sizeForm.customRuleContent!.customEvent!.conditions! =
+    sizeForm.customRuleContent!.customEvent!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: {} }],
@@ -226,7 +213,8 @@ function behaviorAdd() {
 }
 
 function sequenceAdd() {
-  let attr: any = sizeForm.customRuleContent!.eventSequence!.conditions! = (sizeForm.customRuleContent!.eventSequence!.conditions! || []);
+  let attr: any = (sizeForm.customRuleContent!.eventSequence!.conditions! =
+    sizeForm.customRuleContent!.eventSequence!.conditions! || []);
 
   const obj = {
     conditions: [{ conditions: [{}] }],
@@ -254,7 +242,11 @@ function sequenceAdd() {
         </el-radio-group>
       </el-form-item>
 
-      <BehaviorGroupPlus title="用户属性行为分流" color="#333333" v-if="sizeForm.diversionType === 'attr'">
+      <BehaviorGroupPlus
+        title="用户属性行为分流"
+        color="#333333"
+        :class="{ animation: true, display: sizeForm.diversionType === 'attr' }"
+      >
         <div class="titleCondition">进入该策略期的用户需要满足以下条件：</div>
         <el-form-item label="">
           <div class="pannel">
@@ -266,31 +258,35 @@ function sequenceAdd() {
                 <CustomBehavior :custom="sizeForm.customRuleContent!.customEvent" />
               </BehaviorGroup>
               <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-                <CustomBehaviorSequence :custom="sizeForm.customRuleContent!.eventSequence" />
+                <CustomBehaviorSequence
+                  :custom="sizeForm.customRuleContent!.eventSequence"
+                />
               </BehaviorGroup>
             </LogicalLine>
           </div>
         </el-form-item>
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus title="触发事件分流" color="#333333" v-if="sizeForm.diversionType === 'event'">
+      <BehaviorGroupPlus
+        title="触发事件分流"
+        color="#333333"
+        :class="{ animation: true, display: sizeForm.diversionType === 'event' }"
+      >
         <div class="flex-column titleCondition">
-          <div>
-            进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;
-          </div>
+          <div>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</div>
           <el-input v-model="sizeForm.num" type="number" style="width: 100px" />&nbsp;
           <el-select v-model="sizeForm.selectedType" style="width: 100px">
             <el-option value="month" label="月份">分钟</el-option>
             <el-option value="week" label="周">小时</el-option>
-            <el-option value="day" label="天">天</el-option>
-          </el-select>&nbsp;
-          <div>后判断客户
+            <el-option value="day" label="天">天</el-option> </el-select
+          >&nbsp;
+          <div>
+            后判断客户
             <el-select v-model="sizeForm.do" style="width: 100px">
               <el-option :value="true" label="做过">做过</el-option>
               <el-option :value="false" label="没做过">没做过</el-option>
             </el-select>
           </div>
-
         </div>
         <el-form-item label="">
           <div class="pannel">
@@ -301,35 +297,7 @@ function sequenceAdd() {
         </el-form-item>
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus title="延迟设置" color="#62C943">
-        &nbsp;
-        <el-select v-model="sizeForm.eventDelayed.isDelayed" style="width: 100px">
-          <el-option :value="true" label="延迟">延迟</el-option>
-          <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
-        <template v-if="sizeForm.eventDelayed.isDelayed">
-          <el-input v-model="sizeForm.eventDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
-          <el-select placeholder="请选择" v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
-            <el-option value="month" label="月份">分钟</el-option>
-            <el-option value="week" label="周">小时</el-option>
-            <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
-          <el-select v-model="sizeForm.eventDelayed.delayedAction" placeholder="请选择" style="width: 150px">
-            <el-option value="touch" label="发送触达">发送触达</el-option>
-            <el-option value="label" label="打上标签">打上标签</el-option>
-            <el-option value="none" label="不执行动作">不执行动作</el-option>
-            <el-option value="touchAndLabel" label="发送触达并打上标签">发送触达并打上标签</el-option>
-          </el-select>
-        </template>
-      </BehaviorGroupPlus>
-
-      <BehaviorGroupPlus title="触达设置" color="#FFD561">
-        <TouchSettings ref="touchSettingsRef" :touch="sizeForm.touchTemplateContent" />
-      </BehaviorGroupPlus>
-
-      <BehaviorGroupPlus
-        v-if="sizeForm.eventDelayed.isDelayed && String(sizeForm.eventDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1"
-        title="标签设置" color="#277AE7">
-        <NewLabel :p="sizeForm" />
-      </BehaviorGroupPlus>
+      <CommonAttr ref="touchSettingsRef" :sizeForm="sizeForm" />
 
       <div class="BlockBackground">
         <div class="BlockBackground-Under">
@@ -352,8 +320,8 @@ function sequenceAdd() {
                   <div>
                     {{
                       marketingTouchNode.appPushCount != undefined
-                      ? marketingTouchNode.appPushCount
-                      : "-"
+                        ? marketingTouchNode.appPushCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -364,8 +332,8 @@ function sequenceAdd() {
                   <div>
                     {{
                       marketingTouchNode.znxCount != undefined
-                      ? marketingTouchNode.znxCount
-                      : "-"
+                        ? marketingTouchNode.znxCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -376,8 +344,8 @@ function sequenceAdd() {
                   <div>
                     {{
                       marketingTouchNode.digitalCount != undefined
-                      ? marketingTouchNode.digitalCount
-                      : "-"
+                        ? marketingTouchNode.digitalCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -388,8 +356,8 @@ function sequenceAdd() {
                   <div>
                     {{
                       marketingTouchNode.outboundCount != undefined
-                      ? marketingTouchNode.outboundCount
-                      : "-"
+                        ? marketingTouchNode.outboundCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -400,27 +368,41 @@ function sequenceAdd() {
                   <div>
                     {{
                       marketingTouchNode.smsCount != undefined
-                      ? marketingTouchNode.smsCount
-                      : "-"
+                        ? marketingTouchNode.smsCount
+                        : "-"
                     }}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="yugu_flex">
-            <div class="title">策略器目标设置 &nbsp;</div>
-            <el-switch v-model="sizeForm.value1" />
-          </div>
         </div>
+
+        <StrategistTargetAttr :readonly="readonly" :size-form="sizeForm" />
       </div>
     </el-form>
   </div>
 </template>
 
 <style lang="scss">
-li:has(.template-option):has(.template-desc) {
+.BehaviorGroupPlus.animation {
+  &.display {
+    opacity: 1;
+    pointer-events: auto;
 
+    height: unset;
+
+    margin-bottom: 0;
+  }
+  opacity: 0;
+  pointer-events: none;
+
+  height: 36px;
+
+  margin-bottom: -50px;
+}
+
+li:has(.template-option):has(.template-desc) {
   height: 50px;
 }
 
@@ -430,7 +412,7 @@ li:has(.template-option):has(.template-desc) {
   display: block;
 
   color: #000;
-  opacity: .4;
+  opacity: 0.4;
 
   max-width: 100px;
   white-space: nowrap;
@@ -508,7 +490,7 @@ li:has(.template-option):has(.template-desc) {
   }
 
   .pg2 {
-    border-left: 4px solid #A053CD;
+    border-left: 4px solid #a053cd;
   }
 
   .pg3 {

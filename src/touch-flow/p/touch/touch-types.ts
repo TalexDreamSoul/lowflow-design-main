@@ -128,6 +128,7 @@ export type VariableDTO = {
  */
 export type DigitalTemplateDTO = {
   digitalTemplateDetails?: DigitalTemplateDetailDTO[];
+  type?: string;
   [property: string]: any;
 }
 

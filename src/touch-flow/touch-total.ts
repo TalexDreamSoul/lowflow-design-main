@@ -1,8 +1,6 @@
 import { addMarketingTouch } from "~/api";
 
 /**
- * Request
- *
  * MarketingTouchEditDTO
  */
 export type Request = {
@@ -15,11 +13,11 @@ export type Request = {
   /**
    * 勿扰-结束时间
    */
-  disturbEndTime?: Date;
+  disturbEndTime?: string;
   /**
    * 勿扰-开始时间
    */
-  disturbStartTime?: Date;
+  disturbStartTime?: string;
   /**
    * 勿扰配置：quit 退出流程，wait 等待触达 giveUp 放弃触达
    */
@@ -51,7 +49,7 @@ export type Request = {
   /**
    * 执行类型：immediately:定时-单次，repeat:定时-重复，trigger：触发型
    */
-  executeType?: 'immediately' | 'repeat' | 'trigger';
+  executeType?: string;
   /**
    * 主键id
    */
@@ -119,7 +117,7 @@ export type CustomSearchDTO = {
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
+  logicalChar: string;
   [property: string]: any;
 }
 
@@ -380,10 +378,10 @@ export type MarketingTouchNodeEditDTO = {
    * 是否包含目标
    */
   containTarget?: boolean;
-  customRuleContent?: CustomSearchDTO;
+  customRuleContent: CustomSearchDTO;
   diversionRuleContent?: JsonStructListDiversionRuleDTO;
   /**
-   * 执行类型：noDiversion:不分流，event:按事件，attr：按属性
+   * 执行类型：noDiversion:不分流，event:按事件，attr：按属性, safeguard: 兜底
    */
   diversionType?: string;
   eventDelayed?: DelayedDTO;
@@ -395,7 +393,7 @@ export type MarketingTouchNodeEditDTO = {
   labelContent?: LabelRuleDTO;
   nextNodeId?: JsonStructListString;
   nodeContent?: JsonStructObject;
-  nodeDelayed?: DelayedDTO;
+  nodeDelayed: DelayedDTO;
   /**
    * 节点ID
    */
@@ -422,9 +420,9 @@ export type MarketingTouchNodeEditDTO = {
   /**
    * 触达消息模版id
    */
-  touchTemplateId?: string;
+  touchTemplateId?: number;
   /**
-   * 触达消息类型
+   * 触达消息类型: touch:触达、label:打标签, touchAndLabel:触达并且打标签
    */
   touchType?: string;
   [property: string]: any;
@@ -467,19 +465,23 @@ export type DelayedDTO = {
   /**
    * 延时动作
    */
-  delayedAction?: string;
+  delayedAction: string;
   /**
    * 延时时间
    */
-  delayedTime?: number;
+  delayedTime: number;
+  /**
+   * 延时类别
+   */
+  delayedType?: string;
   /**
    * 延时单位
    */
-  delayedUnit?: string;
+  delayedUnit: "day" | "hour" | "minute";
   /**
    * 是否延时
    */
-  isDelayed?: boolean;
+  isDelayed: boolean;
   [property: string]: any;
 }
 
@@ -601,6 +603,10 @@ export type AppPushTemplateDTO = {
  */
 export type VariableTemplateDTO = {
   /**
+   * 默认值
+   */
+  defaultValue?: string;
+  /**
    * 字段
    */
   field?: string;
@@ -608,6 +614,10 @@ export type VariableTemplateDTO = {
    * 字段名
    */
   fieldName?: string;
+  /**
+   * 索引
+   */
+  index?: string;
   /**
    * 标签id
    */
@@ -640,17 +650,18 @@ export type VariableDTO = {
    */
   compareValue?: string;
   /**
-   * 默认值
-   */
-  defaultValue?: string;
-  /**
    * 关系
    */
-  fieldOp?: string;
+  fieldOp: string;
+  /**
+   * 字段范围值
+   */
+  fieldRangeValue?: string;
   /**
    * 设置值
    */
   fieldValue?: string;
+  timeCondition?: TimeConditionDTO;
   [property: string]: any;
 }
 
@@ -659,6 +670,10 @@ export type VariableDTO = {
  */
 export type DigitalTemplateDTO = {
   digitalTemplateDetails?: DigitalTemplateDetailDTO[];
+  /**
+   * 触达类型：message 消息，addFriend 添加好友
+   */
+  type?: string;
   [property: string]: any;
 }
 
@@ -675,7 +690,7 @@ export type DigitalTemplateDetailDTO = {
    */
   imgUrl?: string;
   /**
-   * 触达类型：message 消息，addFriend 添加好友
+   * 触达类型：content 文本，image 图片
    */
   type?: string;
   /**

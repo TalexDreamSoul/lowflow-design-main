@@ -2,109 +2,27 @@
 import { ElMessage } from "element-plus";
 import { inject, reactive, ref } from "vue";
 import { getmarketingTouchEstimate } from "~/api";
-import NewLabel from '../../label/NewLabel.vue';
-import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import DiversionBehavior from "../behavior/diversion/DiversionBehavior.vue";
-import TouchSettings from "../touch/TouchSettings.vue";
+import CommonAttr from "./CommonAttr.vue";
+import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
 
 const origin = {
   nodeId: "",
   nodeType: "subDiversion",
   nodeName: "默认分支",
-
-  targetRuleContent: {
-    targetDelayed: {
-      delayedAction: "",
-      delayedTime: 0,
-      delayedType: "",
-      delayedUnit: "day",
-      isDelayed: false
-    },
-    targetRuleContent: {
-      eventSequence: {
-        conditions: [
-          {
-            conditions: [
-              {
-                action: "",
-                conditions: {
-                  conditions: [
-                    {
-                      attr: {
-                        field: "",
-                        fieldMultiValue: [],
-                        fieldName: "",
-                        fieldOp: "",
-                        fieldRangeValue: "",
-                        fieldType: "",
-                        fieldValue: "",
-                        timeCondition: {
-                          endDay: 0,
-                          endTime: "",
-                          isFuture: false,
-                          isWithin: false,
-                          startDay: 0,
-                          startTime: "",
-                          timeType: ""
-                        }
-                      },
-                      label: {
-                        labelId: 0,
-                        labelName: "",
-                        labelValue: []
-                      },
-                      type: ""
-                    }
-                  ],
-                  logicalChar: "或"
-                },
-                eventCode: "",
-                eventName: ""
-              }
-            ],
-            endTime: "",
-            logicalChar: "或",
-            startTime: ""
-          }
-        ],
-        logicalChar: "或"
-      },
-      logicalChar: "或"
-    }
-  },
-  touch: {
-    type: -1,
-    content: "",
-    variables: []
-  },
-  material: {
-    type: "",
-    beginTime: "",
-    endTime: "",
-    name: "",
-    pageNum: 10,
-    pageSize: -1,
-    status: "available",
-    templates: [{
-      id: -1,
-      name: '不使用模板'
-    }]
-  },
   target: false,
-  touchTemplateContent: {
-
-  },
-  eventDelayed: {
-    delayedAction: '',
+  touchTemplateContent: {},
+  nodeDelayed: {
+    delayedAction: "nothing",
     delayedTime: 0,
-    delayedUnit: '',
-    isDelayed: false
+    delayedUnit: "",
+    isDelayed: false,
   },
   labelContent: {
     labelId: -1,
-    labelName: '',
-    labelValue: []
-  }
+    labelName: "",
+    labelValue: [],
+  },
 };
 
 const marketingTouchNode = ref({
@@ -118,19 +36,19 @@ const marketingTouchNode = ref({
 
 const props = defineProps<{
   p: any;
-  new?: boolean
+  new?: boolean;
 }>();
 
-const touchSettingsRef = ref()
+const touchSettingsRef = ref();
 const sizeForm = reactive<typeof origin>(origin);
 
-console.log("分流器", sizeForm, props.p)
+console.log("分流器", sizeForm, props.p);
 
-const { nodeType, nodeId } = props.p
+const { nodeType, nodeId } = props.p;
 
-if (!props.new && nodeType === 'subDiversion') {
+if (!props.new && nodeType === "subDiversion") {
   if (nodeId) {
-    Object.assign(sizeForm, props.p)
+    Object.assign(sizeForm, props.p);
   }
 }
 
@@ -143,12 +61,12 @@ function saveData() {
     return false;
   }
 
-  console.log("> update", sizeForm, props)
+  console.log("> update", sizeForm, props);
 
   const _: any = { nodeId: "", children: [] };
-  Object.assign(_, sizeForm)
+  Object.assign(_, sizeForm);
 
-  Object.assign(props.p, _)
+  Object.assign(props.p, _);
 
   return true;
 }
@@ -176,7 +94,6 @@ const estimation = async () => {
   marketingTouchNode.value = res.data;
   console.log("Mounted", res);
 };
-
 </script>
 
 <template>
@@ -186,40 +103,7 @@ const estimation = async () => {
         <el-input v-model="sizeForm.nodeName" placeholder="填写名称" />
       </el-form-item>
 
-      <BehaviorGroupPlus title="延迟设置" color="#62C943">
-        &nbsp;
-        <el-select v-model="sizeForm.eventDelayed.isDelayed" style="width: 100px">
-          <el-option :value="true" label="延迟">延迟</el-option>
-          <el-option :value="false" label="不延迟">不延迟</el-option> </el-select>&nbsp;
-        <template v-if="sizeForm.eventDelayed.isDelayed">
-          <el-input v-model="sizeForm.eventDelayed.delayedTime" type="number" style="width: 100px" />&nbsp;
-          <el-select placeholder="请选择" v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
-            <el-option value="month" label="月份">分钟</el-option>
-            <el-option value="week" label="周">小时</el-option>
-            <el-option value="day" label="天">天</el-option> </el-select>&nbsp; 针对符合该装置策略条件的客户 &nbsp;
-          <el-select v-model="sizeForm.eventDelayed.delayedAction" placeholder="请选择" style="width: 150px">
-            <el-option value="touch" label="发送触达">发送触达</el-option>
-            <el-option value="label" label="打上标签">打上标签</el-option>
-            <el-option value="none" label="不执行动作">不执行动作</el-option>
-            <el-option value="touchAndLabel" label="发送触达并打上标签">发送触达并打上标签</el-option>
-          </el-select>
-        </template>
-      </BehaviorGroupPlus>
-
-      <BehaviorGroupPlus title="触达设置" color="#FFD561">
-        <TouchSettings ref="touchSettingsRef" :touch="sizeForm.touchTemplateContent" />
-      </BehaviorGroupPlus>
-
-      <BehaviorGroupPlus
-        v-if="sizeForm.eventDelayed.isDelayed && String(sizeForm.eventDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1"
-        title="标签设置" color="#277AE7">
-        <NewLabel :p="sizeForm" />
-        <!-- <div class="BlockBackground-Under">
-          符合该策略器条件的用户打上 &nbsp;
-          <el-cascader v-model="sizeForm.cascaderLabel" :options="options" clearable />
-
-        </div> -->
-      </BehaviorGroupPlus>
+      <CommonAttr ref="touchSettingsRef" :size-form="sizeForm" />
 
       <div class="BlockBackground">
         <div class="BlockBackground-Under">
@@ -242,8 +126,8 @@ const estimation = async () => {
                   <div>
                     {{
                       marketingTouchNode.appPushCount != undefined
-                      ? marketingTouchNode.appPushCount
-                      : "-"
+                        ? marketingTouchNode.appPushCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -254,8 +138,8 @@ const estimation = async () => {
                   <div>
                     {{
                       marketingTouchNode.znxCount != undefined
-                      ? marketingTouchNode.znxCount
-                      : "-"
+                        ? marketingTouchNode.znxCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -266,8 +150,8 @@ const estimation = async () => {
                   <div>
                     {{
                       marketingTouchNode.digitalCount != undefined
-                      ? marketingTouchNode.digitalCount
-                      : "-"
+                        ? marketingTouchNode.digitalCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -278,8 +162,8 @@ const estimation = async () => {
                   <div>
                     {{
                       marketingTouchNode.outboundCount != undefined
-                      ? marketingTouchNode.outboundCount
-                      : "-"
+                        ? marketingTouchNode.outboundCount
+                        : "-"
                     }}
                   </div>
                 </div>
@@ -290,43 +174,24 @@ const estimation = async () => {
                   <div>
                     {{
                       marketingTouchNode.smsCount != undefined
-                      ? marketingTouchNode.smsCount
-                      : "-"
+                        ? marketingTouchNode.smsCount
+                        : "-"
                     }}
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="yugu_flex">
-            <div class="title">策略器目标设置 &nbsp;</div>
-            <el-switch v-model="sizeForm.targetRuleContent.targetDelayed.isDelayed" />
-          </div>
 
-          <div v-if="sizeForm.targetRuleContent.targetDelayed.isDelayed">
-            <div class="garyblock">
-              <el-text>该策略器的延时以及动作执行完毕后，在</el-text>&nbsp;
-              <el-input v-model="sizeForm.targetRuleContent.targetDelayed.delayedTime" type="number"
-                style="width: 100px" />&nbsp;
-              <el-select v-model="sizeForm.targetRuleContent.targetDelayed.delayedUnit" style="width: 150px">
-                <el-option value="month" label="月份">分钟</el-option>
-                <el-option value="week" label="周">小时</el-option>
-                <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
-              <el-text>后立即判断客户是否完成以下转化事件，则认为完成该策略器模板。</el-text>
-            </div>
-            <DiversionBehavior :custom="sizeForm.targetRuleContent!.targetRuleContent!.eventSequence" />
-          </div>
-
+          <StrategistTargetAttr :size-form="sizeForm" />
         </div>
       </div>
-
     </el-form>
   </div>
 </template>
 
 <style lang="scss">
 li:has(.template-option):has(.template-desc) {
-
   height: 50px;
 }
 
@@ -336,7 +201,7 @@ li:has(.template-option):has(.template-desc) {
   display: block;
 
   color: #000;
-  opacity: .4;
+  opacity: 0.4;
 
   max-width: 100px;
   white-space: nowrap;
@@ -489,7 +354,7 @@ li:has(.template-option):has(.template-desc) {
   }
 
   .pg2 {
-    border-left: 4px solid #A053CD;
+    border-left: 4px solid #a053cd;
   }
 
   .pg3 {

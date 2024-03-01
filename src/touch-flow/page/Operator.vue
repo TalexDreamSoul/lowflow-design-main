@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue'
+import { computed, watch, watchEffect } from 'vue'
 import { useVModel } from '@vueuse/core'
 
 const $props = defineProps<{
@@ -68,14 +68,21 @@ const $emits = defineEmits<{
   (e: 'update:modelValue', modelValue: any): void
 }>()
 const data = useVModel($props, 'modelValue', $emits)
-const type = computed(() => $props.selected ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected) : ($props.attrs.filter((attr: any) => attr.field === $props.item.field)?.[0]?.fieldType ?? "none"));
+const type = computed(() => $props.selected ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected) : ($props.attrs.filter((attr: any) => (attr.field === $props.item.field) || (attr.labelName === $props.item.labelName))?.[0]?.fieldType ?? "none"));
 const operators = computed(() => operatorOptions.filter((item) => item.type.includes(type.value)))
 
-watchEffect(() => {
-  $_ignored: $props
+// watchEffect(() => {
+//   $_ignored: $props
 
-  data.value = ''
-})
+//   data.value = ''
+// })
+
+// watch($props.item, (old, newVal) => {
+//   if ( JSON.stringify(old) === JSON.stringify(newVal) ) return
+//   $_ignored: $props
+
+//   data.value = ''
+// }, { deep: true })
 </script>
 
 <template>
@@ -86,7 +93,7 @@ watchEffect(() => {
 
 <style scoped lang="scss">
 .operator-container {
-  width: 100%;
+  // width: 100%;
   flex-shrink: 0;
 }
 </style>

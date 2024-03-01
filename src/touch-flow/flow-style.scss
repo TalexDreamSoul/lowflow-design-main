@@ -1,0 +1,101 @@
+p.MainTitle {
+  margin: 0.5rem 0;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+div.MainBlock {
+  &-Content {
+    background-color: #ffffff;
+  }
+
+  &-ContentItem {
+    &.bg-transparent {
+      background-color: #f7f8fb;
+    }
+
+    &.border-bottom {
+      border-radius: 4px 4px 0 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    border-radius: 4px;
+    padding: 1rem;
+
+    .topName {
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.6);
+      margin-bottom: 8px;
+    }
+  }
+
+  &-ContentSection {
+    &.bg-transparent {
+      background-color: #f7f8fb;
+    }
+
+    &.flex-wrap {
+      flex-wrap: wrap;
+    }
+
+    border-radius: 4px;
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+    min-height: 48px;
+
+    .innerblock {
+      flex: 1;
+
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .innerblock:last-child {
+      /* 样式属性 */
+      border-right: none;
+    }
+
+    .topName {
+      font-size: 14px;
+      font-weight: 400;
+      color: rgba(0, 0, 0, 0.6);
+      margin-bottom: 8px;
+    }
+  }
+
+  margin: 0.5rem 0 1rem;
+  padding: 0.75rem 1rem 1rem 1rem;
+  align-items: center;
+  min-height: 48px;
+
+  background-color: #f7f8fb;
+}
+
+div.MainBlock-Title {
+  .title {
+    font-size: 16px;
+    font-weight: 600;
+
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .el-button {
+    margin-left: 12px;
+    height: 32px;
+  }
+
+  display: flex;
+
+  align-items: center;
+}
+
+.MainForm {
+  .el-form-item__label {
+    color: #000;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}

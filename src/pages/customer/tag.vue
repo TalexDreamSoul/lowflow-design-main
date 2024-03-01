@@ -10,12 +10,10 @@
             range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            
           />
         </el-form-item>
         <el-form-item>
           <el-select
-            
             v-model="pageParams.labelSource"
             placeholder="来源"
             clearable
@@ -29,7 +27,6 @@
         </el-form-item>
         <el-form-item>
           <el-input
-            
             v-model="pageParams.labelName"
             placeholder="标签名称"
             clearable
@@ -148,7 +145,7 @@
       </el-table>
       <el-pagination
         background
-        layout="prev, pager, next, sizes, jumper"
+        layout="prev, pager, next, jumper"
         :total="total"
         :page-sizes="[10]"
         @current-change="currentChange"
@@ -160,7 +157,7 @@
       :close-on-click-modal="false"
       v-model="modalVisible"
       :title="ModalTitleMap[modalType]"
-      :width="400"
+      :width="checkStringEqual(modalType, DrawerType.Detail) ? 800 : 400"
     >
       <el-form
         v-if="checkStringEqual(modalType, DrawerType.Edit)"
@@ -172,7 +169,6 @@
         <el-form-item label="标签名称" prop="labelName">
           <el-input
             :disabled="true"
-            
             v-model="formValues.labelName"
             placeholder="请输入"
             clearable
@@ -180,7 +176,6 @@
         </el-form-item>
         <el-form-item label="标签说明" prop="labelDesc">
           <el-input
-            
             v-model="formValues.labelDesc"
             placeholder="请输入"
             clearable
@@ -194,7 +189,11 @@
         <div class="desc">
           <div style="color: rgba(64, 120, 224, 1)">客户活跃度</div>
           <div>标签说明：根据客户启动APP的次数，对客户的活跃程度进行判断</div>
-          <div>覆盖度：{{ modalData?.coverRatio * 100 }}% 覆盖132名客户</div>
+          <div>
+            覆盖度：{{ modalData?.coverRatio * 100 }}% 覆盖{{
+              modalData?.count
+            }}名客户
+          </div>
         </div>
         <el-table
           :data="modalData?.labelValueCoverRatios || []"
@@ -217,15 +216,18 @@
           :limit="1"
           :on-exceed="handleExceed"
           :auto-upload="false"
+          :before-upload="beforeAvatarUpload"
+          :on-success="onSuccess"
         >
-          <el-button style="width: 100%" type="primary">上传文件</el-button>
+          <el-button class="upload-btn" style="width: 100%" type="primary"
+            ><el-icon><UploadFilled /></el-icon> 上传文件</el-button
+          >
           <template #tip>
-            <div class="el-upload__tip text-red">支持格式：csv xlsx</div>
+            <div class="el-upload__tip text-red">支持格式：xlsx</div>
           </template>
         </el-upload>
         <el-button
           @click="download"
-          
           style="border-color: #4078e0; color: #4078e0"
           >下载上传格式模版</el-button
         >
@@ -234,21 +236,18 @@
         <span class="dialog-footer">
           <el-button
             v-if="modalType === DrawerType.Detail"
-            
             round
             @click="modalVisible = false"
             >返回</el-button
           >
           <el-button
             v-if="modalType !== DrawerType.Detail"
-            
             round
             @click="modalVisible = false"
             >取消</el-button
           >
           <el-button
             v-if="modalType === DrawerType.Edit"
-            
             @click.prevent="onSubmit(formRef)"
             round
             type="primary"
@@ -256,7 +255,6 @@
           >
           <el-button
             v-if="modalType === DrawerType.Create"
-            
             @click.prevent="submitUpload"
             round
             type="primary"
@@ -278,7 +276,7 @@ import {
 import API from "~/api/customer";
 import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
-import { ElMessageBox, FormInstance, genFileId } from "element-plus";
+import { ElMessage, ElMessageBox, FormInstance, genFileId } from "element-plus";
 import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
 
@@ -306,6 +304,7 @@ const defaultFormValues = {
 };
 let formValues = reactive({ ...defaultFormValues });
 let modalData = reactive<any>({});
+const pageNum = ref(1);
 
 const formRef = ref<FormInstance>();
 
@@ -318,17 +317,18 @@ const upload = ref<UploadInstance>();
 watch(
   pageParams,
   debounce(() => {
-    getData({...pageParams, pageNum: 1});
+    getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );
 
 onMounted(() => {
-  getData({...pageParams, pageNum: 1});
+  getData({ ...pageParams, pageNum: 1 });
 });
 
 const currentChange = (value: number) => {
-  getData({...pageParams, pageNum: value});
-}
+  pageNum.value = value;
+  getData({ ...pageParams, pageNum: value });
+};
 
 const handleExceed: UploadProps["onExceed"] = (files) => {
   upload.value!.clearFiles();
@@ -340,6 +340,18 @@ const handleExceed: UploadProps["onExceed"] = (files) => {
 const submitUpload = () => {
   upload.value!.submit();
 };
+const onSuccess = () => {
+  modalVisible.value = false;
+  getData({ ...pageParams, pageNum: pageNum.value });
+}
+
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  if (rawFile.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+    ElMessage.error('请上传制定类型文件')
+    return false
+  }
+  return true
+}
 
 const getData = async (params: any) => {
   try {
@@ -393,7 +405,7 @@ const handleSetStatus = async (values: any) => {
         : ConfigStatus.Available,
   });
   if (checkStringEqual(res?.code, 0)) {
-    getData(pageParams);
+    getData({ ...pageParams, pageNum: pageNum.value });
   }
 };
 
@@ -407,21 +419,19 @@ const handleDelete = (values: any) => {
   }).then(async () => {
     let res = await API.deleteCustomLabel({ id: values.id });
     if (checkStringEqual(res?.code, 0)) {
-      getData(pageParams);
+      getData({ ...pageParams, pageNum: pageNum.value });
     }
   });
 };
 
 const download = async () => {
-  let res = await API.downloadCustomLabelTemplate();
-  let href = window.URL.createObjectURL(new Blob([res]));
-  let downloadElement = document.createElement("a");
-  downloadElement.href = href;
-  downloadElement.download = '客户标签模版.xlsx';
-  document.body.appendChild(downloadElement);
-  downloadElement.click();
-  document.body.removeChild(downloadElement);
-  window.URL.revokeObjectURL(href);
+  let a = document.createElement("a");
+  a.href = "/api/downloadCustomLabelTemplate";
+  a.download = "客户标签模版.xlsx";
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 };
 
 const onSubmit = async (formEl: FormInstance | undefined) => {
@@ -430,7 +440,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     await formEl.validate();
     let res = await API.updateCustomLabel(formValues);
     if (checkStringEqual(res?.code, 0)) {
-      getData(pageParams);
+      getData({ ...pageParams, pageNum: pageNum.value });
       modalVisible.value = false;
     }
   } catch (error) {
@@ -470,9 +480,16 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   .el-upload {
     width: 100%;
   }
-}
-.add {
-  background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
-  transition: 0.25s;
+  .add {
+    background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
+    transition: 0.25s;
+  }
+  .upload-btn {
+    border: 1px dashed rgba(0, 0, 0, 0.2);
+    background: rgba(64,120,224,0.1);
+    height: 64px;
+    color: #4078E0;
+    justify-content: flex-start;
+  }
 }
 </style>

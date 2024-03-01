@@ -4,6 +4,7 @@ import { reactive, ref, watchEffect } from "vue";
 
 import type { UploadFile, UploadFiles } from "element-plus";
 import MicroEnterpriseDrag from "./MicroEnterpriseDrag.vue";
+import { el } from "element-plus/es/locale";
 
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
@@ -11,6 +12,7 @@ const dialogVisible = ref(false);
 const action = `/api/uploadMaterialFile`;
 const props = defineProps<{
   data: any;
+  type?: any;
   readonly?: boolean;
 }>();
 
@@ -19,55 +21,73 @@ const origin = {
   name: "",
   status: "",
   type: "digital",
-
-  digitalTemplateDetails: {
-    content: "",
-    imgUrl: "",
+  digitalTemplate: {
+    digitalTemplateDetails: [],
     type: "",
-    variables: [
-      {
-        field: "",
-        fieldName: "",
-        labelId: 0,
-        labelName: "",
-        labelValue: [],
-        type: "",
-        variables: [
-          {
-            compareValue: "",
-            defaultValue: "",
-            fieldOp: "",
-            fieldValue: "",
-          },
-        ],
-      },
-    ],
   },
+
+  // digitalTemplateDetails: {
+  //   content: "",
+  //   imgUrl: "",
+  //   type: "",
+  //   variables: [
+  //     {
+  //       field: "",
+  //       fieldName: "",
+  //       labelId: 0,
+  //       labelName: "",
+  //       labelValue: [],
+  //       type: "",
+  //       variables: [
+  //         {
+  //           compareValue: "",
+  //           defaultValue: "",
+  //           fieldOp: "",
+  //           fieldValue: "",
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
 };
 
+const list = ref<any>([]);
 const data = reactive<typeof origin>(origin);
 
 watchEffect(() => {
-  const _data = props.data?.value;
-  if (!_data) return;
+  const _data = props.data?.value || props.data;
+  if (!_data) return setTimeout(() => assignData('addFriend'), 200);
 
   Object.assign(data, _data);
+  list.value = data.digitalTemplate;
+  data.digitalTemplate.type = _data?.content.type;
 });
 
 function saveData() {
-  const { id, name, digitalTemplateDetails } = data;
-  const digitalTemplate = {
-    digitalTemplateDetails,
-    type: "digital",
+  const { id, name } = data;
+  const digitalTemplate: any = {
+    digitalTemplateDetails: list.value.digitalTemplateDetails,
+    type: list.value.type,
   };
 
-  return {
-    id,
-    name,
-    type: data.type,
-    status: "available",
-    digitalTemplate,
-  };
+  // if ( digitalTemplateDetails?.length ) {
+  //   digitalTemplate.digitalTemplateDetails = digitalTemplateDetails
+  // }
+
+  return props.type == "details" || props.type == "update"
+    ? {
+        id,
+        name,
+        type: data.type,
+        status: "available",
+        digitalTemplate,
+      }
+    : {
+        name,
+        type: data.type,
+        status: "available",
+        digitalTemplate,
+      };
 }
 
 defineExpose({ saveData });
@@ -85,33 +105,28 @@ const handleDownload = (file: UploadFile) => {
   console.log(file);
 };
 
-const list = ref<any>([]);
 function getCurrentDate() {
   const currentDate = new Date().toISOString().split("T")[0];
   return currentDate;
 }
-function addPic(
-  response: any,
-  uploadFile: UploadFile,
-  uploadFiles: UploadFiles
-) {
+function addPic(response: any, uploadFile: UploadFile, uploadFiles: UploadFiles) {
   // console.log("addPic", response, uploadFile, uploadFiles)
 
   list.value.push({
-    id: Math.random() * 1000000 + "",
+    // id: Math.random() * 1000000 + "",
     type: "image",
     imgUrl: response.data,
-    name: uploadFile.name
+    name: uploadFile.name,
   });
 }
 
 function addMessage() {
   list.value.push({
-    id: Math.random() * 1000000 + "",
+    // id: Math.random() * 1000000 + "",
     type: "content",
     content: "",
     variables: [],
-    name: "消息内容"
+    name: "消息内容",
   });
 }
 
@@ -120,7 +135,7 @@ function onDelete(item: any, index: number) {
 }
 
 function onUpload(item: any, index: number) {
-  if (index < 1) return
+  if (index < 1) return;
 
   const temp = list.value[index];
   list.value[index] = list.value[index - 1];
@@ -128,69 +143,95 @@ function onUpload(item: any, index: number) {
 }
 
 function onDownload(item: any, index: number) {
-  if (index + 1 > list.value?.length || 1) return
+  if (index + 1 > list.value?.length || 1) return;
 
   const temp = list.value[index];
   list.value[index] = list.value[index + 1];
   list.value[index + 1] = temp;
+}
+function assignData(val: any) {
+  data.digitalTemplate.type = val;
+  if (val == "addFriend") {
+    list.value = [
+      {
+        // id: Math.random() * 1000000 + "",
+        type: "content",
+        content: "",
+        variables: [],
+        name: "消息内容",
+      },
+    ];
+  } else {
+    list.value = [];
+  }
 }
 </script>
 
 <template>
   <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input :disabled="readonly" v-model="data.name" style="width: 50%;"></el-input>
+      <el-input :disabled="readonly" v-model="data.name" style="width: 50%"></el-input>
     </el-form-item>
     <el-form-item label="企微触达方式">
-      <el-select :disabled="readonly" placeholder="请选择" v-model="data.sendtype" style="width: 50%;">
-        <!--
-           sendMessage 发送消息
-           addfriends 添加好友
-   -->
-        <el-option label="发送消息" value="sendMessage" />
-        <el-option label="添加好友" value="addfriends" />
+      <el-select
+        :disabled="readonly"
+        @change="assignData"
+        placeholder="请选择"
+        v-model="data.digitalTemplate.type"
+        style="width: 50%"
+      >
+        <el-option label="发送消息" value="message" />
+        <el-option label="添加好友" value="addFriend" />
       </el-select>
     </el-form-item>
 
-    <el-form-item label="消息内容">
-      <TouchSettingContents :disabled="readonly" variables="variables" content="content"
-        v-model="data.digitalTemplateDetails" buttonTitle="输入变量" />
-    </el-form-item>
+    <MicroEnterpriseDrag
+      :disabled="readonly"
+      @delete="onDelete"
+      @upload="onUpload"
+      @download="onDownload"
+      style="margin-bottom: 6.5rem"
+      v-model="list"
+    />
 
-    <MicroEnterpriseDrag :disabled="readonly" @delete="onDelete" @upload="onUpload" @download="onDownload"
-      style="margin-bottom: 6.5rem" v-model="list" />
-
-    <div v-if="!readonly" class="FloatFixed">
-      <el-upload :action=action :on-success="addPic" :auto-upload="true"
-        :data="{ type: 'material', date: getCurrentDate() }" :show-file-list="false"
-        class="upload-demo button-groupupload">
-        <el-text type="primary" style="cursor: pointer;">
-          <el-icon size="14">
-            <CirclePlusFilled />
-          </el-icon>
-          添加图片
-        </el-text>
-      </el-upload>
-      <div class="button-group">
-        <el-text type="primary" style="cursor: pointer;" @click="addMessage">
-          <el-icon size="14">
-            <CirclePlusFilled />
-          </el-icon>
-          添加消息内容
-        </el-text>
+    <div v-if="data.digitalTemplate.type != 'addFriend'">
+      <div v-if="!readonly" class="FloatFixed">
+        <el-upload
+          :action="action"
+          :on-success="addPic"
+          :auto-upload="true"
+          :data="{ type: 'material', date: getCurrentDate() }"
+          :show-file-list="false"
+          class="upload-demo button-groupupload"
+        >
+          <el-text type="primary" style="cursor: pointer">
+            <el-icon size="14">
+              <CirclePlusFilled />
+            </el-icon>
+            添加图片
+          </el-text>
+        </el-upload>
+        <div class="button-group">
+          <el-text type="primary" style="cursor: pointer" @click="addMessage">
+            <el-icon size="14">
+              <CirclePlusFilled />
+            </el-icon>
+            添加消息内容
+          </el-text>
+        </div>
       </div>
     </div>
   </el-form>
 </template>
 <style lang="scss" scoped>
 .FloatFixed {
-  &>div {
+  & > div {
     height: 40px;
   }
 
   position: absolute;
 
-  width: calc(100% - 5rem);
+  width: calc(100% - 4rem);
   bottom: 3.5rem;
 
   background-color: #fff;

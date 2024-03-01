@@ -3,15 +3,16 @@ import { inject, ref, reactive, watchEffect, computed } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { markRaw } from "vue";
+import { Delete } from '@element-plus/icons-vue'
 
 const origin = {
-  nodeName: "DeliverySettings",
+  nodeName: "",
   nodeType: "diversion",
   height: 200,
   nodeId: "",
   branches: [
-    { nodeName: "branch1", ratio: 50, children: [] },
-    { nodeName: "branch2", ratio: 50, children: [] },
+    { nodeName: "流量策略器1", ratio: 50, children: [] },
+    { nodeName: "流量策略器2", ratio: 50, children: [] },
   ]
 };
 
@@ -50,7 +51,7 @@ const totalRatio = computed(() => sizeForm.branches.reduce((acc: number, curVal)
 function saveData() {
   if (!sizeForm.nodeName) {
     ElMessage.warning({
-      message: "请输入分流器名称",
+      message: "请输入流量策略器名称",
     });
 
     return false;
@@ -123,7 +124,7 @@ const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
 const addBranch = () => {
-  sizeForm.branches.push({ nodeName: "分流器" + (sizeForm.branches.length + 1), ratio: 0, children: [] });
+  sizeForm.branches.push({ nodeName: "流量策略器" + (sizeForm.branches.length + 1), ratio: 0, children: [] });
 };
 
 const deleteBranch = (index: number) => {
@@ -153,15 +154,15 @@ const deleteBranch = (index: number) => {
           </el-row>
           <el-row :gutter="20" style="    align-items: center;
           margin-top: 16px;" v-for="(branch, index) in sizeForm.branches" :key="index">
-            <el-col :span="14">
+            <el-col :span="12">
               <el-input v-model="branch.nodeName" />
             </el-col>
             <el-col :span="7">
               <el-input-number :min="0" :max="100 - +totalRatio + branch.ratio" placeholder="百分比"
                 v-model="branch.ratio" />
             </el-col>
-            <el-col :span="3">
-              <el-text type="primary" style="cursor: pointer;" @click="deleteBranch(index)">
+            <el-col :span="5">
+              <el-text v-if="index > 1" type="primary" style="cursor: pointer;" @click="deleteBranch(index)">
                 <el-icon size="14">
                   <Delete />
                 </el-icon>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, computed, provide, inject, markRaw } from "vue";
 import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
-import ConditionSetAttr from "../p/start/ConditionSetAttr.vue";
-import CustomersAttr from "../p/start/CustomersAttr.vue";
-import PolicySettingsAttr from "../p/start/PolicySettingsAttr.vue";
+import ConditionSetAttr from "./attr/ConditionSetAttr.vue";
+import CustomersAttr from "./attr/CustomersAttr.vue";
+import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
 import Strategist from "./start/Strategist.vue";
 

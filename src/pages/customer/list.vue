@@ -4,12 +4,7 @@
     <div class="search">
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
-          <el-select
-            
-            v-model="pageParams.source"
-            placeholder="类别"
-            clearable
-          >
+          <el-select v-model="pageParams.source" placeholder="类别" clearable>
             <el-option
               v-for="item of PEOPLE_SOURCE"
               :label="item.label"
@@ -19,17 +14,23 @@
         </el-form-item>
         <el-form-item>
           <el-input
-            
             v-model="pageParams.value"
             placeholder="请输入客户姓名或者手机号"
             clearable
             :suffix-icon="Search"
           />
         </el-form-item>
+
+        <el-form-item>
+          <el-button @click="handleModaldrawer(DrawerType.Serach)"
+            >高级筛选</el-button
+          >
+        </el-form-item>
       </el-form>
       <el-button
         round
-        class="add" type="primary"
+        class="add"
+        type="primary"
         @click="handleModal(DrawerType.Create)"
         >手动添加客户</el-button
       >
@@ -75,6 +76,14 @@
         <el-table-column label="操作" min-width="158">
           <template #default="scope">
             <el-button
+              v-if="scope.row.source === peopleSourceEnum.Manual"
+              link
+              type="primary"
+              class="action-btn"
+              @click="handleModal(DrawerType.Edit, scope.row)"
+              >编辑</el-button
+            >
+            <el-button
               :disabled="scope.row.source !== peopleSourceEnum.Manual"
               link
               type="primary"
@@ -94,7 +103,7 @@
       </el-table>
       <el-pagination
         background
-        layout="prev, pager, next, sizes, jumper"
+        layout="prev, pager, next, jumper"
         :total="total"
         :page-sizes="[10]"
         @current-change="currentChange"
@@ -118,7 +127,7 @@
       >
         <el-form-item
           :rules="[
-            { required: true, message: '请输入' },
+            { required: true, message: '请输入客户名称' },
             {
               pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
               message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
@@ -127,32 +136,21 @@
           label="客户名称"
           prop="name"
         >
-          <el-input
-            
-            v-model="formValues.name"
-            placeholder="请输入"
-            clearable
-          />
+          <el-input v-model="formValues.name" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请输入' }]"
+          :rules="[{ required: true, message: '请输入手机号' }]"
           label="手机号"
           prop="phone"
         >
-          <el-input
-            
-            v-model="formValues.phone"
-            placeholder="请输入"
-            clearable
-          />
+          <el-input v-model="formValues.phone" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请输入' }]"
+          :rules="[{ required: true, message: '请输入互金客户号' }]"
           label="互金客户号"
           prop="itFinCode"
         >
           <el-input
-            
             v-model="formValues.itFinCode"
             placeholder="请输入"
             clearable
@@ -160,12 +158,7 @@
         </el-form-item>
         <div class="flex">
           <el-form-item label="性别" prop="sex">
-            <el-select
-              
-              v-model="formValues.sex"
-              placeholder="请选择"
-              clearable
-            >
+            <el-select v-model="formValues.sex" placeholder="请选择" clearable>
               <el-option
                 v-for="item of PEOPLE_SEX"
                 :label="item.label"
@@ -175,7 +168,6 @@
           </el-form-item>
           <el-form-item label="省份" prop="province">
             <el-select
-              
               v-model="formValues.province"
               placeholder="请选择"
               clearable
@@ -188,12 +180,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="城市" prop="city">
-            <el-select
-              
-              v-model="formValues.city"
-              placeholder="请选择"
-              clearable
-            >
+            <el-select v-model="formValues.city" placeholder="请选择" clearable>
               <el-option
                 v-for="item of CITY_DATA.find(
                   (v) => v.value === formValues.province
@@ -209,7 +196,6 @@
             v-model="formValues.birthday"
             type="date"
             placeholder="请选择"
-            
             value-format="YYYY-MM-DD"
           />
         </el-form-item>
@@ -278,27 +264,30 @@
         </div>
         <div class="black-list">
           <div class="title">所在黑名单</div>
+          <div class="tag-content">
+            <el-tag v-for="item of modalData?.blacklists || []">{{
+              item.blacklistName
+            }}</el-tag>
+            <a v-if="!modalData?.blacklists">无</a>
+          </div>
         </div>
       </div>
       <template #footer>
         <span class="dialog-footer">
           <el-button
             v-if="modalType === DrawerType.Detail"
-            
             round
             @click="modalVisible = false"
             >返回</el-button
           >
           <el-button
             v-if="modalType !== DrawerType.Detail"
-            
             round
             @click="modalVisible = false"
             >取消</el-button
           >
           <el-button
             v-if="modalType !== DrawerType.Detail"
-            
             @click.prevent="onSubmit(formRef)"
             round
             type="primary"
@@ -307,6 +296,12 @@
         </span>
       </template>
     </el-dialog>
+    <DrawerSerach
+      ref="drawerRef"
+      :getData="
+        (filtering: any) => getData({ ...pageParams, pageNum }, filtering)
+      "
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -322,6 +317,7 @@ import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
+import DrawerSerach from "./drawerSerach.vue";
 
 enum DrawerType {
   Create = "create",
@@ -340,6 +336,12 @@ const pageParams = reactive({
   source: "",
 });
 
+const filtering = reactive({
+  customAttr: {},
+  customEvent: {},
+  eventSequence: {},
+  logicalChar: "",
+});
 const defaultFormValues = {
   name: "",
   phone: "",
@@ -349,7 +351,7 @@ const defaultFormValues = {
   birthday: "",
   itFinCode: "",
 };
-let formValues = reactive({ ...defaultFormValues });
+let formValues = reactive<any>({ ...defaultFormValues });
 let modalData = reactive<any>({});
 
 const formRef = ref<FormInstance>();
@@ -358,6 +360,7 @@ const total = ref(0);
 const tableData = ref<any[]>([]);
 const modalVisible = ref(false);
 const modalType = ref<any>(DrawerType.Create);
+const pageNum = ref(1);
 
 watch(
   pageParams,
@@ -371,13 +374,16 @@ onMounted(() => {
 });
 
 const currentChange = (value: number) => {
+  pageNum.value = value;
   getData({ ...pageParams, pageNum: value });
 };
 
-const getData = async (params: any) => {
+const getData = async (params: any, filtering?: any) => {
   try {
     let res = await API.qryCustomList({
+      ...filtering,
       ...params,
+      pageNum: 1,
       pageSize: 10,
     });
     if (checkStringEqual(res?.code, 0)) {
@@ -391,7 +397,12 @@ const getData = async (params: any) => {
 
 const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Create) {
+    for (const key in formValues) {
+      formValues[key] = null;
+    }
     Object.assign(formValues, defaultFormValues);
+  } else if (type === DrawerType.Edit) {
+    Object.assign(formValues, values);
   } else {
     let res = await API.customDetail({ id: values?.id });
     if (!checkStringEqual(res?.code, 0)) return;
@@ -400,7 +411,11 @@ const handleModal = async (type: string, values?: any) => {
   modalType.value = type;
   modalVisible.value = true;
 };
+const drawerRef = ref<any>();
 
+const handleModaldrawer = async (type: string, values?: any) => {
+  drawerRef.value?.handleModal?.(type, values);
+};
 const handleDelete = (values: any) => {
   ElMessageBox.alert("删除后将无法恢复", "确认删除", {
     showCancelButton: true,
@@ -411,7 +426,7 @@ const handleDelete = (values: any) => {
   }).then(async () => {
     let res = await API.deleteCustom({ id: values.id });
     if (checkStringEqual(res?.code, 0)) {
-      getData(pageParams);
+      getData({ ...pageParams, pageNum: pageNum.value });
     }
   });
 };
@@ -420,10 +435,16 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   try {
     await formEl.validate();
-    let res = await API.addCustom({
+    let res = { code: '0000' };
+    let values = {
       ...formValues,
       source: peopleSourceEnum.Manual,
-    });
+    };
+    if (modalType.value === DrawerType.Create) {
+      res = await API.addCustom(values);
+    } else {
+      res = await API.updateCustom(values)
+    }
     if (checkStringEqual(res?.code, 0)) {
       getData(pageParams);
       modalVisible.value = false;
@@ -456,6 +477,8 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       overflow: hidden;
     }
     .tag-content {
+      display: flex;
+      gap: 4px;
       margin-top: 8px;
       .el-tag {
         padding: 8px;
