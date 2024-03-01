@@ -20,11 +20,6 @@
             :suffix-icon="Search"
           />
         </el-form-item>
-        <el-form-item>
-          <el-button @click="handleModal(DrawerType.Create)"
-            >高级筛选</el-button
-          >
-        </el-form-item>
       </el-form>
       <el-button
         class="add"
