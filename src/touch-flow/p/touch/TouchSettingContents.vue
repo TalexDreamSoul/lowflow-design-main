@@ -305,7 +305,7 @@ function _handleBlur() {
       {
         console.log("aaa", obj)
         content += `$$${id}$$`;
-      }
+      } else variableMap.delete(id!)
     } else content += node.nodeValue;
   });
 
