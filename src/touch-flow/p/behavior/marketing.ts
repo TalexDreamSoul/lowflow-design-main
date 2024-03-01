@@ -87,7 +87,7 @@ export type CustomSearchDTO = {
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
+  logicalChar: string;
   [property: string]: any;
 }
 

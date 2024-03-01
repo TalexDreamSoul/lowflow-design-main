@@ -664,7 +664,7 @@ function handleAdd() {
 
     border: none;
     cursor: pointer;
-    user-select: none;
+    // user-select: none;
     background: #edeff4;
   }
 
