@@ -12,6 +12,7 @@ import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import CustomEventComponent from "./CustomEventComponent.vue";
 import { createTemplatePopover } from "~/utils/touch-templates";
 import { materialType } from "~/utils/common";
+import { de, el } from "element-plus/es/locale";
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
@@ -138,6 +139,13 @@ const addData = async () => {
   createTemplatePopover(name, route.params.type).then(fetchDataApi);
 };
 const updateData = (row: any) => {
+  const { content, ...rest } = row;
+  if (route.params.type=='digital') {
+    value.value = row;
+  } else{
+    value.value = { ...content, ...rest };
+  }
+
   if (row.usedCount > 0) {
     ElMessageBox.alert(
       `当前有${row.usedCount}个策略流程正在使用该模版（流程${row.usedTouchNames}正在使用），确认后该修改内容会更新至正在使用的流程中`,
@@ -150,16 +158,13 @@ const updateData = (row: any) => {
         customClass: "delete-modal",
       }
     ).then(async () => {
-      const { content, ...rest } = row;
-      value.value = { ...content, ...rest };
       let name = "编辑" + materialTypeName.value + "模版";
-      createTemplatePopover(name, route.params.type, value, "update").then(fetchDataApi);
+      createTemplatePopover(name, route.params.type, value, "update", false).then(fetchDataApi);
     });
   } else {
-    const { content, ...rest } = row;
-    value.value = { ...content, ...rest };
+    console.log(`output->value`,value,row)
     let name = "编辑" + materialTypeName.value + "模版";
-    createTemplatePopover(name, route.params.type, value, "update").then(fetchDataApi);
+    createTemplatePopover(name, route.params.type, value, "update", false).then(fetchDataApi);
   }
 };
 const handleSizeChange = (val: any) => {
