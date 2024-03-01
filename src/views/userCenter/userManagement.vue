@@ -2,10 +2,10 @@
 import { ref, unref, reactive, onMounted, watch } from "vue";
 import dayjs from "dayjs";
 import {
-  getQryMaterial,
-  setDeleteMaterial,
-  setUpdateMaterialStatus,
-} from "~/api/index";
+  qryAccountList,
+  deleteAccount,
+  updateAccount,
+} from "~/api/account";
 import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
@@ -65,7 +65,7 @@ console.log(materialTypeName); // 输出：短信
 //   fetchDataApi();
 // });
 const fetchDataApi = async () => {
-  const res = await getQryMaterial({
+  const res = await qryAccountList({
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
     ...formInline,
