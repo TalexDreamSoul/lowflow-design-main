@@ -39,36 +39,15 @@ const props = defineProps(["getData"]);
 
 const customRuleContent = reactive<CustomSearchDTO>({
   customAttr: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      }
-    ],
+    conditions: [],
     logicalChar: "或",
   },
   customEvent: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      }
-    ],
+    conditions: [],
     logicalChar: "或",
   },
   eventSequence: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      }
-    ],
+    conditions: [],
     logicalChar: "或",
   },
   logicalChar: "或",
@@ -85,6 +64,8 @@ const handleModal = async () => {
 };
 
 const onSubmit = async (formEl: FormInstance | undefined) => {
+  console.log( "submit", customRuleContent )
+
   try {
     await props?.getData?.({...customRuleContent});
       modalVisible.value = false;
@@ -97,42 +78,33 @@ function attrsAdd() {
   let attr = customRuleContent.customAttr!.conditions!;
 
   const obj = {
-    conditions: [{ conditions: {} }],
+    conditions: [{ conditions: [] }],
     logicalChar: "或",
   };
 
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
+  attr.push(obj);
 }
 
 function behaviorAdd() {
   let attr = customRuleContent.customEvent!.conditions!;
 
   const obj = {
-    conditions: [{ conditions: {} }],
+    conditions: [{ conditions: [] }],
     logicalChar: "或",
   };
 
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
+  attr.push(obj);
 }
 
 function sequenceAdd() {
   let attr = customRuleContent.eventSequence!.conditions!;
 
   const obj = {
-    conditions: [{ conditions: [{}] }],
+    conditions: [{ conditions: [] }],
     logicalChar: "或",
   };
 
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
+  attr.push(obj);
 }
 
 defineExpose({ handleModal });
