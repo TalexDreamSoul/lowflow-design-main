@@ -300,7 +300,12 @@ function _handleBlur() {
   contentDom?.childNodes.forEach((node: ChildNode) => {
     if (node.nodeName === "BUTTON") {
       const id = (node as HTMLElement).dataset.id;
-      content += `$$${id}$$`;
+      const obj = variableMap.get(id!)!
+      if ( obj.labelName || obj.fieldName )
+      {
+        console.log("aaa", obj)
+        content += `$$${id}$$`;
+      }
     } else content += node.nodeValue;
   });
 
