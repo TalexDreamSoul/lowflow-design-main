@@ -257,12 +257,11 @@ export type CustomEventConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: EventConditionDTO[];
+  conditions: EventConditionDTO[];
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
-  [property: string]: any;
+  logicalChar: string;
 }
 
 /**
@@ -272,12 +271,11 @@ export type EventConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: EventSearchCondition[];
+  conditions: EventSearchCondition[];
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
-  [property: string]: any;
+  logicalChar: string;
 }
 
 /**
@@ -287,7 +285,7 @@ export type EventSearchCondition = {
   /**
    * 操作
    */
-  action?: string;
+  action: string;
   conditions?: AttrConditionDTO;
   /**
    * 结束时间
@@ -296,16 +294,15 @@ export type EventSearchCondition = {
   /**
    * 事件编码
    */
-  eventCode?: string;
+  eventCode: string;
   /**
    * 事件名
    */
-  eventName?: string;
+  eventName: string;
   /**
    * 开始时间
    */
   startTime?: Date;
-  [property: string]: any;
 }
 
 /**

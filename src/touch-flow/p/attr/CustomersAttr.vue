@@ -19,14 +19,7 @@ const customRuleContent = reactive<CustomSearchDTO>({
     logicalChar: "或",
   },
   customEvent: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      },
-    ],
+    conditions: [],
     logicalChar: "或",
   },
   eventSequence: {

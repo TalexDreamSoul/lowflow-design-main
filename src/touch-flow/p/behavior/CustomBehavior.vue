@@ -3,8 +3,10 @@ import { onMounted, ref, provide } from "vue";
 import BehaviorContent from "./BehaviorContent.vue";
 import LogicalLine from "./LogicalLine.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
+import { CustomEventConditionDTO } from "~/touch-flow/touch-total";
+
 const props = defineProps<{
-  custom: any;
+  custom: CustomEventConditionDTO;
   readonly?: boolean;
 }>();
 
@@ -32,11 +34,9 @@ provide("refreshTree", refreshTree);
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
       <div v-if="dict && custom.conditions?.length" class="Target-Block">
-        <LogicalLine :display="custom.conditions?.length" v-model="custom.LogicalLine">
-          <div v-for="condition in custom.conditions" :key="condition.id">
-            <BehaviorContent :readonly="readonly" v-if="condition?.conditions?.length" :condition="condition" :dict="dict">
-              <slot :condition="condition" :dict="dict" />
-            </BehaviorContent>
+        <LogicalLine :display="!custom.conditions?.length" v-model="custom.logicalChar">
+          <div v-for="(condition, index) in custom.conditions" :key="index">
+            <BehaviorContent :readonly="readonly" :condition="condition" :dict="dict" />
           </div>
         </LogicalLine>
       </div>
