@@ -111,10 +111,10 @@ const attrs = computed(() => {
         </el-text>
       </div>
       <LogicalLine v-if="target.targetDelayed.delayedAction" :display="target.targetDelayed.delayedAction === undefined"
-        title="并且满足" v-model="target.targetRuleContent.customEvent!.logicalOperator">
+        title="并且满足" v-model="target.targetRuleContent.customEvent!.logicalChar">
         <ul :label-width="0" :inline="true">
           <li v-for="(item, index) in target.targetRuleContent.customEvent!.conditions" :key="index">
-            <trigger :readonly="readonly" v-model="item.field" :attrs="attrs" />
+            <trigger :item="item" :readonly="readonly" v-model="item.attr.field" :attrs="attrs" />
             <operator :item="item" :attrs="attrs" :readonly="readonly" ref="operatorRef" v-model="item.fieldOp" />
             <AttrRender :readonly="readonly" :item="item" :attrs="attrs" />
             <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">

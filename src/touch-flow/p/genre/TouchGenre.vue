@@ -62,7 +62,7 @@ const attrs = computed(() => {
             class="filter-item-rule">
             <el-col :xs="24" :sm="7">
               <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                <trigger v-model="item.field" :attrs="attrs" />
+                <trigger :item="item" v-model="item.field" :attrs="attrs" />
               </el-form-item>
             </el-col>
             <el-col :xs="24" :sm="5" v-if="item.field">

@@ -58,6 +58,8 @@ const expand = ref(false);
     .addon-icon {
       opacity: 1;
       transform: translateX(0%);
+
+      pointer-events: all;
     }
 
     max-height: 5000px;
@@ -69,6 +71,7 @@ const expand = ref(false);
     opacity: 0;
     transform: translateX(10%);
 
+    pointer-events: none;
     transition: cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.25s;
   }
 

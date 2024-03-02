@@ -93,6 +93,7 @@ const getCurrSelected = (condition: any) => {
       >
         <trigger
           v-model="item.attr.field"
+          :item="item"
           :attrs="attrs"
           :disabled="readonly"
           placeholder="客户属性/标签"

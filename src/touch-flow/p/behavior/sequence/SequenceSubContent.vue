@@ -79,7 +79,7 @@ const attrs = computed(() => {
         v-for="(item, index) in getConditions()"
         :key="index"
       >
-        <trigger v-model="item.attr.field" :attrs="attrs" />
+        <trigger :item="item" v-model="item.attr.field" :attrs="attrs" />
         <operator
           :attrs="attrs"
           :item="item"
@@ -87,7 +87,7 @@ const attrs = computed(() => {
           v-model="item.attr.fieldOp"
         />
 
-        <AttrRender :item="item" :attrs="attrs" />
+        <AttrRender :item="item.attr" :attrs="attrs" />
 
         <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
           <el-icon size="14">

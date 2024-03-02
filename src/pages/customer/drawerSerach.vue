@@ -3,17 +3,7 @@
     :with-header="false" class="pd-drawer">
     <div class="pd-drawer-header">高级筛选</div>
     <div class=" pd-drawer-content"  >
-      <LogicalLine v-model="customRuleContent.logicalChar">
-        <BehaviorGroup @add="attrsAdd" title="客户属性满足">
-          <CustomAttr :custom="customRuleContent.customAttr" />
-        </BehaviorGroup>
-        <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-          <CustomBehavior :custom="customRuleContent.customEvent" />
-        </BehaviorGroup>
-        <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-          <CustomBehaviorSequence :custom="customRuleContent.eventSequence" />
-        </BehaviorGroup>
-      </LogicalLine>
+      <FilterGroup :custom-rule-content="customRuleContent" />
     </div>
     <div class="pd-drawer-footer">
       <el-button  @click="modalVisible = false"
@@ -24,16 +14,12 @@
   </el-drawer>
 </template>
 <script lang="ts" setup>
-import LogicalLine from "../../touch-flow/p/behavior/LogicalLine.vue";
-import { CustomSearchDTO } from "../../touch-flow/p/behavior/marketing";
-import BehaviorGroup from "../../touch-flow/p/behavior/BehaviorGroup.vue";
-import CustomAttr from "../../touch-flow/p/behavior/CustomAttr.vue";
-import CustomBehavior from "../../touch-flow/p/behavior/CustomBehavior.vue";
-import CustomBehaviorSequence from "../../touch-flow/p/behavior/sequence/CustomBehaviorSequence.vue";
 import { reactive, ref, defineProps, defineExpose } from "vue";
 import { BlackAddTypeEnum, BLACK_LIST_TYPE } from "~/constants";
 import API from "~/api/customer";
 import { ElMessage, FormInstance } from "element-plus";
+import FilterGroup from "~/touch-flow/p/attr/condition/FilterGroup.vue";
+import { CustomSearchDTO } from "~/touch-flow/touch-total";
 
 const props = defineProps(["getData"]);
 
@@ -73,45 +59,6 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     console.error(error);
   }
 };
-
-function attrsAdd() {
-  let attr = customRuleContent.customAttr!.conditions!;
-
-  const obj = {
-    conditions: [],
-    logicalChar: "或",
-  };
-
-  attr.push(obj);
-}
-
-function behaviorAdd() {
-  let attr = customRuleContent.customEvent!.conditions!;
-
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
-
-function sequenceAdd() {
-  let attr = customRuleContent.eventSequence!.conditions!;
-
-  const obj = {
-    conditions: [{ conditions: [{}] }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
 
 defineExpose({ handleModal });
 </script>

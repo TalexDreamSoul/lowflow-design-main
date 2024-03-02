@@ -1,24 +1,13 @@
 <script setup lang="ts">
-import BehaviorGroup from "../behavior/BehaviorGroup.vue";
 import { ref, reactive, computed, inject, unref } from "vue";
 import { getBlackList } from "~/api/index";
-import CustomAttr from "../behavior/CustomAttr.vue";
-import CustomBehavior from "../behavior/CustomBehavior.vue";
-import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
 import { MarketingTouchEditDTO } from "../behavior/marketing";
-import {
-  AttrConditionDTO,
-  CustomSearchDTO,
-  EventConditionDTO,
-  EventSearchCondition,
-  SearchCondition,
-  SequenceConditionDTO,
-} from "../../touch-total";
+import { CustomSearchDTO } from "../../touch-total";
 import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
-import LogicalLine from "../behavior/LogicalLine.vue";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
 import { validateAES, validateCommonDays, validatePropValue } from "../../flow-utils";
 import { ElMessage } from "element-plus";
+import FilterGroup from "./condition/FilterGroup.vue";
 
 const customRuleContent = reactive<CustomSearchDTO>({
   customAttr: {
@@ -61,54 +50,6 @@ Object.assign(blackList, {
   _enable: props.p.blacklist?.data?.length ? "yes" : "no",
   data: props.p.blacklist?.data || [],
 });
-
-function attrsAdd() {
-  const attr: AttrConditionDTO[] = customRuleContent.customAttr!.conditions!;
-
-  attr.push({
-    conditions: new Array<SearchCondition>(),
-    logicalChar: "或",
-  });
-}
-
-function behaviorAdd() {
-  const attr: EventConditionDTO[] = customRuleContent.customEvent!.conditions!;
-
-  const obj: EventSearchCondition = {
-    action: "",
-    conditions: {
-      conditions: new Array<SearchCondition>(),
-      logicalChar: "或",
-    },
-    eventCode: "",
-    eventName: "",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
-
-function sequenceAdd() {
-  const attr: SequenceConditionDTO[] = customRuleContent.eventSequence!.conditions!;
-
-  const obj = {
-    action: "",
-    eventCode: "",
-    eventName: "",
-    conditions: {
-      conditions: new Array<SearchCondition>(),
-      logicalChar: "或",
-    },
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
 
 function saveData(): boolean {
   if (!validateAES(customRuleContent)) {
@@ -190,29 +131,7 @@ const blackListFields = ref();
       <br />
       <br />
 
-      <LogicalLine v-model="customRuleContent!.logicalChar">
-        <BehaviorGroup @add="attrsAdd" title="客户属性满足">
-          <CustomAttr
-            v-if="customRuleContent.customAttr?.conditions?.length"
-            :readonly="readonly"
-            :custom="customRuleContent.customAttr"
-          />
-        </BehaviorGroup>
-        <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-          <CustomBehavior
-            v-if="customRuleContent.customEvent?.conditions?.length"
-            :readonly="readonly"
-            :custom="customRuleContent.customEvent"
-          />
-        </BehaviorGroup>
-        <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-          <CustomBehaviorSequence
-            v-if="customRuleContent.eventSequence?.conditions?.length"
-            :readonly="readonly"
-            :custom="customRuleContent.eventSequence"
-          />
-        </BehaviorGroup>
-      </LogicalLine>
+      <FilterGroup :readonly="readonly" :custom-rule-content="customRuleContent" />
 
       <TouchEstimation :readonly="readonly" :custom-rule-content="customRuleContent" />
 

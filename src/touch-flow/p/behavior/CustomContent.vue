@@ -114,8 +114,10 @@ const getCurrSelected = (condition: any) =>
     <LogicalLine :display="conditionArr?.length < 2" v-model="condition.logicalChar">
       <div v-for="(item, index) in conditionArr" :key="index" class="AttrLine">
         <trigger
+          @update-type="(val) => item.type = val"
           multiple
           v-model="item.attr.field"
+          :item="item.attr"
           :attrs="attrs"
           :disabled="readonly"
           placeholder="客户属性/标签"
