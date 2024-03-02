@@ -28,7 +28,7 @@ function toggle() {
         <div class="logical-operator__line"></div>
         <div
           class="custom-switch"
-          :class="{ active: model === 'and' }"
+          :class="{ dotted: model !== '或' }"
           @click="toggle"
           v-text="label"
         />
@@ -128,7 +128,10 @@ function toggle() {
 }
 
 .custom-switch {
-  border: 1px solid #4078e0;
+  &.dotted {
+    border-style: dotted;
+  }
+  border: 1.5px solid #4078e0;
   color: #fff;
   width: 24px;
   height: 24px;
