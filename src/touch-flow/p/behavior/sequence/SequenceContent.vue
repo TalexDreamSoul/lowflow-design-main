@@ -1,200 +1,192 @@
 <script setup lang="ts" name="SequenceContent">
-import { computed, inject } from "vue";
-import SequenceSubContent from './SequenceSubContent.vue'
-import { Delete } from "@element-plus/icons-vue";
+import { computed, inject, ref } from "vue";
+import SequenceSubContent from "./SequenceSubContent.vue";
+import { CirclePlusFilled, Delete } from "@element-plus/icons-vue";
+import {
+  AttrConditionDTO,
+  SearchCondition,
+  SequenceCondition,
+  SequenceConditionDTO,
+} from "~/touch-flow/touch-total";
 
 const props = defineProps<{
-  condition: any;
+  condition: SequenceConditionDTO;
   dict: any;
-  readonly?: boolean
+  readonly?: boolean;
 }>();
+const emits = defineEmits(["del"]);
+
+const dataObj = Object.freeze({
+  attr: {
+    field: "",
+    fieldMultiValue: [],
+    fieldName: "",
+    fieldOp: "",
+    fieldRangeValue: "",
+    fieldType: "",
+    fieldValue: "",
+  },
+  label: {
+    labelId: 0,
+    labelName: "",
+    labelValue: [],
+  },
+  type: "event",
+});
 
 const refreshTree: Function = inject("refreshTree")!;
+const timeRange = ref();
 
-const handleDel = (index: number) => {
-  props.condition.conditions.splice(index, 1);
+function handleDateChange() {
+  const [startTime, endTime] = timeRange.value;
+
+  props.condition.startTime = startTime;
+  props.condition.endTime = endTime;
+}
+
+const handleDel = () => {
+  emits("del");
 
   refreshTree();
 };
 
-const conditionArr = computed(() => props.condition.conditions);
+function handleAdd() {
+  const arr: SequenceCondition[] = (props.condition.conditions =
+    props.condition.conditions || []);
 
-function handleAdd(item: any) {
-  const arr = (item.conditions = item.conditions || []);
   arr.push({
-    conditions: [],
-    logicalChar: '或'
+    action: "",
+    conditions: {
+      conditions: new Array<SearchCondition>(),
+      logicalChar: "或",
+    },
+    eventCode: "",
+    eventName: "",
   });
 }
 
-function handleSubAdd(item: any) {
-  const arr = item.conditions = (item.conditions || []);
+function handleSubAdd(item: SequenceCondition) {
+  const arr = (item.conditions.conditions = item.conditions.conditions || []);
 
-  arr.push({});
+  arr.push(JSON.parse(JSON.stringify(dataObj)));
+}
+
+function handleSubDel(index: number) {
+  props.condition.conditions.splice(index, 1);
 }
 </script>
 
 <template>
-  <div class="CustomContent">
-    <div v-if="conditionArr" class="filter-option-content">
-      <el-form :label-width="0" :inline="true" :model="condition.conditions">
-        <div v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="CustomBehavior-Main">
-          <el-row class="filter-item-rule">
-            <el-col :xs="24" :sm="10">
-              <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                <el-date-picker :disabled="readonly" v-model="condition.timeRange" type="daterange" range-separator="-"
-                  start-placeholder="开始日期" end-placeholder="结束日期" />
-              </el-form-item>
-            </el-col>
-            <span style="zoom: 0.9;font-size:12px;color:#484545;">
-              &nbsp;&nbsp; 依次做过
-            </span>
-            <el-col :xs="24" :sm="2" style="
-                display: flex;
-                align-items: center;
-                flex-direction: row-reverse;
-              ">
-              <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="handleDel(index)">
-                <el-icon size="14">
-                  <Delete />
-                </el-icon>
-              </el-text>
-              &nbsp;&nbsp;&nbsp;
-              <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="handleAdd(item)">
-                <el-icon size="14">
-                  <CirclePlus />
-                </el-icon>
-              </el-text>
-            </el-col>
+  <div class="SequenceContent">
+    <div class="SequenceContent-Line">
+      <el-date-picker
+        @change="handleDateChange"
+        :disabled="readonly"
+        v-model="timeRange"
+        type="daterange"
+        range-separator="-"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        style="width: 120px"
+      />
+      <span style="color: #484545"> &nbsp;&nbsp; 依次做过 </span>
 
-          </el-row>
+      <span>
+        <el-text
+          :disabled="readonly"
+          type="primary"
+          style="cursor: pointer"
+          @click="handleAdd"
+        >
+          <el-icon size="14">
+            <CirclePlusFilled />
+          </el-icon>
+          添加事件
+        </el-text>
+        &nbsp;&nbsp;&nbsp;
+        <el-text
+          :disabled="readonly"
+          type="primary"
+          style="cursor: pointer"
+          @click="handleDel"
+        >
+          <el-icon size="14">
+            <Delete />
+          </el-icon>
+          删除
+        </el-text>
+      </span>
+    </div>
 
-          <div class="SequenceContent-Events" v-for="(event, _index) in item.conditions" :key="`${event.field}-${index}`">
-            <el-row class="filter-item-rule">
-              <el-col :xs="24" :sm="5">
-                <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                  <el-select :disabled="readonly" placeholder="选择事件" v-model="event.delayedAction">
-                    <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
-                      <el-option v-for="item in group.events" :key="item.id" :label="item.eventName"
-                        :value="item.eventCode" />
-                    </el-option-group>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="5">
-                &nbsp;&nbsp;&nbsp;
-                <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="handleSubAdd(event)">
-                  <el-icon size="14">
-                    <CirclePlusFilled />
-                  </el-icon>
-                  添加筛选
-                </el-text>
-              </el-col>
-            </el-row>
-            <SequenceSubContent :index="_index" :dict="dict" :condition="event" />
-          </div>
-        </div>
-      </el-form>
+    <div
+      class="SequenceContent-Events"
+      v-for="(event, _index) in condition.conditions"
+      :key="_index"
+    >
+      <el-select :disabled="readonly" placeholder="选择事件" v-model="event.eventCode">
+        <el-option-group
+          v-for="group in dict?.events"
+          :key="group.eventType"
+          :label="group.eventTypeName"
+        >
+          <el-option
+            v-for="item in group.events"
+            :key="item.id"
+            :label="item.eventName"
+            :value="item.eventCode"
+          />
+        </el-option-group>
+      </el-select>
+      &nbsp;&nbsp;&nbsp;
+      <el-text
+        type="primary"
+        v-if="event.eventCode"
+        style="cursor: pointer"
+        @click="handleSubAdd(event)"
+      >
+        <el-icon size="14">
+          <CirclePlusFilled />
+        </el-icon>
+        添加筛选
+      </el-text>
+      &nbsp;&nbsp;&nbsp;
+      <el-text
+        v-if="condition.conditions.length > 1"
+        :disabled="readonly"
+        type="primary"
+        style="cursor: pointer"
+        @click="handleSubDel(_index)"
+      >
+        <el-icon size="14">
+          <Delete />
+        </el-icon>
+        删除
+      </el-text>
+
+      <SequenceSubContent
+        :index="_index"
+        :dict="dict"
+        :eventCode="event.eventCode"
+        :condition="event.conditions"
+      />
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.CustomContent {
+.SequenceContent {
+  &-Line {
+    padding-right: 20%;
+    display: flex;
+
+    gap: 0.5rem;
+    align-items: center;
+  }
+  &-Events {
+    margin-left: 1rem;
+  }
   margin: 10px 0;
 
   border-radius: 8px;
-
-  .filter-container {
-    //background-color: #f5f8fc;
-    //border-radius: 3px;
-    display: flex;
-
-    .fontstyle {
-      font-size: 12px;
-      font-weight: 400;
-      color: #000000;
-      position: relative;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      min-width: 70px;
-    }
-
-    .logical-operator {
-      position: relative;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      min-width: 40px;
-
-      .logical-operator__line {
-        position: absolute;
-        left: calc(38% - 1px);
-        border-width: 1px 0 1px 1px;
-        border-top-style: solid;
-        border-bottom-style: solid;
-        border-left-style: solid;
-        border-left-color: #4078e0;
-        border-image: initial;
-        border-right-style: initial;
-        border-right-color: initial;
-        border-radius: 5px 0 0 5px;
-        height: calc(100% - 22px);
-      }
-    }
-
-    .filter-option-content {
-      position: relative;
-      width: 100%;
-
-      .filter-item-rule {
-        display: flex;
-        align-items: center;
-        //min-height: 48px;
-      }
-
-      .filter-filter-item__add {
-        border-style: dashed;
-        width: 100%;
-      }
-    }
-  }
-}
-
-.TargetContent-TopBanner {
-  background: #ebeff3;
-  border-radius: 4px 4px 0px 0px;
-  font-size: 12px;
-  font-weight: 400;
-  color: #000000;
-  padding: 0px 24px;
-}
-
-:deep(.el-form-item) {
-  margin-right: 0;
-  margin-bottom: 0;
-}
-
-.custom-switch {
-  border: 1px solid #4078e0;
-  color: #fff;
-  width: 24px;
-  height: 24px;
-  background: #fff;
-  font-weight: 500;
-  color: #4078e0;
-  font-size: 14px;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.el-form-item {
-  margin-right: 0;
-  margin-bottom: unset !important;
 }
 </style>

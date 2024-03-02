@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, provide } from "vue";
+import { onMounted, ref, provide, watchEffect } from "vue";
 import CustomContent from "./CustomContent.vue";
 import LogicalLine from "./LogicalLine.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
@@ -10,6 +10,13 @@ const props = defineProps<{
 }>();
 
 const dict = ref<any>();
+
+watchEffect(() => {
+  for (let item of props.custom.conditions) {
+    // @ts-ignore
+    if (item.conditions.length === 0) item.conditions.push({});
+  }
+});
 
 onMounted(async () => {
   const res = await getDictFilterTree();

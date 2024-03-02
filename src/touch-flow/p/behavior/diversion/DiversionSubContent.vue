@@ -68,7 +68,7 @@ const attrs = computed(() => {
               </el-form-item>
             </el-col>
             <el-col class="add-filter__inner" :xs="24" :sm="3">
-              <el-text type="primary" style="cursor: pointer;zoom: 0.8;    display: inline-block;width: 100px;"
+              <el-text type="primary" style="cursor: pointer;    display: inline-block;width: 100px;"
                 @click="addCondition">
                 <el-icon size="14">
                   <CirclePlusFilled />

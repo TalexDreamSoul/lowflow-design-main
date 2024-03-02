@@ -6,7 +6,14 @@ import CustomAttr from "../behavior/CustomAttr.vue";
 import CustomBehavior from "../behavior/CustomBehavior.vue";
 import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
 import { MarketingTouchEditDTO } from "../behavior/marketing";
-import { CustomSearchDTO } from "../../touch-total";
+import {
+  AttrConditionDTO,
+  CustomSearchDTO,
+  EventConditionDTO,
+  EventSearchCondition,
+  SearchCondition,
+  SequenceConditionDTO,
+} from "../../touch-total";
 import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
 import LogicalLine from "../behavior/LogicalLine.vue";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
@@ -23,14 +30,7 @@ const customRuleContent = reactive<CustomSearchDTO>({
     logicalChar: "或",
   },
   eventSequence: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      },
-    ],
+    conditions: [],
     logicalChar: "或",
   },
   logicalChar: "或",
@@ -63,25 +63,25 @@ Object.assign(blackList, {
 });
 
 function attrsAdd() {
-  let attr = customRuleContent.customAttr!.conditions!;
-
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "或",
-  };
+  const attr: AttrConditionDTO[] = customRuleContent.customAttr!.conditions!;
 
   attr.push({
-    conditions: [obj],
+    conditions: new Array<SearchCondition>(),
     logicalChar: "或",
   });
 }
 
 function behaviorAdd() {
-  let attr = customRuleContent.customEvent!.conditions!;
+  const attr: EventConditionDTO[] = customRuleContent.customEvent!.conditions!;
 
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "或",
+  const obj: EventSearchCondition = {
+    action: "",
+    conditions: {
+      conditions: new Array<SearchCondition>(),
+      logicalChar: "或",
+    },
+    eventCode: "",
+    eventName: "",
   };
 
   attr.push({
@@ -91,10 +91,16 @@ function behaviorAdd() {
 }
 
 function sequenceAdd() {
-  let attr = customRuleContent.eventSequence!.conditions!;
+  const attr: SequenceConditionDTO[] = customRuleContent.eventSequence!.conditions!;
 
   const obj = {
-    conditions: [{ conditions: [{}] }],
+    action: "",
+    eventCode: "",
+    eventName: "",
+    conditions: {
+      conditions: new Array<SearchCondition>(),
+      logicalChar: "或",
+    },
     logicalChar: "或",
   };
 
@@ -184,7 +190,7 @@ const blackListFields = ref();
       <br />
       <br />
 
-      <LogicalLine v-model="customRuleContent!.logicalOperator">
+      <LogicalLine v-model="customRuleContent!.logicalChar">
         <BehaviorGroup @add="attrsAdd" title="客户属性满足">
           <CustomAttr
             v-if="customRuleContent.customAttr?.conditions?.length"

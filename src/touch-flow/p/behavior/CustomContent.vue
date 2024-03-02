@@ -1,6 +1,6 @@
 <script setup lang="ts" name="CustomContent">
 import { computed, inject } from "vue";
-import { CirclePlus, Delete } from "@element-plus/icons-vue";
+import { CirclePlusFilled, Delete } from "@element-plus/icons-vue";
 import AttrRender from "../../page/AttrRender.vue";
 import Operator from "../../page/Operator.vue";
 import Trigger from "../../page/Trigger.vue";
@@ -45,7 +45,7 @@ const conditionArr = computed(() => {
 
   for (let item of arr) {
     if (!item.type) {
-      Object.assign(item, { ...dataObj });
+      Object.assign(item, JSON.parse(JSON.stringify(dataObj)));
     }
   }
 
@@ -53,7 +53,7 @@ const conditionArr = computed(() => {
 });
 
 function handleAdd() {
-  props.condition.conditions.push({ ...dataObj });
+  props.condition.conditions.push(JSON.parse(JSON.stringify(dataObj)));
 }
 
 const attrs = computed(() => {
@@ -111,7 +111,7 @@ const getCurrSelected = (condition: any) =>
 
 <template>
   <div class="CustomContent">
-    <LogicalLine :display="!conditionArr?.length" v-model="condition.logicalChar">
+    <LogicalLine :display="conditionArr?.length < 2" v-model="condition.logicalChar">
       <div v-for="(item, index) in conditionArr" :key="index" class="AttrLine">
         <trigger
           multiple
@@ -136,18 +136,20 @@ const getCurrSelected = (condition: any) =>
         />
 
         <div>
+          <template v-if="index + 1 === conditionArr.length">
+            <el-text type="primary" style="cursor: pointer" @click="handleAdd">
+              <el-icon size="14">
+                <CirclePlusFilled />
+              </el-icon>
+              添加同组
+            </el-text>
+            &nbsp;&nbsp;&nbsp;
+          </template>
           <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
             <el-icon size="14">
               <Delete />
             </el-icon>
             删除
-          </el-text>
-          &nbsp;&nbsp;&nbsp;
-          <el-text type="primary" style="cursor: pointer" @click="handleAdd">
-            <el-icon size="14">
-              <CirclePlus />
-            </el-icon>
-            添加
           </el-text>
         </div>
       </div>

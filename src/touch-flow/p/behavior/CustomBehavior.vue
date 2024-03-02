@@ -10,6 +10,11 @@ const props = defineProps<{
   readonly?: boolean;
 }>();
 
+// for (let item of props.custom.conditions) {
+//   // @ts-ignore
+//   if ( item.conditions.length === 0) item.conditions.push({})
+// }
+
 const dict = ref<any>();
 
 onMounted(async () => {

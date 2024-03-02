@@ -1,28 +1,50 @@
 <script setup lang="ts" name="BehaviorSubContent">
 import { computed } from "vue";
-import { Delete } from "@element-plus/icons-vue";
+import { CirclePlusFilled, Delete } from "@element-plus/icons-vue";
 import LogicalLine from "./LogicalLine.vue";
 import AttrRender from "../../page/AttrRender.vue";
 import Operator from "../../page/Operator.vue";
 import Trigger from "../../page/Trigger.vue";
+import { EventSearchCondition } from "~/touch-flow/touch-total";
 
 const props = defineProps<{
-  condition: any;
+  condition: EventSearchCondition;
   index: number;
   dict: any;
-  title?: string
+  title?: string;
+  readonly?: boolean;
 }>();
 
-function getConditions() {
-  return (props.condition.conditions = props.condition.conditions || []);
-}
+const dataObj = Object.freeze({
+  attr: {
+    field: "",
+    fieldMultiValue: [],
+    fieldName: "",
+    fieldOp: "",
+    fieldRangeValue: "",
+    fieldType: "",
+    fieldValue: "",
+  },
+  label: {
+    labelId: 0,
+    labelName: "",
+    labelValue: [],
+  },
+  type: "event",
+});
 
-const addCondition = () => {
-  getConditions().push({
-    field: null,
-    fieldOp: "equal",
-    fieldValue: null,
-  });
+const getConditions = () => {
+  const arr = props.condition.conditions.conditions || [];
+
+  console.log("got", arr);
+
+  for (let item of arr) {
+    if (!item.type) {
+      Object.assign(item, { ...dataObj });
+    }
+  }
+
+  return arr;
 };
 
 /**
@@ -36,60 +58,65 @@ const handleDel = (index: number) => {
 const attrs = computed(() => {
   const { events } = props.dict;
 
-  const flattedEvents = [...events].map((e: any) => e.events)
+  const flattedEvents = [...events].map((e: any) => e.events);
 
-  const targetEvent = flattedEvents.flat().find((item: any) => item.eventCode === props.condition.eventCode)
+  const targetEvent = flattedEvents
+    .flat()
+    .find((item: any) => item.eventCode === props.condition.eventCode);
+
+  console.log("targetEvent", targetEvent, flattedEvents);
 
   return targetEvent?.eventAttr?.attrs;
 });
+
+const getCurrSelected = (condition: any) => {
+  console.log("attrsss", attrs, props.dict);
+
+  return attrs.value.find(
+    (_: any) => _.field === condition.field || _.label === condition.field
+  );
+};
 </script>
 
 <template>
   <div class="BehaviorSubContent">
-    <LogicalLine :title="title" :model-value="condition.logicalChar"
-      :display="condition.conditions ? !(condition.conditions.length > 1) : !0">
-      <div v-if="attrs" class="filter-option-content">
-        <el-form :label-width="0" :inline="true" :model="condition.conditions">
-          <el-row v-for="(item, index) in condition.conditions" :key="`${item.field}-${index}`" :gutter="5"
-            class="filter-item-rule">
-            <el-col :xs="24" :sm="7">
-              <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                <trigger v-model="item.field" :attrs="attrs" />
-              </el-form-item>
-            </el-col>
-            <el-col :xs="24" :sm="4" v-if="item.field">
-              <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                <operator :attrs="attrs" :item="item" ref="operatorRef" v-model="item.fieldOp" />
-              </el-form-item>
-            </el-col>
-            <el-col :xs="24" :sm="6" v-if="item.field">
-              <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <AttrRender :item="item" :attrs="attrs" />
-              </el-form-item>
-            </el-col>
-            <el-col class="add-filter__inner" :xs="24" :sm="3">
-              <el-text type="primary" style="cursor: pointer;zoom: 0.8;    display: inline-block;width: 100px;" @click="addCondition">
-                <el-icon size="14">
-                  <CirclePlusFilled />
-                </el-icon>
-                添加筛选
-              </el-text>
-            </el-col>
-            <el-col :xs="24" :sm="1">
-              <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
-                <el-icon size="14">
-                  <Delete />
-                </el-icon>
-              </el-text>
-            </el-col>
-          </el-row>
+    <LogicalLine
+      :title="title"
+      :model-value="condition.conditions.logicalChar"
+      :display="condition.conditions?.conditions?.length < 2"
+    >
+      <div
+        class="BehaviorSubContent-Line"
+        v-if="attrs"
+        v-for="(item, index) in getConditions()"
+        :key="index"
+      >
+        <trigger
+          v-model="item.attr.field"
+          :attrs="attrs"
+          :disabled="readonly"
+          placeholder="客户属性/标签"
+        />
+        <operator
+          :selected="getCurrSelected(item)"
+          :attrs="attrs"
+          :item="item.attr"
+          :disabled="readonly"
+          v-model="item.attr.fieldOp"
+        />
+        <AttrRender
+          :selected="getCurrSelected(item)"
+          :disabled="readonly"
+          :item="item.attr"
+          :attrs="attrs"
+        />
 
-          <div v-if="!(
-            condition?.filterRules?.groups?.length |
-            condition?.filterRules?.conditions?.length
-          )
-            " class="filter-item-rule" />
-        </el-form>
+        <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
+          <el-icon size="14">
+            <Delete />
+          </el-icon>
+          删除
+        </el-text>
       </div>
     </LogicalLine>
   </div>
@@ -97,6 +124,13 @@ const attrs = computed(() => {
 
 <style scoped lang="scss">
 .BehaviorSubContent {
+  &-Line {
+    display: flex;
+
+    flex: 1;
+    gap: 0.5rem;
+    align-items: center;
+  }
   margin: 10px 0;
 
   border-radius: 8px;

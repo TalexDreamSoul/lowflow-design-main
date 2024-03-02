@@ -55,7 +55,7 @@ const attrs = computed(() => {
               &nbsp;
               <el-col :xs="24" :sm="3" >
 
-                <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="handleSubAdd(item)">
+                <el-text type="primary" style="cursor: pointer" @click="handleSubAdd(item)">
                   <el-icon size="12">
                     <Plus />
                   </el-icon>

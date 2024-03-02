@@ -47,11 +47,16 @@ function toggle() {
 
   &-Filter {
     &.active {
+      margin-right: 0px;
+
       opacity: 1;
+      transform: translateX(0);
     }
     display: flex;
+    margin-right: -10px;
 
     opacity: 0;
+    transform: translateX(-10%);
     transition: 0.25s;
     .fontstyle {
       align-self: center;

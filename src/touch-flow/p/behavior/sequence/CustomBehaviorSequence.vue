@@ -3,9 +3,10 @@ import { onMounted, ref, provide } from "vue";
 import SequenceContent from "./SequenceContent.vue";
 import LogicalLine from "../LogicalLine.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
+import { EventSequenceConditionDTO } from "~/touch-flow/touch-total";
 const props = defineProps<{
-  custom: any;
-  readonly?: boolean
+  custom: EventSequenceConditionDTO;
+  readonly?: boolean;
 }>();
 
 const dict = ref<any>();
@@ -32,10 +33,15 @@ provide("refreshTree", refreshTree);
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
       <div v-if="dict && custom.conditions?.length" class="Target-Block">
-        <LogicalLine :display="custom.conditions?.length" v-model="custom.LogicalLine">
-          <div v-for="condition in custom.conditions" :key="condition.id" >
-            <SequenceContent :readonly="readonly" v-if="condition?.conditions?.length" :condition="condition"
-                :dict="dict" />
+        <LogicalLine :display="!custom.conditions?.length" v-model="custom.logicalChar">
+          <div v-for="(condition, index) in custom.conditions" :key="index">
+            <SequenceContent
+              @del="() => custom.conditions.splice(index, 1)"
+              :readonly="readonly"
+              v-if="condition?.conditions?.length"
+              :condition="condition"
+              :dict="dict"
+            />
           </div>
         </LogicalLine>
       </div>

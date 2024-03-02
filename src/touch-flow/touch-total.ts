@@ -111,14 +111,13 @@ export type TouchBlacklistDTO = {
  * CustomSearchDTO
  */
 export type CustomSearchDTO = {
-  customAttr?: CustomAttrConditionDTO;
-  customEvent?: CustomEventConditionDTO;
-  eventSequence?: EventSequenceConditionDTO;
+  customAttr: CustomAttrConditionDTO;
+  customEvent: CustomEventConditionDTO;
+  eventSequence: EventSequenceConditionDTO;
   /**
    * 逻辑符号
    */
   logicalChar: string;
-  [property: string]: any;
 }
 
 /**
@@ -286,7 +285,7 @@ export type EventSearchCondition = {
    * 操作
    */
   action: string;
-  conditions?: AttrConditionDTO;
+  conditions: AttrConditionDTO;
   /**
    * 结束时间
    */
@@ -312,12 +311,11 @@ export type EventSequenceConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: SequenceConditionDTO[];
+  conditions: SequenceConditionDTO[];
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
-  [property: string]: any;
+  logicalChar: string;
 }
 
 /**
@@ -327,7 +325,7 @@ export type SequenceConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: SequenceCondition[];
+  conditions: SequenceCondition[];
   /**
    * 结束时间
    */
@@ -335,12 +333,11 @@ export type SequenceConditionDTO = {
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
+  logicalChar: string;
   /**
    * 开始时间
    */
   startTime?: Date;
-  [property: string]: any;
 }
 
 /**
@@ -350,17 +347,16 @@ export type SequenceCondition = {
   /**
    * 操作
    */
-  action?: string;
-  conditions?: AttrConditionDTO;
+  action: string;
+  conditions: AttrConditionDTO;
   /**
    * 事件编码
    */
-  eventCode?: string;
+  eventCode: string;
   /**
    * 事件名
    */
-  eventName?: string;
-  [property: string]: any;
+  eventName: string;
 }
 
 /**

@@ -68,7 +68,7 @@ const $emits = defineEmits<{
   (e: 'update:modelValue', modelValue: any): void
 }>()
 const data = useVModel($props, 'modelValue', $emits)
-const type = computed(() => $props.selected ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected) : ($props.attrs.filter((attr: any) => (attr.field === $props.item.field) || (attr.labelName === $props.item.labelName))?.[0]?.fieldType ?? "none"));
+const type = computed(() => $props.selected ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected) : ($props.attrs.filter((attr: any) => (attr.field === $props.item.field) || (attr.labelName === $props.item?.labelName))?.[0]?.fieldType ?? "none"));
 const operators = computed(() => operatorOptions.filter((item) => item.type.includes(type.value)))
 
 // watchEffect(() => {
