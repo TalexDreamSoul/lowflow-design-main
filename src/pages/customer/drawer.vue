@@ -73,17 +73,7 @@
           :name="BlackAddTypeEnum.StaticRule"
         >
           <div class="pannel">
-            <LogicalLine v-model="ruleContent.logicalChar">
-              <BehaviorGroup @add="attrsAdd" title="客户属性满足">
-                <CustomAttr :custom="ruleContent.customAttr" />
-              </BehaviorGroup>
-              <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-                <CustomBehavior :custom="ruleContent.customEvent" />
-              </BehaviorGroup>
-              <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-                <CustomBehaviorSequence :custom="ruleContent.eventSequence" />
-              </BehaviorGroup>
-            </LogicalLine>
+            <FilterGroup :custom-rule-content="ruleContent" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
@@ -92,19 +82,7 @@
       </el-tabs>
       <div class="detail" v-if="drawerType === DrawerType.Detail">
         <div class="item">
-          <div class="pannel">
-            <LogicalLine v-model="ruleContent.logicalChar">
-              <BehaviorGroup @add="attrsAdd" title="客户属性满足">
-                <CustomAttr :custom="ruleContent.customAttr" />
-              </BehaviorGroup>
-              <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-                <CustomBehavior :custom="ruleContent.customEvent" />
-              </BehaviorGroup>
-              <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-                <CustomBehaviorSequence :custom="ruleContent.eventSequence" />
-              </BehaviorGroup>
-            </LogicalLine>
-          </div>
+          <FilterGroup :custom-rule-content="ruleContent" />
         </div>
         <div class="item">
           <section-group :trigger-rule-content="eventContent" />
@@ -133,18 +111,14 @@
 </template>
 <script lang="ts" setup>
 import sectionGroup from "./section-group.vue";
-import LogicalLine from "../../touch-flow/p/behavior/LogicalLine.vue";
-import { CustomSearchDTO } from "../../touch-flow/p/behavior/marketing";
-import BehaviorGroup from "../../touch-flow/p/behavior/BehaviorGroup.vue";
-import CustomAttr from "../../touch-flow/p/behavior/CustomAttr.vue";
-import CustomBehavior from "../../touch-flow/p/behavior/CustomBehavior.vue";
-import CustomBehaviorSequence from "../../touch-flow/p/behavior/sequence/CustomBehaviorSequence.vue";
 import { reactive, ref, defineProps, defineExpose } from "vue";
 import { BlackAddTypeEnum, BLACK_LIST_TYPE } from "~/constants";
 import API from "~/api/customer";
 import { checkStringEqual } from "~/utils/common";
 import { ElMessage, FormInstance } from "element-plus";
 import HandAdd from "./handAdd.vue";
+import FilterGroup from "~/touch-flow/p/attr/condition/FilterGroup.vue";
+import { CustomSearchDTO } from "~/touch-flow/touch-total";
 
 const props = defineProps(["getData"]);
 
@@ -155,6 +129,7 @@ enum DrawerType {
   Detail = "detail",
   Edit = "edit",
 }
+
 const defaultEventContent = {
   eventA: {
     customEvent: {
@@ -182,38 +157,18 @@ const defaultEventContent = {
   },
 };
 const eventContent = reactive({ ...defaultEventContent });
+
 const defaultRuleContent = {
   customAttr: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      },
-    ],
+    conditions: [],
     logicalChar: "或",
   },
   customEvent: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      },
-    ],
+    conditions: [],
     logicalChar: "或",
   },
   eventSequence: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      },
-    ],
+    conditions: [],
     logicalChar: "或",
   },
   logicalChar: "或",
@@ -291,45 +246,6 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     console.error(error);
   }
 };
-
-function attrsAdd() {
-  let attr = ruleContent.customAttr!.conditions!;
-
-  const obj = {
-    conditions: [],
-    logicalChar: "或",
-  };
-
-  attr.push(obj);
-}
-
-function behaviorAdd() {
-  let attr = ruleContent.customEvent!.conditions!;
-
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
-
-function sequenceAdd() {
-  let attr = ruleContent.eventSequence!.conditions!;
-
-  const obj = {
-    conditions: [{ conditions: [{}] }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
 
 defineExpose({ handleModal });
 </script>

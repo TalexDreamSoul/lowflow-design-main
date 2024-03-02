@@ -1,9 +1,8 @@
 <script setup lang="ts" name="SequenceContent">
-import { computed, inject, ref } from "vue";
+import { watchEffect, inject, ref } from "vue";
 import SequenceSubContent from "./SequenceSubContent.vue";
 import { CirclePlusFilled, Delete } from "@element-plus/icons-vue";
 import {
-  AttrConditionDTO,
   SearchCondition,
   SequenceCondition,
   SequenceConditionDTO,
@@ -36,6 +35,13 @@ const dataObj = Object.freeze({
 
 const refreshTree: Function = inject("refreshTree")!;
 const timeRange = ref();
+
+watchEffect(() => {
+  timeRange.value = [
+    props.condition?.startTime || null,
+    props.condition?.endTime || null,
+  ];
+})
 
 function handleDateChange() {
   const [startTime, endTime] = timeRange.value;

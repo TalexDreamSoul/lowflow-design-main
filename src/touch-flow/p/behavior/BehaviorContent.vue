@@ -1,6 +1,6 @@
 <script setup lang="ts" name="CustomContent">
 import { computed, inject, ref } from "vue";
-import { Delete, CirclePlusFilled, CirclePlus } from "@element-plus/icons-vue";
+import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 import BehaviorSubContent from "./BehaviorSubContent.vue";
 import LogicalLine from "./LogicalLine.vue";
 import {
@@ -31,8 +31,6 @@ const subDataObj = Object.freeze({
   },
   type: "event",
 });
-
-console.log("props", props);
 
 const refreshTree: Function = inject("refreshTree")!;
 const timeRange = ref();
