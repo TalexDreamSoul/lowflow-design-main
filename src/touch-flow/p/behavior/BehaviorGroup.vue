@@ -60,9 +60,9 @@ const expand = ref(false);
       transform: translateX(0%);
     }
 
-    max-height: 500px;
+    max-height: 5000px;
 
-    transition: 0.2s;
+    transition: max-height 1s ease-in-out;
   }
 
   .addon-icon {
@@ -109,11 +109,11 @@ const expand = ref(false);
   }
 
   margin: 0.8rem 0;
-  max-height: 48px;
+  max-height: 40px;
 
   overflow: hidden;
   border-radius: 4px;
-  transition: 0.2s;
+  transition: max-height .5s cubic-bezier(0, 1, 0, 1);
   background-color: #f7f8fb;
 }
 </style>

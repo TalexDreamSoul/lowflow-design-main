@@ -52,7 +52,7 @@ function toggle() {
     display: flex;
 
     opacity: 0;
-    transition: .25s;
+    transition: 0.25s;
     .fontstyle {
       align-self: center;
       //margin-right: 0.5rem;
@@ -65,23 +65,39 @@ function toggle() {
     .logical-operator {
       position: relative;
       display: flex;
+
+      margin: 0 5px;
+
       align-items: center;
       overflow: hidden;
-      min-width: 40px;
 
       .logical-operator__line {
+        &:before,
+        &:after {
+          content: "";
+          position: absolute;
+
+          top: 0;
+          left: 0;
+
+          width: 10px;
+          height: 1px;
+
+          background-color: #4078e0;
+        }
+        &:after {
+          top: 100%;
+        }
         position: absolute;
-        left: calc(38% - 1px);
-        border-width: 1px 0 1px 1px;
-        border-top-style: solid;
-        border-bottom-style: solid;
-        border-left-style: solid;
-        border-left-color: #4078e0;
-        border-image: initial;
-        border-right-style: initial;
-        border-right-color: initial;
-        border-radius: 5px 0 0 5px;
-        height: calc(100% - 22px);
+
+        top: 5%;
+        left: 50%;
+
+        width: 1px;
+        height: 90%;
+
+        background-color: #4078e0;
+        transform: translateX(-50%);
       }
     }
 
@@ -104,6 +120,8 @@ function toggle() {
 
   &-Main {
     flex: 1;
+
+    padding: 12px 0;
   }
 
   user-select: none;

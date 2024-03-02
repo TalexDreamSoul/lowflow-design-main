@@ -62,19 +62,20 @@ const expand = ref(props.defaultExpand !== undefined ? props.defaultExpand : fal
     justify-content: space-between;
     align-items: center;
 
-    user-select: none;
     background-color: var(--el-fill-color-light);
   }
 
   &.expand {
 
-    max-height: 10000px;
+    max-height: 1000px;
 
     transition: 0.35s ease-in;
   }
 
   &-Main {
     padding: 0.5rem;
+
+    height: 100%;
   }
 
   margin: 0.8rem 0;

@@ -1,6 +1,5 @@
 <script setup lang="ts" name="AttrRender">
 import { ref, computed, watchEffect } from "vue";
-import { useVModel } from "@vueuse/core";
 
 type AttrType = any; //number | string | boolean | Array<Number> | Array<string>
 
