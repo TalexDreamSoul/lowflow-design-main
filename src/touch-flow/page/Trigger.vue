@@ -17,7 +17,7 @@ const ph = computed(() => props?.placeholder ?? "选择字段");
 </script>
 
 <template>
-  <el-tree-select v-if="multiple" v-model="model" :data="attrs" :render-after-expand="false" />
+  <el-tree-select :placeholder="placeholder" v-if="multiple" v-model="model" :data="attrs" :render-after-expand="false" />
   <!-- <el-option-group v-if="multiple" v-for="(group, index) in attrs" :key="index" :label="group.label">
         <template v-for="(option, i) in group.options" :key="i">
           <el-option v-if="!option.labelValue?.data?.length" :key="option.field"

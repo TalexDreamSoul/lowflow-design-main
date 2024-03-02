@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import BehaviorGroup from "../behavior/BehaviorGroup.vue";
-import { ref, reactive, computed, inject } from "vue";
+import { ref, reactive, computed, inject, unref } from "vue";
 import { getBlackList } from "~/api/index";
 import CustomAttr from "../behavior/CustomAttr.vue";
 import CustomBehavior from "../behavior/CustomBehavior.vue";
 import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
-import { MarketingTouchEditDTO, CustomSearchDTO } from "../behavior/marketing";
+import { MarketingTouchEditDTO } from "../behavior/marketing";
+import { CustomSearchDTO } from "../../touch-total";
 import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
 import LogicalLine from "../behavior/LogicalLine.vue";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
@@ -14,14 +15,7 @@ import { ElMessage } from "element-plus";
 
 const customRuleContent = reactive<CustomSearchDTO>({
   customAttr: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      },
-    ],
+    conditions: [],
     logicalChar: "或",
   },
   customEvent: {
@@ -47,10 +41,14 @@ const customRuleContent = reactive<CustomSearchDTO>({
     logicalChar: "或",
   },
   logicalChar: "或",
-  blackList: {
-    _enable: "no",
-    data: [],
-  },
+});
+
+const blackList = reactive<{
+  _enable: "no" | "yes";
+  data: Array<any>;
+}>({
+  _enable: "no",
+  data: [],
 });
 
 interface ICustomerAttrProp {
@@ -66,6 +64,10 @@ const sizeForm = reactive({
 // 将props数据同步到本地数据 实现保存后才更新替换
 Object.assign(customRuleContent, props.p.customRuleContent);
 Object.assign(sizeForm, props.p);
+Object.assign(blackList, {
+  _enable: props.p.blacklist?.data?.length ? "yes" : "no",
+  data: props.p.blacklist?.data || [],
+});
 
 function attrsAdd() {
   let attr = customRuleContent.customAttr!.conditions!;
@@ -119,18 +121,6 @@ function saveData(): boolean {
     return false;
   }
 
-  // 验证黑名单是否填写完整
-  if (customRuleContent.blackList._enable === "yes") {
-    if (!validatePropValue(customRuleContent.blackList.data)) {
-      ElMessage({
-        message: "过滤黑名单必须选择内容！",
-        type: "error",
-      });
-
-      return false;
-    }
-  }
-
   // 验证目标设置是否填写完整
   if (sizeForm.targetRuleContent?.targetDelayed.isDelayed) {
     if (
@@ -148,6 +138,24 @@ function saveData(): boolean {
     }
   }
 
+  // 验证黑名单是否填写完整
+  if (blackList._enable === "yes") {
+    if (!validatePropValue(blackList.data)) {
+      ElMessage({
+        message: "过滤黑名单必须选择内容！",
+        type: "error",
+      });
+
+      return false;
+    }
+  } else {
+    Object.assign(props.p, {
+      blackList: {
+        data: blackList.data,
+      },
+    });
+  }
+
   Object.assign(props.p, {
     customRuleContent,
     targetRuleContent: sizeForm.targetRuleContent,
@@ -160,12 +168,12 @@ type IRegSaveFunc = (regFunc: () => boolean) => void;
 const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
-const blackList = ref();
+const blackListFields = ref();
 !(async () => {
   const res = await getBlackList({});
 
   if (res.data) {
-    blackList.value = res.data;
+    blackListFields.value = res.data;
   }
 })();
 </script>
@@ -214,25 +222,21 @@ const blackList = ref();
       <div class="MainTitle">黑名单</div>
 
       <el-form-item label="过滤黑名单" label-class="custom-label">
-        <el-select
-          :disabled="readonly"
-          v-model="customRuleContent.blackList._enable"
-          style="width: 100px"
-        >
+        <el-select :disabled="readonly" v-model="blackList._enable" style="width: 100px">
           <el-option value="no" label="不过滤">不过滤</el-option>
           <el-option value="yes" label="过滤">过滤</el-option>
         </el-select>
         &nbsp;
         <el-select
           placeholder="请选择"
-          v-model="customRuleContent.blackList.data"
+          v-model="blackList.data"
           multiple
           :disabled="readonly"
-          v-if="customRuleContent?.blackList?._enable === 'yes'"
+          v-if="blackList?._enable === 'yes'"
           style="min-width: 100px"
         >
           <el-option
-            v-for="item in blackList.records"
+            v-for="item in blackListFields.records"
             :value="item.blacklistName"
             :label="item.blacklistName"
           >

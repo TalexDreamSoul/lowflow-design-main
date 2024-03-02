@@ -128,12 +128,11 @@ export type CustomAttrConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: AttrConditionDTO[];
+  conditions: AttrConditionDTO[];
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
-  [property: string]: any;
+  logicalChar: string;
 }
 
 /**
@@ -143,25 +142,23 @@ export type AttrConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: SearchCondition[];
+  conditions: SearchCondition[];
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
-  [property: string]: any;
+  logicalChar: string;
 }
 
 /**
  * SearchCondition
  */
 export type SearchCondition = {
-  attr?: AttrDTO;
-  label?: LabelDTO;
+  attr: AttrDTO;
+  label: LabelDTO;
   /**
    * 类型 1：基础属性 2：客户标签
    */
-  type?: string;
-  [property: string]: any;
+  type: "event" | "label";
 }
 
 /**
@@ -171,7 +168,7 @@ export type AttrDTO = {
   /**
    * 字段
    */
-  field?: string;
+  field: string;
   /**
    * 字段值
    */
@@ -183,7 +180,7 @@ export type AttrDTO = {
   /**
    * 运算符号
    */
-  fieldOp?: string;
+  fieldOp: string;
   /**
    * 字段范围值
    */
@@ -191,13 +188,12 @@ export type AttrDTO = {
   /**
    * 字段类型
    */
-  fieldType?: string;
+  fieldType: string;
   /**
    * 字段值
    */
-  fieldValue?: string;
+  fieldValue: string;
   timeCondition?: TimeConditionDTO;
-  [property: string]: any;
 }
 
 /**

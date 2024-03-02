@@ -81,14 +81,13 @@ export type MarketingTouchEditDTO = {
  * CustomSearchDTO
  */
 export type CustomSearchDTO = {
-  customAttr?: CustomAttrConditionDTO;
-  customEvent?: CustomEventConditionDTO;
-  eventSequence?: EventSequenceConditionDTO;
+  customAttr: CustomAttrConditionDTO;
+  customEvent: CustomEventConditionDTO;
+  eventSequence: EventSequenceConditionDTO;
   /**
    * 逻辑符号
    */
   logicalChar: string;
-  [property: string]: any;
 }
 
 /**

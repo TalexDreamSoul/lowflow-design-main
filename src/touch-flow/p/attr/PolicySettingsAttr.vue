@@ -67,47 +67,6 @@ const origin: MarketingTouchNodeEditDTO = {
   },
 };
 
-const customRuleContent = reactive<CustomSearchDTO>({
-  customAttr: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      },
-    ],
-    logicalChar: "或",
-  },
-  customEvent: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      },
-    ],
-    logicalChar: "或",
-  },
-  eventSequence: {
-    conditions: [
-      {
-        conditions: [
-          // {}
-        ],
-        logicalChar: "或",
-      },
-    ],
-    logicalChar: "或",
-  },
-  logicalChar: "或",
-  blackList: {
-    _enable: "no",
-    data: [],
-  },
-});
-
 const props = defineProps<{
   p: any;
   new?: boolean;
@@ -304,7 +263,7 @@ function sequenceAdd() {
 
       <CommonAttr ref="touchSettingsRef" :sizeForm="sizeForm" />
 
-      <TouchEstimation :readonly="readonly" :custom-rule-content="customRuleContent" />
+      <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
     </el-form>
   </div>
 </template>
