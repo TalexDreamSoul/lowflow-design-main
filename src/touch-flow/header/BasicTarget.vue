@@ -68,7 +68,7 @@ function addTarget() {
         />
         <el-button
           :class="{ display: target.enable }"
-          :disabled="readonly"
+          :disabled="readonly || target.targetRuleContent.data.length > 1"
           @click="addTarget"
           type="primary"
           text
