@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import API from "~/api/account";
 import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
-import { ElMessageBox, ElMessage, FormInstance } from "element-plus";
+import { ElMessageBox, ElMessage, FormInstance,ElTree } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { checkStringEqual, debounce } from '~/utils/common';
 
@@ -16,7 +16,7 @@ const formInline = reactive({
   roleName: "",
 });
 const tableData = ref([]); // 表格数据
-const RoleList = ref([]); // 权限列表
+const MenuList = ref([]); // 权限列表
 const total = ref(100); // 总数
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -57,20 +57,25 @@ function getNameByValue(data: any[], val: string) {
 
 onMounted(async () => {
   fetchDataApi();
+  fetchqryMenuList();
 });
 
 watch([currentPage, pageSize, formInline], () => {
   fetchDataApi();
 });
 
-const fetchRoleList = async () => {
-  const res = await API.qryRoleList({
-    pageNum: 1,
-    pageSize: 999,
-    roleName: "",
+
+const fetchqryaccountContainMenuList = async (id:any) => {
+  const res = await API.accountContainMenuList({
+    id: id
   });
-  RoleList.value = res.data.records;
-  console.log(`output->RoleList`, RoleList.value);
+  Object.assign(formValues, res.data);
+  console.log(`output->formValues`, formValues);
+};
+const fetchqryMenuList = async () => {
+  const res = await API.qryMenuList();
+  MenuList.value = res.data;
+  console.log(`output->MenuList`, MenuList.value);
 };
 const fetchDataApi = async () => {
   const res = await API.qryRoleList({
@@ -114,7 +119,7 @@ const handleModal = async (type: string, values?: any) => {
     }
     Object.assign(formValues, defaultFormValues);
   } else if (type === DrawerType.Edit) {
-    Object.assign(formValues, values);
+    fetchqryaccountContainMenuList(values?.id)
   }
   modalType.value = type;
   modalVisible.value = true;
@@ -166,7 +171,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-space wrap>
-              <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
+              <el-link type="primary"  @click="handleModal(DrawerType.Edit, scope.row)">编辑</el-link>
               <el-link type="primary" @click="delData(scope.row)">删除</el-link>
             </el-space>
 
@@ -188,24 +193,26 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
               pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
               message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
             },
-          ]" label="角色名称" prop="name">
-        <el-input v-model="formValues.accountName" style="width:300px" placeholder="请输入" clearable />
+          ]" label="角色名称" prop="roleName">
+        <el-input v-model="formValues.roleName" style="width:300px" placeholder="请输入" clearable />
       </el-form-item>
 
-      <el-form-item prop="roleId" label="角色说明">
-        <el-select v-model="formValues.roleId" clearable style="width:300px" placeholder="用户角色" name="roleId" tabindex="2" autocomplete="on">
-          <el-option v-for="item in RoleList" :label="item.roleName" :value="item.id" />
-        </el-select>
+      <el-form-item prop="describe" label="角色说明">
+        <el-input v-model="formValues.describe" style="width:300px" placeholder="请输入" clearable />
       </el-form-item>
       <el-form-item :rules="[
-        { required: true, message: '请输入手机号' },
-        {
-          pattern: /^[1][3-9][0-9]{9}$/,
-          message: '请输入按照正确格式输入手机号',
-        },
-      ]" label="角色权限" prop="phone">
+        { required: true, message: '请输入角色权限' },
+      ]" label="角色权限" prop="menuIds">
 
-
+      <el-tree
+      :data="MenuList"
+      show-checkbox
+      node-key="id"
+      :props="{
+        children: 'subMenus',
+        label: 'menuName'
+      }"
+    />
       </el-form-item>
     </el-form>
     <template #footer>

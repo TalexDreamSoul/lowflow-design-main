@@ -37,8 +37,8 @@ const customerAPI = {
     return request.post({ url: "/api/logout.do", data });
   },
   // 菜单列表
-  qryMenuList(data: any) {
-    return request.post({ url: "/api/qryMenuList.do", data });
+  qryMenuList() {
+    return request.post({ url: "/api/qryMenuList.do" });
   },
   // 权限列表
   qryRoleList(data: any) {
