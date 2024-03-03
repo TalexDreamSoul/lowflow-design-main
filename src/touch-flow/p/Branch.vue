@@ -5,6 +5,7 @@ import PolicySettingsAttr from './attr/PolicySettingsAttr.vue'
 import DeliverySettingsAttr from './start/DeliverySettingsAttr.vue'
 import Strategist from "./attr/Strategist.vue";
 import { delChild } from '../flow-utils'
+import { MarketingTouchEditDTO } from './behavior/marketing';
 
 const getNode: Function = inject('getNode')!
 const { data: _data } = getNode()
@@ -125,12 +126,10 @@ provide('save', (regFunc: () => boolean) => {
 })
 
 const visible = ref(false)
-function del(p: any) {
-  delChild(p)
+function del(p: MarketingTouchEditDTO) {
+  _data.$del(p);
 
-  window.$refreshLayout()
-
-  visible.value = false
+  visible.value = false;
 }
 </script>
 
