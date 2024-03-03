@@ -277,7 +277,8 @@ const handleCurrentChange = (val: number) => {
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background"         layout="prev, pager, next, jumper"
+      :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
 
     </div>
 

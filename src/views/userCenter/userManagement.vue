@@ -6,6 +6,7 @@ import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, FormInstance } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
+import { checkStringEqual, debounce } from '~/utils/common';
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
@@ -100,7 +101,6 @@ const delData = async (row: any) => {
     }
   });
 };
-const detailsData = async (row: any) => {};
 
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);
@@ -130,12 +130,12 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       ...formValues,
     };
     if (modalType.value === DrawerType.Create) {
-      res = await API.addCustom(values);
+      res = await API.addAccount(values);
     } else {
       res = await API.updateAccount(values);
     }
     if (checkStringEqual(res?.code, 0)) {
-      getData(pageParams);
+      fetchDataApi();
       modalVisible.value = false;
     }
   } catch (error) {
@@ -185,7 +185,8 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       </el-table>
     </template>
     <template #pagination>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, sizes, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background         layout="prev, pager, next, jumper"
+      :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </template>
   </CustomEventComponent>
 
