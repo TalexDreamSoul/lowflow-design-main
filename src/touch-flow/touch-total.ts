@@ -372,8 +372,8 @@ export type MarketingTouchNodeEditDTO = {
   /**
    * 执行类型：noDiversion:不分流，event:按事件，attr：按属性, safeguard: 兜底
    */
-  diversionType: string;
-  eventDelayed: DelayedDTO;
+  diversionType?: string;
+  eventDelayed?: DelayedDTO;
   eventRuleContent?: CustomSearchDTO;
   /**
    * 主键id

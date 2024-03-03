@@ -78,7 +78,7 @@ const sizeForm = reactive<typeof origin>(origin);
 watch(
   () => sizeForm.diversionType,
   (val) => {
-    sizeForm.eventDelayed.isDelayed = val === "event";
+    sizeForm.eventDelayed!.isDelayed = val === "event";
   }
 );
 
@@ -194,18 +194,18 @@ regSaveFunc(saveData);
           <el-text>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</el-text>
           <el-input-number
             :min="1"
-            v-model="sizeForm.eventDelayed.delayedTime"
+            v-model="sizeForm.eventDelayed!.delayedTime"
             type="number"
             style="width: 100px"
           />&nbsp;
-          <el-select v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
+          <el-select v-model="sizeForm.eventDelayed!.delayedUnit" style="width: 100px">
             <el-option value="minute" label="分钟">分钟</el-option>
             <el-option value="hour" label="小时">小时</el-option>
             <el-option value="day" label="天">天</el-option> </el-select
           >&nbsp;
           <el-text>
             后判断客户
-            <el-select v-model="sizeForm.eventDelayed.delayedAction" style="width: 100px">
+            <el-select v-model="sizeForm.eventDelayed!.delayedAction" style="width: 100px">
               <el-option value="=" label="做过">做过</el-option>
               <el-option value="!=" label="没做过">没做过</el-option>
             </el-select>

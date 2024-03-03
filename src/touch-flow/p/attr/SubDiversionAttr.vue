@@ -4,8 +4,10 @@ import { inject, reactive, ref } from "vue";
 import CommonAttr from "../attr/CommonAttr.vue";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
 import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
+import { validateCommonDays } from "~/touch-flow/flow-utils";
+import { MarketingTouchNodeEditDTO } from "~/touch-flow/touch-total";
 
-const origin = {
+const origin: MarketingTouchNodeEditDTO = {
   nodeId: "",
   nodeType: "subDiversion",
   nodeName: "默认分支",
@@ -14,7 +16,7 @@ const origin = {
   nodeDelayed: {
     delayedAction: "nothing",
     delayedTime: 0,
-    delayedUnit: "",
+    delayedUnit: "day",
     isDelayed: false,
   },
   labelContent: {
@@ -42,7 +44,7 @@ const origin = {
 const props = defineProps<{
   p: any;
   new?: boolean;
-  readonly?: boolean
+  readonly?: boolean;
 }>();
 
 const touchSettingsRef = ref();
@@ -66,6 +68,21 @@ function saveData() {
 
     return false;
   }
+
+  if (
+    !validateCommonDays(
+      sizeForm.nodeDelayed.delayedTime,
+      sizeForm.nodeDelayed.delayedUnit
+    )
+  ) {
+    ElMessage.warning({
+      message: "延迟设置折算时间不可超过30天！",
+    });
+
+    return false;
+  }
+
+  touchSettingsRef.value.updateData();
 
   console.log("> update", sizeForm, props);
 
