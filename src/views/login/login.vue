@@ -75,8 +75,8 @@ const validatePhone = (rule, value, callback) => {
 const state = reactive({
   refLoginForm: null,
   loginForm: {
-    accountName: "admin",
-    accountPassword: "123456",
+    accountName: "4pd2",
+    accountPassword: "4pdadmin",
     email: "",
     phone: "",
     roleId: 0,
