@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, unref, reactive, onMounted, watch } from "vue";
-import dayjs from "dayjs";
 import API from "~/api/account";
 import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
@@ -8,8 +7,6 @@ import { ElMessageBox, ElMessage, FormInstance } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { checkStringEqual, debounce } from '~/utils/common';
 
-// 使用 useRoute 获取当前路由信息
-const route = useRoute();
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
 const formInline = reactive({
@@ -23,11 +20,7 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
 const disabled = ref(false);
-const time = ref(null);
-const statusLabels = {
-  available: { Text: "可用", type: "success" },
-  offline: { Text: "下线", type: "info" },
-};
+
 enum DrawerType {
   Create = "create",
   Edit = "edit",
@@ -48,13 +41,6 @@ let formValues = reactive<any>({ ...defaultFormValues });
 const modalVisible = ref(false);
 const modalType = ref<any>(DrawerType.Create);
 const formRef = ref<FormInstance>();
-
-const value = ref();
-
-function getNameByValue(data: any[], val: string) {
-  const item = data.find((item: { value: any }) => item.value === val);
-  return item ? item.name : "";
-}
 
 onMounted(async () => {
   fetchDataApi();

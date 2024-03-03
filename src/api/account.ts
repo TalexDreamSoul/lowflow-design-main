@@ -46,7 +46,7 @@ const customerAPI = {
   },
   // 权限详情
   roleDetail(data: any) {
-    return request.get({ url: "/api/roleDetail.do", data });
+    return request.get({ url: `/api/roleDetail.do?id=${data}` });
   },
   // 更新账户
   updateAccount(data: any) {

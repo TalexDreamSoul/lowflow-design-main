@@ -22,11 +22,7 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
 const disabled = ref(false);
-const time = ref(null);
-const statusLabels = {
-  available: { Text: "可用", type: "success" },
-  offline: { Text: "下线", type: "info" },
-};
+
 enum DrawerType {
   Create = "create",
   Edit = "edit",
@@ -47,14 +43,13 @@ let formValues = reactive<any>({ ...defaultFormValues });
 const modalVisible = ref(false);
 const modalType = ref<any>(DrawerType.Create);
 const formRef = ref<FormInstance>();
-
-const value = ref();
-
-function getNameByValue(data: any[], val: string) {
-  const item = data.find((item: { value: any }) => item.value === val);
-  return item ? item.name : "";
-}
-
+  const treeProps = {
+      children: 'subMenus',
+      label: 'menuName',
+      hasChildren(node: { subMenus: null; }) {
+        return node.subMenus !== null; // 当 subMenus 不为 null 时显示展开符号
+      }
+    };
 onMounted(async () => {
   fetchDataApi();
   fetchqryMenuList();
@@ -65,10 +60,8 @@ watch([currentPage, pageSize, formInline], () => {
 });
 
 
-const fetchqryaccountContainMenuList = async (id:any) => {
-  const res = await API.accountContainMenuList({
-    id: id
-  });
+const fetchqryroleDetail = async (id:any) => {
+  const res = await API.roleDetail(id);
   Object.assign(formValues, res.data);
   console.log(`output->formValues`, formValues);
 };
@@ -119,7 +112,7 @@ const handleModal = async (type: string, values?: any) => {
     }
     Object.assign(formValues, defaultFormValues);
   } else if (type === DrawerType.Edit) {
-    fetchqryaccountContainMenuList(values?.id)
+    fetchqryroleDetail(values?.id)
   }
   modalType.value = type;
   modalVisible.value = true;
@@ -185,7 +178,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     </template>
   </CustomEventComponent>
 
-  <el-dialog width="650" destroy-on-close :close-on-click-modal="false" v-model="modalVisible" :title="ModalTitleMap[modalType]">
+  <el-dialog width="650"  destroy-on-close :close-on-click-modal="false" v-model="modalVisible" :title="ModalTitleMap[modalType]">
     <el-form ref="formRef" :hide-required-asterisk="true" label-position="top" class="form" :model="formValues">
       <el-form-item :rules="[
             { required: true, message: '请输入帐号名称' },
@@ -203,16 +196,16 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       <el-form-item :rules="[
         { required: true, message: '请输入角色权限' },
       ]" label="角色权限" prop="menuIds">
-
+      <div  style="height: 500px; width:100%;overflow: scroll;">
       <el-tree
       :data="MenuList"
       show-checkbox
-      node-key="id"
-      :props="{
-        children: 'subMenus',
-        label: 'menuName'
-      }"
+       node-key="id"
+      :default-expand-all="true"
+      :default-checked-keys="formValues.menuIds"
+      :props="treeProps"
     />
+      </div>
       </el-form-item>
     </el-form>
     <template #footer>
