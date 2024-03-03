@@ -33,8 +33,8 @@ const customerAPI = {
   login(data: any)  {
     return request.post({ url: "/api/login.do", data });
   },
-  logout(data: any) {
-    return request.post({ url: "/api/logout.do", data });
+  logout() {
+    return request.post({ url: "/api/logout.do"});
   },
   // 菜单列表
   qryMenuList() {
