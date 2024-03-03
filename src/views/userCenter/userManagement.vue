@@ -198,10 +198,19 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
               pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
               message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
             },
-          ]" label="帐号名称" prop="name">
+          ]" label="帐号名称" prop="accountName">
         <el-input v-model="formValues.accountName" style="width:300px" placeholder="请输入" clearable />
       </el-form-item>
 
+      <el-form-item prop="accountPassword" label="用户密码" :rules="[
+        { required: true, message: '请输入用户密码' },
+        {
+          pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
+          message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
+        },
+      ]" >
+        <el-input v-model="formValues.accountPassword" style="width:300px" placeholder="请输入" clearable />
+      </el-form-item>
       <el-form-item prop="roleId" label="用户角色">
         <el-select v-model="formValues.roleId" clearable style="width:300px" placeholder="用户角色" name="roleId" tabindex="2" autocomplete="on">
           <el-option v-for="item in RoleList" :label="item.roleName" :value="item.id" />
