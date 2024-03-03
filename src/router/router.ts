@@ -14,7 +14,7 @@ export const routes: RouterOptions["routes"] = [
       hideTopMenu: true,
     },},
   {
-    path: "/design",
+    path: "/design/:id?",
     component: () => import("~/touch-flow/FlowPage.vue"),
     meta: {
       hideTopMenu: true,

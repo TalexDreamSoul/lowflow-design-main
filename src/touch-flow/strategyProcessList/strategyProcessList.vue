@@ -107,9 +107,7 @@ const pauseData = async (row: any) => {
 };
 
 const updateData = async (row: any) => {
-  await getpauseMarketingTouch({ id: row.id }).finally(() => {});
-  getmarketingTouchNode();
-  fetchDataApi();
+  router.push(`/design/${row.id}`);
 };
 const detailsData = async (row: any) => {
   router.push(`/strategyProcess/details/${row.id}`);
