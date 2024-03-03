@@ -2,7 +2,7 @@
 import { ref, reactive, provide, computed, inject } from "vue";
 import { Stamp, Plus, Delete } from "@element-plus/icons-vue";
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
-import DeliverySettingsAttr from "./start/DeliverySettingsAttr.vue";
+import DeliverySettingsAttr from "./attr/DeliverySettingsAttr.vue";
 import { _delChild } from "../flow-utils";
 import Strategist from "./attr/Strategist.vue";
 import { MarketingTouchEditDTO } from "./behavior/marketing";

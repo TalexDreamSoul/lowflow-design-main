@@ -4,7 +4,7 @@ import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/ic
 import ConditionSetAttr from "./attr/ConditionSetAttr.vue";
 import CustomersAttr from "./attr/CustomersAttr.vue";
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
-import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
+import DeliverySettingsAttr from "../p/attr/DeliverySettingsAttr.vue";
 import Strategist from "./attr/Strategist.vue";
 
 const getNode: Function = inject("getNode")!;

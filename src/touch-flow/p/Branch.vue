@@ -2,9 +2,8 @@
 import { ref, reactive, provide, inject, computed } from 'vue'
 import { Stamp, Plus, Delete } from '@element-plus/icons-vue'
 import PolicySettingsAttr from './attr/PolicySettingsAttr.vue'
-import DeliverySettingsAttr from './start/DeliverySettingsAttr.vue'
+import DeliverySettingsAttr from './attr/DeliverySettingsAttr.vue'
 import Strategist from "./attr/Strategist.vue";
-import { delChild } from '../flow-utils'
 import { MarketingTouchEditDTO } from './behavior/marketing';
 
 const getNode: Function = inject('getNode')!

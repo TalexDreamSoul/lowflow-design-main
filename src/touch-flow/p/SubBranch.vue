@@ -1,9 +1,9 @@
 <script setup lang="ts" name="SubBranch">
 import { ref, reactive, provide, inject, computed } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
-import SubDiversionAttr from './start/SubDiversionAttr.vue';
+import SubDiversionAttr from './attr/SubDiversionAttr.vue';
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
-import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
+import DeliverySettingsAttr from "./attr/DeliverySettingsAttr.vue";
 import Strategist from "./attr/Strategist.vue";
 
 const getNode: Function = inject('getNode')!
