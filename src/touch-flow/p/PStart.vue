@@ -161,7 +161,7 @@ function handleSave() {
 
   Object.assign(__data, data);
 
-  // console.log("assign", data)
+  console.log("assign", data, __data)
 
   // // define father
   // Object.defineProperty(__data, 'father', {

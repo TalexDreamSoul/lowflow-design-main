@@ -65,6 +65,7 @@ export function delChild(child: {
   children: any[];
   [key: string]: any;
 }) {
+  console.log("Del", child)
   return _delChild(child.father, child);
 }
 

@@ -12,7 +12,9 @@
 import { onMounted, ref, toRefs, provide, watchEffect } from "vue";
 import Hierarchy from "@antv/hierarchy";
 import initGraph from "./graph";
-import { genIdNodeReactive } from "./../flow-utils";
+import { _delChild, genIdNodeReactive } from "./../flow-utils";
+import { MarketingTouchEditDTO } from "../p/behavior/marketing";
+import { ElMessage } from "element-plus";
 
 interface IGraphData {
   id: string;
@@ -31,6 +33,24 @@ let _Graph: any;
 let treeMap = props.p;
 
 const getNodeReactive = genIdNodeReactive(props.p);
+
+const del = (p: MarketingTouchEditDTO) => {
+  const fatherNode = getNodeReactive(p.father.id);
+
+  console.log("delete", fatherNode, p);
+
+  if (!_delChild(fatherNode, p)) {
+    ElMessage.error({
+      message: "删除失败！",
+    });
+
+    console.log(fatherNode, p);
+
+    throw new Error("删除失败!");
+  }
+
+  // window.$refreshLayout();
+};
 
 const layoutFn = () => {
   console.groupCollapsed("layoutFn");
@@ -116,7 +136,7 @@ const layoutFn = () => {
         x: data.x + 700,
         y: data.y + 200,
         shape,
-        data: { ...data, $d: getNodeReactive },
+        data: { ...data, $d: getNodeReactive, $del: del },
         width: 610,
         height: calc(data.height, data),
         ports: {

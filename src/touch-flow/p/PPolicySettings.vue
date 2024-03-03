@@ -3,8 +3,9 @@ import { ref, reactive, provide, computed, inject } from "vue";
 import { Stamp, Plus, Delete } from "@element-plus/icons-vue";
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "./start/DeliverySettingsAttr.vue";
-import { delChild } from "../flow-utils";
+import { _delChild } from "../flow-utils";
 import Strategist from "./attr/Strategist.vue";
+import { MarketingTouchEditDTO } from "./behavior/marketing";
 
 const getNode: Function = inject("getNode")!;
 const { data: _data } = getNode();
@@ -44,20 +45,6 @@ const haveReveal = computed(() => {
     [...children].find((child) => "strategy" === child?.nodeType && child?.reveal) ??
     false
   );
-});
-
-const customerConditioned = computed(() => {
-  const { customAttr, customEvent } = data?.customRuleContent ?? {};
-
-  const _obj = {
-    customAttr: customAttr?.conditions?.length ?? 0,
-    customEvent: customEvent?.conditions?.length ?? 0,
-  };
-
-  return {
-    display: _obj.customAttr && _obj.customEvent,
-    ..._obj,
-  };
 });
 
 const _comps = [
@@ -170,10 +157,8 @@ const delayedActionStr = computed(() => {
 });
 
 const visible = ref(false);
-function del(p: any) {
-  delChild(p);
-
-  window.$refreshLayout();
+function del(p: MarketingTouchEditDTO) {
+  _data.$del(p);
 
   visible.value = false;
 }

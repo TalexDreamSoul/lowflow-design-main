@@ -146,6 +146,8 @@ function saveData() {
 
     _.nodeId = randomStr(12);
 
+    console.log('add', props.p)
+
     props.p.children.push(_);
   }
 
