@@ -401,8 +401,8 @@ function addEventB() {
                 v-model="sizeForm.triggerRuleContent.delayed.delayedAction"
                 style="width: 150px"
               >
-                <el-option value="=" label="月份">做过</el-option>
-                <el-option value="!=" label="周">未做过</el-option> </el-select
+                <el-option value="=" label="做过">做过</el-option>
+                <el-option value="!=" label="未做过">未做过</el-option> </el-select
               >&nbsp;
             </div>
             <el-text type="primary" style="cursor: pointer" @click="addEventB">

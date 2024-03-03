@@ -205,14 +205,23 @@ const goBack = () => {
 
 <template>
   <div class="FlowPage">
-    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
+    <el-container
+      :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }"
+      class="FlowPage-Container"
+    >
       <el-header>
         <FlowHeader v-if="!modelValue || !readonly" :basic="flowOptions.basic">
           <template #controller>
             <div>
               <el-button @click="goBack" round>返回</el-button>
               <el-button @click="submitReview('draft')" round>保存草稿</el-button>
-              <el-button round type="primary" @click="submitReview('')" primaryStyle>提交审核</el-button>
+              <el-button
+                round
+                type="primary"
+                @click="submitReview('')"
+                class="primaryStyle"
+                >提交审核</el-button
+              >
             </div>
           </template>
         </FlowHeader>
@@ -235,8 +244,13 @@ const goBack = () => {
 
   <teleport to="body">
     <el-dialog title="流程基础设置" v-model="dialogVisible">
-      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview"
-        :basic="flowOptions.basic" />
+      <FlowHeader
+        :readonly="readonly"
+        :expandAll="true"
+        class="FlowPage-ShrinkHeader"
+        @submit-review="submitReview"
+        :basic="flowOptions.basic"
+      />
     </el-dialog>
   </teleport>
 </template>
@@ -248,7 +262,6 @@ div.el-dialog {
 
 .FlowPage-Container.expand {
   .el-header {
-
     height: 60%;
   }
 }
@@ -279,11 +292,10 @@ div.el-dialog {
     overflow: hidden;
     perspective: 100px;
     transition: height 0.25s;
-    background-color: #FFFFFF;
-    box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02),
-      0 2px 4px rgba(0, 0, 0, 0.125);
+    background-color: #ffffff;
+    box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.125);
 
-    animation: header-join .5s;
+    animation: header-join 0.5s;
   }
 
   & .expand .el-header {
@@ -310,10 +322,10 @@ div.el-dialog {
     align-items: center;
 
     background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
     background-size: 30px 30px;
 
-    transform: translateY(80px)
+    transform: translateY(80px);
   }
 
   position: absolute;
@@ -334,5 +346,5 @@ div.el-dialog {
   }
 }
 
-@import './flow-style.scss';
+@import "./flow-style.scss";
 </style>

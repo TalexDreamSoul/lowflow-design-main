@@ -1,11 +1,10 @@
 <script setup lang="ts" name="SubBranch">
-import { ref, reactive, provide, inject, computed, watchEffect } from 'vue'
+import { ref, reactive, provide, inject, computed } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import SubDiversionAttr from './start/SubDiversionAttr.vue';
-import CustomersAttr from "./attr/CustomersAttr.vue";
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
-import Strategist from "./start/Strategist.vue";
+import Strategist from "./attr/Strategist.vue";
 
 const getNode: Function = inject('getNode')!
 const { data: _data } = getNode()

@@ -129,6 +129,7 @@ const getCurrSelected = (condition: any) =>
           :disabled="readonly"
           ref="operatorRef"
           v-model="item.attr.fieldOp"
+          style="width: 120px"
         />
         <AttrRender
           :selected="getCurrSelected(item)"

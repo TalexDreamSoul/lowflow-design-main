@@ -1,31 +1,19 @@
 <script setup lang="ts">
-import { inject, ref, reactive, watchEffect } from "vue";
+import { inject, ref, reactive, watchEffect, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
-import BehaviorGroup from "../behavior/BehaviorGroup.vue";
-import CustomAttr from "../behavior/CustomAttr.vue";
-import CustomBehavior from "../behavior/CustomBehavior.vue";
-import CustomBehaviorSequence from "../behavior/sequence/CustomBehaviorSequence.vue";
-import LogicalLine from "../behavior/LogicalLine.vue";
+import FilterGroup from "./condition/FilterGroup.vue";
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
-import EventBehavior from "../behavior/EventBehavior.vue";
 import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
 import { markRaw } from "vue";
-import CommonAttr from "../start/CommonAttr.vue";
+import CommonAttr from "./CommonAttr.vue";
 import { validateCommonDays } from "~/touch-flow/flow-utils";
-import { CustomSearchDTO, MarketingTouchNodeEditDTO } from "~/touch-flow/touch-total";
+import { MarketingTouchNodeEditDTO } from "~/touch-flow/touch-total";
 
 const origin: MarketingTouchNodeEditDTO = {
   nodeId: "",
   nodeType: "strategy",
   nodeName: "",
-  value1: false,
-  isDelayed: false,
-  selectedType: "day",
-  delayedAction: "day",
-  cascaderLabel: "sms",
-  do: false,
-  num: 1,
   diversionType: "noDiversion",
   touchTemplateContent: {},
   nodeDelayed: {
@@ -50,15 +38,26 @@ const origin: MarketingTouchNodeEditDTO = {
     logicalChar: "或",
   },
   eventRuleContent: {
+    customAttr: {
+      conditions: [],
+      logicalChar: "或",
+    },
     customEvent: {
-      conditions: [
-        {
-          conditions: [{}],
-        },
-      ],
+      conditions: [],
+      logicalChar: "或",
+    },
+    eventSequence: {
+      conditions: [],
       logicalChar: "或",
     },
     logicalChar: "或",
+  },
+  eventDelayed: {
+    delayedAction: "=",
+    delayedTime: 1,
+    delayedType: "",
+    delayedUnit: "day",
+    isDelayed: false,
   },
   labelContent: {
     labelId: -1,
@@ -68,13 +67,20 @@ const origin: MarketingTouchNodeEditDTO = {
 };
 
 const props = defineProps<{
-  p: any;
+  p: MarketingTouchNodeEditDTO;
   new?: boolean;
   readonly?: boolean;
 }>();
 
 const touchSettingsRef = ref();
 const sizeForm = reactive<typeof origin>(origin);
+
+watch(
+  () => sizeForm.diversionType,
+  (val) => {
+    sizeForm.eventDelayed.isDelayed = val === "event";
+  }
+);
 
 watchEffect(() => {
   const { nodeType, nodeId } = props.p;
@@ -149,51 +155,6 @@ function saveData() {
 type IRegSaveFunc = (regFunc: () => boolean) => void;
 const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
-
-function attrsAdd() {
-  let attr: any = (sizeForm.customRuleContent!.customAttr!.conditions! =
-    sizeForm.customRuleContent!.customAttr!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
-
-function behaviorAdd() {
-  let attr: any = (sizeForm.customRuleContent!.customEvent!.conditions! =
-    sizeForm.customRuleContent!.customEvent!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: {} }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
-
-function sequenceAdd() {
-  let attr: any = (sizeForm.customRuleContent!.eventSequence!.conditions! =
-    sizeForm.customRuleContent!.eventSequence!.conditions! || []);
-
-  const obj = {
-    conditions: [{ conditions: [{}] }],
-    logicalChar: "或",
-  };
-
-  attr.push({
-    conditions: [obj],
-    logicalChar: "或",
-  });
-}
 </script>
 
 <template>
@@ -216,21 +177,10 @@ function sequenceAdd() {
         :class="{ animation: true, display: sizeForm.diversionType === 'attr' }"
       >
         <div class="titleCondition">进入该策略期的用户需要满足以下条件：</div>
-        <el-form-item label="">
-          <LogicalLine v-model="sizeForm.customRuleContent.logicalChar">
-            <BehaviorGroup @add="attrsAdd" title="客户属性满足">
-              <CustomAttr :custom="sizeForm.customRuleContent!.customAttr" />
-            </BehaviorGroup>
-            <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-              <CustomBehavior :custom="sizeForm.customRuleContent!.customEvent" />
-            </BehaviorGroup>
-            <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
-              <CustomBehaviorSequence
-                :custom="sizeForm.customRuleContent!.eventSequence"
-              />
-            </BehaviorGroup>
-          </LogicalLine>
-        </el-form-item>
+        <FilterGroup
+          :readonly="readonly"
+          :custom-rule-content="sizeForm.customRuleContent"
+        />
       </BehaviorGroupPlus>
 
       <BehaviorGroupPlus
@@ -239,31 +189,40 @@ function sequenceAdd() {
         :class="{ animation: true, display: sizeForm.diversionType === 'event' }"
       >
         <div class="flex-column titleCondition">
-          <div>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</div>
-          <el-input v-model="sizeForm.num" type="number" style="width: 100px" />&nbsp;
-          <el-select v-model="sizeForm.selectedType" style="width: 100px">
-            <el-option value="month" label="月份">分钟</el-option>
-            <el-option value="week" label="周">小时</el-option>
+          <el-text>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</el-text>
+          <el-input-number
+            :min="1"
+            v-model="sizeForm.eventDelayed.delayedTime"
+            type="number"
+            style="width: 100px"
+          />&nbsp;
+          <el-select v-model="sizeForm.eventDelayed.delayedUnit" style="width: 100px">
+            <el-option value="minute" label="分钟">分钟</el-option>
+            <el-option value="hour" label="小时">小时</el-option>
             <el-option value="day" label="天">天</el-option> </el-select
           >&nbsp;
-          <div>
+          <el-text>
             后判断客户
-            <el-select v-model="sizeForm.do" style="width: 100px">
-              <el-option :value="true" label="做过">做过</el-option>
-              <el-option :value="false" label="没做过">没做过</el-option>
+            <el-select v-model="sizeForm.eventDelayed.delayedAction" style="width: 100px">
+              <el-option value="=" label="做过">做过</el-option>
+              <el-option value="!=" label="没做过">没做过</el-option>
             </el-select>
-          </div>
+          </el-text>
         </div>
-        <el-form-item label="">
-          <!-- <LogicalLine v-model="sizeForm.eventRuleContent.logicalChar"> -->
-          <EventBehavior :custom="sizeForm.eventRuleContent!.customEvent" />
-          <!-- </LogicalLine> -->
-        </el-form-item>
+
+        <FilterGroup
+          :readonly="readonly"
+          :custom-rule-content="sizeForm.eventRuleContent!"
+          :configuration="{ ignore: { attrs: true, sequence: true } }"
+        />
       </BehaviorGroupPlus>
 
       <CommonAttr ref="touchSettingsRef" :sizeForm="sizeForm" />
 
-      <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
+      <TouchEstimation
+        :readonly="readonly"
+        :custom-rule-content="sizeForm.customRuleContent"
+      />
     </el-form>
   </div>
 </template>

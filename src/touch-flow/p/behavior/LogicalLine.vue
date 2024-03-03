@@ -53,7 +53,7 @@ function toggle() {
       transform: translateX(0);
     }
     display: flex;
-    margin-right: -10px;
+    margin-right: -40px;
 
     opacity: 0;
     transform: translateX(-10%);

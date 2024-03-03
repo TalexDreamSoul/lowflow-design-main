@@ -4,7 +4,7 @@ import { Stamp, Plus, Delete } from "@element-plus/icons-vue";
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "./start/DeliverySettingsAttr.vue";
 import { delChild } from "../flow-utils";
-import Strategist from "./start/Strategist.vue";
+import Strategist from "./attr/Strategist.vue";
 
 const getNode: Function = inject("getNode")!;
 const { data: _data } = getNode();

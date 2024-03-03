@@ -111,9 +111,9 @@ export type TouchBlacklistDTO = {
  * CustomSearchDTO
  */
 export type CustomSearchDTO = {
-  customAttr: CustomAttrConditionDTO;
+  customAttr?: CustomAttrConditionDTO;
   customEvent: CustomEventConditionDTO;
-  eventSequence: EventSequenceConditionDTO;
+  eventSequence?: EventSequenceConditionDTO;
   /**
    * 逻辑符号
    */
@@ -372,8 +372,8 @@ export type MarketingTouchNodeEditDTO = {
   /**
    * 执行类型：noDiversion:不分流，event:按事件，attr：按属性, safeguard: 兜底
    */
-  diversionType?: string;
-  eventDelayed?: DelayedDTO;
+  diversionType: string;
+  eventDelayed: DelayedDTO;
   eventRuleContent?: CustomSearchDTO;
   /**
    * 主键id
@@ -519,9 +519,8 @@ export type JsonStructObject = {
  * MarketingTouchTargetDTO
  */
 export type MarketingTouchTargetDTO = {
-  targetDelayed?: DelayedDTO;
-  targetRuleContent?: CustomSearchDTO;
-  [property: string]: any;
+  targetDelayed: DelayedDTO;
+  targetRuleContent: CustomSearchDTO;
 }
 
 /**

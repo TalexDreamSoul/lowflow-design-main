@@ -2,8 +2,7 @@
 import { ElMessage } from "element-plus";
 import { inject, reactive, ref } from "vue";
 import { getmarketingTouchEstimate } from "~/api";
-import DiversionBehavior from "../behavior/diversion/DiversionBehavior.vue";
-import CommonAttr from "./CommonAttr.vue";
+import CommonAttr from "../attr/CommonAttr.vue";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
 
 const origin = {

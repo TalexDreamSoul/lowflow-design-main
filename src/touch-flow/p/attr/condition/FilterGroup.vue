@@ -13,9 +13,17 @@ import {
   SequenceConditionDTO,
 } from "~/touch-flow/touch-total";
 
+export interface IPropConfig {
+  ignore: {
+    attrs: boolean
+    sequence: boolean
+  }
+}
+
 const props = defineProps<{
   customRuleContent: CustomSearchDTO;
   readonly?: boolean;
+  configuration?: IPropConfig
 }>();
 
 function attrsAdd() {
@@ -68,8 +76,8 @@ function sequenceAdd() {
 </script>
 
 <template>
-  <LogicalLine v-model="customRuleContent!.logicalChar">
-    <BehaviorGroup @add="attrsAdd" title="客户属性满足">
+  <LogicalLine :display="!!configuration?.ignore" v-model="customRuleContent!.logicalChar">
+    <BehaviorGroup v-if="!configuration?.ignore?.attrs" @add="attrsAdd" title="客户属性满足">
       <CustomAttr
         v-if="customRuleContent.customAttr?.conditions?.length"
         :readonly="readonly"
@@ -83,7 +91,7 @@ function sequenceAdd() {
         :custom="customRuleContent.customEvent"
       />
     </BehaviorGroup>
-    <BehaviorGroup @add="sequenceAdd" title="行为序列满足">
+    <BehaviorGroup v-if="!configuration?.ignore?.sequence" @add="sequenceAdd" title="行为序列满足">
       <CustomBehaviorSequence
         v-if="customRuleContent.eventSequence?.conditions?.length"
         :readonly="readonly"
