@@ -9,7 +9,7 @@ import {
 import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
-import CustomEventComponent from "./CustomEventComponent.vue";
+import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { createTemplatePopover } from "~/utils/touch-templates";
 import { materialType } from "~/utils/common";
 
@@ -64,6 +64,17 @@ console.log(materialTypeName); // 输出：短信
 // watch([currentPage, pageSize, formInline], () => {
 //   fetchDataApi();
 // });
+const fetchRoleList = async () => {
+  const res = await API.qryRoleList
+({
+    pageNum: 1,
+    pageSize: 999,
+    roleName: '',
+  });
+  tableData.value = res.data.records;
+  total.value = res.data.total;
+  console.log(`output->tabledata`, tableData.value);
+};
 const fetchDataApi = async () => {
   const res = await getQryMaterial({
     pageNum: unref(currentPage),

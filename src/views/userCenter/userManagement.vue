@@ -5,7 +5,7 @@ import API from "~/api/account";
 import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
-import CustomEventComponent from "./CustomEventComponent.vue";
+import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { createTemplatePopover } from "~/utils/touch-templates";
 import { materialType } from "~/utils/common";
 
@@ -14,14 +14,22 @@ const route = useRoute();
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
 const formInline = reactive({
-  name: "",
-  // type	素材类型：sms 短信，appPush app消息，digital 数字员工，outbound 智能外呼，znx 站内信
-  type: route.params.type,
-  beginTime: "",
-  endTime: "",
-  status: "",
+  accountName: "",
+    roleId: 0,
 });
 const tableData = ref([]); // 表格数据
+const RoleList = ref([
+		{
+			"createBy": 0,
+			"createTime": "",
+			"deleted": false,
+			"describe": "",
+			"id": 0,
+			"roleName": "nam",
+			"updatedBy": 0,
+			"updatedTime": ""
+		}
+	]); // 权限列表
 const total = ref(100); // 总数
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -41,27 +49,31 @@ function getNameByValue(data: any[], val: string) {
   return item ? item.name : "";
 }
 
-const materialTypeName = ref(getNameByValue(materialType, route.params.type));
-
-console.log(materialTypeName); // 输出：短信
 onMounted(async () => {
   fetchDataApi();
+  fetchRoleList();
+
 });
 
-watch(
-  () => route.fullPath,
-  (val) => {
-    console.log(`output->val`, val);
-    materialTypeName.value = getNameByValue(materialType, route.params.type);
-    formInline.type = route.params.type;
-    fetchDataApi();
-  }
-);
+
+
 watch([currentPage, pageSize, formInline], () => {
   fetchDataApi();
 });
+
+const fetchRoleList = async () => {
+  const res = await API.qryRoleList
+({
+    pageNum: 1,
+    pageSize: 999,
+    roleName: '',
+  });
+  RoleList.value = res.data.records;
+  console.log(`output->RoleList`, RoleList.value);
+};
 const fetchDataApi = async () => {
   const res = await API.qryAccountList({
+   
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
     ...formInline,
@@ -94,7 +106,6 @@ const updateMaterialStatusData = async (row: any, status: String) => {
   let res = await API.updateAccount({
     id: row.id,
     status: status,
-    type: formInline.type,
   });
   if (res?.code == 0) {
     ElMessage.success(res.message);
@@ -103,59 +114,14 @@ const updateMaterialStatusData = async (row: any, status: String) => {
 };
 
 const detailsData = async (row: any) => {
-  ElMessageBox.alert(
-    `确认重制该用户密码为初始密码（初始密码为：12345678）`,
-    "确认编辑",
-    {
-      showCancelButton: true,
-      roundButton: true,
-      cancelButtonClass: "pd-button",
-      confirmButtonClass: "pd-button",
-      customClass: "delete-modal",
-    }
-  ).then(async () => {
-    value.value = row;
-    createTemplatePopover("编辑短信模版", "sms", value, "update");
-  });
-  value.value = row;
-  // createTemplatePopover('新建企微模版', 'digital')
-  // createTemplatePopover('新建站内信模版', 'znx', value)
-  console.log(`output->row`,row)
-  let name= `${materialTypeName}模版详情`
-  createTemplatePopover(
-    "模版详情",
-    row.type,
-    value,
-    "details"
-  );
-  // createTemplatePopover('新建APP Push模版', 'app')
-  // createTemplatePopover('新建外呼模版', 'outbound')
+
 };
 
 const addData = async () => {
-  value.value = "";
-  let name= '新建'+materialTypeName.value+'模版';
-  createTemplatePopover(
-    name,
-    route.params.type,
-    value
-  );
+ 
 };
 const updateData = async (row: any) => {
-  ElMessageBox.alert(
-    `当前有${row.usedCount}个策略流程正在使用该模版（流程LC1、LC5、LC22正在使用），确认后该修改内容会更新至正在使用的流程中`,
-    "确认编辑",
-    {
-      showCancelButton: true,
-      roundButton: true,
-      cancelButtonClass: "pd-button",
-      confirmButtonClass: "pd-button",
-      customClass: "delete-modal",
-    }
-  ).then(async () => {
-    value.value = row;
-    createTemplatePopover("编辑短信模版", "sms", value, "update");
-  });
+
 };
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);
@@ -171,12 +137,12 @@ const handleCurrentChange = (val: number) => {
         <div class="search">
           <el-form :inline="true">
             <el-form-item >
-              <el-select v-model="formInline.type" clearable style="width:200px" placeholder="用户角色">
-                <el-option  v-for="item in materialType"  :label="item.name" :value="item.value" />
+              <el-select v-model="formInline.roleId" clearable style="width:200px" placeholder="用户角色">
+                <el-option  v-for="item in RoleList"  :label="item.roleName" :value="item.id" />
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-input v-model="formInline.name" placeholder="用户名" clearable style="width:200px" :suffix-icon="Search" />
+              <el-input v-model="formInline.accountName" placeholder="用户名" clearable style="width:200px" :suffix-icon="Search" />
             </el-form-item>
 
           </el-form>
@@ -189,13 +155,13 @@ const handleCurrentChange = (val: number) => {
 
         <el-table :data="tableData">
           <el-table-column label="用户ID" prop="id" />
-          <el-table-column label="用户名" prop="name" />
-          <el-table-column label="用户角色" prop="createBy" />
-          <el-table-column label="联系电话" width="180" prop="updatedTime" />
-          <el-table-column label="联系邮箱" width="180" prop="createTime" />
+          <el-table-column label="用户名" prop="accountName" />
+          <el-table-column label="用户角色" prop="roleName" />
+          <el-table-column label="联系电话" width="180" prop="phone" />
+          <el-table-column label="联系邮箱" width="180" prop="email" />
           <el-table-column label="操作" width="280" fixed="right">
             <template #default="scope">
-              <el-space wrap >
+              <el-space wrap>
                 <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
                 <el-link type="primary" @click="delData(scope.row)">删除</el-link>
                 <el-link type="primary" @click="detailsData(scope.row)">重置密码</el-link>
