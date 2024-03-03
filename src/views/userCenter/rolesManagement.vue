@@ -28,8 +28,8 @@ enum DrawerType {
   Edit = "edit",
 }
 const ModalTitleMap: any = {
-  [DrawerType.Create]: "新建用户",
-  [DrawerType.Edit]: "编辑用户",
+  [DrawerType.Create]: "新建角色",
+  [DrawerType.Edit]: "编辑角色",
 };
 
 const defaultFormValues = {
