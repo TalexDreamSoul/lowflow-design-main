@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { ref, unref, reactive, onMounted, watch } from "vue";
 import dayjs from "dayjs";
-import {
-  qryAccountList,
-  deleteAccount,
-  updateAccount,
-} from "~/api/account";
+import API from "~/api/account";
 import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
@@ -48,24 +44,24 @@ function getNameByValue(data: any[], val: string) {
 const materialTypeName = ref(getNameByValue(materialType, route.params.type));
 
 console.log(materialTypeName); // 输出：短信
-// onMounted(async () => {
-//   fetchDataApi();
-// });
+onMounted(async () => {
+  fetchDataApi();
+});
 
-// watch(
-//   () => route.fullPath,
-//   (val) => {
-//     console.log(`output->val`, val);
-//     materialTypeName.value = getNameByValue(materialType, route.params.type);
-//     formInline.type = route.params.type;
-//     fetchDataApi();
-//   }
-// );
-// watch([currentPage, pageSize, formInline], () => {
-//   fetchDataApi();
-// });
+watch(
+  () => route.fullPath,
+  (val) => {
+    console.log(`output->val`, val);
+    materialTypeName.value = getNameByValue(materialType, route.params.type);
+    formInline.type = route.params.type;
+    fetchDataApi();
+  }
+);
+watch([currentPage, pageSize, formInline], () => {
+  fetchDataApi();
+});
 const fetchDataApi = async () => {
-  const res = await qryAccountList({
+  const res = await API.qryAccountList({
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
     ...formInline,
@@ -82,7 +78,7 @@ const delData = async (row: any) => {
     confirmButtonClass: "pd-button",
     customClass: "delete-modal",
   }).then(async () => {
-    let res = await setDeleteMaterial({
+    let res = await API.deleteAccount({
       id: row.id,
       status: row.status,
       type: formInline.type,
@@ -95,7 +91,7 @@ const delData = async (row: any) => {
 };
 // 上线素材
 const updateMaterialStatusData = async (row: any, status: String) => {
-  let res = await setUpdateMaterialStatus({
+  let res = await API.updateAccount({
     id: row.id,
     status: status,
     type: formInline.type,

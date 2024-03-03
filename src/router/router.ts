@@ -5,11 +5,17 @@ export const routes: RouterOptions["routes"] = [
   {
     path: "/",
     redirect: '/configuration'
-    // component: () => import("../views/dashboard/index.vue"),
+    // component: () => import("~/views/dashboard/index.vue"),
   },
   {
+    path: '/login',
+    component: () => import("~/views/login/login.vue"),
+    meta: {
+      hideTopMenu: true,
+    },},
+  {
     path: "/design",
-    component: () => import("../touch-flow/FlowPage.vue"),
+    component: () => import("~/touch-flow/FlowPage.vue"),
     meta: {
       hideTopMenu: true,
     },
@@ -42,11 +48,11 @@ export const routes: RouterOptions["routes"] = [
     children: [
       {
         path: "event",
-        component: () => import("../pages/configuration/event.vue"),
+        component: () => import("~/pages/configuration/event.vue"),
       },
       {
         path: "attr",
-        component: () => import("../pages/configuration/attr.vue"),
+        component: () => import("~/pages/configuration/attr.vue"),
       },
     ],
   },
@@ -56,15 +62,15 @@ export const routes: RouterOptions["routes"] = [
     children: [
       {
         path: "list",
-        component: () => import("../pages/customer/list.vue"),
+        component: () => import("~/pages/customer/list.vue"),
       },
       {
         path: "tag",
-        component: () => import("../pages/customer/tag.vue"),
+        component: () => import("~/pages/customer/tag.vue"),
       },
       {
         path: "blackList",
-        component: () => import("../pages/customer/blacklist.vue"),
+        component: () => import("~/pages/customer/blacklist.vue"),
       },
     ],
   },
@@ -75,7 +81,7 @@ export const routes: RouterOptions["routes"] = [
     children: [
       {
         path: "templatePanel/:type",
-        component: () => import("../views/materialCenter/SmsTemplateVue.vue"),
+        component: () => import("~/views/materialCenter/SmsTemplateVue.vue"),
       },
     ],
   },
@@ -85,19 +91,19 @@ export const routes: RouterOptions["routes"] = [
     children: [
       {
         path: "transactionList",
-        component: () => import("../views/channelManagement/transactionList.vue"),
+        component: () => import("~/views/channelManagement/transactionList.vue"),
       },
       {
         path: "reconciliationList",
-        component: () => import("../views/channelManagement/reconciliationList.vue"),
+        component: () => import("~/views/channelManagement/reconciliationList.vue"),
       },
       {
         path: "equityManagement",
-        component: () => import("../views/channelManagement/equityManagement.vue"),
+        component: () => import("~/views/channelManagement/equityManagement.vue"),
       },
       {
         path: "channelDisturb",
-        component: () => import("../views/channelManagement/channelDisturb.vue"),
+        component: () => import("~/views/channelManagement/channelDisturb.vue"),
       }
     ],
   },
@@ -107,15 +113,15 @@ export const routes: RouterOptions["routes"] = [
     children: [
       {
         path: "userManagement",
-        component: () => import("../views/userCenter/userManagement.vue"),
+        component: () => import("~/views/userCenter/userManagement.vue"),
       },
       {
         path: "rolesManagement",
-        component: () => import("../views/userCenter/rolesManagement.vue"),
+        component: () => import("~/views/userCenter/rolesManagement.vue"),
       },
       {
         path: "personalInformation",
-        component: () => import("../views/userCenter/personalInformation.vue"),
+        component: () => import("~/views/userCenter/personalInformation.vue"),
       }
     ],
   },

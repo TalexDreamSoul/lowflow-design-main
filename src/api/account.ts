@@ -56,6 +56,7 @@ const customerAPI = {
   updateRole(data: any) {
     return request.put({ url: "/api/updateRole.do", data });
   },
+
 };
 
 export default customerAPI;
