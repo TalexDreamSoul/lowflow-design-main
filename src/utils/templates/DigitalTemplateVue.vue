@@ -186,7 +186,7 @@ function assignData(val: any) {
     </el-form-item>
 
     <MicroEnterpriseDrag
-      :disabled="readonly"
+      :readonly="readonly"
       @delete="onDelete"
       @upload="onUpload"
       @download="onDownload"

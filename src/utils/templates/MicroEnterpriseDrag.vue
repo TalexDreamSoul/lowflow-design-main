@@ -7,7 +7,8 @@ import { watchEffect } from 'vue';
 import { Delete, Upload, Download } from '@element-plus/icons-vue';
 
 const props = defineProps<{
-  modelValue?: Array<any>,
+  modelValue?: Array<any>;
+  readonly?: boolean;
 }>()
 
 const emits = defineEmits(['update:modelValue', 'delete', 'upload', 'download'])
@@ -83,7 +84,7 @@ function getBlockSectionName(item: any) {
           <div class="header-controller">
             <el-button
               type="text"
-              v-if="index !== 0"
+              v-if="!readonly && index !== 0"
               @click="emits('upload', item, index)"
             >
               <el-icon>
@@ -93,7 +94,7 @@ function getBlockSectionName(item: any) {
             </el-button>
             <el-button
               type="text"
-              v-if="index + 1 < (thisList?.length ?? 0)"
+              v-if="!readonly && index + 1 < (thisList?.length ?? 0)"
               @click="emits('download', item, index)"
             >
               <el-icon>
@@ -101,7 +102,7 @@ function getBlockSectionName(item: any) {
               </el-icon>
               下移
             </el-button>
-            <el-button type="text" @click="emits('delete', item, index)">
+            <el-button v-if="!readonly" type="text" @click="emits('delete', item, index)">
               <el-icon>
                 <Delete />
               </el-icon>
@@ -111,6 +112,7 @@ function getBlockSectionName(item: any) {
         <div class="content-container">
           <img v-if="item.type === 'image'" :src="item.imgUrl" alt="AddonPic" />
           <TouchSettingContents
+            :disabled="readonly"
             :ignore-id="true"
             content="content"
             variables="variables"
