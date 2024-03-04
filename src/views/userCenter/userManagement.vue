@@ -11,7 +11,7 @@ import { checkStringEqual, debounce } from '~/utils/common';
 // const getType = route.params.type;
 const formInline = reactive({
   accountName: "",
-  roleId: 0,
+  roleId: '',
 });
 const tableData = ref([]); // 表格数据
 const RoleList = ref([]); // 权限列表
