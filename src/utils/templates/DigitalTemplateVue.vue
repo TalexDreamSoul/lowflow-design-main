@@ -1,10 +1,8 @@
 <script setup lang="ts" name="ZnxTemplate">
-import TouchSettingContents from "~/touch-flow/p/touch/TouchSettingContents.vue";
 import { reactive, ref, watchEffect } from "vue";
 
 import type { UploadFile, UploadFiles } from "element-plus";
 import MicroEnterpriseDrag from "./MicroEnterpriseDrag.vue";
-import { el } from "element-plus/es/locale";
 
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
@@ -59,20 +57,22 @@ watchEffect(() => {
   if (!_data) return setTimeout(() => assignData('addFriend'), 200);
 
   Object.assign(data, _data);
-  list.value = data.digitalTemplate;
-  data.digitalTemplate.type = _data?.content.type;
+  list.value = _data.content.digitalTemplateDetails;
+  data.digitalTemplate.type = _data.content.type;
 });
 
 function saveData() {
   const { id, name } = data;
   const digitalTemplate: any = {
-    digitalTemplateDetails: list.value.digitalTemplateDetails,
-    type: list.value.type,
+    digitalTemplateDetails: list.value,
+    type: data.digitalTemplate.type,
   };
 
   // if ( digitalTemplateDetails?.length ) {
   //   digitalTemplate.digitalTemplateDetails = digitalTemplateDetails
   // }
+
+  console.log("digital template", digitalTemplate)
 
   return props.type == "details" || props.type == "update"
     ? {
