@@ -1,31 +1,44 @@
 <script setup lang="ts" name="BehaviorGroupPlus">
-import { ref } from "vue";
-import { DArrowRight } from '@element-plus/icons-vue'
+import { ref, watchEffect } from "vue";
+import { DArrowRight } from "@element-plus/icons-vue";
 
 const props = defineProps<{
   title: string;
   color: string;
-  defaultExpand?: boolean
+  hideToggleButton?: boolean;
+  defaultExpand?: boolean;
 }>();
 
-const expand = ref(props.defaultExpand !== undefined ? props.defaultExpand : false);
+const expand = ref(false);
+
+watchEffect(() => {
+  expand.value = props.defaultExpand !== undefined ? props.defaultExpand : false;
+});
 </script>
 
 <template>
   <div :style="`--c: ${color}`" class="BehaviorGroupPlus" :class="{ expand }">
     <div class="BehaviorGroupPlus-Header">
       <span>
-        {{ title }}
+        <slot name="title">
+          {{ title }}
+        </slot>
       </span>
 
-      <span class="addon-icon">
-        <el-text class="mx-1" type="primary" @click="expand = !expand">{{ expand ? "收起" : "展开" }}
-          <el-icon class="icondown" :style="{
-            transform: expand ? 'rotate(-90deg)' : 'rotate(90deg)',
-          }">
-            <DArrowRight />
-          </el-icon></el-text>
-      </span>
+      <slot name="toggle">
+        <span @click="expand = !expand" v-if="!hideToggleButton" class="addon-icon">
+          <el-text class="mx-1" type="primary"
+            >{{ expand ? "收起" : "展开" }}
+            <el-icon
+              class="icondown"
+              :style="{
+                transform: expand ? 'rotate(-90deg)' : 'rotate(90deg)',
+              }"
+            >
+              <DArrowRight /> </el-icon
+          ></el-text>
+        </span>
+      </slot>
     </div>
     <div class="BehaviorGroupPlus-Main">
       <slot />
@@ -53,7 +66,7 @@ const expand = ref(props.defaultExpand !== undefined ? props.defaultExpand : fal
       cursor: pointer;
     }
     .icondown {
-      transition: .25s;
+      transition: 0.25s;
     }
     position: relative;
     padding: 8px 18px;
@@ -66,14 +79,16 @@ const expand = ref(props.defaultExpand !== undefined ? props.defaultExpand : fal
   }
 
   &.expand {
-
+    & .BehaviorGroupPlus-Main {
+      padding: 0.5rem;
+    }
     max-height: 1000px;
 
     transition: 0.35s ease-in;
   }
 
   &-Main {
-    padding: 0.5rem;
+    padding: 0;
 
     height: 100%;
   }

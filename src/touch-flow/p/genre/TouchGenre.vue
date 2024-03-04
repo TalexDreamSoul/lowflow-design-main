@@ -54,46 +54,28 @@ const attrs = computed(() => {
 
 <template>
   <div class="TouchGenre">
-    <LogicalLine title="并且满足" v-model="condition.logicalChar"
-      :display="condition.conditions ? !(condition.conditions.length > 1) : !0">
-      <div v-if="attrs" class="filter-option-content">
-        <el-form :label-width="0" :inline="true" :model="condition.conditions">
-          <el-row v-for="(item, index) in condition.conditions" :key="`${item.field}-${index}`" :gutter="5"
-            class="filter-item-rule">
-            <el-col :xs="24" :sm="7">
-              <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                <trigger :item="item" v-model="item.field" :attrs="attrs" />
-              </el-form-item>
-            </el-col>
-            <el-col :xs="24" :sm="5" v-if="item.field">
-              <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                <operator :attrs="attrs" :item="item" ref="operatorRef" v-model="item.fieldOp" />
-              </el-form-item>
-            </el-col>
-            <el-col :xs="24" :sm="10" v-if="item.field">
-              <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <AttrRender :item="item" :attrs="attrs" />&nbsp;
-              </el-form-item>
-            </el-col>
-            <el-col :xs="24" :sm="2" style="
-                  display: flex;
-                  align-items: center;
-                  flex-direction: row-reverse;
-                ">
-              <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
-                <el-icon size="14">
-                  <Delete />
-                </el-icon>
-              </el-text>
-            </el-col>
-          </el-row>
+    <LogicalLine
+      title="并且满足"
+      v-model="condition.logicalChar"
+      :display="condition.conditions.length < 2"
+    >
+      <div
+        v-if="attrs"
+        class="TouchGenre-Line"
+        v-for="(item, index) in condition.conditions"
+        :key="`${item.field}-${index}`"
+      >
+        <trigger :item="item" v-model="item.field" :attrs="attrs" />
 
-          <div v-if="!(
-            condition?.filterRules?.groups?.length |
-            condition?.filterRules?.conditions?.length
-          )
-            " class="filter-item-rule" />
-        </el-form>
+        <operator :attrs="attrs" :item="item" ref="operatorRef" v-model="item.fieldOp" />
+        <AttrRender :item="item" :attrs="attrs" />&nbsp;
+
+        <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
+          <el-icon size="14">
+            <Delete />
+          </el-icon>
+          删除
+        </el-text>
       </div>
     </LogicalLine>
   </div>
@@ -101,6 +83,13 @@ const attrs = computed(() => {
 
 <style scoped lang="scss">
 .TouchGenre {
+  &-Line {
+    display: flex;
+    margin: 4px 0 8px;
+
+    gap: 0.5rem;
+    align-items: center;
+  }
   margin: 10px 0;
 
   border-radius: 8px;

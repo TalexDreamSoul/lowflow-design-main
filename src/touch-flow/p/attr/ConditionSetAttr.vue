@@ -7,6 +7,7 @@ import { dictFilterTree as getDictFilterTree } from "~/api/index";
 import TouchBlockGenre from "~/touch-flow/p/genre/TouchBlockGenre.vue";
 import FlowTypeSelector from "./condition/FlowTypeSelector.vue";
 import { validatePropValue } from "~/touch-flow/flow-utils";
+import EventGroup from "./condition/EventGroup.vue";
 
 const dict = ref<any>();
 const timeFuncs: { [func: string]: any } = {
@@ -190,19 +191,6 @@ onMounted(async () => {
   }
 });
 
-function addEventA() {
-  props.p.triggerRuleContent.eventA.customEvent.conditions.push({
-    conditions: [{}],
-    logicalChar: "或",
-  });
-}
-
-function addEventB() {
-  props.p.triggerRuleContent.eventB.customEvent.conditions.push({
-    conditions: [{}],
-    logicalChar: "或",
-  });
-}
 </script>
 
 <template>
@@ -321,106 +309,7 @@ function addEventB() {
       </el-form-item>
 
       <br />
-      <el-form-item>
-        <div class="pannel">
-          <div class="toppannel">触发事件组A</div>
-          <div class="garyblock">
-            <el-text>在流程有效期内依次完成下列事件后</el-text>&nbsp; &nbsp;
-            <el-text type="primary" style="cursor: pointer" @click="addEventA">
-              <el-icon size="14">
-                <CirclePlusFilled />
-              </el-icon>
-              添加事件
-            </el-text>
-          </div>
-
-          <!-- props.p.triggerRuleContent.eventA.customEvent.conditions -->
-          <TouchBlockGenre
-            v-if="dict"
-            :condition="sizeForm.triggerRuleContent.eventA.customEvent"
-            :dict="dict"
-          />
-        </div>
-      </el-form-item>
-
-      <br />
-      <div
-        class="underright"
-        v-show="!sizeForm.triggerRuleContent.delayed.isDelayed"
-        @click="
-          sizeForm.triggerRuleContent.delayed.isDelayed = !sizeForm.triggerRuleContent
-            .delayed.isDelayed
-        "
-      >
-        <el-icon size="14">
-          <CirclePlusFilled />
-        </el-icon>
-        添加事件组b
-      </div>
-      <el-form-item v-show="sizeForm.triggerRuleContent.delayed.isDelayed">
-        <div class="pannel">
-          <div class="toppannel" style="display: flex; justify-content: space-between">
-            触发事件组B
-
-            <el-text
-              type="primary"
-              style="cursor: pointer"
-              @click="
-                sizeForm.triggerRuleContent.delayed.isDelayed = !sizeForm
-                  .triggerRuleContent.delayed.isDelayed
-              "
-            >
-              <el-icon size="14">
-                <Delete />
-              </el-icon>
-              删除事件
-            </el-text>
-          </div>
-          <div class="garyblock" style="display: flex; justify-content: space-between">
-            <div>
-              <el-text>且在</el-text>&nbsp;
-              <el-input
-                placeholder="输入值"
-                v-model="sizeForm.triggerRuleContent.delayed.delayedTime"
-                type="number"
-                style="width: 100px"
-              />&nbsp;
-              <el-select
-                placeholder="选择单位"
-                v-model="sizeForm.triggerRuleContent.delayed.delayedUnit"
-                style="width: 150px"
-              >
-                <el-option value="month" label="月份">分钟</el-option>
-                <el-option value="week" label="周">小时</el-option>
-                <el-option value="day" label="天">天</el-option> </el-select
-              >&nbsp;
-              <el-text>后立即判断</el-text>
-              &nbsp;
-              <el-select
-                placeholder="是否做过"
-                v-model="sizeForm.triggerRuleContent.delayed.delayedAction"
-                style="width: 150px"
-              >
-                <el-option value="=" label="做过">做过</el-option>
-                <el-option value="!=" label="未做过">未做过</el-option> </el-select
-              >&nbsp;
-            </div>
-            <el-text type="primary" style="cursor: pointer" @click="addEventB">
-              <el-icon size="14">
-                <CirclePlusFilled />
-              </el-icon>
-              添加事件
-            </el-text>
-          </div>
-
-          <TouchBlockGenre
-            v-if="dict"
-            :condition="sizeForm.triggerRuleContent.eventB.customEvent"
-            :dict="dict"
-          />
-        </div>
-      </el-form-item>
-      <div></div>
+      <EventGroup :p="sizeForm" :dict="dict" />
     </div>
 
     <template v-if="sizeForm.executeType !== 'immediately'">

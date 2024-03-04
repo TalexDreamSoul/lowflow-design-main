@@ -7,6 +7,8 @@ const props = defineProps<{
   triggerRuleContent?: any,
 }>()
 
+console.log("sg", props)
+
 const form = reactive({
   planB: false
 })
