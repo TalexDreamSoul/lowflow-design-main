@@ -77,7 +77,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
-          <section-group :trigger-rule-content="eventContent" />
+          <!-- <EventGroup :p="eventContent" /> -->
         </el-tab-pane>
       </el-tabs>
       <div class="detail" v-if="drawerType === DrawerType.Detail">
@@ -85,7 +85,7 @@
           <FilterGroup :custom-rule-content="ruleContent" />
         </div>
         <div class="item">
-          <section-group :trigger-rule-content="eventContent" />
+          <!-- <EventGroup :p="eventContent" /> -->
         </div>
         <div class="item">
           <HandAdd ref="handAddRef" :drawerType="drawerType" :formValues="formValues" />
@@ -110,7 +110,7 @@
   </el-drawer>
 </template>
 <script lang="ts" setup>
-import sectionGroup from "./section-group.vue";
+import EventGroup from "~/touch-flow/p/attr/condition/EventGroup.vue";
 import { reactive, ref, defineProps, defineExpose } from "vue";
 import { BlackAddTypeEnum, BLACK_LIST_TYPE } from "~/constants";
 import API from "~/api/customer";
@@ -131,6 +131,13 @@ enum DrawerType {
 }
 
 const defaultEventContent = {
+  delayed: {
+    delayedAction: "",
+    delayedTime: 0,
+    delayedType: "",
+    delayedUnit: "",
+    isDelayed: false,
+  },
   eventA: {
     customEvent: {
       conditions: [
@@ -210,7 +217,7 @@ const handleModal = async (type: string, values?: any) => {
   } else {
     let res = await API.blacklistDetail({ id: values?.id });
     if (!checkStringEqual(res?.code, 0)) return;
-    console.log("a", res)
+    console.log("a", res);
     Object.assign(formValues, res?.data);
     Object.assign(eventContent, res?.data?.eventContent);
     Object.assign(ruleContent, res?.data?.ruleContent);

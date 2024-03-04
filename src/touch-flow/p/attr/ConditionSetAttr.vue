@@ -309,7 +309,7 @@ onMounted(async () => {
       </el-form-item>
 
       <br />
-      <EventGroup :p="sizeForm" :dict="dict" />
+      <EventGroup :p="sizeForm" />
     </div>
 
     <template v-if="sizeForm.executeType !== 'immediately'">

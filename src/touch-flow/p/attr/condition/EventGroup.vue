@@ -1,12 +1,15 @@
 <script setup lang="ts" name="EventGroup">
 import BehaviorGroupPlus from "../../behavior/BehaviorGroupPlus.vue";
+import { dictFilterTree as getDictFilterTree } from "~/api/index";
 import TouchBlockGenre from "../../genre/TouchBlockGenre.vue";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
+import { ref } from "vue";
 
 const props = defineProps<{
   p: any;
-  dict: any;
 }>();
+
+const dict = ref<any>();
 
 function addEventA() {
   props.p.triggerRuleContent.eventA.customEvent.conditions.push({
@@ -21,6 +24,14 @@ function addEventB() {
     logicalChar: "或",
   });
 }
+
+!(async () => {
+  const res = await getDictFilterTree();
+
+  if (res.data) {
+    dict.value = res.data;
+  }
+})();
 </script>
 
 <template>
