@@ -77,6 +77,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     };
       res = await API.updateAccount(values);
     if (checkStringEqual(res?.code, 0)) {
+      ElMessage.success(res?.message);
       fetchDataApi();
     }
   } catch (error) {
