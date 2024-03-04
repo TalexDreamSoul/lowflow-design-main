@@ -11,7 +11,7 @@ const props = defineProps<{
 }>();
 const emits = defineEmits<{
   (e: "update:model-value", modelValue: any): void;
-  (e: "updateType", type: "event" | "label"): void;
+  (e: "updateType", type: "attr" | "label"): void;
 }>();
 
 const model = useVModel(props, "modelValue", emits);
@@ -29,7 +29,7 @@ watch(() => model.value, (val) => {
 
     item.fieldType = res.fieldType || res.labelValueType
 
-    emits("updateType", res.labelValueType ? "label" : "event")
+    emits("updateType", res.labelValueType ? "label" : "attr")
   } else {
     const res = attrs.find((item: any) => item.field === val)
 

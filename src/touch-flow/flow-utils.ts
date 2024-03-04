@@ -91,7 +91,7 @@ export function validateSingleCondition(condition: SearchCondition) {
   const { attr, label, type } = condition
 
   switch (type) {
-    case 'event':
+    case 'attr':
       return validateAttr(attr!);
     case 'label':
       return validateLabel(label!);

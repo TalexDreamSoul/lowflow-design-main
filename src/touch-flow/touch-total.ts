@@ -157,7 +157,7 @@ export type SearchCondition = {
   /**
    * 类型 1：基础属性 2：客户标签
    */
-  type: "event" | "label";
+  type: "attr" | "label";
 }
 
 /**
