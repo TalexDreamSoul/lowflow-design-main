@@ -414,7 +414,7 @@ function handleAdd() {
       <el-icon color="#326DD7">
         <Plus />
       </el-icon>
-      &nbsp;&nbsp;&nbsp;{{ buttonTitle ?? "插入端口" }}
+      &nbsp;&nbsp;&nbsp;{{ buttonTitle ?? "插入变量" }}
     </el-button>
 
     <span class="placeholder-label"> 共 {{ contentLength }} 字 </span>

@@ -5,13 +5,13 @@ import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, FormInstance } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
-import { checkStringEqual, debounce } from '~/utils/common';
+import { checkStringEqual, debounce } from "~/utils/common";
 
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
 const formInline = reactive({
   accountName: "",
-  roleId: 0,
+  roleId: "",
 });
 const tableData = ref([]); // 表格数据
 const RoleList = ref([]); // 权限列表
@@ -79,7 +79,7 @@ const delData = async (row: any) => {
     customClass: "delete-modal",
   }).then(async () => {
     let res = await API.deleteAccount({
-      ...row
+      ...row,
     });
     if (res?.code == 0) {
       fetchDataApi();
@@ -95,6 +95,12 @@ const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
 };
 
+const fetchaccountDetail = async (id?: any) => {
+  console.log(`output->id`, id);
+  const res = await API.accountDetail(id);
+  Object.assign(formValues, res.data);
+  console.log(`output->tabledata`, formValues.value);
+};
 const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Create) {
     for (const key in formValues) {
@@ -102,6 +108,7 @@ const handleModal = async (type: string, values?: any) => {
     }
     Object.assign(formValues, defaultFormValues);
   } else if (type === DrawerType.Edit) {
+    // fetchaccountDetail(values.id)
     Object.assign(formValues, values);
   }
   modalType.value = type;
@@ -171,8 +178,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       </el-table>
     </template>
     <template #pagination>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background         layout="prev, pager, next, jumper"
-      :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </template>
   </CustomEventComponent>
 
@@ -187,14 +193,13 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
           ]" label="帐号名称" prop="accountName">
         <el-input v-model="formValues.accountName" style="width:300px" placeholder="请输入" clearable />
       </el-form-item>
-
-      <el-form-item prop="accountPassword" label="用户密码" :rules="[
+      <el-form-item v-if="modalType === DrawerType.Create" prop="accountPassword" label="用户密码" :rules="[
         { required: true, message: '请输入用户密码' },
         {
           pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
           message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
         },
-      ]" >
+      ]">
         <el-input v-model="formValues.accountPassword" style="width:300px" placeholder="请输入" clearable />
       </el-form-item>
       <el-form-item prop="roleId" label="用户角色">

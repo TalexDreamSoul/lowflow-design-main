@@ -6,8 +6,9 @@ const customerAPI = {
     return request.post({ url: "/api/qryAccountList.do", data });
   },
   // 账户详情
-  accountDetail(data: any) {
-    return request.get({ url: "/api/accountDetail.do", data });
+  accountDetail(data?: any) {
+    return  data? request.get({ url: `/api/accountDetail.do?id=${data}` }):
+     request.get({ url: `/api/accountDetail.do` });
   },
   // 账户包含的菜单列表
   accountContainMenuList(data: any) {

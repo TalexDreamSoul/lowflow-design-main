@@ -76,7 +76,7 @@
       <el-menu-item class="pd-menu-item" index="/channelManagement/equityManagement">权益管理</el-menu-item>
     </el-sub-menu>
 
-    <el-sub-menu index="8">
+    <!-- <el-sub-menu index="8">
       <template #title>
         <div class="title">审核中心 <el-icon :size="12">
             <CaretBottom />
@@ -84,7 +84,7 @@
       </template>
       <el-menu-item class="pd-menu-item" index="/pinia">Service</el-menu-item>
       <el-menu-item class="pd-menu-item" index="/page">Service</el-menu-item>
-    </el-sub-menu>
+    </el-sub-menu> -->
     <el-sub-menu index="9">
       <template #title>
         <div class="title">用户中心 <el-icon :size="12">

@@ -141,7 +141,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 </script>
 
 <template>
-  <CustomEventComponent title="用户管理" :tableData="tableData" :total="total">
+  <CustomEventComponent title="角色管理" :tableData="tableData" :total="total">
     <template #search>
       <div class="search">
         <el-form :inline="true">

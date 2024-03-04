@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref, unref, reactive, onMounted, watch } from "vue";
 import dayjs from "dayjs";
-import { getQryMaterial, setDeleteMaterial, setUpdateMaterialStatus } from "~/api/index";
+import {
+  getQryMaterial,
+  setDeleteMaterial,
+  setUpdateMaterialStatus,
+} from "~/api/index";
 import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
@@ -145,10 +149,11 @@ const updateData = (row: any, readonly: boolean = false) => {
         customClass: "delete-modal",
       }
     ).then(async () => {
-      let name = (!readonly ? "编辑" : "查看") + materialTypeName.value + "模版";
+      let name =
+        (!readonly ? "编辑" : "查看") + materialTypeName.value + "模版";
       createTemplatePopover(
         name,
-        route.params.type,
+        !readonly ? route.params.type : row.type,
         value,
         readonly ? "details" : "update",
         readonly
@@ -159,7 +164,7 @@ const updateData = (row: any, readonly: boolean = false) => {
     let name = (!readonly ? "编辑" : "查看") + materialTypeName.value + "模版";
     createTemplatePopover(
       name,
-      route.params.type,
+      !readonly ? route.params.type : row.type,
       value,
       readonly ? "details" : "update",
       readonly
@@ -175,71 +180,38 @@ const handleCurrentChange = (val: number) => {
 </script>
 
 <template>
-  <CustomEventComponent
-    :title="
+  <CustomEventComponent :title="
       route.params.type == 'all' ? `${materialTypeName}` : `${materialTypeName}模版列表`
-    "
-    :tableData="tableData"
-    :total="total"
-  >
+    " :tableData="tableData" :total="total">
     <template #search>
       <div class="search">
         <el-form :inline="true">
           <el-form-item label="创建时间：">
-            <el-date-picker
-              v-model="time"
-              type="daterange"
-              range-separator="To"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :size="size"
-              @change="
+            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="
                 (val) => {
                   formInline.beginTime = dayjs(val[0]).format('YYYY-MM-DD');
                   formInline.endTime = dayjs(val[1]).format('YYYY-MM-DD');
                   val[0];
                 }
-              "
-            />
+              " />
           </el-form-item>
           <el-form-item v-if="route.params.type == 'all'">
-            <el-select
-              v-model="formInline.type"
-              style="width: 200px"
-              placeholder="模板类型"
-            >
-              <el-option
-                v-for="item in materialType"
-                :label="item.name"
-                :value="item.value"
-              />
+            <el-select v-model="formInline.type" style="width: 200px" placeholder="模板类型">
+              <el-option v-for="item in materialType" :label="item.name" :value="item.value" />
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-select
-              v-model="formInline.status"
-              clearable
-              style="width: 200px"
-              placeholder="模板状态"
-            >
+            <el-select v-model="formInline.status" clearable style="width: 200px" placeholder="模板状态">
               <el-option label="可用" value="available" />
               <el-option label="下线" value="offline" />
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input
-              v-model="formInline.name"
-              :placeholder="`请输入${materialTypeName}模板名称`"
-              clearable
-              style="width: 200px"
-              :suffix-icon="Search"
-            />
+            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width: 200px" :suffix-icon="Search" />
           </el-form-item>
         </el-form>
         <div v-if="route.params.type != 'all'">
-          <el-button type="primary" class="add" @click="addData()" round
-            >新建{{ materialTypeName }}模版</el-button
-          >
+          <el-button type="primary" class="add" @click="addData()" round>新建{{ materialTypeName }}模版</el-button>
         </div>
       </div>
     </template>
@@ -249,15 +221,11 @@ const handleCurrentChange = (val: number) => {
         <el-table-column label="模版名称" prop="name" />
         <el-table-column label="状态">
           <template #default="scope">
-            <el-tag
-              class="mx-1"
-              :type="
+            <el-tag class="mx-1" :type="
                 statusLabels[scope.row.status].type
                   ? statusLabels[scope.row.status].type
                   : 'info'
-              "
-              effect="light"
-            >
+              " effect="light">
               {{ statusLabels[scope.row.status].Text }}
             </el-tag>
           </template>
@@ -275,44 +243,20 @@ const handleCurrentChange = (val: number) => {
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-space wrap v-if="route.params.type != 'all'">
-              <el-link
-                type="primary"
-                v-if="scope.row.status == 'offline'"
-                @click="updateMaterialStatusData(scope.row, 'available')"
-                >上线</el-link
-              >
-              <el-link
-                type="primary"
-                v-if="scope.row.status !== 'offline'"
-                @click="updateMaterialStatusData(scope.row, 'offline')"
-                >下线</el-link
-              >
+              <el-link type="primary" v-if="scope.row.status == 'offline'" @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
+              <el-link type="primary" v-if="scope.row.status !== 'offline'" @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
               <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
               <el-link type="primary" @click="delData(scope.row)">删除</el-link>
 
               <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
             </el-space>
-            <el-link v-else type="primary" @click="detailsData(scope.row)"
-              >查看详情</el-link
-            >
+            <el-link v-else type="primary" @click="detailsData(scope.row)">查看详情</el-link>
           </template>
         </el-table-column>
       </el-table>
     </template>
     <template #pagination>
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        background
-        layout="prev, pager, next, jumper"
-        :page-sizes="[10]"
-        :small="small"
-        :disabled="disabled"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        class="pagination"
-      />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </template>
   </CustomEventComponent>
 </template>

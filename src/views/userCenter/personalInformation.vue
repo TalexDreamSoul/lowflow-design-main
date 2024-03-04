@@ -31,10 +31,9 @@ const formRef = ref<FormInstance>();
 
 const defaultFormValues = {
   accountName: "",
-  accountPassword: "",
+  // accountPassword: "",
   email: "",
   phone: "",
-  roleId: "",
 };
 let formValues = reactive<any>({ ...defaultFormValues });
 const RoleList = ref([]); // 权限列表
@@ -56,14 +55,9 @@ const fetchRoleList = async () => {
   console.log(`output->RoleList`, RoleList.value);
 };
 const fetchDataApi = async () => {
-  const res = await getQryMaterial({
-    pageNum: unref(currentPage),
-    pageSize: unref(pageSize),
-    ...formInline,
-  });
-  tableData.value = res.data.records;
-  total.value = res.data.total;
-  console.log(`output->tabledata`, tableData.value);
+  const res = await API.accountDetail();
+  Object.assign(formValues, res.data);
+  console.log(`output->tabledata`, formValues.value);
 };
 const logout = async () => {
   const res = await API.logout();
@@ -81,8 +75,9 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     let values = {
       ...formValues,
     };
-      res = await API.addAccount(values);
+      res = await API.updateAccount(values);
     if (checkStringEqual(res?.code, 0)) {
+      ElMessage.success(res?.message);
       fetchDataApi();
     }
   } catch (error) {
@@ -105,7 +100,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
             <el-input v-model="formValues.accountName" style="width:300px" placeholder="请输入" clearable />
           </el-form-item>
     
-          <el-form-item prop="accountPassword" label="用户密码" :rules="[
+          <!-- <el-form-item prop="accountPassword" label="用户密码" :rules="[
             { required: true, message: '请输入用户密码' },
             {
               pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
@@ -113,7 +108,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
             },
           ]" >
             <el-input v-model="formValues.accountPassword" style="width:300px" placeholder="请输入" clearable />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item prop="roleId" label="用户角色">
             <el-select v-model="formValues.roleId" clearable style="width:300px" placeholder="用户角色" name="roleId" tabindex="2" autocomplete="on">
               <el-option v-for="item in RoleList" :label="item.roleName" :value="item.id" />
