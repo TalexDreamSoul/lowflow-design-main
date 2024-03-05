@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, nextTick } from "vue";
+import { onMounted, ref, nextTick, computed } from "vue";
 import TargetContent from "./TargetContent.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
 import { IHeaderTarget } from "../flow-types";
@@ -18,13 +18,19 @@ if (!props.readonly && !props.target.targetRuleContent.data.length) {
 
 const dict = ref<any>();
 
-onMounted(async () => {
+!(async () => {
   const res = await getDictFilterTree();
 
   if (res.data) {
     dict.value = res.data;
+  } else {
+    console.log(res);
+
+    window.history.back()
+
+    throw new Error('获取字典失败,无法完成流程!')
   }
-});
+})();
 
 function addTarget() {
   let arr = (props.target.targetRuleContent.data =
@@ -67,6 +73,7 @@ function addTarget() {
 
   nextTick(() => {
     const el = document.getElementById(id);
+    if ( !el ) return
 
     el!.scrollIntoView({
       behavior: "smooth",
@@ -74,10 +81,18 @@ function addTarget() {
     });
   });
 }
+
+function handleDel(index: number) {
+  props.target.targetRuleContent.data.splice(index, 1);
+}
+
+const doDisable = computed<boolean>(
+  () => props.readonly || props.target.targetRuleContent.data.length > 1
+);
 </script>
 
 <template>
-  <el-form-item class="Basic-Block transition-item" :class="{ expand }">
+  <el-form-item v-if="dict" class="Basic-Block transition-item" :class="{ expand }">
     <template #label>
       <div class="Basic-Block-Head">
         <label class="el-form-item__label">目标设置</label>
@@ -89,7 +104,7 @@ function addTarget() {
         />
         <el-button
           :class="{ display: target.enable }"
-          :disabled="readonly || target.targetRuleContent.data.length > 1"
+          :disabled="doDisable"
           @click="addTarget"
           type="primary"
           text
@@ -110,7 +125,13 @@ function addTarget() {
         :key="index"
         class="Target-Block"
       >
-        <TargetContent @del="() => target.targetRuleContent.data.splice(index, 1)" :readonly="readonly" :index="index" :target="item" :dict="dict" />
+        <TargetContent
+          @del="handleDel(index)"
+          :readonly="readonly"
+          :index="index"
+          :target="item"
+          :dict="dict"
+        />
       </div>
     </div>
   </el-form-item>
