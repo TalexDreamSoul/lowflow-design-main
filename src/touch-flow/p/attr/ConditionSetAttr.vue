@@ -77,7 +77,7 @@ const sizeForm = reactive({
       customEvent: {
         conditions: [
           {
-            conditions: [{}],
+            conditions: [],
             logicalChar: "或",
           },
         ],
@@ -89,7 +89,7 @@ const sizeForm = reactive({
       customEvent: {
         conditions: [
           {
-            conditions: [{}],
+            conditions: [],
             logicalChar: "或",
           },
         ],

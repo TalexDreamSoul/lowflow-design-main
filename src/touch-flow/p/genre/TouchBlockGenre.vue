@@ -8,9 +8,27 @@ const props = defineProps<{
   dict: any;
 }>();
 
+const dataObj = Object.freeze({
+  attr: {
+    field: "",
+    fieldMultiValue: [],
+    fieldName: "",
+    fieldOp: "",
+    fieldRangeValue: "",
+    fieldType: "",
+    fieldValue: "",
+  },
+  label: {
+    labelId: 0,
+    labelName: "",
+    labelValue: [],
+  },
+  type: "event",
+});
+
 function addCondition(event: any) {
   console.log("e", event);
-  event.conditions.push({});
+  event.conditions.push(JSON.parse(JSON.stringify(dataObj)));
 }
 
 function delEvent(index: number) {

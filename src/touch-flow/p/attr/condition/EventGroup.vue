@@ -13,14 +13,14 @@ const dict = ref<any>();
 
 function addEventA() {
   props.p.triggerRuleContent.eventA.customEvent.conditions.push({
-    conditions: [{}],
+    conditions: [],
     logicalChar: "或",
   });
 }
 
 function addEventB() {
   props.p.triggerRuleContent.eventB.customEvent.conditions.push({
-    conditions: [{}],
+    conditions: [],
     logicalChar: "或",
   });
 }

@@ -16,14 +16,6 @@ function getConditions() {
   return (props.condition.conditions = props.condition.conditions || []);
 }
 
-const addCondition = () => {
-  getConditions().push({
-    field: null,
-    operator: "equal",
-    fieldValue: null,
-  });
-};
-
 /**
  * 删除条件
  * @param index
@@ -59,16 +51,21 @@ const attrs = computed(() => {
       v-model="condition.logicalChar"
       :display="condition.conditions.length < 2"
     >
-      <div
+      <li
         v-if="attrs"
         class="TouchGenre-Line"
         v-for="(item, index) in condition.conditions"
         :key="`${item.field}-${index}`"
       >
-        <trigger :item="item" v-model="item.field" :attrs="attrs" />
+        <trigger :item="item.attr" v-model="item.field" :attrs="attrs" />
 
-        <operator :attrs="attrs" :item="item" ref="operatorRef" v-model="item.fieldOp" />
-        <AttrRender :item="item" :attrs="attrs" />&nbsp;
+        <operator
+          :attrs="attrs"
+          :item="item.attr"
+          ref="operatorRef"
+          v-model="item.fieldOp"
+        />
+        <AttrRender :item="item.attr" :attrs="attrs" />&nbsp;
 
         <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
           <el-icon size="14">
@@ -76,7 +73,7 @@ const attrs = computed(() => {
           </el-icon>
           删除
         </el-text>
-      </div>
+      </li>
     </LogicalLine>
   </div>
 </template>
