@@ -57,7 +57,7 @@ const attrs = computed(() => {
         v-for="(item, index) in condition.conditions"
         :key="`${item.field}-${index}`"
       >
-      {{ item }}
+      <!-- {{ item }} -->
         <trigger :item="item" v-model="item.attr.field" :attrs="attrs" />
 
         <operator

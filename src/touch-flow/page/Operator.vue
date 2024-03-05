@@ -93,7 +93,7 @@ const operators = computed(() => operatorOptions.filter((item) => item.type.incl
 
 <style scoped lang="scss">
 .operator-container {
-  // width: 100%;
+   width: 100px;
   flex-shrink: 0;
 
   min-width: 100px
