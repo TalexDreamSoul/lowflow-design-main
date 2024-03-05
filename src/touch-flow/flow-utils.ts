@@ -254,20 +254,20 @@ export function commonValidate(rule: any, value: any, callback: any) {
  * 1. 只要下一层还存在 condition 就会走 conditionValidate
  * 2. 任意一项都可以直接或者间接为空
  */
-export function validateAES(data: CustomSearchDTO) {
+export function validateAES(data: CustomSearchDTO, xor: boolean = false) {
   const { customAttr, customEvent, eventSequence } = data;
 
   if (!validateObjConditions(customAttr)) {
-    return false;
-  }
+    if (!xor) return false;
+  } else if (xor) return true;
 
   if (!validateObjConditions(customEvent)) {
-    return false;
-  }
+    if (!xor) return false;
+  } else if (xor) return true;
 
   if (!validateObjConditions(eventSequence)) {
-    return false;
-  }
+    if (!xor) return false;
+  } else if (xor) return true;
 
   return true;
 }

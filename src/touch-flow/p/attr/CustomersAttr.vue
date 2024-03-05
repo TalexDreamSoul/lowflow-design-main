@@ -52,7 +52,7 @@ Object.assign(blackList, {
 });
 
 function saveData(): boolean {
-  if (!validateAES(customRuleContent)) {
+  if (!validateAES(customRuleContent, true)) {
     ElMessage({
       message: "请填写完整 客户属性，客户行为，行为序列 ！",
       type: "error",
