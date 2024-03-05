@@ -95,5 +95,7 @@ const operators = computed(() => operatorOptions.filter((item) => item.type.incl
 .operator-container {
   // width: 100%;
   flex-shrink: 0;
+
+  min-width: 100px
 }
 </style>

@@ -135,7 +135,7 @@ function toggle() {
     ul {
       display: flex;
 
-      align-items: flex-start;
+      // justify-content: start;
       flex-direction: column;
     }
     flex: 1;
