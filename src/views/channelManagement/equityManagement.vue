@@ -12,19 +12,42 @@ import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { createTemplatePopover } from "~/utils/touch-templates";
 import { materialType } from "~/utils/common";
+import API from "~/api/channelManagement";
+import { checkStringEqual, debounce } from "~/utils/common";
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
 const formInline = reactive({
-  name: "",
+  equityName: "",
   // type	素材类型：sms 短信，appPush app消息，digital 数字员工，outbound 智能外呼，znx 站内信
   type: route.params.type,
-  beginTime: "",
-  endTime: "",
   status: "",
 });
+enum DrawerType {
+  Create = "create",
+  Detail = "detail",
+  Edit = "edit",
+}
+const modalType = ref<any>(DrawerType.Create);
+
+const ModalTitleMap: any = {
+  [DrawerType.Create]: "新增权益",
+  [DrawerType.Detail]: "权益详情",
+  [DrawerType.Edit]: "编辑权益",
+};
+const defaultFormValues = {
+
+  equityAmount: "",
+  equityImageUrl: "",
+  equityName: "",
+  equityRule: "",
+  equityType: "",
+  skuCode: "",
+};
+
+let formValues = reactive<any>({ ...defaultFormValues });
 const tableData = ref([]); // 表格数据
 const total = ref(100); // 总数
 const currentPage = ref(1);
@@ -37,6 +60,7 @@ const statusLabels = {
   available: { Text: "可用", type: "success" },
   offline: { Text: "下线", type: "info" },
 };
+const modalVisible = ref(false);
 
 const value = ref();
 
@@ -48,24 +72,24 @@ function getNameByValue(data: any[], val: string) {
 const materialTypeName = ref(getNameByValue(materialType, route.params.type));
 
 console.log(materialTypeName); // 输出：短信
-// onMounted(async () => {
-//   fetchDataApi();
-// });
+onMounted(async () => {
+  fetchDataApi();
+});
 
-// watch(
-//   () => route.fullPath,
-//   (val) => {
-//     console.log(`output->val`, val);
-//     materialTypeName.value = getNameByValue(materialType, route.params.type);
-//     formInline.type = route.params.type;
-//     fetchDataApi();
-//   }
-// );
-// watch([currentPage, pageSize, formInline], () => {
-//   fetchDataApi();
-// });
+watch(
+  () => route.fullPath,
+  (val) => {
+    console.log(`output->val`, val);
+    materialTypeName.value = getNameByValue(materialType, route.params.type);
+    formInline.type = route.params.type;
+    fetchDataApi();
+  }
+);
+watch([currentPage, pageSize, formInline], () => {
+  fetchDataApi();
+});
 const fetchDataApi = async () => {
-  const res = await getQryMaterial({
+  const res = await API.qryEquityList({
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
     ...formInline,
@@ -121,15 +145,23 @@ const detailsData = async (row: any) => {
   // createTemplatePopover('新建APP Push模版', 'app')
   // createTemplatePopover('新建外呼模版', 'outbound')
 };
+let modalData = reactive<any>({});
 
-const addData = async () => {
-  value.value = "";
-  let name= '新建'+materialTypeName.value+'模版';
-  createTemplatePopover(
-    name,
-    route.params.type,
-    value
-  );
+const handleModal = async (type: string, values?: any) => {
+  if (type === DrawerType.Create) {
+    for (const key in formValues) {
+      formValues[key] = null;
+    }
+    Object.assign(formValues, defaultFormValues);
+  } else if (type === DrawerType.Edit) {
+    Object.assign(formValues, values);
+  } else {
+    let res = await API.equityDetail({ id: values?.id,	status: values?.status});
+    if (!checkStringEqual(res?.code, 0)) return;
+    Object.assign(modalData, res?.data);
+  }
+  modalType.value = type;
+  modalVisible.value = true;
 };
 const updateData = async (row: any) => {
   ElMessageBox.alert(
@@ -167,12 +199,12 @@ const handleCurrentChange = (val: number) => {
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-input v-model="formInline.name" placeholder="权益展示名称" clearable style="width:200px" :suffix-icon="Search" />
+              <el-input v-model="formInline.equityName" placeholder="权益展示名称" clearable style="width:200px" :suffix-icon="Search" />
             </el-form-item>
 
           </el-form>
           <div >
-            <el-button type="primary" class="add" @click="addData()" round>新建权益</el-button>
+            <el-button type="primary" class="add"    @click="handleModal(DrawerType.Create)"  round>新建权益</el-button>
           </div>
         </div>
       </template>
@@ -180,15 +212,11 @@ const handleCurrentChange = (val: number) => {
 
         <el-table :data="tableData">
           <el-table-column label="权益ID" prop="id" />
-          <el-table-column label="权益编号" prop="name" />
-          <el-table-column label="权益展示名称">
-            <template #default="scope">
-              <el-tag class="mx-1" :type="statusLabels[scope.row.status].type?statusLabels[scope.row.status].type:'info'" effect="light">
-                {{ statusLabels[scope.row.status].Text }}
-              </el-tag>
-            </template>
+          <el-table-column label="权益编号" prop="skuCode" />
+          <el-table-column label="权益展示名称" prop="equityName"  >
+           
           </el-table-column>
-          <el-table-column label="权益展示金额" width="180" prop="updatedTime" />
+          <el-table-column label="权益展示金额" width="180" prop="equityAmount" />
           <el-table-column label="状态" prop="usedCount">
             <template #default="scope">
               <el-tag class="mx-1" :type="statusLabels[scope.row.status].type?statusLabels[scope.row.status].type:'info'" effect="light">
@@ -201,9 +229,10 @@ const handleCurrentChange = (val: number) => {
               <el-space wrap >
                 <el-link type="primary" v-if="scope.row.status=='offline'" @click="updateMaterialStatusData(scope.row,'available')">上线</el-link>
                 <el-link type="primary" v-if="scope.row.status!=='offline'" @click="updateMaterialStatusData(scope.row,'offline')">下线</el-link>
-                <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
+                <el-link type="primary"  @click="handleModal(DrawerType.Edit, scope.row)" >编辑</el-link>
                 <el-link type="primary" @click="delData(scope.row)">删除</el-link>
-                <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+                <el-link type="primary" 
+                @click="handleModal(DrawerType.Detail, scope.row)">查看详情</el-link>
               </el-space>
             </template>
           </el-table-column>
@@ -214,6 +243,111 @@ const handleCurrentChange = (val: number) => {
         :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
       </template>
     </CustomEventComponent>
+    <el-dialog
+    class="pd-modal"
+    destroy-on-close
+    :close-on-click-modal="false"
+    v-model="modalVisible"
+    :title="ModalTitleMap[modalType]"
+  >
+    <el-form
+      :disabled="checkStringEqual(modalType, DrawerType.Detail)"
+      ref="formRef"
+      :hide-required-asterisk="true"
+      label-position="top"
+      class="form"
+      :model="formValues"
+    >
+      <el-form-item
+        :rules="[
+          { required: true, message: '请输入权益名称' },
+          {
+            pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
+            message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
+          },
+        ]"
+        label="权益名称"
+        prop="equityName"
+      >
+        <el-input v-model="formValues.equityName" placeholder="请输入权益名称" clearable />
+      </el-form-item>
+      <el-form-item
+        :rules="[{ required: true, message: '请输入权益金额	' }]"
+        label="权益金额	"
+        prop="equityAmount"
+      >
+        <el-input v-model="formValues.equityAmount" placeholder="请输入权益金额" clearable />
+      </el-form-item>
+      <el-form-item
+        :rules="[{ required: true, message: '请输入互金客户号' }]"
+        label="互金客户号"
+        prop="itFinCode"
+      >
+        <el-input
+          v-model="formValues.itFinCode"
+          placeholder="请输入"
+          clearable
+        />
+      </el-form-item>
+      <el-form-item
+        :rules="[{ required: true, message: '请输入权益图片链接' }]"
+        label="权益图片链接"
+        prop="equityImageUrl"
+      >
+        <el-input
+          v-model="formValues.equityImageUrl"
+          placeholder="请输入权益图片链接"
+          clearable
+        />
+      </el-form-item>
+      <el-form-item
+        :rules="[{ required: true, message: '请输入权益规则' }]"
+        label="权益规则"
+        prop="equityRule"
+      >
+        <el-input
+          v-model="formValues.equityRule"
+          placeholder="请输入权益规则"
+          clearable
+        />
+      </el-form-item>
+      <el-form-item
+        :rules="[{ required: true, message: '请输入权益类型' }]"
+        label="权益类型"
+        prop="equityType"
+      >
+        <el-input
+          v-model="formValues.equityType"
+          placeholder="请输入权益类型"
+          clearable
+        />
+      </el-form-item>
+      
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button
+          v-if="modalType === DrawerType.Detail"
+          round
+          @click="modalVisible = false"
+          >返回</el-button
+        >
+        <el-button
+          v-if="modalType !== DrawerType.Detail"
+          round
+          @click="modalVisible = false"
+          >取消</el-button
+        >
+        <el-button
+          v-if="modalType !== DrawerType.Detail"
+          @click.prevent="onSubmit(formRef)"
+          round
+          type="primary"
+          >保存</el-button
+        >
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 
