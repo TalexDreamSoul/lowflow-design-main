@@ -125,7 +125,7 @@ function toggle() {
 
   &-Main {
     ul, li {
-      * {
+      & > * {
         flex: 1;
       }
       display: flex;
