@@ -40,7 +40,8 @@ watch(() => model.value, (val) => {
 </script>
 
 <template>
-  <el-tree-select :placeholder="placeholder" v-if="multiple" v-model="model" :data="attrs" :render-after-expand="false" />
+  <div class="Trigger-Wrapper">
+    <el-tree-select :placeholder="placeholder" v-if="multiple" v-model="model" :data="attrs" :render-after-expand="false" />
   <!-- <el-option-group v-if="multiple" v-for="(group, index) in attrs" :key="index" :label="group.label">
         <template v-for="(option, i) in group.options" :key="i">
           <el-option v-if="!option.labelValue?.data?.length" :key="option.field"
@@ -55,6 +56,11 @@ watch(() => model.value, (val) => {
   <el-select v-else class="trigger-container" v-model="model" :placeholder="ph">
     <el-option v-for="item in attrs" :key="item.field" :label="item.fieldName" :value="item.field" />
   </el-select>
+  </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.Trigger-Wrapper {
+  min-width: 120px;
+}
+</style>
