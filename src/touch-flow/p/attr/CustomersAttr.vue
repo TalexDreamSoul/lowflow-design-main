@@ -4,7 +4,6 @@ import { getBlackList } from "~/api/index";
 import { MarketingTouchEditDTO } from "../behavior/marketing";
 import { CustomSearchDTO } from "../../touch-total";
 import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
-import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
 import { validateAES, validateCommonDays, validatePropValue } from "../../flow-utils";
 import { ElMessage } from "element-plus";
 import FilterGroup from "./condition/FilterGroup.vue";
@@ -134,8 +133,6 @@ const blackListFields = ref();
       <FilterGroup :readonly="readonly" :custom-rule-content="customRuleContent" />
 
       <TouchEstimation :readonly="readonly" :custom-rule-content="customRuleContent" />
-
-      <StrategistTargetAttr :readonly="readonly" :size-form="sizeForm" />
 
       <div class="MainTitle">黑名单</div>
 
