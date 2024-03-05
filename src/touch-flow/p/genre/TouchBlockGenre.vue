@@ -34,6 +34,20 @@ function addCondition(event: any) {
 function delEvent(index: number) {
   props.condition.conditions.splice(index, 1);
 }
+
+function handleSelectChanged(val: string, event: any) {
+  const { events } = props.dict;
+
+  const flattedEvents = [...events!].map((e: any) => e.events);
+
+  const targetEvent = flattedEvents
+    .flat()
+    .find((item: any) => item.eventCode === val);
+
+  console.log(targetEvent, val, event)
+
+  event.eventName = targetEvent.eventName
+}
 </script>
 
 <template>
@@ -41,7 +55,7 @@ function delEvent(index: number) {
     <LogicalLine v-model="condition.logicalChar">
       <div class="EventA-Wrapper" v-for="(event, index) in condition.conditions">
         <div class="EventA-Wrapper-Head">
-          <el-select placeholder="选择事件" v-model="event.action" style="width: 240px">
+          <el-select @change="handleSelectChanged($event, event)" placeholder="选择事件" v-model="event.eventCode" style="width: 240px">
             <el-option-group
               v-for="group in dict?.events"
               :key="group.eventType"

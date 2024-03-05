@@ -76,8 +76,9 @@ const layoutFn = () => {
       const width = window.innerWidth;
       if (width === 1920) return -150;
       if (width === 2560) return 30;
-      if (Math.abs(width - 1445) <= 50) return -50;
-      if (Math.abs(width - 1600) <= 50) return -80;
+      if (Math.abs(width - 1445) <= 100) return -50;
+      if (Math.abs(width - 1600) <= 100) return -80;
+      if (Math.abs(width - 1050) <= 100) return 60;
 
       console.log("width", width);
       return k * width - b;

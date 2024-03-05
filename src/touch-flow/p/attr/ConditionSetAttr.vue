@@ -165,8 +165,6 @@ function saveData() {
     return false;
   }
 
-  // TODO 触发型：触发时间组A B以及delayed 非空测试
-
   Object.assign(props.p, {
     executeTime: date,
     executeType: lp,
