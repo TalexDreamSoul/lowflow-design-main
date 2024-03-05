@@ -138,7 +138,11 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
 </script>
 
 <template>
-  <div class="AttrRender" style="display: flex; gap: 1rem">
+  <div
+    v-if="!(item.fieldOp?.indexOf('空') !== -1)"
+    class="AttrRender"
+    style="display: flex; gap: 1rem"
+  >
     <template v-if="type === 'num'">
       <template v-if="item.fieldOp === '区间'">
         <el-input

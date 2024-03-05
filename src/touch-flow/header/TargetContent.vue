@@ -158,19 +158,19 @@ const attrs = computed(() => {
         <ul :label-width="0" :inline="true">
           <li v-for="(item, index) in conditions.conditions.conditions" :key="index">
             <trigger
-              :item="item"
+              :item="item.attr"
               :readonly="readonly"
               v-model="item.attr.field"
               :attrs="attrs"
             />
             <operator
-              :item="item"
+              :item="item.attr"
               :attrs="attrs"
               :readonly="readonly"
               ref="operatorRef"
               v-model="item.attr.fieldOp"
             />
-            <AttrRender :readonly="readonly" :item="item" :attrs="attrs" />
+            <AttrRender :readonly="readonly" :item="item.attr" :attrs="attrs" />
             <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
               <el-icon size="14">
                 <Delete :disabled="readonly" />

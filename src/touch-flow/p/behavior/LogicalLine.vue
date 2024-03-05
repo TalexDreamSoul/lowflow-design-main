@@ -125,12 +125,13 @@ function toggle() {
 
   &-Main {
     li {
-      & > * {
-        flex: 1;
-      }
+      // & > * {
+      //   flex: 1;
+      // }
       display: flex;
 
       align-items: center;
+      justify-content: flex-start;
     }
     & > ul {
       display: flex;
