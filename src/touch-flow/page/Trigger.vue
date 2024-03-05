@@ -10,7 +10,7 @@ const props = defineProps<{
   multiple?: boolean;
 }>();
 const emits = defineEmits<{
-  (e: "update:model-value", modelValue: any): void;
+  (e: "update:modelValue", modelValue: any): void;
   (e: "updateType", type: "attr" | "label"): void;
 }>();
 
