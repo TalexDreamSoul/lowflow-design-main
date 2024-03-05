@@ -9,6 +9,7 @@ import {
 } from "~/api/index";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
+import dayjs from "dayjs";
 
 const formInline = reactive({
   touchName: "",
@@ -121,6 +122,16 @@ const handleSizeChange = (val: any) => {
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
 };
+const changeTime = (val: any) => {
+  console.log(val, "change");
+  if (val == null) {
+    formInline.beginTime = "";
+    formInline.endTime = "";
+  } else {
+    formInline.beginTime = dayjs(val[0]).format("YYYY-MM-DD");
+    formInline.endTime = dayjs(val[1]).format("YYYY-MM-DD");
+  }
+};
 </script>
 
 <template>
@@ -130,10 +141,7 @@ const handleCurrentChange = (val: number) => {
       <el-form :inline="true" class="demo-form-inline">
 
         <el-form-item label="创建时间：">
-          <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="(val) => {
-              formInline.beginTime = val[0];
-              formInline.endTime = val[1];
-            }" />
+          <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
         </el-form-item>
         <el-form-item>
 

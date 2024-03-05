@@ -177,6 +177,16 @@ const handleSizeChange = (val: any) => {
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
 };
+const changeTime = (val: any) => {
+  console.log(val, "change");
+  if (val == null) {
+    formInline.beginTime = "";
+    formInline.endTime = "";
+  } else {
+    formInline.beginTime = dayjs(val[0]).format("YYYY-MM-DD");
+    formInline.endTime = dayjs(val[1]).format("YYYY-MM-DD");
+  }
+};
 </script>
 
 <template>
@@ -187,13 +197,7 @@ const handleCurrentChange = (val: number) => {
       <div class="search">
         <el-form :inline="true">
           <el-form-item label="创建时间：">
-            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="
-                (val) => {
-                  formInline.beginTime = dayjs(val[0]).format('YYYY-MM-DD');
-                  formInline.endTime = dayjs(val[1]).format('YYYY-MM-DD');
-                  val[0];
-                }
-              " />
+            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime " />
           </el-form-item>
           <el-form-item v-if="route.params.type == 'all'">
             <el-select v-model="formInline.type" style="width: 200px" placeholder="模板类型">
