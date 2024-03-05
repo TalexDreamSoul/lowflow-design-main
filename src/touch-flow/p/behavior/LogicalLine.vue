@@ -124,13 +124,19 @@ function toggle() {
   }
 
   &-Main {
-    ul, li {
+    li {
       & > * {
         flex: 1;
       }
       display: flex;
 
       align-items: center;
+    }
+    ul {
+      display: flex;
+
+      align-items: flex-start;
+      flex-direction: column;
     }
     flex: 1;
 
