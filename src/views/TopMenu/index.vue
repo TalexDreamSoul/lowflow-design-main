@@ -29,6 +29,7 @@
 
       <!-- <el-menu-item class="pd-menu-item" index="/design">流程画布</el-menu-item> -->
       <el-menu-item class="pd-menu-item" index="/strategyProcess">策略流程列表</el-menu-item>
+      <el-menu-item @click="handleloca">活动编辑器</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="4">
       <template #title>
@@ -55,7 +56,7 @@
       <el-menu-item class="pd-menu-item" index="/customer/tag">客户标签</el-menu-item>
       <el-menu-item class="pd-menu-item" index="/customer/blackList">黑名单管理</el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="6">
+    <el-sub-menu index="6" @click="handleloca">
       <template #title>
         <div class="title">配置中心 <el-icon :size="12">
             <CaretBottom />
@@ -112,6 +113,10 @@ const activeIndex = ref(router.currentRoute.value.path);
 const handleSelect = (key: string, params?: string) => {
   router.push(key);
 };
+
+const handleloca = () => {
+  window.open('http://172.30.3.6:18700/', '_blank');
+}
 </script>
 
 <style lang="scss">
