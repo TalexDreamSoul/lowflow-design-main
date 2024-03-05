@@ -40,7 +40,7 @@ function toggle() {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .LogicalLine {
   display: flex;
   //margin: 10px 0;
@@ -124,9 +124,19 @@ function toggle() {
   }
 
   &-Main {
+    ul, li {
+      * {
+        flex: 1;
+      }
+      display: flex;
+
+      align-items: center;
+    }
     flex: 1;
 
     padding: 12px 0;
+
+    overflow: hidden;
   }
 
   user-select: none;
