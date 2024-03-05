@@ -56,7 +56,7 @@
       <el-menu-item class="pd-menu-item" index="/customer/tag">客户标签</el-menu-item>
       <el-menu-item class="pd-menu-item" index="/customer/blackList">黑名单管理</el-menu-item>
     </el-sub-menu>
-    <el-sub-menu index="6" @click="handleloca">
+    <el-sub-menu index="6">
       <template #title>
         <div class="title">配置中心 <el-icon :size="12">
             <CaretBottom />
