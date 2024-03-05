@@ -12,19 +12,18 @@ import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { createTemplatePopover } from "~/utils/touch-templates";
 import { materialType } from "~/utils/common";
+import API from "~/api/channelManagement";
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
 const formInline = reactive({
-  name: "",
-  // type	素材类型：sms 短信，appPush app消息，digital 数字员工，outbound 智能外呼，znx 站内信
-  type: route.params.type,
-  beginTime: "",
-  endTime: "",
-  status: "",
+  startDate: "",
+  endDate: "",
+  trsPlatform: "",
 });
+
 const tableData = ref([]); // 表格数据
 const total = ref(100); // 总数
 const currentPage = ref(1);
@@ -34,10 +33,10 @@ const background = ref(false);
 const disabled = ref(false);
 const time = ref(null);
 const statusLabels = {
-  available: { Text: "可用", type: "success" },
-  offline: { Text: "下线", type: "info" },
+  pointIncrease: { Text: "增加积分", type: "success" },
+  pointDecrease: { Text: "减少积分", type: "info" },
+  distributionEquity: { Text: "派发权益", type: "info" },
 };
-
 const value = ref();
 
 function getNameByValue(data: any[], val: string) {
@@ -48,24 +47,15 @@ function getNameByValue(data: any[], val: string) {
 const materialTypeName = ref(getNameByValue(materialType, route.params.type));
 
 console.log(materialTypeName); // 输出：短信
-// onMounted(async () => {
-//   fetchDataApi();
-// });
+onMounted(async () => {
+  fetchDataApi();
+});
 
-// watch(
-//   () => route.fullPath,
-//   (val) => {
-//     console.log(`output->val`, val);
-//     materialTypeName.value = getNameByValue(materialType, route.params.type);
-//     formInline.type = route.params.type;
-//     fetchDataApi();
-//   }
-// );
-// watch([currentPage, pageSize, formInline], () => {
-//   fetchDataApi();
-// });
+watch([currentPage, pageSize, formInline], () => {
+  fetchDataApi();
+});
 const fetchDataApi = async () => {
-  const res = await getQryMaterial({
+  const res = await API.qryTrsRecordList({
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
     ...formInline,
@@ -153,6 +143,16 @@ const handleSizeChange = (val: any) => {
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
 };
+const changeTime = (val: any) => {
+  console.log(val, "change");
+  if (val == null) {
+    formInline.startDate = "";
+    formInline.endDate = "";
+  } else {
+    formInline.startDate = dayjs(val[0]).format("YYYY-MM-DD");
+    formInline.endDate = dayjs(val[1]).format("YYYY-MM-DD");
+  }
+};
 </script>
 
 <template>
@@ -161,11 +161,16 @@ const handleCurrentChange = (val: number) => {
         <div class="search">
           <el-form :inline="true">
             <el-form-item label="创建时间：">
-              <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="(val) => {
-                  formInline.beginTime =  dayjs(val[0]).format('YYYY-MM-DD');
-                  formInline.endTime = dayjs(val[1]).format('YYYY-MM-DD');val[0];
-                }" />
+              <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
             </el-form-item>
+
+          <el-form-item >
+            <el-select v-model="formInline.trsPlatform" style="width: 200px" placeholder="模板类型">
+              <el-option label="全部" value="" />
+              <el-option label="积分平台" value="point" />
+              <el-option label="权益厂商" value="equity" />
+            </el-select>
+          </el-form-item>
           </el-form>
         </div>
       </template>
@@ -173,26 +178,18 @@ const handleCurrentChange = (val: number) => {
 
         <el-table :data="tableData">
           <el-table-column label="交易明细ID" prop="id" />
-          <el-table-column label="客户ID" prop="name" />
+          <el-table-column label="客户ID" prop="customId" />
           <el-table-column label="交易类型">
             <template #default="scope">
-              <el-tag class="mx-1" :type="statusLabels[scope.row.status].type?statusLabels[scope.row.status].type:'info'" effect="light">
-                {{ statusLabels[scope.row.status].Text }}
-              </el-tag>
+              {{ statusLabels[scope.row.trsType].Text }}
             </template>
           </el-table-column>
-          <el-table-column label="交易内容" prop="usedCount">
-            <template #default="scope">
-              <span :style="scope.row.usedCount > 0 ? 'color: #00C068' : 'color: #333'">{{scope.row.usedCount}}</span>
-            </template>
+          <el-table-column label="交易内容" prop="trsContent">
           </el-table-column>
-          <el-table-column label="数量" width="180" prop="updatedTime" />
-          <el-table-column label="交易来源" prop="usedCount">
-            <template #default="scope">
-              <span :style="scope.row.usedCount > 0 ? 'color: #00C068' : 'color: #333'">{{scope.row.usedCount}}</span>
-            </template>
+          <el-table-column label="数量" width="180" prop="trsCount" />
+          <el-table-column label="交易来源" prop="trsSourceName">
           </el-table-column>
-          <el-table-column label="交易话术" prop="createBy" />
+          <el-table-column label="交易话术" prop="trsChatContent" />
           <el-table-column label="交易成功时间" width="180" prop="createTime" />
         </el-table>
       </template>
