@@ -33,7 +33,11 @@ watch(() => model.value, (val) => {
   } else {
     const res = attrs.find((item: any) => item.field === val)
 
-    item.attr.fieldType = res.fieldType
+    console.log("aaa", res)
+
+    if ( item.attr?.fieldType )
+      item.attr.fieldType = res.fieldType
+    else item.fieldType = res.fieldType
   }
 
 })

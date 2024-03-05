@@ -89,18 +89,20 @@ if (!props.sizeForm?.targetRuleContent?.targetDelayed) {
           <el-option value="day" label="天">天</el-option> </el-select
         >&nbsp;
         <el-text>后立即判断客户是否完成以下转化事件，则认为完成该策略器模板。</el-text>
-      </div>
-      <div class="MainBlock-ContentItem bg-transparent">
+
         <TargetContent
           :readonly="readonly"
           :target="sizeForm.targetRuleContent"
           :dict="dict"
         />
-        <!-- <DiversionBehavior
+      </div>
+      <!-- <div class="MainBlock-ContentItem bg-transparent"> -->
+
+      <!-- <DiversionBehavior
           :readonly="readonly"
           :custom="sizeForm.targetRuleContent!.targetRuleContent!.eventSequence"
         /> -->
-      </div>
+      <!-- </div> -->
     </div>
   </div>
 </template>

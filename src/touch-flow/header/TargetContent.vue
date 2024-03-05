@@ -97,7 +97,7 @@ const attrs = computed(() => {
     </div>
 
     <div class="filter-wrap">
-      <div class="garyblock">
+      <div v-if="index !== undefined" class="garyblock">
         <el-text>客户进入流程后，在</el-text>&nbsp;
         <el-input-number
           :min="1"

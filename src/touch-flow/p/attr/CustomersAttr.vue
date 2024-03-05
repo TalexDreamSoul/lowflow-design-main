@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, inject, unref } from "vue";
+import { ref, reactive, computed, inject, unref, watchEffect } from "vue";
 import { getBlackList } from "~/api/index";
 import { MarketingTouchEditDTO } from "../behavior/marketing";
 import { CustomSearchDTO } from "../../touch-total";
@@ -40,10 +40,17 @@ interface ICustomerAttrProp {
 const props = defineProps<ICustomerAttrProp>();
 
 // 将props数据同步到本地数据 实现保存后才更新替换
-Object.assign(customRuleContent, props.p.customRuleContent);
-Object.assign(blackList, {
-  _enable: props.p.blacklist?.data?.length ? "yes" : "no",
-  data: props.p.blacklist?.data || [],
+watchEffect(() => {
+  Object.assign(customRuleContent, props.p.customRuleContent);
+
+  if (props.p.blacklist?.data?.length) {
+    Object.assign(blackList, {
+      _enable: props.p.blacklist?.data?.length ? "yes" : "no",
+      data: props.p.blacklist?.data || [],
+    });
+  }
+
+  console.log("ca", blackList, props.p);
 });
 
 function saveData(): boolean {
@@ -82,13 +89,11 @@ function saveData(): boolean {
       });
 
       return false;
-    }
-  } else {
-    Object.assign(props.p, {
-      blackList: {
+    } else {
+      props.p.blacklist = {
         data: blackList.data,
-      },
-    });
+      };
+    }
   }
 
   Object.assign(props.p, {
@@ -132,7 +137,7 @@ const blackListFields = ref();
 
       <div class="MainTitle">黑名单</div>
 
-      <el-form-item label="过滤黑名单" label-class="custom-label">
+      <el-form-item v-if="blackListFields" label="过滤黑名单" label-class="custom-label">
         <el-select :disabled="readonly" v-model="blackList._enable" style="width: 100px">
           <el-option value="no" label="不过滤">不过滤</el-option>
           <el-option value="yes" label="过滤">过滤</el-option>

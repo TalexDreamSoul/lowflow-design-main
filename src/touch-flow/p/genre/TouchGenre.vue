@@ -57,13 +57,14 @@ const attrs = computed(() => {
         v-for="(item, index) in condition.conditions"
         :key="`${item.field}-${index}`"
       >
-        <trigger :item="item.attr" v-model="item.field" :attrs="attrs" />
+      {{ item }}
+        <trigger :item="item" v-model="item.attr.field" :attrs="attrs" />
 
         <operator
           :attrs="attrs"
           :item="item.attr"
           ref="operatorRef"
-          v-model="item.fieldOp"
+          v-model="item.attr.fieldOp"
         />
         <AttrRender :item="item.attr" :attrs="attrs" />&nbsp;
 
