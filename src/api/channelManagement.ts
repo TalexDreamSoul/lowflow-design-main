@@ -33,12 +33,12 @@ const customerAPI = {
     return request.post({ url: "/api/qryEquityList.do", data });
   },
   // 交易误差详情
-  qryNqTrsList() {
-    return request.post({ url: "/api/qryNqTrsList.do"});
+  qryNqTrsList(data: any) {
+    return request.post({ url: "/api/qryNqTrsList.do", data});
   },
   // 交易对账
-  qryTrsCheckList() {
-    return request.post({ url: "/api/qryTrsCheckList.do" });
+  qryTrsCheckList(data: any) {
+    return request.post({ url: "/api/qryTrsCheckList.do", data });
   },
   // 交易明细
   qryTrsRecordList(data: any) {
