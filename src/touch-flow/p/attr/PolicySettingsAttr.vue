@@ -9,6 +9,7 @@ import { markRaw } from "vue";
 import CommonAttr from "./CommonAttr.vue";
 import { validateCommonDays } from "~/touch-flow/flow-utils";
 import { MarketingTouchNodeEditDTO } from "~/touch-flow/touch-total";
+import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
 
 const origin: MarketingTouchNodeEditDTO = {
   nodeId: "",
@@ -225,6 +226,8 @@ regSaveFunc(saveData);
         :readonly="readonly"
         :custom-rule-content="sizeForm.customRuleContent"
       />
+
+      <StrategistTargetAttr :readonly="readonly" :size-form="sizeForm" />
     </el-form>
   </div>
 </template>

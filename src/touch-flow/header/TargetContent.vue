@@ -1,6 +1,6 @@
 <script setup lang="ts" name="TargetContent">
 import { computed } from "vue";
-import { Delete } from "@element-plus/icons-vue";
+import { CirclePlusFilled, Delete } from "@element-plus/icons-vue";
 import { num2character } from "~/utils/common";
 import AttrRender from "../page/AttrRender.vue";
 import Operator from "../page/Operator.vue";
@@ -13,7 +13,7 @@ interface ITargentContentProp {
   /**
    * 当前目标的索引，用于生成标题
    */
-  index: number;
+  index?: number;
   /**
    * 得到的词典树
    */
@@ -64,7 +64,7 @@ const conditions = computed(() => {
 });
 
 function handleDel(index: number) {
-  conditions.value.conditions.conditions.splice(index, 1)
+  conditions.value.conditions.conditions.splice(index, 1);
 }
 
 const addCondition = () => {
@@ -85,8 +85,8 @@ const attrs = computed(() => {
 </script>
 
 <template>
-  <div class="TargetContent" :style="`--t: ${index * 0.1}s`">
-    <div class="TargetContent-TopBanner">
+  <div class="TargetContent" :style="`--t: ${(index || 1) * 0.1}s`">
+    <div v-if="index !== undefined" class="TargetContent-TopBanner">
       <span>目标{{ num2character(index + 1) }}</span>
       <el-text @click="emits('del')" style="cursor: pointer" type="primary">
         <el-icon>
@@ -121,6 +121,7 @@ const attrs = computed(() => {
           :disabled="readonly"
           v-model="target.targetDelayed.delayedAction"
           style="width: 240px"
+          placeholder="请选择"
         >
           <el-option-group
             v-for="group in dict?.events"
@@ -244,5 +245,9 @@ ul {
 
 .filter-wrap {
   padding: 12px;
+}
+
+.garyblock {
+  margin: 0 0 10px;
 }
 </style>

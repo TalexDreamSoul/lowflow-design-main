@@ -1,65 +1,55 @@
 <script setup lang="ts" name="StrategistTargetAttr">
+import { dictFilterTree as getDictFilterTree } from "~/api/index";
 import DiversionBehavior from "../p/behavior/diversion/DiversionBehavior.vue";
+import TargetContent from "../header/TargetContent.vue";
+import { ref } from "vue";
 
 const props = defineProps<{
   sizeForm: any;
   readonly?: boolean;
 }>();
 
+const dict = ref<any>();
+
+!(async () => {
+  const res = await getDictFilterTree();
+
+  if (res.data) {
+    dict.value = res.data;
+  } else {
+    console.log(res);
+
+    window.history.back();
+
+    throw new Error("获取字典失败,无法完成流程!");
+  }
+})();
+
 if (!props.sizeForm?.targetRuleContent?.targetDelayed) {
   props.sizeForm.targetRuleContent = {
     targetDelayed: {
+      delayedType: "",
       delayedAction: "",
       delayedTime: 0,
-      delayedType: "",
       delayedUnit: "day",
       isDelayed: false,
     },
     targetRuleContent: {
-      eventSequence: {
+      customEvent: {
         conditions: [
           {
             conditions: [
               {
                 action: "",
                 conditions: {
-                  conditions: [
-                    {
-                      attr: {
-                        field: "",
-                        fieldMultiValue: [],
-                        fieldName: "",
-                        fieldOp: "",
-                        fieldRangeValue: "",
-                        fieldType: "",
-                        fieldValue: "",
-                        timeCondition: {
-                          endDay: 0,
-                          endTime: "",
-                          isFuture: false,
-                          isWithin: false,
-                          startDay: 0,
-                          startTime: "",
-                          timeType: "",
-                        },
-                      },
-                      label: {
-                        labelId: 0,
-                        labelName: "",
-                        labelValue: [],
-                      },
-                      type: "",
-                    },
-                  ],
+                  conditions: [],
                   logicalChar: "或",
                 },
                 eventCode: "",
                 eventName: "",
               },
             ],
-            endTime: "",
             logicalChar: "或",
-            startTime: "",
           },
         ],
         logicalChar: "或",
@@ -101,10 +91,15 @@ if (!props.sizeForm?.targetRuleContent?.targetDelayed) {
         <el-text>后立即判断客户是否完成以下转化事件，则认为完成该策略器模板。</el-text>
       </div>
       <div class="MainBlock-ContentItem bg-transparent">
-        <DiversionBehavior
+        <TargetContent
+          :readonly="readonly"
+          :target="sizeForm.targetRuleContent"
+          :dict="dict"
+        />
+        <!-- <DiversionBehavior
           :readonly="readonly"
           :custom="sizeForm.targetRuleContent!.targetRuleContent!.eventSequence"
-        />
+        /> -->
       </div>
     </div>
   </div>
