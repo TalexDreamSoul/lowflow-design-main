@@ -114,7 +114,7 @@ const customerConditioned = computed(() => {
 
   return {
     display:
-      (data.blackList && data.targetRuleContent && data.customRuleContent) ||
+      (data.blackList && data.customRuleContent) ||
       _obj.customAttr ||
       _obj.customEvent,
     ..._obj,

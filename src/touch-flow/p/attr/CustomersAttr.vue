@@ -38,13 +38,9 @@ interface ICustomerAttrProp {
 }
 
 const props = defineProps<ICustomerAttrProp>();
-const sizeForm = reactive({
-  targetRuleContent: props.p?.targetRuleContent,
-});
 
 // 将props数据同步到本地数据 实现保存后才更新替换
 Object.assign(customRuleContent, props.p.customRuleContent);
-Object.assign(sizeForm, props.p);
 Object.assign(blackList, {
   _enable: props.p.blacklist?.data?.length ? "yes" : "no",
   data: props.p.blacklist?.data || [],
@@ -60,22 +56,22 @@ function saveData(): boolean {
     return false;
   }
 
-  // 验证目标设置是否填写完整
-  if (sizeForm.targetRuleContent?.targetDelayed.isDelayed) {
-    if (
-      !validateCommonDays(
-        sizeForm.targetRuleContent.targetDelayed.delayedTime,
-        sizeForm.targetRuleContent.targetDelayed.delayedUnit
-      )
-    ) {
-      ElMessage({
-        message: "目标设置延时总计不能超过30天！",
-        type: "error",
-      });
+  // // 验证目标设置是否填写完整
+  // if (sizeForm.targetRuleContent?.targetDelayed.isDelayed) {
+  //   if (
+  //     !validateCommonDays(
+  //       sizeForm.targetRuleContent.targetDelayed.delayedTime,
+  //       sizeForm.targetRuleContent.targetDelayed.delayedUnit
+  //     )
+  //   ) {
+  //     ElMessage({
+  //       message: "目标设置延时总计不能超过30天！",
+  //       type: "error",
+  //     });
 
-      return false;
-    }
-  }
+  //     return false;
+  //   }
+  // }
 
   // 验证黑名单是否填写完整
   if (blackList._enable === "yes") {
@@ -97,7 +93,7 @@ function saveData(): boolean {
 
   Object.assign(props.p, {
     customRuleContent,
-    targetRuleContent: sizeForm.targetRuleContent,
+    // targetRuleContent: sizeForm.targetRuleContent,
   });
 
   return true;

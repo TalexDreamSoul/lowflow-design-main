@@ -124,7 +124,8 @@ function toggle() {
   }
 
   &-Main {
-    li {
+    li,
+    & > div {
       & > * {
         flex: 1;
       }
@@ -132,7 +133,7 @@ function toggle() {
 
       align-items: center;
     }
-    ul {
+    & > ul {
       display: flex;
 
       // justify-content: start;
