@@ -38,7 +38,28 @@ function addTarget() {
       delayedUnit: "day",
       isDelayed: false,
     },
-    targetRuleContent: {},
+    targetRuleContent: {
+      customEvent: {
+        conditions: [
+          {
+            conditions: [
+              {
+                action: "",
+                conditions: {
+                  conditions: [],
+                  logicalChar: "或",
+                },
+                eventCode: "",
+                eventName: "",
+              },
+            ],
+            logicalChar: "或",
+          },
+        ],
+        logicalChar: "或",
+      },
+      logicalChar: "或",
+    },
   });
 
   const ind = arr.length - 1;
@@ -89,7 +110,7 @@ function addTarget() {
         :key="index"
         class="Target-Block"
       >
-        <TargetContent :readonly="readonly" :index="index" :target="item" :dict="dict" />
+        <TargetContent @del="() => target.targetRuleContent.data.splice(index, 1)" :readonly="readonly" :index="index" :target="item" :dict="dict" />
       </div>
     </div>
   </el-form-item>

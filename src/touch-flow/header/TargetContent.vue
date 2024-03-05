@@ -6,11 +6,10 @@ import AttrRender from "../page/AttrRender.vue";
 import Operator from "../page/Operator.vue";
 import Trigger from "../page/Trigger.vue";
 import LogicalLine from "../p/behavior/LogicalLine.vue";
-import { DictTreeType } from "../flow-types";
-import { EventConditionDTO, MarketingTouchTargetDTO } from "../touch-total";
+import { DictTreeType, ITargetContent } from "../flow-types";
 
 interface ITargentContentProp {
-  target: EventConditionDTO;
+  target: ITargetContent;
   /**
    * 当前目标的索引，用于生成标题
    */
@@ -27,8 +26,26 @@ const emits = defineEmits<{
   (e: "del"): void;
 }>();
 
-function getConditions() {
-  let target = props.target.conditions[0];
+const dataObj = Object.freeze({
+  attr: {
+    field: "",
+    fieldMultiValue: [],
+    fieldName: "",
+    fieldOp: "",
+    fieldRangeValue: "",
+    fieldType: "",
+    fieldValue: "",
+  },
+  label: {
+    labelId: 0,
+    labelName: "",
+    labelValue: [],
+  },
+  type: "event",
+});
+
+const conditions = computed(() => {
+  let target = props.target.targetRuleContent.customEvent.conditions[0].conditions[0];
 
   console.log("go", target, props);
 
@@ -44,20 +61,14 @@ function getConditions() {
   // }
 
   return target; //(props.target.targetRuleContent = props.target.conditions || []);
+});
+
+function handleDel(index: number) {
+  conditions.value.conditions.conditions.splice(index, 1)
 }
 
 const addCondition = () => {
-  getConditions().conditions.push({
-    action,
-  });
-};
-
-/**
- * 删除条件
- * @param index
- */
-const handleDel = (index: number) => {
-  getConditions().splice(index, 1);
+  conditions.value.conditions.conditions.push(JSON.parse(JSON.stringify(dataObj)));
 };
 
 const attrs = computed(() => {
@@ -139,25 +150,32 @@ const attrs = computed(() => {
       </div>
       <LogicalLine
         v-if="target.targetDelayed.delayedAction"
-        :display="target.targetRuleContent.customEvent!.conditions?.length < 2"
+        :display="conditions.conditions.conditions.length < 2"
         title="并且满足"
-        v-model="target.targetRuleContent.customEvent!.logicalChar"
+        v-model="conditions.conditions.logicalChar"
       >
         <ul :label-width="0" :inline="true">
-          <li
-            v-for="(item, index) in target.targetRuleContent.customEvent!.conditions"
-            :key="index"
-          >
-            {{ item }}
-            <!-- <trigger :item="item" :readonly="readonly" v-model="item.attr.field" :attrs="attrs" />
-            <operator :item="item" :attrs="attrs" :readonly="readonly" ref="operatorRef" v-model="item.attr.fieldOp" />
+          <li v-for="(item, index) in conditions.conditions.conditions" :key="index">
+            <trigger
+              :item="item"
+              :readonly="readonly"
+              v-model="item.attr.field"
+              :attrs="attrs"
+            />
+            <operator
+              :item="item"
+              :attrs="attrs"
+              :readonly="readonly"
+              ref="operatorRef"
+              v-model="item.attr.fieldOp"
+            />
             <AttrRender :readonly="readonly" :item="item" :attrs="attrs" />
             <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
               <el-icon size="14">
                 <Delete :disabled="readonly" />
               </el-icon>
               删除
-            </el-text> -->
+            </el-text>
           </li>
         </ul>
       </LogicalLine>
