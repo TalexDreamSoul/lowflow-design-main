@@ -41,20 +41,12 @@ export const EVENT_TYPE = [
     value: "games",
   },
   {
-    label: "微信公众号事件",
-    value: "mp",
-  },
-  {
     label: "互动事件",
     value: "interaction",
   },
   {
     label: "app事件",
     value: "app",
-  },
-  {
-    label: "自定义事件",
-    value: "customize",
   },
 ];
 
