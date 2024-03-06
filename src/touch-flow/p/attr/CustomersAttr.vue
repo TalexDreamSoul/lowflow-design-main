@@ -149,7 +149,7 @@ const blackListFields = ref();
           multiple
           :disabled="readonly"
           v-if="blackList?._enable === 'yes'"
-          style="min-width: 100px"
+          style="width: 300px"
         >
           <el-option
             v-for="item in blackListFields.records"
