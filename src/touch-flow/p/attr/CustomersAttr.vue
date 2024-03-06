@@ -26,9 +26,11 @@ const customRuleContent = reactive<CustomSearchDTO>({
 
 const blackList = reactive<{
   _enable: "no" | "yes";
+  list: Array<any>;
   data: Array<any>;
 }>({
   _enable: "no",
+  list: [],
   data: [],
 });
 
@@ -37,6 +39,7 @@ interface ICustomerAttrProp {
   readonly?: boolean;
 }
 
+const blackListFields = ref();
 const props = defineProps<ICustomerAttrProp>();
 
 // 将props数据同步到本地数据 实现保存后才更新替换
@@ -48,6 +51,8 @@ watchEffect(() => {
       _enable: props.p.blacklist?.data?.length ? "yes" : "no",
       data: props.p.blacklist?.data || [],
     });
+
+    if (blackListFields.value) transformBlackListData();
   }
 
   console.log("ca", blackList, props.p);
@@ -82,7 +87,7 @@ function saveData(): boolean {
 
   // 验证黑名单是否填写完整
   if (blackList._enable === "yes") {
-    if (!validatePropValue(blackList.data)) {
+    if (!validatePropValue(blackList.list)) {
       ElMessage({
         message: "过滤黑名单必须选择内容！",
         type: "error",
@@ -91,7 +96,14 @@ function saveData(): boolean {
       return false;
     } else {
       props.p.blacklist = {
-        data: blackList.data,
+        data: blackList.list.map((item) => {
+          const res = [...blackListFields.value.records].find((each) => each.id === item);
+
+          return {
+            id: res.id,
+            blacklistName: res.blacklistName,
+          };
+        }),
       };
     }
   }
@@ -108,14 +120,29 @@ type IRegSaveFunc = (regFunc: () => boolean) => void;
 const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
-const blackListFields = ref();
 !(async () => {
   const res = await getBlackList({});
 
   if (res.data) {
     blackListFields.value = res.data;
+
+    transformBlackListData();
   }
 })();
+
+function transformBlackListData() {
+  console.log("transform blacklist", blackList);
+
+
+  if (blackList.data.length) {
+    [...blackList.data].forEach((item) => {
+      blackList.list.push(item.id);
+    });
+
+    // 去重
+    blackList.list = [ ...new Set(blackList.list) ]
+  }
+}
 </script>
 
 <template>
@@ -145,7 +172,7 @@ const blackListFields = ref();
         &nbsp;
         <el-select
           placeholder="请选择"
-          v-model="blackList.data"
+          v-model="blackList.list"
           multiple
           :disabled="readonly"
           v-if="blackList?._enable === 'yes'"
@@ -153,7 +180,7 @@ const blackListFields = ref();
         >
           <el-option
             v-for="item in blackListFields.records"
-            :value="item.blacklistName"
+            :value="item.id"
             :label="item.blacklistName"
           >
             <span>{{ item.blacklistName }}</span>
