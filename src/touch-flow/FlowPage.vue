@@ -97,11 +97,17 @@ function transformNodes(__nodes: Array<any>) {
     console.log("do have father", node.father)
 
     if (node.father) {
+
+      if (node.father.nodeType === 'Start') {
+        node.preNodeId = 'root'
+      } else {
       // 先拿到父元素中children 我这个元素的位置
       const fatherInd = [...node.father.children].indexOf((item: any) => item.nodeId === node.nodeId)
 
       node.preNodeId = (fatherInd < 1 ? node.father.nodeId : node.father.children[fatherInd - 1].nodeId)
       //node.nextNodeId = (fatherInd < node.father.children.length - 1 ? node.father.children[fatherInd + 1].nodeId : node.children?.[0]?.nodeId)
+
+      }
 
       const nextNodes = (node.father.nextNodeId = (node.father.nextNodeId || []))
 
