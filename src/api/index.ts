@@ -35,6 +35,10 @@ export const marketingTouchStatistics = (data: any) => {
 export const getpauseMarketingTouch = (data: any) => {
   return request.post({ url: "/api/pauseMarketingTouch.do", data });
 };
+// 营销触达列表审核通过
+export const updateMarketingTouchStatus = (data: any) => {
+  return request.post({ url: "/api/updateMarketingTouchStatus.do", data });
+};
 
 // 营销触达开始
 export const getstartMarketingTouch = (data: any) => {
