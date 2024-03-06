@@ -64,6 +64,8 @@ const operatorOptions = [
   }
 ]
 
+console.log("operators", $props)
+
 const $emits = defineEmits<{
   (e: 'update:modelValue', modelValue: any): void
 }>()

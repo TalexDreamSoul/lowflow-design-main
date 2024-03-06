@@ -78,10 +78,23 @@ const attrs = computed(() => {
 
   const targetEvent = flattedEvents
     .flat()
-    .find((item: any) => item.eventCode === props.target.targetDelayed.delayedAction);
+    .find((item: any) => item.eventCode === conditions.value.eventCode);
+    // props.target.targetDelayed.delayedAction
 
   return targetEvent?.eventAttr?.attrs;
 });
+
+function handleSelectChanged(val: string) {
+  const { events } = props.dict;
+
+  const flattedEvents = [...events!].map((e: any) => e.events);
+
+  const targetEvent = flattedEvents.flat().find((item: any) => item.eventCode === val);
+
+  console.log(targetEvent, val);
+
+  conditions.value.eventName = targetEvent.eventName;
+}
 </script>
 
 <template>
@@ -118,8 +131,9 @@ const attrs = computed(() => {
       </div>
       <div>
         <el-select
+          @change="handleSelectChanged"
           :disabled="readonly"
-          v-model="target.targetDelayed.delayedAction"
+          v-model="conditions.eventCode"
           style="width: 240px"
           placeholder="请选择"
         >
@@ -137,7 +151,7 @@ const attrs = computed(() => {
           </el-option-group> </el-select
         >&nbsp;
         <el-text
-          v-if="target.targetDelayed.delayedAction"
+          v-if="conditions.eventCode"
           :disabled="readonly"
           type="primary"
           style="cursor: pointer"
@@ -150,7 +164,7 @@ const attrs = computed(() => {
         </el-text>
       </div>
       <LogicalLine
-        v-if="target.targetDelayed.delayedAction"
+        v-if="attrs && conditions.eventCode"
         :display="conditions.conditions.conditions.length < 2"
         title="并且满足"
         v-model="conditions.conditions.logicalChar"
