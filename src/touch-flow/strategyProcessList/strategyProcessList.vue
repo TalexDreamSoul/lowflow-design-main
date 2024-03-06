@@ -6,6 +6,7 @@ import {
   getqryTouchStatusCount,
   getstartMarketingTouch,
   getpauseMarketingTouch,
+  updateMarketingTouchStatus,
 } from "~/api/index";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
@@ -113,6 +114,19 @@ const updateData = async (row: any) => {
 const detailsData = async (row: any) => {
   router.push(`/strategyProcess/details/${row.id}`);
 };
+
+const successData = async (row: any) => {
+  let res=await updateMarketingTouchStatus({
+    id: row.id,
+    status: "approvalSuccess",
+  }).finally(() => {
+    fetchDataApi();
+    getmarketingTouchNode();
+  });
+  ElMessage.success(res.message)
+
+};
+
 const copyData = async (row: any) => {
   // await getcopyMarketingTouch({ id: row.id }).finally(() => {});
 };
@@ -261,7 +275,7 @@ const changeTime = (val: any) => {
 
         <el-table-column label="创建人" prop="createBy" />
 
-        <el-table-column label="操作" width="250" fixed="right">
+        <el-table-column label="操作" width="300" fixed="right">
           <template #default="scope">
             <el-space wrap>
               <!-- 
@@ -279,12 +293,12 @@ const changeTime = (val: any) => {
               <el-link type="primary" @click="copyData(scope.row)">复制</el-link>
               <el-link type="primary" v-if="scope.row.status=='approvalRefuse'||scope.row.status=='draft'" @click="updateData(scope.row)">编辑</el-link>
               <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+              <el-link type="primary" @click="successData(scope.row)">审核通过</el-link>
             </el-space>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background"         layout="prev, pager, next, jumper"
-      :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background" layout="prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
 
     </div>
 

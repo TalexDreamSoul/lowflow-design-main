@@ -97,6 +97,7 @@ const getCurrSelected = (condition: any) => {
           :attrs="attrs"
           :disabled="readonly"
           placeholder="客户属性/标签"
+          style="width: 220px"
         />
         <operator
           :selected="getCurrSelected(item)"
