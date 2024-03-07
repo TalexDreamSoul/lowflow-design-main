@@ -15,6 +15,7 @@ const origin: MarketingTouchNodeEditDTO = {
   nodeId: "",
   nodeType: "strategy",
   nodeName: "",
+  containTarget: false,
   diversionType: "noDiversion",
   touchTemplateContent: {},
   nodeDelayed: {
