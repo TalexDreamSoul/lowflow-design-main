@@ -2,7 +2,7 @@
 import { computed, ref, inject, reactive, onMounted, watch } from "vue";
 import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-
+import DayJs from 'dayjs'
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
 import TouchBlockGenre from "~/touch-flow/p/genre/TouchBlockGenre.vue";
 import FlowTypeSelector from "./condition/FlowTypeSelector.vue";
@@ -27,9 +27,9 @@ const timeFuncs: { [func: string]: any } = {
       return date;
     },
     (obj: any) => {
-      if (!props.p.executeTime) return false;
+      if (!props.p._executeTime) return false;
 
-      const date = new Date(props.p.executeTime);
+      const date = new Date(props.p._executeTime);
       obj.date1 = date.toString();
       obj.date2 = date.toString();
     },
@@ -39,9 +39,9 @@ const timeFuncs: { [func: string]: any } = {
       return obj.date3;
     },
     (obj: any) => {
-      if (!props.p.executeTime) return false;
+      if (!props.p._executeTime) return false;
 
-      obj.date3 = props.p.executeTime;
+      obj.date3 = props.p._executeTime;
     },
   ],
   trigger: [
@@ -49,9 +49,9 @@ const timeFuncs: { [func: string]: any } = {
       return obj.date3;
     },
     (obj: any) => {
-      if (!props.p.executeTime) return false;
+      if (!props.p._executeTime) return false;
 
-      obj.date3 = props.p.executeTime;
+      obj.date3 = props.p._executeTime;
     },
   ],
 };
@@ -165,14 +165,24 @@ function saveData() {
     return false;
   }
 
+  console.log("Date Save", date, props.p);
+
+  const _format = "YYYY-MM-DD HH:MM:ss";
+  let timeFormat;
+
+  if (Array.isArray(date)) {
+    timeFormat = [ ...date ].map(item => DayJs(item).format(_format));
+  } else timeFormat = DayJs(date).format(_format);
+
   Object.assign(props.p, {
-    executeTime: date,
+    _executeTime: date,
+    executeTime: timeFormat,
     executeType: lp,
     repeatTime: repeatTime,
     enterType,
     enterCount,
     enterDay,
-    triggerRuleContent: sizeForm.triggerRuleContent
+    triggerRuleContent: sizeForm.triggerRuleContent,
   });
 
   return true;
@@ -189,7 +199,6 @@ onMounted(async () => {
     dict.value = res.data;
   }
 });
-
 </script>
 
 <template>
@@ -230,7 +239,7 @@ onMounted(async () => {
       <el-form-item label="流程有效期：">
         <el-date-picker
           v-model="sizeForm.date3"
-          type="daterange"
+          type="datetimerange"
           style="max-width: 382px"
           range-separator="至"
           start-placeholder="开始日期"
@@ -299,7 +308,7 @@ onMounted(async () => {
         <el-col :span="12">
           <el-date-picker
             v-model="sizeForm.date3"
-            type="daterange"
+            type="datetimerange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"

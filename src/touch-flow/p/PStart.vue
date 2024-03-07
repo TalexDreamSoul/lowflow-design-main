@@ -67,8 +67,8 @@ const flowTime = computed(() => {
   const [date1, date2] = _time;
   if (!date1 || !date2) return "-";
 
-  const date1Text = date1.toLocaleDateString().replaceAll("/", "-");
-  const date2Text = date2.toLocaleDateString().replaceAll("/", "-");
+  const date1Text = date1; //.toLocaleDateString().replaceAll("/", "-");
+  const date2Text = date2; //.toLocaleDateString().replaceAll("/", "-");
 
   return `${date1Text} 至 ${date2Text}`;
 });
