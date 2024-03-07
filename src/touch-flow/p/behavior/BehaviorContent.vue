@@ -107,7 +107,7 @@ function handleChange(val: string, condition: any) {
         </el-option-group>
       </el-select>
 
-      <div class="CustomBehavior-Line-Group">
+      <div class="CustomBehavior-Line-Group" style="zoom:.8">
         <el-text
           v-if="condition.eventCode"
           type="primary"

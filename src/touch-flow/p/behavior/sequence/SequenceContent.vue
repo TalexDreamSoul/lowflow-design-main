@@ -103,7 +103,7 @@ function handleSubDel(index: number) {
       />
       <span style="color: #484545"> &nbsp;&nbsp; 依次做过 </span>
 
-      <span>
+      <span style="zoom:.8">
         <el-text
           :disabled="readonly"
           type="primary"
