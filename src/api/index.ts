@@ -6,8 +6,11 @@ export interface Role {
 }
 
 // 分割线api/营销触达
-export const dictFilterTree = (data: any) => {
-  return request.post({ url: "/api/dictFilterTree.do" , data});
+export const dictFilterTree = (data: any = {
+  pageNum: "1",
+  pageSize: "999"
+}) => {
+  return request.post({ url: "/api/dictFilterTree.do", data });
 };
 // 营销触达节点统计
 export const getmarketingTouchEstimate = (data: any) => {

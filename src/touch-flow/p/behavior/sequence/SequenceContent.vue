@@ -41,7 +41,7 @@ watchEffect(() => {
     props.condition?.startTime || null,
     props.condition?.endTime || null,
   ];
-})
+});
 
 function handleDateChange() {
   const [startTime, endTime] = timeRange.value;
@@ -71,11 +71,17 @@ function handleAdd() {
   });
 }
 
-function handleSubAdd(item: SequenceCondition) {
-  const arr = (item.conditions.conditions = item.conditions.conditions || []);
+// function handleSubAdd() {
+//   console.log(props.condition);
+//   // const arr = (item.conditions.conditions = item.conditions.conditions || []);
 
-  arr.push(JSON.parse(JSON.stringify(dataObj)));
-}
+//   // arr.push(JSON.parse(JSON.stringify(dataObj)));
+
+//   // props.conditions.push({
+//   //   action: "",
+//   //   conditions:
+//   // })
+// }
 
 function handleSubDel(index: number) {
   props.condition.conditions.splice(index, 1);
@@ -98,6 +104,18 @@ function handleSubDel(index: number) {
       <span style="color: #484545"> &nbsp;&nbsp; 依次做过 </span>
 
       <span>
+        <el-text
+          :disabled="readonly"
+          type="primary"
+          style="cursor: pointer"
+          @click="handleSubAdd"
+        >
+          <el-icon size="14">
+            <CirclePlusFilled />
+          </el-icon>
+          添加同组
+        </el-text>
+        &nbsp;&nbsp;&nbsp;
         <el-text
           :disabled="readonly"
           type="primary"
@@ -129,7 +147,12 @@ function handleSubDel(index: number) {
       v-for="(event, _index) in condition.conditions"
       :key="_index"
     >
-      <el-select  style="width: 200px" :disabled="readonly" placeholder="选择事件" v-model="event.eventCode">
+      <el-select
+        style="width: 200px"
+        :disabled="readonly"
+        placeholder="选择事件"
+        v-model="event.eventCode"
+      >
         <el-option-group
           v-for="group in dict?.events"
           :key="group.eventType"

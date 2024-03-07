@@ -3,7 +3,7 @@ import { onMounted, ref, provide } from "vue";
 import BehaviorContent from "./BehaviorContent.vue";
 import LogicalLine from "./LogicalLine.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
-import { CustomEventConditionDTO } from "~/touch-flow/touch-total";
+import { CustomEventConditionDTO, EventSearchCondition, SearchCondition } from "~/touch-flow/touch-total";
 
 const props = defineProps<{
   custom: CustomEventConditionDTO;
@@ -18,12 +18,7 @@ const props = defineProps<{
 const dict = ref<any>();
 
 onMounted(async () => {
-  const res = await getDictFilterTree(
-    {
-      pageNum:"1",
-      pageSize:"999"
-    }
-  );
+  const res = await getDictFilterTree();
 
   if (res.data) {
     dict.value = res.data;
@@ -37,6 +32,22 @@ const refreshTree = () => {
   );
 };
 
+function handleAdd(condition: any) {
+  console.log('q', condition)
+
+  const obj: EventSearchCondition = {
+    action: "",
+    conditions: {
+      conditions: new Array<SearchCondition>(),
+      logicalChar: "或",
+    },
+    eventCode: "",
+    eventName: "",
+  };
+
+  condition.conditions.push(obj)
+}
+
 provide("refreshTree", refreshTree);
 </script>
 
@@ -45,8 +56,11 @@ provide("refreshTree", refreshTree);
     <div class="Basic-Block-Content">
       <div v-if="dict && custom.conditions?.length" class="Target-Block">
         <LogicalLine :display="!custom.conditions?.length" v-model="custom.logicalChar">
-          <div v-for="(condition, index) in custom.conditions" :key="index">
-            <BehaviorContent :readonly="readonly" :condition="condition" :dict="dict" />
+          <div
+            v-for="(condition, index) in custom.conditions"
+            :key="index"
+          >
+            <BehaviorContent @addSub="handleAdd(condition)" :readonly="readonly" :condition="condition" :dict="dict" />
           </div>
         </LogicalLine>
       </div>

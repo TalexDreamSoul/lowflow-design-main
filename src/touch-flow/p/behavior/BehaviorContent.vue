@@ -3,16 +3,14 @@ import { computed, inject, ref } from "vue";
 import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 import BehaviorSubContent from "./BehaviorSubContent.vue";
 import LogicalLine from "./LogicalLine.vue";
-import {
-  EventConditionDTO,
-  EventSearchCondition,
-} from "~/touch-flow/touch-total";
+import { EventConditionDTO, EventSearchCondition } from "~/touch-flow/touch-total";
 
 const props = defineProps<{
   condition: EventConditionDTO;
   dict: any;
   readonly?: boolean;
 }>();
+const emits = defineEmits(["addSub"]);
 
 const subDataObj = Object.freeze({
   attr: {
@@ -50,7 +48,7 @@ const handleDel = (index: number) => {
 
 const conditionArr = computed(() => props.condition.conditions);
 
-function handleSubAdd(item: EventSearchCondition) {
+function handleAdd(item: EventSearchCondition) {
   const arr = (item.conditions.conditions = item.conditions.conditions || []);
 
   arr.push(JSON.parse(JSON.stringify(subDataObj)));
@@ -70,7 +68,7 @@ function handleSubAdd(item: EventSearchCondition) {
             range-separator="-"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            style="width: 120px"
+            style="width: 50px"
           />
           <el-select
             style="width: 100px"
@@ -82,7 +80,7 @@ function handleSubAdd(item: EventSearchCondition) {
             <el-option label="未做过" value="!=" />
           </el-select>
           <el-select
-          style="width: 200px"
+            style="width: 150px"
             :disabled="readonly"
             placeholder="选择事件"
             v-model="item.eventCode"
@@ -106,23 +104,41 @@ function handleSubAdd(item: EventSearchCondition) {
               v-if="item.eventCode"
               type="primary"
               style="cursor: pointer"
-              @click="handleSubAdd(item)"
+              @click="handleAdd(item)"
             >
               <el-icon size="12">
                 <CirclePlusFilled />
               </el-icon>
               添加筛选
             </el-text>
-            <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
-              <el-icon size="14">
-                <Delete />
-              </el-icon>
-              删除
-            </el-text>
+            <div class="CustomBehavior-Line-Group-Sticky">
+              <el-text
+                v-if="item.eventCode && conditionArr.length === index + 1"
+                type="primary"
+                style="cursor: pointer"
+                @click="emits('addSub')"
+              >
+                <el-icon size="12">
+                  <CirclePlusFilled />
+                </el-icon>
+                添加同组
+              </el-text>
+              <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
+                <el-icon size="14">
+                  <Delete />
+                </el-icon>
+                删除
+              </el-text>
+            </div>
           </div>
         </div>
 
-        <BehaviorSubContent :index="index" :dict="dict" :condition="item" />
+        <BehaviorSubContent
+          title="并且满足"
+          :index="index"
+          :dict="dict"
+          :condition="item"
+        />
       </div>
     </LogicalLine>
   </div>
@@ -138,12 +154,20 @@ function handleSubAdd(item: EventSearchCondition) {
 
   &-Line {
     &-Group {
+      &-Sticky {
+        display: flex;
+
+        gap: 0.5rem;
+      }
       display: flex;
+      padding: 0 1rem 0 0.5rem;
 
       flex: 1;
 
       gap: 1rem;
       align-items: center;
+      box-sizing: border-box;
+      justify-content: space-between;
     }
     display: flex;
 
