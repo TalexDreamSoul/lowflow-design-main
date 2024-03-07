@@ -123,8 +123,8 @@ function handleSelectChanged(val: string) {
           v-model="target.targetDelayed.delayedUnit"
           style="width: 150px"
         >
-          <el-option value="month" label="月份">分钟</el-option>
-          <el-option value="week" label="周">小时</el-option>
+          <el-option value="month" label="月">月</el-option>
+          <el-option value="week" label="周">周</el-option>
           <el-option value="day" label="天">天</el-option> </el-select
         >&nbsp;
         <el-text>内完成以下转化事件，则认为完成目标</el-text>

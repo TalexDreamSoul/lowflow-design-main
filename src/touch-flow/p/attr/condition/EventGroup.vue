@@ -107,8 +107,8 @@ function addEventB() {
             v-model="p.triggerRuleContent.delayed.delayedUnit"
             style="width: 150px"
           >
-            <el-option value="month" label="月份">分钟</el-option>
-            <el-option value="week" label="周">小时</el-option>
+            <el-option value="month" label="月">月</el-option>
+            <el-option value="week" label="周">周</el-option>
             <el-option value="day" label="天">天</el-option>
           </el-select>
           <el-text>后立即判断</el-text>
