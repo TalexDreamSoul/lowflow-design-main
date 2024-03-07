@@ -82,7 +82,16 @@ function handleAdd() {
 //   //   conditions:
 //   // })
 // }
+function handleSubAdd(item: any) {
+  console.log("----", item.conditions, conditionArr.value);
+  const arr = (item.conditions.conditions = item.conditions.conditions || []);
 
+  arr.push({
+    attr: "",
+    label: "",
+    type: "",
+  });
+}
 function handleSubDel(index: number) {
   props.condition.conditions.splice(index, 1);
 }
@@ -104,7 +113,7 @@ function handleSubDel(index: number) {
       <span style="color: #484545"> &nbsp;&nbsp; 依次做过 </span>
 
       <span style="zoom:.8">
-        <el-text
+        <!-- <el-text
           :disabled="readonly"
           type="primary"
           style="cursor: pointer"
@@ -115,7 +124,7 @@ function handleSubDel(index: number) {
           </el-icon>
           添加同组
         </el-text>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; -->
         <el-text
           :disabled="readonly"
           type="primary"
