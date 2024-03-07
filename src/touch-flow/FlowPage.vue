@@ -1,24 +1,50 @@
 <script setup lang="ts" name="FlowPage">
-import { watchEffect, reactive, ref } from "vue";
+import { watchEffect, reactive, ref, onMounted } from "vue";
 import FlowHeader from "./header/FlowHeader.vue";
 import { randomStr } from "~/utils/common";
-import { touchSubmitReview, type Request } from './touch-total'
-import XFlow from './x/XFlow.vue'
+import { touchSubmitReview, type Request } from "./touch-total";
+import XFlow from "./x/XFlow.vue";
 import { ArrowRight } from "@element-plus/icons-vue";
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import { flatConvert2Tree } from './flow-utils'
+import { flatConvert2Tree } from "./flow-utils";
 import { IFlowHeader } from "./flow-types";
 import { ITEM_RENDER_EVT } from "element-plus/es/components/virtual-list/src/defaults";
+import { getmarketingTouchDetail } from "~/api/index";
+
+const route = useRoute();
 
 const props = defineProps<{
   modelValue?: Request;
   readonly?: boolean;
 }>();
 
-const flowOptions = reactive<{
-  basic: IFlowHeader
-} & { p: any }>({
+onMounted(async () => {
+  if (route.params.id) {
+    fetchDataDetails();
+  }
+});
+
+const fetchDataDetails = async () => {
+  const res = await getmarketingTouchDetail({
+    id: route.params.id,
+  });
+  const data = res.data;
+  console.log("!!!", data);
+
+  Object.assign(flowOptions.basic, {
+    touchName: data.touchName,
+    disturb: disturbReduction(data),
+    target: targetReduction(data),
+  });
+  flowOptions.p.children = flatConvert2Tree([...data.nodes!]);
+  console.log("FlowPage updated!", props.modelValue);
+};
+const flowOptions = reactive<
+  {
+    basic: IFlowHeader;
+  } & { p: any }
+>({
   basic: {
     _expand: false,
     touchName: "",
@@ -30,7 +56,7 @@ const flowOptions = reactive<{
     target: {
       enable: false,
       targetRuleContent: {
-        data: []
+        data: [],
       },
     },
   },
@@ -44,21 +70,21 @@ const flowOptions = reactive<{
 
 watchEffect(() => {
   if (props.modelValue) {
-    const data = props.modelValue
+    const data = props.modelValue;
 
-    console.log("!!!", data)
+    console.log("!!!", data);
 
     Object.assign(flowOptions.basic, {
       touchName: data.touchName,
       disturb: disturbReduction(data),
       target: targetReduction(data),
-    })
+    });
 
-    flowOptions.p.children = flatConvert2Tree([...data.nodes!])
+    flowOptions.p.children = flatConvert2Tree([...data.nodes!]);
 
-    console.log('FlowPage updated!', props.modelValue)
+    console.log("FlowPage updated!", props.modelValue);
   }
-})
+});
 
 function transformDisturb(disturb: typeof flowOptions.basic.disturb) {
   return {
@@ -66,7 +92,7 @@ function transformDisturb(disturb: typeof flowOptions.basic.disturb) {
     disturbStartTime: disturb.time[0],
     disturbEndTime: disturb.time[1],
     disturbType: disturb.action,
-  }
+  };
 }
 
 function disturbReduction(data: Request) {
@@ -74,47 +100,50 @@ function disturbReduction(data: Request) {
     enable: data.isDisturb,
     time: [data.disturbStartTime, data.disturbEndTime],
     action: data.disturbType,
-  }
+  };
 }
 
 function transformTarget(target: typeof flowOptions.basic.target) {
   return {
     containTarget: target.enable,
     targetRuleContent: target.targetRuleContent,
-  }
+  };
 }
 
 function targetReduction(data: Request) {
   return {
     enable: data.containTarget ?? props.readonly,
     targetRuleContent: data.targetRuleContent || [],
-  }
+  };
 }
 
 function transformNodes(__nodes: Array<any>) {
   const res: Array<any> = [];
 
   [...__nodes].forEach((node: any) => {
-    console.log("do have father", node.father)
+    console.log("do have father", node.father);
 
     if (node.father) {
-
-      if (node.father.nodeType === 'Start') {
-        node.preNodeId = 'root'
+      if (node.father.nodeType === "Start") {
+        node.preNodeId = "root";
       } else {
         // 先拿到父元素中children 我这个元素的位置
-        const fatherInd = [...node.father.children].indexOf((item: any) => item.nodeId === node.nodeId)
+        const fatherInd = [...node.father.children].indexOf(
+          (item: any) => item.nodeId === node.nodeId
+        );
 
-        node.preNodeId = (fatherInd < 1 ? node.father.nodeId : node.father.children[fatherInd - 1].nodeId)
-
+        node.preNodeId =
+          fatherInd < 1
+            ? node.father.nodeId
+            : node.father.children[fatherInd - 1].nodeId;
       }
 
       // node.nextNodeId = (fatherInd < node.father.children.length - 1 ? node.father.children[fatherInd + 1].nodeId : node.children?.[0]?.nodeId)
 
       if (!node.father?.nextNodeId?.data) {
         node.father.nextNodeId = {
-          data: []
-        }
+          data: [],
+        };
       }
 
       // 获取子元素
@@ -126,25 +155,23 @@ function transformNodes(__nodes: Array<any>) {
     }
 
     if (node.children) {
-
-      const children = node.children
+      const children = node.children;
       if (children.length) {
         node.nextNodeId = {
-          data: [ ...children ].map(item => item.nodeId)
-        }
+          data: [...children].map((item) => item.nodeId),
+        };
       }
 
-      transformNodes(node.children)
+      transformNodes(node.children);
       // [...node.children].forEach((child, index) => {
       //   node.children[index] = transformNodes([child])
       // })
     }
 
-    res.push(node)
-  })
+    res.push(node);
+  });
 
-
-  return res
+  return res;
 }
 
 function flatMaps(__nodes: Array<any>) {
@@ -152,52 +179,51 @@ function flatMaps(__nodes: Array<any>) {
   // 每一个node有一个children: [] 要铺平
   const res: Array<any> = [];
 
-  const stack: any = [...__nodes]
+  const stack: any = [...__nodes];
 
   while (stack.length) {
-    const node = stack.pop()
+    const node = stack.pop();
 
-    const obj = { ...node }
+    const obj = { ...node };
 
     if (obj.children) {
-      stack.push(...node.children)
+      stack.push(...node.children);
 
-      delete obj.children
+      delete obj.children;
     }
 
-    res.push(obj)
-
+    res.push(obj);
   }
 
-  return res
+  return res;
 }
 
-async function submitReview(status: string = 'approvalPending') {
-  if (props.readonly) return
+async function submitReview(status: string = "approvalPending") {
+  if (props.readonly) return;
 
-  console.groupCollapsed('submit')
+  console.groupCollapsed("submit");
 
-  console.log("transformNodes", flowOptions.p.children)
+  console.log("transformNodes", flowOptions.p.children);
 
   const _flowOptions: any = {
     ...flowOptions.p,
     nodes: flatMaps(transformNodes([...flowOptions.p.children])),
     touchName: flowOptions.basic.touchName,
     ...transformDisturb(flowOptions.basic.disturb),
-    ...transformTarget(flowOptions.basic.target)
-  }
+    ...transformTarget(flowOptions.basic.target),
+  };
 
-  console.log("flowOptions", _flowOptions)
+  console.log("flowOptions", _flowOptions);
 
-  delete _flowOptions.children
-  delete _flowOptions.id
+  delete _flowOptions.children;
+  delete _flowOptions.id;
 
   const data: Request = {
-    status
-  }
-  Object.assign(data, _flowOptions)
+    status,
+  };
+  Object.assign(data, _flowOptions);
 
-  const res = await touchSubmitReview(data)
+  const res = await touchSubmitReview(data);
 
   if (!+res?.code) {
     return ElMessage({
@@ -207,19 +233,19 @@ async function submitReview(status: string = 'approvalPending') {
       onClose: () => {
         router.go(-1);
       },
-    })
+    });
   }
 
-  console.log(res, data)
+  console.log(res, data);
 
-  console.groupEnd()
+  console.groupEnd();
 }
 
 const router = useRouter();
 
-const dialogVisible = ref()
+const dialogVisible = ref();
 
-console.log("total flow", flowOptions);;
+console.log("total flow", flowOptions);
 
 const goBack = () => {
   router.go(-1);
@@ -228,23 +254,14 @@ const goBack = () => {
 
 <template>
   <div class="FlowPage">
-    <el-container
-      :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }"
-      class="FlowPage-Container"
-    >
+    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
       <el-header>
         <FlowHeader v-if="!modelValue || !readonly" :basic="flowOptions.basic">
           <template #controller>
             <div>
               <el-button @click="goBack" round>返回</el-button>
               <el-button @click="submitReview('draft')" round>保存草稿</el-button>
-              <el-button
-                round
-                type="primary"
-                @click="submitReview('')"
-                class="primaryStyle"
-                >提交审核</el-button
-              >
+              <el-button round type="primary" @click="submitReview('')" class="primaryStyle">提交审核</el-button>
             </div>
           </template>
         </FlowHeader>
@@ -267,13 +284,7 @@ const goBack = () => {
 
   <teleport to="body">
     <el-dialog title="流程基础设置" v-model="dialogVisible">
-      <FlowHeader
-        :readonly="readonly"
-        :expandAll="true"
-        class="FlowPage-ShrinkHeader"
-        @submit-review="submitReview"
-        :basic="flowOptions.basic"
-      />
+      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview" :basic="flowOptions.basic" />
     </el-dialog>
   </teleport>
 </template>
@@ -316,7 +327,8 @@ div.el-dialog {
     perspective: 100px;
     transition: height 0.25s;
     background-color: #ffffff;
-    box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.125);
+    box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02),
+      0 2px 4px rgba(0, 0, 0, 0.125);
 
     animation: header-join 0.5s;
   }
