@@ -1,9 +1,9 @@
 <script setup lang="ts" name="TouchSettings">
-import TouchSettingContents from '../touch/TouchSettingContents.vue'
-import { reactive, ref, computed } from 'vue'
+import TouchSettingContents from "../touch/TouchSettingContents.vue";
+import { reactive, ref, computed, watchEffect, nextTick } from "vue";
 import { getQryMaterial } from "~/api";
-import { MaterialTemplateEditDTO } from './touch-types'
-import { createTemplatePopover } from '~/utils/touch-templates'
+import { MaterialTemplateEditDTO } from "./touch-types";
+import { createTemplatePopover } from "~/utils/touch-templates";
 
 import ZnxTemplateVue from "~/utils/templates/ZnxTemplate.vue";
 import SmsTemplateVue from "~/utils/templates/SmsTemplateVue.vue";
@@ -11,7 +11,12 @@ import AppTemplateVue from "~/utils/templates/AppTemplateVue.vue";
 import DigitalTemplateVue from "~/utils/templates/DigitalTemplateVue.vue";
 import OutboundTemplateVue from "~/utils/templates/OutboundTemplateVue.vue";
 
-type TemplateComponents = typeof ZnxTemplateVue | typeof SmsTemplateVue | typeof AppTemplateVue | typeof DigitalTemplateVue | typeof OutboundTemplateVue
+type TemplateComponents =
+  | typeof ZnxTemplateVue
+  | typeof SmsTemplateVue
+  | typeof AppTemplateVue
+  | typeof DigitalTemplateVue
+  | typeof OutboundTemplateVue;
 const origin: MaterialTemplateEditDTO = {
   material: {
     beginTime: "",
@@ -20,10 +25,12 @@ const origin: MaterialTemplateEditDTO = {
     pageNum: 10,
     pageSize: -1,
     status: "available",
-    templates: [{
-      id: -1,
-      name: '不使用模板'
-    }]
+    templates: [
+      {
+        id: -1,
+        name: "不使用模板",
+      },
+    ],
   },
   appPushTemplate: {
     content: "",
@@ -32,14 +39,14 @@ const origin: MaterialTemplateEditDTO = {
     pageLink: "",
     sceneCode: "",
     title: "",
-    titleVariables: []
+    titleVariables: [],
   },
   digitalTemplate: {
-    digitalTemplateDetails: []
+    digitalTemplateDetails: [],
   },
   outboundTemplate: {
     outboundCode: "",
-    variables: []
+    variables: [],
   },
   znxTemplate: {
     carouselId: "",
@@ -49,139 +56,201 @@ const origin: MaterialTemplateEditDTO = {
     znxTitle: "",
     znxTitleVariables: [],
     listTitle: "",
-    titleVariables: []
+    titleVariables: [],
   },
   smsTemplate: {
     content: "",
     sceneCode: "",
-    variables: []
+    variables: [],
   },
-  type: ''
+  type: "",
 };
 
 const props = defineProps<{
   touch: MaterialTemplateEditDTO;
-  readonly?: boolean
+  readonly?: boolean;
 }>();
 
-const comp = ref<TemplateComponents>()
-const showComp = ref<boolean>(false)
+const comp = ref<TemplateComponents>();
+const showComp = ref<boolean>(false);
 const touchOptions = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 
-async function refreshMaterialTemplate(clearStatus: boolean = true) {
-  if ( clearStatus )
-    touchOptions.id = -1
+watchEffect(() => {
+  if (!props.touch?.id) return;
 
-  const { material } = touchOptions
+  Object.assign(touchOptions, props.touch);
+
+  nextTick(() => {
+    assignData(touchOptions.id);
+  });
+});
+
+async function refreshMaterialTemplate(clearStatus: boolean = true) {
+  if (clearStatus) touchOptions.id = -1;
+
+  const { material } = touchOptions;
 
   let res = await getQryMaterial({
     ...material,
-    type: touchOptions.type
+    type: touchOptions.type,
   });
 
   if (res.data?.records) {
-    touchOptions.material.templates = [{
-      id: -1,
-      name: "不使用模板"
-    }, ...res.data.records];
+    touchOptions.material.templates = [
+      {
+        id: -1,
+        name: "不使用模板",
+      },
+      ...res.data.records,
+    ];
   }
 }
 
 function updateData() {
   const { saveData: save } = comp.value!;
 
-  const templateData = touchOptions[curPlatform.value.propKey]
+  const templateData = touchOptions[curPlatform.value.propKey];
 
-  Object.assign(templateData, save())
+  Object.assign(templateData, save());
 
-  Object.assign(props.touch, touchOptions)
+  Object.assign(props.touch, touchOptions);
+
+  console.log("ud", templateData, props.touch);
 }
 
 function handleAddDone() {
-  refreshMaterialTemplate(false)
+  refreshMaterialTemplate(false);
 }
 
 function assignData(val: any) {
-  showComp.value = false
+  showComp.value = false;
 
   let res;
 
-  if ( val === -1 ) {
-    res = origin[curPlatform.value.propKey]
+  if (val === -1) {
+    res = origin[curPlatform.value.propKey];
 
-    res.content = {}
-    res.name = ''
-    res.sceneCode = ''
-  } else res = touchOptions.material.templates.find((item: any) => item.id === val)
+    res.content = {};
+    res.name = "";
+    res.sceneCode = "";
+  } else res = touchOptions.material.templates.find((item: any) => item.id === val);
 
-  console.log('assign', res, touchOptions, curPlatform.value.propKey)
+  console.log("assign", res, touchOptions, curPlatform.value.propKey);
 
-  Object.assign(touchOptions[curPlatform.value.propKey], { ...res.content , id: res.id, name: res.name, status: res.status })
+  Object.assign(touchOptions[curPlatform.value.propKey], {
+    ...res.content,
+    id: res.id,
+    name: res.name,
+    status: res.status,
+  });
 
-  setTimeout(() => showComp.value = true, 10)
+  setTimeout(() => (showComp.value = true), 10);
 }
 
-const platformOptions: Record<string, {
-  button: {
-    label: string,
-    click: Function
-  },
-  propKey: string,
-  template: TemplateComponents
-}> = {
-  'sms': {
+const platformOptions: Record<
+  string,
+  {
+    button: {
+      label: string;
+      click: Function;
+    };
+    propKey: string;
+    template: TemplateComponents;
+  }
+> = {
+  sms: {
     button: {
       label: "短信",
-      click: () => createTemplatePopover("新建短信模板", "sms", undefined, undefined, props.readonly).then(handleAddDone)
+      click: () =>
+        createTemplatePopover(
+          "新建短信模板",
+          "sms",
+          undefined,
+          undefined,
+          props.readonly
+        ).then(handleAddDone),
     },
     propKey: "smsTemplate",
-    template: SmsTemplateVue
+    template: SmsTemplateVue,
   },
-  'appPush': {
+  appPush: {
     button: {
       label: "app消息",
-      click: () => createTemplatePopover("新建App消息模板", "appPush", undefined, undefined, props.readonly).then(handleAddDone)
+      click: () =>
+        createTemplatePopover(
+          "新建App消息模板",
+          "appPush",
+          undefined,
+          undefined,
+          props.readonly
+        ).then(handleAddDone),
     },
     propKey: "appPushTemplate",
-    template: AppTemplateVue
+    template: AppTemplateVue,
   },
-  'digital': {
+  digital: {
     button: {
       label: "企微",
-      click: () => createTemplatePopover("新建企微模板", "digital", undefined, undefined, props.readonly).then(handleAddDone)
+      click: () =>
+        createTemplatePopover(
+          "新建企微模板",
+          "digital",
+          undefined,
+          undefined,
+          props.readonly
+        ).then(handleAddDone),
     },
     propKey: "digitalTemplate",
-    template: DigitalTemplateVue
+    template: DigitalTemplateVue,
   },
-  'outbound': {
+  outbound: {
     button: {
       label: "智能外呼",
-      click: () => createTemplatePopover("新建智能外呼模板", "outbound", undefined, undefined, props.readonly).then(handleAddDone)
+      click: () =>
+        createTemplatePopover(
+          "新建智能外呼模板",
+          "outbound",
+          undefined,
+          undefined,
+          props.readonly
+        ).then(handleAddDone),
     },
     propKey: "outboundTemplate",
-    template: OutboundTemplateVue
+    template: OutboundTemplateVue,
   },
-  'znx': {
+  znx: {
     button: {
       label: "站内信",
-      click: () => createTemplatePopover("新建站内信模板", "znx", undefined, undefined, props.readonly).then(handleAddDone)
+      click: () =>
+        createTemplatePopover(
+          "新建站内信模板",
+          "znx",
+          undefined,
+          undefined,
+          props.readonly
+        ).then(handleAddDone),
     },
     propKey: "znxTemplate",
-    template: ZnxTemplateVue
+    template: ZnxTemplateVue,
   },
-}
+};
 
-const curPlatform = computed(() => platformOptions[touchOptions.type!])
+const curPlatform = computed(() => platformOptions[touchOptions.type!]);
 
-defineExpose({ updateData  })
+defineExpose({ updateData });
 </script>
 
 <template>
   <div>
     <el-form>
       <el-form-item label="触达通道">
-        <el-select :disabled="readonly" placeholder="请选择通道" @change="refreshMaterialTemplate" v-model="touchOptions.type"
-          style="width: 120px">
+        <el-select
+          :disabled="readonly"
+          placeholder="请选择通道"
+          @change="refreshMaterialTemplate"
+          v-model="touchOptions.type"
+          style="width: 120px"
+        >
           <el-option value="sms" label="短信">手机短信</el-option>
           <el-option value="appPush" label="app消息">app消息</el-option>
           <el-option value="digital" label="企微">企微</el-option>
@@ -190,8 +259,17 @@ defineExpose({ updateData  })
         </el-select>
       </el-form-item>
       <el-form-item v-if="touchOptions.type" label="选择模版">
-        <el-select @change="assignData" :disabled="readonly" v-model="touchOptions.id" style="width: 120px">
-          <el-option v-for="item in (touchOptions.material.templates)" :value="item.id" :label="item.name">
+        <el-select
+          @change="assignData"
+          :disabled="readonly"
+          v-model="touchOptions.id"
+          style="width: 120px"
+        >
+          <el-option
+            v-for="item in touchOptions.material.templates"
+            :value="item.id"
+            :label="item.name"
+          >
             <div class="template-option">
               <span>{{ item.name }}</span>
               <span class="template-desc" v-if="(item as any)?.content?.content">
@@ -200,12 +278,25 @@ defineExpose({ updateData  })
             </div>
           </el-option>
         </el-select>
-        <el-button :disabled="readonly" v-if="curPlatform" @click="curPlatform.button.click" ml-1rem type="primary" plain>
-          新增{{ curPlatform.button.label }}模块版本</el-button>
+        <el-button
+          :disabled="readonly"
+          v-if="curPlatform"
+          @click="curPlatform.button.click"
+          ml-1rem
+          type="primary"
+          plain
+        >
+          新增{{ curPlatform.button.label }}模块版本</el-button
+        >
       </el-form-item>
 
       <template v-if="curPlatform && showComp">
-        <component ref="comp" :disabled="readonly" :is="curPlatform.template" :data="touchOptions[curPlatform.propKey]" />
+        <component
+          ref="comp"
+          :disabled="readonly"
+          :is="curPlatform.template"
+          :data="touchOptions[curPlatform.propKey]"
+        />
       </template>
     </el-form>
   </div>

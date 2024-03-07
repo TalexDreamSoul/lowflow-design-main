@@ -93,6 +93,11 @@ watchEffect(() => {
     Object.assign(sizeForm, props.p);
 
     sizeForm.nodeId = nodeId;
+
+    if (props.p.touchTemplateContent)
+      sizeForm.touchTemplateContent = props.p.touchTemplateContent;
+
+    console.log("aqwqsdadas", props.p, sizeForm)
   }
 });
 
@@ -123,6 +128,8 @@ function saveData() {
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm);
 
+  console.log("ppp", _);
+
   Object.defineProperty(_, "father", {
     value: markRaw(props.p),
     enumerable: false,
@@ -148,7 +155,7 @@ function saveData() {
 
     _.nodeId = randomStr(12);
 
-    console.log('add', props.p)
+    console.log("add", props.p);
 
     props.p.children.push(_);
   }
@@ -207,7 +214,10 @@ regSaveFunc(saveData);
           >&nbsp;
           <el-text>
             后判断客户
-            <el-select v-model="sizeForm.eventDelayed!.delayedAction" style="width: 100px">
+            <el-select
+              v-model="sizeForm.eventDelayed!.delayedAction"
+              style="width: 100px"
+            >
               <el-option value="=" label="做过">做过</el-option>
               <el-option value="!=" label="没做过">没做过</el-option>
             </el-select>
