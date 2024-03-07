@@ -60,6 +60,26 @@ const getmarketingTouchNode = async () => {
   });
   StatisticsList.value = res.data;
   console.log(StatisticsList, "res");
+
+  chart.value = echarts.init(chartContainer.value);
+  const options = {
+    xAxis: {
+      type: "category",
+      data: ["累计进入", "累计触达", "完成目标一", "完成目标二"],
+    },
+    yAxis: {
+      type: "value",
+    },
+    series: [
+      {
+        data: [StatisticsList.value.accumulateEntryCount, StatisticsList.value.accumulateTouchCount, StatisticsList.value.completeTargetCount1, StatisticsList.value.completeTargetCount2],
+        type: "bar",
+        barWidth: 30, // 设置柱体宽度
+      },
+    ],
+  };
+  chart.value.setOption(options);
+  console.log(`output->options`,options)
 };
 
 const chartContainer = ref(null);
@@ -87,26 +107,6 @@ const chart = ref(null);
 //   }
 // });
 
-onMounted(() => {
-  chart.value = echarts.init(chartContainer.value);
-  const options = {
-    xAxis: {
-      type: "category",
-      data: ["累计进入", "累计触达", "完成目标一", "完成目标二"],
-    },
-    yAxis: {
-      type: "value",
-    },
-    series: [
-      {
-        data: [StatisticsList.value.accumulateEntryCount, StatisticsList.value.accumulateTouchCount, StatisticsList.value.completeTargetCount1, StatisticsList.value.completeTargetCount2],
-        type: "bar",
-        barWidth: 30, // 设置柱体宽度
-      },
-    ],
-  };
-  chart.value.setOption(options);
-});
 </script>
 
 <template>
