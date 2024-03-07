@@ -5,6 +5,7 @@ type AttrType = any; //number | string | boolean | Array<Number> | Array<string>
 
 const props = defineProps<{
   item: AttrType;
+  obj: any;
   attrs: any;
   selected?: string;
   readonly?: boolean;
@@ -139,7 +140,7 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
 
 <template>
   <div
-    v-if="!(item.fieldOp?.indexOf('空') !== -1)"
+    v-if="obj?.type !== 'label' && !(item.fieldOp?.indexOf('空') !== -1)"
     class="AttrRender"
     style="display: flex; gap: 1rem"
   >

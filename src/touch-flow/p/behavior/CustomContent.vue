@@ -114,20 +114,21 @@ const getCurrSelected = (condition: any) =>
     <LogicalLine :display="conditionArr?.length < 2" v-model="condition.logicalChar">
       <div v-for="(item, index) in conditionArr" :key="index" class="AttrLine">
         <trigger
-          @update-type="(val) => item.type = val"
+          @update-type="(val) => (item.type = val)"
           multiple
           v-model="item.attr.field"
           :item="item.attr"
+          :obj="item"
           :attrs="attrs"
           :disabled="readonly"
           placeholder="客户属性/标签"
-          style="width: 220px"
-
+          :style="`width: ${item.type === 'label' ? '500' : '220'}px`"
         />
         <operator
           :selected="getCurrSelected(item)"
           :attrs="attrs"
           :item="item.attr"
+          :obj="item"
           :disabled="readonly"
           ref="operatorRef"
           v-model="item.attr.fieldOp"
@@ -137,6 +138,7 @@ const getCurrSelected = (condition: any) =>
           :selected="getCurrSelected(item)"
           :disabled="readonly"
           :item="item.attr"
+          :obj="item"
           :attrs="attrs"
         />
 
