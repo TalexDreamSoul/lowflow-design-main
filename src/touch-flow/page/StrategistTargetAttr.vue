@@ -84,7 +84,7 @@ if (!props.sizeForm?.targetRuleContent?.targetDelayed) {
           v-model="sizeForm.targetRuleContent.targetDelayed.delayedUnit"
           style="width: 150px"
         >
-          <el-option value="min" label="月份">分钟</el-option>
+          <el-option value="minute" label="月份">分钟</el-option>
           <el-option value="hour" label="周">小时</el-option>
           <el-option value="day" label="天">天</el-option> </el-select
         >&nbsp;
