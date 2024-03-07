@@ -3,7 +3,11 @@ import { onMounted, ref, provide } from "vue";
 import BehaviorContent from "./BehaviorContent.vue";
 import LogicalLine from "./LogicalLine.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
-import { CustomEventConditionDTO, EventSearchCondition, SearchCondition } from "~/touch-flow/touch-total";
+import {
+  CustomEventConditionDTO,
+  EventSearchCondition,
+  SearchCondition,
+} from "~/touch-flow/touch-total";
 
 const props = defineProps<{
   custom: CustomEventConditionDTO;
@@ -25,6 +29,8 @@ onMounted(async () => {
   }
 });
 
+// 删除某一项为空
+// { conditions: [] } => 仍然会显示 => 删除掉 不要去显示仅剩的一个 或
 const refreshTree = () => {
   [...props.custom.conditions].forEach(
     (condition, index) =>
@@ -33,7 +39,7 @@ const refreshTree = () => {
 };
 
 function handleAdd(condition: any) {
-  console.log('q', condition)
+  console.log("q", condition);
 
   const obj: EventSearchCondition = {
     action: "",
@@ -45,7 +51,13 @@ function handleAdd(condition: any) {
     eventName: "",
   };
 
-  condition.conditions.push(obj)
+  condition.conditions.push(JSON.parse(JSON.stringify(obj)));
+}
+
+function handleDel(ind: number, condition: any) {
+  condition.conditions.splice(ind, 1);
+
+  refreshTree();
 }
 
 provide("refreshTree", refreshTree);
@@ -56,12 +68,24 @@ provide("refreshTree", refreshTree);
     <div class="Basic-Block-Content">
       <div v-if="dict && custom.conditions?.length" class="Target-Block">
         <LogicalLine :display="!custom.conditions?.length" v-model="custom.logicalChar">
-          <div
+          <LogicalLine
+            v-model="condition.logicalChar"
             v-for="(condition, index) in custom.conditions"
+            :display="condition?.conditions?.length < 2"
             :key="index"
           >
-            <BehaviorContent @addSub="handleAdd(condition)" :readonly="readonly" :condition="condition" :dict="dict" />
-          </div>
+            <BehaviorContent
+              v-for="(item, ind) in condition.conditions"
+              :key="ind"
+              @addSub="handleAdd(condition)"
+              @del="handleDel(ind, condition)"
+              :readonly="readonly"
+              :condition="item"
+              :index="ind"
+              :length="condition.conditions.length"
+              :dict="dict"
+            />
+          </LogicalLine>
         </LogicalLine>
       </div>
     </div>

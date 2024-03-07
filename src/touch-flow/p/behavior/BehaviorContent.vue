@@ -3,14 +3,16 @@ import { computed, inject, ref } from "vue";
 import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 import BehaviorSubContent from "./BehaviorSubContent.vue";
 import LogicalLine from "./LogicalLine.vue";
-import { EventConditionDTO, EventSearchCondition } from "~/touch-flow/touch-total";
+import { EventSearchCondition } from "~/touch-flow/touch-total";
 
 const props = defineProps<{
-  condition: EventConditionDTO;
+  condition: EventSearchCondition;
+  length: number;
+  index: number;
   dict: any;
   readonly?: boolean;
 }>();
-const emits = defineEmits(["addSub"]);
+const emits = defineEmits(["addSub", "del"]);
 
 const subDataObj = Object.freeze({
   attr: {
@@ -40,107 +42,114 @@ function handleDateChange(item: any) {
   item.endTime = endTime;
 }
 
-const handleDel = (index: number) => {
-  props.condition.conditions.splice(index, 1);
+// const handleDel = (index: number) => {
+//   console.log('aaa', props.condition, index)
+//   // props.condition.conditions.splice(index, 1);
 
-  refreshTree();
-};
+//   // refreshTree();
+// };
 
-const conditionArr = computed(() => props.condition.conditions);
+// const conditionArr = computed(() => props.condition.conditions);
 
 function handleAdd(item: EventSearchCondition) {
   const arr = (item.conditions.conditions = item.conditions.conditions || []);
 
   arr.push(JSON.parse(JSON.stringify(subDataObj)));
 }
+
+function handleChange(val: string, condition: any) {
+  console.log(val, condition, props.dict)
+}
 </script>
 
 <template>
   <div class="CustomBehavior">
-    <LogicalLine :display="conditionArr?.length < 2" v-model="condition.logicalChar">
-      <div v-for="(item, index) in conditionArr" :key="index" class="CustomBehavior-Main">
-        <div class="CustomBehavior-Line">
-          <el-date-picker
-            @change="handleDateChange(item)"
-            :disabled="readonly"
-            v-model="timeRange"
-            type="daterange"
-            range-separator="-"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            style="width: 50px"
+    <!-- <LogicalLine :display="conditionArr?.length < 2" v-model="condition.logicalChar"> -->
+    <!-- <div v-for="(item, index) in conditionArr" :key="index" class="CustomBehavior-Main"> -->
+    <div class="CustomBehavior-Line">
+      <el-date-picker
+        @change="handleDateChange(condition)"
+        :disabled="readonly"
+        v-model="timeRange"
+        type="daterange"
+        range-separator="-"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        style="width: 50px"
+      />
+      <el-select
+        style="width: 100px"
+        :disabled="readonly"
+        placeholder="是否做过"
+        v-model="condition.action"
+      >
+        <el-option label="做过" value="=" />
+        <el-option label="未做过" value="!=" />
+      </el-select>
+      <el-select
+        @change="handleChange($event, condition)"
+        style="width: 150px"
+        :disabled="readonly"
+        placeholder="选择事件"
+        v-model="condition.eventCode"
+      >
+        <el-option-group
+          v-for="group in dict?.events"
+          :key="group.eventType"
+          :label="group.eventTypeName"
+        >
+          <el-option
+            v-for="item in group.events"
+            :key="item.id"
+            :label="item.eventName"
+            :value="item.eventCode"
           />
-          <el-select
-            style="width: 100px"
-            :disabled="readonly"
-            placeholder="是否做过"
-            v-model="item.action"
-          >
-            <el-option label="做过" value="=" />
-            <el-option label="未做过" value="!=" />
-          </el-select>
-          <el-select
-            style="width: 150px"
-            :disabled="readonly"
-            placeholder="选择事件"
-            v-model="item.eventCode"
-          >
-            <el-option-group
-              v-for="group in dict?.events"
-              :key="group.eventType"
-              :label="group.eventTypeName"
-            >
-              <el-option
-                v-for="item in group.events"
-                :key="item.id"
-                :label="item.eventName"
-                :value="item.eventCode"
-              />
-            </el-option-group>
-          </el-select>
+        </el-option-group>
+      </el-select>
 
-          <div class="CustomBehavior-Line-Group">
-            <el-text
-              v-if="item.eventCode"
-              type="primary"
-              style="cursor: pointer"
-              @click="handleAdd(item)"
-            >
-              <el-icon size="12">
-                <CirclePlusFilled />
-              </el-icon>
-              添加筛选
-            </el-text>
-            <div class="CustomBehavior-Line-Group-Sticky">
-              <el-text
-                v-if="item.eventCode && conditionArr.length === index + 1"
-                type="primary"
-                style="cursor: pointer"
-                @click="emits('addSub')"
-              >
-                <el-icon size="12">
-                  <CirclePlusFilled />
-                </el-icon>
-                添加同组
-              </el-text>
-              <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
-                <el-icon size="14">
-                  <Delete />
-                </el-icon>
-                删除
-              </el-text>
-            </div>
-          </div>
+      <div class="CustomBehavior-Line-Group">
+        <el-text
+          v-if="condition.eventCode"
+          type="primary"
+          style="cursor: pointer"
+          @click="handleAdd(condition)"
+        >
+          <el-icon size="12">
+            <CirclePlusFilled />
+          </el-icon>
+          添加筛选
+        </el-text>
+        <div class="CustomBehavior-Line-Group-Sticky">
+          <el-text
+            v-if="condition.eventCode && length === index + 1"
+            type="primary"
+            style="cursor: pointer"
+            @click="emits('addSub')"
+          >
+            <el-icon size="12">
+              <CirclePlusFilled />
+            </el-icon>
+            添加同组
+          </el-text>
+          <el-text type="primary" style="cursor: pointer" @click="emits('del')">
+            <el-icon size="14">
+              <Delete />
+            </el-icon>
+            删除
+          </el-text>
         </div>
-
-        <BehaviorSubContent
-          title="并且满足"
-          :index="index"
-          :dict="dict"
-          :condition="item"
-        />
       </div>
-    </LogicalLine>
+    </div>
+
+    <BehaviorSubContent
+      title="并且满足"
+      :index="index"
+      :dict="dict"
+      :condition="condition"
+    />
+
+    <!-- </div> -->
+    <!-- </LogicalLine> -->
   </div>
 </template>
 

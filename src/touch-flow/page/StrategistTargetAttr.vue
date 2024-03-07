@@ -75,7 +75,7 @@ if (!props.sizeForm?.targetRuleContent?.targetDelayed) {
 
     <div
       class="MainBlock-Content"
-      v-if="sizeForm.targetRuleContent.targetDelayed.isDelayed"
+      v-if="sizeForm.containTarget"
     >
       <div class="MainBlock-ContentItem bg-transparent">
         <el-text>该策略器的延时以及动作执行完毕后，在</el-text>&nbsp;
