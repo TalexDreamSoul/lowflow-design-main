@@ -12,7 +12,7 @@ interface ITargetProp {
 
 const props = defineProps<ITargetProp>();
 
-if (!props.readonly && !props.target.targetRuleContent.data.length) {
+if (!props.readonly && !props.target.targetRuleContent.data?.length) {
   addTarget();
 }
 
@@ -92,7 +92,7 @@ function handleDel(index: number) {
 }
 
 const doDisable = computed<boolean>(
-  () => props.readonly || props.target.targetRuleContent.data.length > 1
+  () => props.readonly || props.target.targetRuleContent.data?.length > 1
 );
 </script>
 
