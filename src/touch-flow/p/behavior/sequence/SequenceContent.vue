@@ -129,7 +129,7 @@ function handleSubDel(index: number) {
       v-for="(event, _index) in condition.conditions"
       :key="_index"
     >
-      <el-select :disabled="readonly" placeholder="选择事件" v-model="event.eventCode">
+      <el-select  style="width: 200px" :disabled="readonly" placeholder="选择事件" v-model="event.eventCode">
         <el-option-group
           v-for="group in dict?.events"
           :key="group.eventType"

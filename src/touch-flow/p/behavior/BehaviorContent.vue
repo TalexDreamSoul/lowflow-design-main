@@ -82,7 +82,7 @@ function handleSubAdd(item: EventSearchCondition) {
             <el-option label="未做过" value="!=" />
           </el-select>
           <el-select
-            style="width: 120px"
+          style="width: 200px"
             :disabled="readonly"
             placeholder="选择事件"
             v-model="item.eventCode"

@@ -55,7 +55,7 @@ function handleSelectChanged(val: string, event: any) {
     <LogicalLine v-model="condition.logicalChar">
       <div class="EventA-Wrapper" v-for="(event, index) in condition.conditions">
         <div class="EventA-Wrapper-Head">
-          <el-select @change="handleSelectChanged($event, event)" placeholder="选择事件" v-model="event.eventCode" style="width: 240px">
+          <el-select @change="handleSelectChanged($event, event)" placeholder="选择事件" v-model="event.eventCode"  style="width: 200px">
             <el-option-group
               v-for="group in dict?.events"
               :key="group.eventType"

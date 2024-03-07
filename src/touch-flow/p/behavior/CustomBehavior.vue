@@ -18,7 +18,12 @@ const props = defineProps<{
 const dict = ref<any>();
 
 onMounted(async () => {
-  const res = await getDictFilterTree();
+  const res = await getDictFilterTree(
+    {
+      pageNum:"1",
+      pageSize:"999"
+    }
+  );
 
   if (res.data) {
     dict.value = res.data;
