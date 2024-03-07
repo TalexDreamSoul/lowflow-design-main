@@ -9,6 +9,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from "element-plus";
 import { flatConvert2Tree } from './flow-utils'
 import { IFlowHeader } from "./flow-types";
+import { ITEM_RENDER_EVT } from "element-plus/es/components/virtual-list/src/defaults";
 
 const props = defineProps<{
   modelValue?: Request;
@@ -110,10 +111,16 @@ function transformNodes(__nodes: Array<any>) {
 
       // node.nextNodeId = (fatherInd < node.father.children.length - 1 ? node.father.children[fatherInd + 1].nodeId : node.children?.[0]?.nodeId)
 
-      // 获取子元素
-      const nextNodes = (node.father.nextNodeId = (node.father.nextNodeId || []))
+      if (!node.father?.nextNodeId?.data) {
+        node.father.nextNodeId = {
+          data: []
+        }
+      }
 
-      nextNodes.push(node.nodeId)
+      // 获取子元素
+      // const nextNodes = node.father.nextNodeId.data //(node.father.nextNodeId = (node.father.nextNodeId || []))
+
+      // nextNodes.push(node.nodeId)
 
       // delete node.father
     }
@@ -122,7 +129,9 @@ function transformNodes(__nodes: Array<any>) {
 
       const children = node.children
       if (children.length) {
-        node.nextNodeId = children[0].nodeId
+        node.nextNodeId = {
+          data: [ ...children ].map(item => item.nodeId)
+        }
       }
 
       transformNodes(node.children)
