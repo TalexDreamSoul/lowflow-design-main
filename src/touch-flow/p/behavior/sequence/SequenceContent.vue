@@ -170,7 +170,7 @@ function handleSubDel(index: number) {
       <el-text
         type="primary"
         v-if="event.eventCode"
-        style="cursor: pointer"
+        style="cursor: pointer;zoom:.8"
         @click="handleSubAdd(event)"
       >
         <el-icon size="14">
@@ -183,7 +183,7 @@ function handleSubDel(index: number) {
         v-if="condition.conditions.length > 1"
         :disabled="readonly"
         type="primary"
-        style="cursor: pointer"
+        style="cursor: pointer;zoom:.8"
         @click="handleSubDel(_index)"
       >
         <el-icon size="14">
