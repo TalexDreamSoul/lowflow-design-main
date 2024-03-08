@@ -229,7 +229,8 @@ onMounted(async () => {
         type="date"
         label="选择日期"
         placeholder="选择日期"
-        style="width: 150px"
+        value-format="YYYY-MM-DD"
+         style="width: 150px"
       />&nbsp;
       <el-time-picker
         v-model="sizeForm.date2"
@@ -245,7 +246,8 @@ onMounted(async () => {
         <el-date-picker
           v-model="sizeForm.date3"
           type="datetimerange"
-          style="max-width: 382px"
+          value-format="YYYY-MM-DD"
+           style="max-width: 382px"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -314,7 +316,8 @@ onMounted(async () => {
           <el-date-picker
             v-model="sizeForm.date3"
             type="datetimerange"
-            range-separator="至"
+            value-format="YYYY-MM-DD"
+              range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
           />

@@ -70,7 +70,8 @@ function handleChange(val: string, condition: any) {
       <el-date-picker
         @change="handleDateChange(condition)"
         :disabled="readonly"
-        v-model="timeRange"
+        value-format="YYYY-MM-DD"
+          v-model="timeRange"
         type="daterange"
         range-separator="-"
         start-placeholder="开始日期"

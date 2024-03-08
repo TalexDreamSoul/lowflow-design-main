@@ -103,7 +103,8 @@ function handleSubDel(index: number) {
       <el-date-picker
         @change="handleDateChange"
         :disabled="readonly"
-        v-model="timeRange"
+        value-format="YYYY-MM-DD"
+         v-model="timeRange"
         type="daterange"
         range-separator="-"
         start-placeholder="开始日期"
