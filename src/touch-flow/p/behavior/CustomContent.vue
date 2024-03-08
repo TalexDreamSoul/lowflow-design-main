@@ -116,7 +116,7 @@ const getCurrSelected = (condition: any) =>
         <trigger
           @update-type="(val) => (item.type = val)"
           multiple
-          v-model="item.attr.field"
+          v-model="item.attr.fieldName"
           :item="item.attr"
           :obj="item"
           :attrs="attrs"

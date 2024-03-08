@@ -58,9 +58,12 @@ watch(
       } else {
         // field
         // if (item.attr?.fieldType)
-        if (item.attr.hasOwnProperty('fieldType'))
+        /* if (item.attr?.hasOwnProperty?.('fieldType'))
           item.attr.fieldType = res.fieldType || res.labelValueType;
-        else item.fieldType = res.fieldType || res.labelValueType;
+        else */ item.fieldType = res.fieldType || res.labelValueType;
+
+        item.field = res.field
+        item.fieldName = res.fieldName
       }
 
       emits("updateType", res.labelValueType ? "label" : "attr");
@@ -68,7 +71,7 @@ watch(
       const res = attrs.find((item: any) => item.field === val);
       if (!res) return;
 
-      if (item.attr.hasOwnProperty('fieldType')) item.attr.fieldType = res.fieldType;
+      if (item.attr?.hasOwnProperty?.('fieldType')) item.attr.fieldType = res.fieldType;
       else item.fieldType = res.fieldType;
     }
   },
@@ -87,8 +90,7 @@ watch(
     /> -->
     <div v-if="multiple" style="display: flex; gap: 0.5rem; flex: 1">
       <el-select :placeholder="placeholder" v-model="model">
-        <el-option-group v-if="multiple" :placeholder="placeholder" v-for="(group, index) in attrs" :key="index"
-          :label="group.label">
+        <el-option-group :placeholder="placeholder" v-for="(group, index) in attrs" :key="index" :label="group.label">
           <el-option v-for="(item, ind) in group.children" :key="item.label" :label="item.label" :value="item.label" />
         </el-option-group>
       </el-select>
