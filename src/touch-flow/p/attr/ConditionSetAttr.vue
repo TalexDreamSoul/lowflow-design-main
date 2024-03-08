@@ -177,8 +177,12 @@ function saveData() {
 
     props.p.startTime = timeFormat[0]
     props.p.endTime = timeFormat[1]
+
+    props.p.executeTime = null
   } else {
     timeFormat = DayJs(date).format(_format);
+
+    console.log(">>>", timeFormat)
 
     props.p.executeTime = timeFormat
   }

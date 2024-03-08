@@ -56,9 +56,9 @@ const flowType = computed(() => {
 
 const flowTime = computed(() => {
   const _time = data.executeTime;
-  if (!_time) return "-";
+  // if (!_time) return "-";
 
-  if (_time instanceof Date) {
+  if (_time) {
     const s: Date = _time;
 
     return s.toLocaleString().replaceAll("/", "-");
