@@ -4,10 +4,24 @@ export function num2character(num: number): string {
   return num <= 10 ? c_character[num] : (parseInt(`${num / 10}`) != 1 ? c_character[parseInt(`${num / 10}`)] : "" + c_character[10] + num2character(num % 10))
 }
 
-export function randomStr(length: number = 6): string {
-  if (!length) return ''
+// export function randomStr(length: number = 6): string {
+//   if (!length) return ''
 
-  return (100000 + Math.random() * 1000000).toString(16).slice(length) + (length == 6 ? '' : randomStr(length - 6))
+//   return (100000 + Math.random() * 1000000).toString(16).slice(length) + (length == 6 ? '' : randomStr(length - 6))
+// }
+
+/**
+ * Fake random string => uuid
+ * @param length fake
+ */
+export function randomStr(length: number = 36) {
+  return 'xxxxxxxx-xxxx-9xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+
+    return v.toString(16);
+
+  });
 }
 
 const isNil = (v: unknown): boolean => {
