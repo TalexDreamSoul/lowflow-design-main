@@ -57,7 +57,8 @@ watch(
         labelOptions.value.label = res;
       } else {
         // field
-        if (item.attr?.fieldType)
+        // if (item.attr?.fieldType)
+        if (item.attr.hasOwnProperty('fieldType'))
           item.attr.fieldType = res.fieldType || res.labelValueType;
         else item.fieldType = res.fieldType || res.labelValueType;
       }
@@ -67,7 +68,7 @@ watch(
       const res = attrs.find((item: any) => item.field === val);
       if (!res) return;
 
-      if (item.attr?.fieldType) item.attr.fieldType = res.fieldType;
+      if (item.attr.hasOwnProperty('fieldType')) item.attr.fieldType = res.fieldType;
       else item.fieldType = res.fieldType;
     }
   },
