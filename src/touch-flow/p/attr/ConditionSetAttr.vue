@@ -261,7 +261,7 @@ onMounted(async () => {
           <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="day"></el-option>
         </el-select>
 
-        <el-time-picker v-model="sizeForm.repeatTime.repeatTime" placeholder="选择时间"
+        <el-time-picker v-model="sizeForm.repeatTime.repeatTime" value-format="HH:mm" placeholder="选择时间"
           style="width: 120px"></el-time-picker>
         &nbsp;&nbsp;
         <el-text>进入流程(启动任务) </el-text>
