@@ -4,6 +4,7 @@ import { CirclePlusFilled, Delete } from "@element-plus/icons-vue";
 import AttrRender from "../../page/AttrRender.vue";
 import Operator from "../../page/Operator.vue";
 import Trigger from "../../page/Trigger.vue";
+import MultipleTrigger from "~/touch-flow/page/MultipleTrigger .vue";
 import LogicalLine from "./LogicalLine.vue";
 import { AttrConditionDTO } from "../../touch-total";
 // import CustomBlock from "./CustomBlock.vue";
@@ -86,6 +87,8 @@ const attrs = computed(() => {
     };
   });
 
+  // console.log("aaaaaaaa", attrs, labels, _attrs, _labels)
+
   return [
     {
       label: "用户属性",
@@ -113,34 +116,12 @@ const getCurrSelected = (condition: any) =>
   <div class="CustomContent">
     <LogicalLine :display="conditionArr?.length < 2" v-model="condition.logicalChar">
       <div v-for="(item, index) in conditionArr" :key="index" class="AttrLine">
-        <trigger
-          @update-type="(val) => (item.type = val)"
-          multiple
-          v-model="item.attr.fieldName"
-          :item="item.attr"
-          :obj="item"
-          :attrs="attrs"
-          :disabled="readonly"
-          placeholder="客户属性/标签"
-          :style="`width: ${item.type === 'label' ? '500' : '220'}px`"
-        />
-        <operator
-          :selected="getCurrSelected(item)"
-          :attrs="attrs"
-          :item="item.attr"
-          :obj="item"
-          :disabled="readonly"
-          ref="operatorRef"
-          v-model="item.attr.fieldOp"
-          style="width: 120px"
-        />
-        <AttrRender
-          :selected="getCurrSelected(item)"
-          :disabled="readonly"
-          :item="item.attr"
-          :obj="item"
-          :attrs="attrs"
-        />
+        <MultipleTrigger :obj="item" :attrs="attrs" :disabled="readonly" placeholder="客户属性/标签"
+          :style="`width: ${item.type === 'label' ? '500' : '220'}px`" />
+        <operator :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :obj="item" :disabled="readonly"
+          ref="operatorRef" v-model="item.attr.fieldOp" style="width: 120px" />
+        <AttrRender :selected="getCurrSelected(item)" :disabled="readonly" :item="item.attr" :obj="item"
+          :attrs="attrs" />
 
         <div style="zoom:.8">
           <template v-if="index + 1 === conditionArr.length">

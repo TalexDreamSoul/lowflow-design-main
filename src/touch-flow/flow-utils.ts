@@ -257,6 +257,8 @@ export function commonValidate(rule: any, value: any, callback: any) {
 export function validateAES(data: CustomSearchDTO, xor: boolean = false) {
   const { customAttr, customEvent, eventSequence } = data;
 
+  console.error("validate aes", data)
+
   if (!validateObjConditions(customAttr)) {
     if (!xor) return false;
   } else if (xor) return true;

@@ -83,14 +83,10 @@ function handleAdd() {
 //   // })
 // }
 function handleSubAdd(item: any) {
-  console.log("----", item.conditions, conditionArr.value);
+  // console.log("----", item.conditions, conditionArr.value);
   const arr = (item.conditions.conditions = item.conditions.conditions || []);
 
-  arr.push({
-    attr: "",
-    label: "",
-    type: "",
-  });
+  arr.push(JSON.parse(JSON.stringify(dataObj)));
 }
 function handleSubDel(index: number) {
   props.condition.conditions.splice(index, 1);

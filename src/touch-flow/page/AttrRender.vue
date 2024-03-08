@@ -5,7 +5,7 @@ type AttrType = any; //number | string | boolean | Array<Number> | Array<string>
 
 const props = defineProps<{
   item: AttrType;
-  obj: any;
+  obj?: any;
   attrs: any;
   selected?: string;
   readonly?: boolean;
