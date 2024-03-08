@@ -64,11 +64,12 @@ const flowTime = computed(() => {
     return s.toLocaleString().replaceAll("/", "-");
   }
 
-  const [date1, date2] = _time;
-  if (!date1 || !date2) return "-";
+  // const [date1, date2] = _time;
+  const { startTime, endTime } = data;
+  if (!startTime || !endTime) return "-";
 
-  const date1Text = date1; //.toLocaleDateString().replaceAll("/", "-");
-  const date2Text = date2; //.toLocaleDateString().replaceAll("/", "-");
+  const date1Text = startTime; //.toLocaleDateString().replaceAll("/", "-");
+  const date2Text = endTime; //.toLocaleDateString().replaceAll("/", "-");
 
   return `${date1Text} 至 ${date2Text}`;
 });
@@ -193,11 +194,7 @@ function handleClick(e: Event) {
   <el-card class="PBlock">
     <p>进入流程设置</p>
     <div class="PBlock-Content">
-      <div
-        @click="openCustomer"
-        :class="{ checked: customerConditioned.display }"
-        class="PBlock-Section"
-      >
+      <div @click="openCustomer" :class="{ checked: customerConditioned.display }" class="PBlock-Section">
         <p>
           <el-icon>
             <User />
@@ -210,26 +207,12 @@ function handleClick(e: Event) {
           </span>
         </p>
         <span v-if="customerConditioned.display">
-          <span
-            >客户属性满足：<span contentPrimary
-              >{{ customerConditioned.customAttr }}条</span
-            ></span
-          ><br />
-          <span
-            >客户行为满足：<span contentPrimary
-              >{{ customerConditioned.customEvent }}条</span
-            ></span
-          ><br />
+          <span>客户属性满足：<span contentPrimary>{{ customerConditioned.customAttr }}条</span></span><br />
+          <span>客户行为满足：<span contentPrimary>{{ customerConditioned.customEvent }}条</span></span><br />
         </span>
-        <span v-else
-          >根据客户属性、客户标签、客户行为、行为序列筛选能够进入流程的客户</span
-        >
+        <span v-else>根据客户属性、客户标签、客户行为、行为序列筛选能够进入流程的客户</span>
       </div>
-      <div
-        @click="openCondition"
-        :class="{ checked: conditioned }"
-        class="PBlock-Section"
-      >
+      <div @click="openCondition" :class="{ checked: conditioned }" class="PBlock-Section">
         <p>
           <el-icon>
             <Position />
@@ -242,12 +225,8 @@ function handleClick(e: Event) {
           </span>
         </p>
         <span v-if="conditioned" style="opacity: 0.75; font-size: 14px">
-          <span
-            >流程类型：<span contentPrimary>{{ flowType }}</span></span
-          ><br />
-          <span
-            >进入时间：<span contentPrimary>{{ flowTime }}</span></span
-          ><br />
+          <span>流程类型：<span contentPrimary>{{ flowType }}</span></span><br />
+          <span>进入时间：<span contentPrimary>{{ flowTime }}</span></span><br />
         </span>
         <span v-else>设置流程类型、流程有效期、流程开始时间、进入限制。</span>
       </div>
@@ -256,12 +235,8 @@ function handleClick(e: Event) {
     <teleport to="body">
       <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div
-            @click="openDrawer(item)"
-            v-for="item in comps"
-            :class="{ disabled: item.disabled?.value }"
-            class="PBlock-Section"
-          >
+          <div @click="openDrawer(item)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
+            class="PBlock-Section">
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
@@ -276,34 +251,20 @@ function handleClick(e: Event) {
     </teleport>
 
     <teleport to="body">
-      <el-drawer
-        @click="handleClick"
-        v-model="drawerOptions.visible"
-        :title="drawerOptions.title"
-        size="55%"
-      >
+      <el-drawer @click="handleClick" v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
-          <el-button round @click="handleSave" type="primary" primaryStyle
-            >保存</el-button
-          >
+          <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
         </template>
       </el-drawer>
     </teleport>
   </el-card>
   <!-- && !customerConditioned.display -->
-  <el-button
-    :class="{
-      display: conditioned && customerConditioned.display,
-      disabled: haveDiverse,
-    }"
-    @click="dialogVisible = true"
-    class="start-add"
-    type="primary"
-    :icon="Plus"
-    circle
-  />
+  <el-button :class="{
+        display: conditioned && customerConditioned.display,
+        disabled: haveDiverse,
+      }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">
@@ -344,11 +305,9 @@ function handleClick(e: Event) {
       transform: scaleX(0) translateX(-100%);
       width: 160px;
       height: 7px;
-      background: linear-gradient(
-        82deg,
-        rgba(64, 120, 224, 0.4) 0%,
-        rgba(64, 120, 224, 0) 100%
-      );
+      background: linear-gradient(82deg,
+          rgba(64, 120, 224, 0.4) 0%,
+          rgba(64, 120, 224, 0) 100%);
       border-radius: 2px 2px 2px 2px;
       opacity: 0.6;
       position: absolute;
