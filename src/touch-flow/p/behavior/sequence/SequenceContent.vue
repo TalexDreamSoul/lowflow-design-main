@@ -82,7 +82,16 @@ function handleAdd() {
 //   //   conditions:
 //   // })
 // }
+function handleSubAdd(item: any) {
+  console.log("----", item.conditions, conditionArr.value);
+  const arr = (item.conditions.conditions = item.conditions.conditions || []);
 
+  arr.push({
+    attr: "",
+    label: "",
+    type: "",
+  });
+}
 function handleSubDel(index: number) {
   props.condition.conditions.splice(index, 1);
 }
@@ -94,7 +103,8 @@ function handleSubDel(index: number) {
       <el-date-picker
         @change="handleDateChange"
         :disabled="readonly"
-        v-model="timeRange"
+        value-format="YYYY-MM-DD"
+         v-model="timeRange"
         type="daterange"
         range-separator="-"
         start-placeholder="开始日期"
@@ -103,8 +113,8 @@ function handleSubDel(index: number) {
       />
       <span style="color: #484545"> &nbsp;&nbsp; 依次做过 </span>
 
-      <span>
-        <el-text
+      <span style="zoom:.8">
+        <!-- <el-text
           :disabled="readonly"
           type="primary"
           style="cursor: pointer"
@@ -115,7 +125,7 @@ function handleSubDel(index: number) {
           </el-icon>
           添加同组
         </el-text>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; -->
         <el-text
           :disabled="readonly"
           type="primary"
@@ -170,7 +180,7 @@ function handleSubDel(index: number) {
       <el-text
         type="primary"
         v-if="event.eventCode"
-        style="cursor: pointer"
+        style="cursor: pointer;zoom:.8"
         @click="handleSubAdd(event)"
       >
         <el-icon size="14">
@@ -183,7 +193,7 @@ function handleSubDel(index: number) {
         v-if="condition.conditions.length > 1"
         :disabled="readonly"
         type="primary"
-        style="cursor: pointer"
+        style="cursor: pointer;zoom:.8"
         @click="handleSubDel(_index)"
       >
         <el-icon size="14">

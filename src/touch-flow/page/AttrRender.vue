@@ -192,7 +192,8 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
       <template v-if="item.fieldOp === '绝对时间'">
         <el-date-picker
           :disabled="readonly"
-          v-if="item.timeCondition.timeType !== 'absoluteInterval'"
+          value-format="YYYY-MM-DD"
+            v-if="item.timeCondition.timeType !== 'absoluteInterval'"
           v-model="timeInterval"
           type="date"
           placeholder="选择时间"
@@ -201,7 +202,8 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
           :disabled="readonly"
           v-else
           v-model="timeInterval"
-          type="daterange"
+          value-format="YYYY-MM-DD"
+           type="daterange"
           range-separator="至"
           start-placeholder="开始时间"
           end-placeholder="结束时间"

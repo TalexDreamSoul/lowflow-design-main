@@ -142,7 +142,7 @@ const getCurrSelected = (condition: any) =>
           :attrs="attrs"
         />
 
-        <div>
+        <div style="zoom:.8">
           <template v-if="index + 1 === conditionArr.length">
             <el-text type="primary" style="cursor: pointer" @click="handleAdd">
               <el-icon size="14">

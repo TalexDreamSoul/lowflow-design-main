@@ -67,7 +67,7 @@ const attrs = computed(() => {
                 <AttrRender :item="item" :attrs="attrs" />
               </el-form-item>
             </el-col>
-            <el-col class="add-filter__inner" :xs="24" :sm="3">
+            <el-col class="add-filter__inner" :xs="24" :sm="3" style="zoom:.8">
               <el-text type="primary" style="cursor: pointer;    display: inline-block;width: 100px;"
                 @click="addCondition">
                 <el-icon size="14">
@@ -76,7 +76,7 @@ const attrs = computed(() => {
                 添加筛选
               </el-text>
             </el-col>
-            <el-col :xs="24" :sm="1">
+            <el-col :xs="24" :sm="1" style="zoom:.8">
               <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
                 <el-icon size="14">
                   <Delete />
