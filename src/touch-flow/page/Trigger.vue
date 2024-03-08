@@ -65,6 +65,7 @@ watch(
       emits("updateType", res.labelValueType ? "label" : "attr");
     } else {
       const res = attrs.find((item: any) => item.field === val);
+      if (!res) return;
 
       if (item.attr?.fieldType) item.attr.fieldType = res.fieldType;
       else item.fieldType = res.fieldType;
@@ -85,33 +86,13 @@ watch(
     /> -->
     <div v-if="multiple" style="display: flex; gap: 0.5rem; flex: 1">
       <el-select :placeholder="placeholder" v-model="model">
-        <el-option-group
-          v-if="multiple"
-          :placeholder="placeholder"
-          v-for="(group, index) in attrs"
-          :key="index"
-          :label="group.label"
-        >
-          <el-option
-            v-for="(item, ind) in group.children"
-            :key="item.label"
-            :label="item.label"
-            :value="item.label"
-          />
+        <el-option-group v-if="multiple" :placeholder="placeholder" v-for="(group, index) in attrs" :key="index"
+          :label="group.label">
+          <el-option v-for="(item, ind) in group.children" :key="item.label" :label="item.label" :value="item.label" />
         </el-option-group>
       </el-select>
-      <el-select
-        v-model="obj.label.labelValue"
-        multiple
-        placeholder="请选择标签"
-        v-if="labelOptions.do"
-      >
-        <el-option
-          :value="each"
-          :key="each"
-          :label="each"
-          v-for="(each, i) in labelOptions.label.labelValue?.data"
-        />
+      <el-select v-model="obj.label.labelValue" multiple placeholder="请选择标签" v-if="labelOptions.do">
+        <el-option :value="each" :key="each" :label="each" v-for="(each, i) in labelOptions.label.labelValue?.data" />
       </el-select>
     </div>
 
@@ -125,14 +106,9 @@ watch(
               :value="`${group.label}-${item}`" />
           </el-option-group>
         </template>
-      </el-option-group> -->
+</el-option-group> -->
     <el-select v-else class="trigger-container" v-model="model" :placeholder="ph">
-      <el-option
-        v-for="item in attrs"
-        :key="item.field"
-        :label="item.fieldName"
-        :value="item.field"
-      />
+      <el-option v-for="item in attrs" :key="item.field" :label="item.fieldName" :value="item.field" />
     </el-select>
   </div>
 </template>

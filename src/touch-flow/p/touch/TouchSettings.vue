@@ -244,13 +244,8 @@ defineExpose({ updateData });
   <div>
     <el-form>
       <el-form-item label="触达通道">
-        <el-select
-          :disabled="readonly"
-          placeholder="请选择通道"
-          @change="refreshMaterialTemplate"
-          v-model="touchOptions.type"
-          style="width: 120px"
-        >
+        <el-select :disabled="readonly" placeholder="请选择通道" @change="refreshMaterialTemplate"
+          v-model="touchOptions.type" style="width: 120px">
           <el-option value="sms" label="短信">手机短信</el-option>
           <el-option value="appPush" label="app消息">app消息</el-option>
           <el-option value="digital" label="企微">企微</el-option>
@@ -259,17 +254,8 @@ defineExpose({ updateData });
         </el-select>
       </el-form-item>
       <el-form-item v-if="touchOptions.type" label="选择模版">
-        <el-select
-          @change="assignData"
-          :disabled="readonly"
-          v-model="touchOptions.id"
-          style="width: 120px"
-        >
-          <el-option
-            v-for="item in touchOptions.material.templates"
-            :value="item.id"
-            :label="item.name"
-          >
+        <el-select @change="assignData" :disabled="readonly" v-model="touchOptions.id" style="width: 120px">
+          <el-option v-for="item in touchOptions.material.templates" :value="item.id" :label="item.name">
             <div class="template-option">
               <span>{{ item.name }}</span>
               <span class="template-desc" v-if="(item as any)?.content?.content">
@@ -278,25 +264,14 @@ defineExpose({ updateData });
             </div>
           </el-option>
         </el-select>
-        <el-button
-          :disabled="readonly"
-          v-if="curPlatform"
-          @click="curPlatform.button.click"
-          ml-1rem
-          type="primary"
-          plain
-        >
-          新增{{ curPlatform.button.label }}模块版本</el-button
-        >
+        <el-button :disabled="readonly" v-if="curPlatform" @click="curPlatform.button.click" ml-1rem type="primary"
+          plain>
+          新增{{ curPlatform.button.label }}模块版本</el-button>
       </el-form-item>
 
       <template v-if="curPlatform && showComp">
-        <component
-          ref="comp"
-          :disabled="readonly"
-          :is="curPlatform.template"
-          :data="touchOptions[curPlatform.propKey]"
-        />
+        <component ref="comp" :disabled="readonly" :is="curPlatform.template"
+          :data="touchOptions[curPlatform.propKey]" />
       </template>
     </el-form>
   </div>
