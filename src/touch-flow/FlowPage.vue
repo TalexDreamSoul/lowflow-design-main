@@ -247,6 +247,10 @@ const dialogVisible = ref();
 
 console.log("total flow", flowOptions);
 
+Object.defineProperty(window, '$flow', {
+  value: flowOptions
+})
+
 const goBack = () => {
   router.go(-1);
 };
