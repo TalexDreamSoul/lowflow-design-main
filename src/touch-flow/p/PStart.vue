@@ -17,7 +17,9 @@ const drawerOptions = reactive<any>({
   visible: false,
 });
 
-console.log("PStart setup!", getNode())
+Object.assign(data, __data)
+
+console.log("PStart setup!", getNode(), __data, data)
 
 function openCondition() {
   openDrawer({

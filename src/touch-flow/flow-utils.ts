@@ -199,6 +199,8 @@ export function genIdNodeReactive(p: any) {
     while (stack.length) {
       const node = stack.pop()
 
+      // console.log("search target", id, node)
+
       if (node.id === id) {
         return node
       }
