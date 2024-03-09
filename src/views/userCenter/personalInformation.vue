@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, unref, reactive, onMounted, watch } from "vue";
+import { ref, unref, reactive, onMounted, inject } from "vue";
 import {
   getQryMaterial,
 } from "~/api/index";
@@ -8,10 +8,13 @@ import { useRouter, useRoute } from "vue-router";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { ElMessageBox, ElMessage, FormInstance } from "element-plus";
 import { checkStringEqual, debounce } from '~/utils/common';
-const router = useRouter();
 
+const router = useRouter();
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
+
+const appOptions: any = inject('appOptions')!
+
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
 const formInline = reactive({
@@ -57,6 +60,9 @@ const fetchRoleList = async () => {
 const fetchDataApi = async () => {
   const res = await API.accountDetail();
   Object.assign(formValues, res.data);
+
+  appOptions.user = res.data;
+
   console.log(`output->tabledata`, formValues.value);
 };
 const logout = async () => {
@@ -75,7 +81,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     let values = {
       ...formValues,
     };
-      res = await API.updateAccount(values);
+    res = await API.updateAccount(values);
     if (checkStringEqual(res?.code, 0)) {
       ElMessage.success(res?.message);
       fetchDataApi();
@@ -87,20 +93,21 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 </script>
 
 <template>
-    <CustomEventComponent title="个人信息" >
-      <template #table>
-        <el-form ref="formRef" :hide-required-asterisk="true" label-position="top" class="form" style="margin:32px" :model="formValues">
-          <el-form-item :rules="[
-                { required: true, message: '请输入帐号名称' },
-                {
-                  pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
-                  message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
-                },
-              ]" label="帐号名称" prop="accountName">
-            <el-input v-model="formValues.accountName" style="width:300px" placeholder="请输入" clearable />
-          </el-form-item>
-    
-          <!-- <el-form-item prop="accountPassword" label="用户密码" :rules="[
+  <CustomEventComponent title="个人信息">
+    <template #table>
+      <el-form ref="formRef" :hide-required-asterisk="true" label-position="top" class="form" style="margin:32px"
+        :model="formValues">
+        <el-form-item :rules="[
+        { required: true, message: '请输入帐号名称' },
+        {
+          pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
+          message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
+        },
+      ]" label="帐号名称" prop="accountName">
+          <el-input v-model="formValues.accountName" style="width:300px" placeholder="请输入" clearable />
+        </el-form-item>
+
+        <!-- <el-form-item prop="accountPassword" label="用户密码" :rules="[
             { required: true, message: '请输入用户密码' },
             {
               pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
@@ -109,42 +116,44 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
           ]" >
             <el-input v-model="formValues.accountPassword" style="width:300px" placeholder="请输入" clearable />
           </el-form-item> -->
-          <el-form-item prop="roleId" label="用户角色">
-            <el-select v-model="formValues.roleId" clearable style="width:300px" placeholder="用户角色" name="roleId" tabindex="2" autocomplete="on">
-              <el-option v-for="item in RoleList" :label="item.roleName" :value="item.id" />
-            </el-select>
-          </el-form-item>
-          <el-form-item :rules="[
-            { required: true, message: '请输入手机号' },
-            {
-              pattern: /^[1][3-9][0-9]{9}$/,
-              message: '请输入按照正确格式输入手机号',
-            },
-          ]" label="手机号" prop="phone">
-            <el-input v-model="formValues.phone" style="width:300px" placeholder="请输入" clearable />
-          </el-form-item>
-          <el-form-item prop="email" :rules="[
-            { required: true, message: '请输入邮箱' },
-            {
-              pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-              message: '请输入按照正确格式输入邮箱',
-            },
-          ]" label="邮箱">
-            <el-input v-model="formValues.email" style="width:300px" placeholder="邮箱" name="accountemail" tabindex="2" autocomplete="on" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit(formRef)">保存</el-button>
-            <el-button @click="logout()">登出</el-button>
-            <el-button @click="login()">登陆</el-button>
-          </el-form-item>
-        </el-form>
-        
-      </template>
-      <template #pagination>
-    
-    
-      </template>
-    </CustomEventComponent>
+        <el-form-item prop="roleId" label="用户角色">
+          <el-select v-model="formValues.roleId" clearable style="width:300px" placeholder="用户角色" name="roleId"
+            tabindex="2" autocomplete="on">
+            <el-option v-for="item in RoleList" :label="item.roleName" :value="item.id" />
+          </el-select>
+        </el-form-item>
+        <el-form-item :rules="[
+        { required: true, message: '请输入手机号' },
+        {
+          pattern: /^[1][3-9][0-9]{9}$/,
+          message: '请输入按照正确格式输入手机号',
+        },
+      ]" label="手机号" prop="phone">
+          <el-input v-model="formValues.phone" style="width:300px" placeholder="请输入" clearable />
+        </el-form-item>
+        <el-form-item prop="email" :rules="[
+        { required: true, message: '请输入邮箱' },
+        {
+          pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+          message: '请输入按照正确格式输入邮箱',
+        },
+      ]" label="邮箱">
+          <el-input v-model="formValues.email" style="width:300px" placeholder="邮箱" name="accountemail" tabindex="2"
+            autocomplete="on" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit(formRef)">保存</el-button>
+          <el-button @click="logout()">登出</el-button>
+          <el-button @click="login()">登陆</el-button>
+        </el-form-item>
+      </el-form>
+
+    </template>
+    <template #pagination>
+
+
+    </template>
+  </CustomEventComponent>
 </template>
 
 
