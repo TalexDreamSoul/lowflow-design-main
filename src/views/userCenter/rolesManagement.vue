@@ -7,6 +7,7 @@ import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, FormInstance,ElTree } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { checkStringEqual, debounce } from '~/utils/common';
+import RoleFlatMap from "./role/RoleFlatMap.vue";
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
@@ -205,6 +206,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       :default-checked-keys="formValues.menuIds"
       :props="treeProps"
     />
+        <RoleFlatMap :data="MenuList" />
       </div>
       </el-form-item>
     </el-form>
