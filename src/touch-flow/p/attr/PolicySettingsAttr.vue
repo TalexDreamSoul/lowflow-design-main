@@ -75,7 +75,7 @@ const props = defineProps<{
 }>();
 
 const touchSettingsRef = ref();
-const sizeForm = reactive<typeof origin>(origin);
+const sizeForm = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 
 watch(
   () => sizeForm.diversionType,
@@ -86,6 +86,8 @@ watch(
 
 watchEffect(() => {
   const { nodeType, nodeId } = props.p;
+
+  console.log("w", props)
 
   if (props.new || nodeType !== "strategy") return;
 

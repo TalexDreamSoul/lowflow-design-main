@@ -107,15 +107,18 @@ async function refreshMaterialTemplate(clearStatus: boolean = true) {
 }
 
 function updateData() {
-  const { saveData: save } = comp.value!;
+  const _comp = comp.value;
+  if (_comp) {
+    const { saveData: save } = _comp
 
-  const templateData = touchOptions[curPlatform.value.propKey];
+    const templateData = touchOptions[curPlatform.value.propKey];
 
-  Object.assign(templateData, save());
+    Object.assign(templateData, save());
+  }
 
   Object.assign(props.touch, touchOptions);
 
-  console.log("ud", templateData, props.touch);
+  // console.log("ud", templateData, props.touch);
 }
 
 function handleAddDone() {

@@ -67,7 +67,7 @@ const layoutFn = () => {
         console.log("__subDiversion");
         return 450;
       }
-      return d.height ? parseInt(d.height) : 280;
+      return d.height ? parseInt(d.height) : 400;
     },
     getHGap() {
       const k = 0.07692307692307693;
@@ -102,7 +102,10 @@ const layoutFn = () => {
       if (data.data?.father?.nodeType === "subDiversion") return height - 40;
       if (data.data.nodeName === "兜底策略器") return height - 155;
 
-      return height - 40;
+      if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
+        return height - 60
+
+      return height - 160;
     },
     diversion: (height: number) => height - 132,
     subDiversion: (height: number, _data: any) => {

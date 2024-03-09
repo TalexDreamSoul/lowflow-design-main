@@ -18,6 +18,10 @@ const drawerOptions = reactive<any>({
   new: false,
 });
 
+Object.assign(data, __data)
+
+console.log("PolicySettings setup!", getNode(), __data, data)
+
 const doDiverse = computed(() => {
   const { children } = data;
 
@@ -124,7 +128,7 @@ provide("save", (regFunc: () => boolean) => {
 
 const pushTemplate = computed(() => {
   const { type } = data?.touchTemplateContent || {};
-  if (!type)
+  if (!type || String(data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') === -1)
     return {
       has: false,
       val: "",
