@@ -6,16 +6,14 @@ const props = defineProps<{
   data: any,
 }>()
 
-const subData = ref()
+const select = ref()
 
-console.log('map', props.data)
+console.log('map', props.data, select)
 </script>
 
 <template>
   <div class="RoleFlatMap">
-
-    <MapList :data="props.data" @change="subData = $event" />
-
+    <MapList v-model="select" :data="props.data" />
   </div>
 </template>
 
