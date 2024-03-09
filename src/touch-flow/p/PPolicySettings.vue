@@ -96,6 +96,8 @@ function openDrawer(comp: any, doNew: boolean = false) {
 
   Object.assign(drawerOptions, { ...comp, new: doNew });
 
+  console.log("op", comp)
+
   if (!data.executeType) data.executeType = "immediately";
 
   drawerOptions.visible = true;
@@ -107,6 +109,8 @@ function handleSave() {
   if (!_saveFunc || !_saveFunc()) return;
 
   Object.assign(__data, data);
+
+  console.log("____", __data)
 
   // window.$refreshLayout()
 

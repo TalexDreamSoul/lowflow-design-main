@@ -55,7 +55,7 @@ watchEffect(() => {
     if (blackListFields.value) transformBlackListData();
   }
 
-  console.log("ca", blackList, props.p);
+  // console.log("ca", blackList, props.p);
 });
 
 function saveData(): boolean {
@@ -131,7 +131,7 @@ regSaveFunc(saveData);
 })();
 
 function transformBlackListData() {
-  console.log("transform blacklist", blackList);
+  // console.log("transform blacklist", blackList);
 
 
   if (blackList.data.length) {

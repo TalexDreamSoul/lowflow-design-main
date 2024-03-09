@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, provide, inject, markRaw } from "vue";
+import { ref, reactive, computed, provide, inject, watch } from "vue";
 import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
 import ConditionSetAttr from "./attr/ConditionSetAttr.vue";
 import CustomersAttr from "./attr/CustomersAttr.vue";
@@ -16,6 +16,8 @@ const dialogVisible = ref(false);
 const drawerOptions = reactive<any>({
   visible: false,
 });
+
+console.log("PStart setup!", getNode())
 
 function openCondition() {
   openDrawer({
@@ -162,13 +164,9 @@ function handleSave() {
 
   Object.assign(__data, data);
 
-  console.log("assign", data, __data)
+  __data.children = data.children
 
-  // // define father
-  // Object.defineProperty(__data, 'father', {
-  //   value: markRaw(data.father),
-  //   enumerable: false
-  // })
+  console.log("__data", __data)
 
   dialogVisible.value = false;
   drawerOptions.visible = false;

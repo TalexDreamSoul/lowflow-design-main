@@ -245,7 +245,7 @@ const router = useRouter();
 
 const dialogVisible = ref();
 
-console.log("total flow", flowOptions);
+// console.log("total flow", flowOptions);
 
 Object.defineProperty(window, '$flow', {
   value: flowOptions
