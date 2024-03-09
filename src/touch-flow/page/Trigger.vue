@@ -24,8 +24,14 @@ watch(
     const res = attrs.find((item: any) => item.field === val);
     if (!res) return;
 
-    if (item.attr?.hasOwnProperty?.('fieldType')) item.attr.fieldType = res.fieldType;
-    else item.fieldType = res.fieldType;
+    if (item.attr?.hasOwnProperty?.('fieldType')) {
+      item.attr.fieldType = res.fieldType;
+      item.attr.fieldName = res.fieldName;
+    }
+    else {
+      item.fieldType = res.fieldType;
+      item.fieldName = res.fieldName;
+    }
   },
   { immediate: true }
 );

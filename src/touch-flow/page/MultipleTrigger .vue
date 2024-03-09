@@ -85,7 +85,6 @@ function handleChangeSelect(val: string) {
       id: res.id,
       field: res.field,
       fieldName: res.fieldName,
-      fieldOp: res.fieldOp,
       fieldType: res.fieldType,
     })
 

@@ -180,7 +180,7 @@ export type AttrDTO = {
   /**
    * 运算符号
    */
-  fieldOp?: string;
+  fieldOp: string;
   /**
    * 字段范围值
    */
@@ -293,6 +293,7 @@ export type TimeConditionDTO = {
  * LabelDTO
  */
 export type LabelDTO = {
+  id?: string;
   /**
    * 标签id
    */

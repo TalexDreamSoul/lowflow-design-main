@@ -61,7 +61,7 @@ function handleAdd() {
     props.condition.conditions || []);
 
   arr.push({
-    action: "",
+    action: "=",
     conditions: {
       conditions: new Array<SearchCondition>(),
       logicalChar: "或",
@@ -90,6 +90,18 @@ function handleSubAdd(item: any) {
 }
 function handleSubDel(index: number) {
   props.condition.conditions.splice(index, 1);
+}
+
+function handleEventChanged(val: string, condition: any) {
+  const { events } = props.dict
+
+  const _events = events.map((item: any) => item.events).flat()
+
+  const targetEvent = _events.find((item: any) => item.eventCode === val)
+
+  console.log(val, condition, targetEvent)
+
+  condition.eventName = targetEvent.eventName
 }
 </script>
 
@@ -154,6 +166,7 @@ function handleSubDel(index: number) {
       :key="_index"
     >
       <el-select
+        @change="handleEventChanged($event, event)"
         style="width: 200px"
         :disabled="readonly"
         placeholder="选择事件"

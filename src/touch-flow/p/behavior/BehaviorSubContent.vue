@@ -30,13 +30,13 @@ const dataObj = Object.freeze({
     labelName: "",
     labelValue: [],
   },
-  type: "event",
+  type: "attr",
 });
 
 const getConditions = () => {
   const arr = props.condition.conditions.conditions || [];
 
-  console.log("got", arr);
+  // console.log("got", arr);
 
   for (let item of arr) {
     if (!item.type) {
@@ -64,13 +64,13 @@ const attrs = computed(() => {
     .flat()
     .find((item: any) => item.eventCode === props.condition.eventCode);
 
-  console.log("targetEvent", targetEvent, flattedEvents);
+  // console.log("targetEvent", targetEvent, flattedEvents);
 
   return targetEvent?.eventAttr?.attrs;
 });
 
 const getCurrSelected = (condition: any) => {
-  console.log("attrsss", attrs, props.dict);
+  // console.log("attrsss", attrs, props.dict);
 
   return attrs.value.find(
     (_: any) => _.field === condition.field || _.label === condition.field
