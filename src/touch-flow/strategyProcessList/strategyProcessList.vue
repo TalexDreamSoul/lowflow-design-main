@@ -7,6 +7,7 @@ import {
   getstartMarketingTouch,
   getpauseMarketingTouch,
   updateMarketingTouchStatus,
+  copyMarketingTouch
 } from "~/api/index";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
@@ -127,8 +128,16 @@ const successData = async (row: any) => {
 
 };
 
+
 const copyData = async (row: any) => {
-  // await getcopyMarketingTouch({ id: row.id }).finally(() => {});
+  let res=await copyMarketingTouch({
+    id: row.id,
+  }).finally(() => {
+    fetchDataApi();
+    getmarketingTouchNode();
+  });
+  ElMessage.success(res.message)
+
 };
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);

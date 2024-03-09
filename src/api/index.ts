@@ -43,6 +43,11 @@ export const updateMarketingTouchStatus = (data: any) => {
   return request.post({ url: "/api/updateMarketingTouchStatus.do", data });
 };
 
+// 复制
+export const copyMarketingTouch = (data: any) => {
+  return request.post({ url: "/api/copyMarketingTouch.do", data });
+};
+
 // 营销触达开始
 export const getstartMarketingTouch = (data: any) => {
   return request.post({ url: "/api/startMarketingTouch.do", data });
