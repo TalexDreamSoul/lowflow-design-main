@@ -151,7 +151,7 @@ const pushTemplate = computed(() => {
 });
 
 const delayedActionStr = computed(() => {
-  const action = data?.eventDelayed?.delayedAction;
+  const action = data?.nodeDelayed?.delayedAction;
   if (!action) return "";
 
   if (action === "touch") return "发送触达";
@@ -190,15 +190,23 @@ function del(p: MarketingTouchEditDTO) {
       </el-popover>
     </p>
     <div class="PBlock-Content theme" @click="openCondition">
-      <div
-        v-if="data.nodeName !== '兜底策略器'"
-        style="--theme-color: #90a0b8"
-        class="PBlock-Section"
-      >
-        <p>客户属性行为分流</p>
-        <span v-if="data.diversionType === 'noDiversion'"> 不分流 </span>
-        <span v-else-if="data.diversionType === 'attr'"> 按属性用户行为分流 </span>
-        <span v-else-if="data.diversionType === 'event'">按触发事件分流</span>
+      <div v-if="data.nodeName !== '兜底策略器'" style="--theme-color: #90a0b8" class="PBlock-Section">
+        <template v-if="data.diversionType === 'noDiversion'">
+          <p>不分流</p>
+          <span>不分流</span>
+        </template>
+        <template v-if="data.diversionType === 'attr'">
+          <p>客户属性行为分流</p>
+          <span>客户属性满足：{{ data.customRuleContent.customAttr?.conditions?.length || 0 }}条</span>
+          <br />
+          <span>客户事件满足：{{ data.customRuleContent.customEvent?.conditions?.length || 0 }}条</span>
+          <br />
+          <span>行为序列满足：{{ data.customRuleContent.eventSequence?.conditions?.length || 0 }}条</span>
+        </template>
+        <template v-if="data.diversionType === 'event'">
+          <p>触发事件分流</p>
+          <span>触发事件满足：{{ data.eventRuleContent?.customEvent?.conditions?.length || 0 }}条</span>
+        </template>
       </div>
       <div style="--theme-color: #7dc757" class="PBlock-Section">
         <p>延迟设置</p>
@@ -209,9 +217,12 @@ function del(p: MarketingTouchEditDTO) {
             <span v-else-if="data.nodeDelayed.delayedUnit === 'hour'"> 小时 </span>
             <span v-else-if="data.nodeDelayed.delayedUnit === 'minute'"> 分钟 </span>
           </span>
-          后 {{ delayedActionStr }}
+          后
+          <!-- {{ delayedActionStr }} -->
         </span>
-        <span v-else>立即针对符合该策略器条件的客户发送触达</span>
+        <!-- <span v-else-if="data.nodeDelayed.delayedAction === 'nothing'">不执行动作</span> -->
+        <span v-else>立即针对符合该策略器条件的客户</span>
+        <span>{{ delayedActionStr }}</span>
       </div>
       <div v-if="pushTemplate.has" style="--theme-color: #ffb858" class="PBlock-Section">
         <p>APP推送</p>
@@ -222,12 +233,8 @@ function del(p: MarketingTouchEditDTO) {
     <teleport to="body">
       <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div
-            @click="openDrawer(item, true)"
-            v-for="item in comps"
-            class="PBlock-Section"
-            :class="{ disabled: item.disabled?.value }"
-          >
+          <div @click="openDrawer(item, true)" v-for="item in comps" class="PBlock-Section"
+            :class="{ disabled: item.disabled?.value }">
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
@@ -252,17 +259,10 @@ function del(p: MarketingTouchEditDTO) {
     </teleport>
   </el-card>
 
-  <el-button
-    @click="dialogVisible = true"
-    :class="{
-      display:
-        data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate,
-    }"
-    class="start-add"
-    type="primary"
-    :icon="Plus"
-    circle
-  />
+  <el-button @click="dialogVisible = true" :class="{
+        display:
+          data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate,
+      }" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">

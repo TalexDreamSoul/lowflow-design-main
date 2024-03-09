@@ -247,8 +247,12 @@ const dialogVisible = ref();
 
 // console.log("total flow", flowOptions);
 
+// @ts-ignore
+delete window.$flow
+
 Object.defineProperty(window, '$flow', {
-  value: flowOptions
+  value: flowOptions,
+  configurable: true
 })
 
 const goBack = () => {

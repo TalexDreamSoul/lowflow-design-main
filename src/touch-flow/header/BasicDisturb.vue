@@ -46,7 +46,7 @@ function analyzeTime(time: string) {
 
   date.setHours(+time.split(":")[0]);
   date.setMinutes(+time.split(":")[1]);
-  date.setSeconds(+time.split(":")[2]);
+  // date.setSeconds(+time.split(":")[2]);
 
   return date;
 }
@@ -55,8 +55,8 @@ function handleChange(value: any) {
   console.log("change", value);
 
   props.disturb.time = [
-    DayJs(value[0]).format("HH:MM:ss"),
-    DayJs(value[1]).format("HH:MM:ss"),
+    DayJs(value[0]).format("HH:MM"),
+    DayJs(value[1]).format("HH:MM"),
   ];
 }
 </script>
@@ -79,7 +79,7 @@ function handleChange(value: any) {
         <el-time-picker
           is-range
           @change="handleChange"
-          format="HH:MM:ss"
+          format="HH:MM"
           style="width: 200px"
           :disabled="readonly"
           v-model="timeRange"
