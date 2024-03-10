@@ -27,7 +27,8 @@ console.log('map', props.data, select)
 
       transition: .25s;
 
-      &:hover {
+      &:hover,
+      &.active {
         background-color: #277AE710;
       }
     }

@@ -41,9 +41,6 @@ const defaultFormValues = {
 let formValues = reactive<any>({ ...defaultFormValues });
 const RoleList = ref([]); // 权限列表
 
-
-
-
 onMounted(async () => {
   fetchRoleList();
   fetchDataApi();
@@ -61,7 +58,7 @@ const fetchDataApi = async () => {
   const res = await API.accountDetail();
   Object.assign(formValues, res.data);
 
-  appOptions.user = res.data;
+  appOptions.value.user = res.data;
 
   console.log(`output->tabledata`, formValues.value);
 };

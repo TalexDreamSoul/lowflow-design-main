@@ -61,3 +61,8 @@ export const materialType = [
   { value: "znx", name: "站内信" }
 ];
 
+export function sleep(num: number = 200) {
+  return new Promise(resolve => {
+    setTimeout(resolve, num)
+  })
+}

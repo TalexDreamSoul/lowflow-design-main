@@ -90,3 +90,65 @@ export function createTemplatePopover(
     __resolve = resolve;
   });
 }
+
+export function createPopover(
+  comp: any,
+  data: any
+) {
+  if (!comp) throw new Error(`Component not found!`);
+
+  let __resolve: any;
+
+  function resolve() {
+    if (!__resolve) {
+      throw new Error("Promise resolve fatal error!");
+    }
+
+    dom.style.opacity = '0'
+
+    setTimeout(() => {
+
+      __resolve();
+
+      window.addEventListener("scroll", handleScroll);
+
+      app.unmount();
+
+      document.body.removeChild(dom);
+    }, 300)
+
+  }
+
+  window.addEventListener("scroll", handleScroll);
+
+  const dom = document.createElement("div");
+  const app = _createApp(comp, {
+    ...data,
+    close: resolve
+  });
+
+  function handleScroll(e: Event) {
+    e.preventDefault();
+  }
+
+  Object.assign(dom.style, {
+    zIndex: "1000",
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    left: "0",
+    top: "0",
+    transition: '.25s',
+    opacity: '0',
+    backgroundColor: "rgba(0, 0, 0, .5)",
+  });
+
+  setTimeout(() => dom.style.opacity = '1', 50)
+
+  document.body.appendChild(dom);
+  app.mount(dom);
+
+  return new Promise((resolve) => {
+    __resolve = resolve;
+  });
+}

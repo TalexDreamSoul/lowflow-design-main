@@ -18,13 +18,27 @@
 // @ts-ignore sure exist
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import TopMenu from "~/views/TopMenu/index.vue";
-import { computed, reactive, provide } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, reactive, provide, watchEffect } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { reactiveMessage } from "./utils/mention/mention";
+import { useLocalStorage } from "@vueuse/core";
 
-const appOptions = reactive<any>({})
+const appOptions = useLocalStorage('app-options', { user: {}  })
 const route = useRoute()
+const router = useRouter()
 
 const meta = computed(() => route.meta)
+
+watchEffect(() => {
+  $ignored: appOptions
+
+  const { user } = appOptions.value
+  if (!user) {
+    const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false)
+
+    promise.then(() => router.push('/userCenter/personalInformation'))
+  }
+})
 
 provide('appOptions', appOptions)
 </script>

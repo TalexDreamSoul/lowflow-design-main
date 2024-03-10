@@ -1,5 +1,5 @@
 <script setup lang="ts" name="MapList">
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, computed } from 'vue'
 import { useVModel } from '@vueuse/core'
 
 const props = defineProps<{
@@ -34,11 +34,19 @@ function handleSelect(item: any) {
   }
 
 }
+
+function calcActive(item: any) {
+  const { now } = (model.value || {})
+  if (!now) return
+
+  return +now.id === +item?.id
+}
 </script>
 
 <template>
   <ul class="RoleFlatMap-List">
-    <li @click="handleSelect(item)" class="RoleFlatMap-ListItem" v-for="item in data" :key="item.id">
+    <li :class="{ active: calcActive(item) }" @click="handleSelect(item)" class="RoleFlatMap-ListItem"
+      v-for="item in data" :key="item.id">
       {{ item.menuName }}
     </li>
   </ul>

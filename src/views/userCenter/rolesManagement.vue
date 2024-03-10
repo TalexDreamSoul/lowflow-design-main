@@ -4,10 +4,11 @@ import dayjs from "dayjs";
 import API from "~/api/account";
 import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
-import { ElMessageBox, ElMessage, FormInstance,ElTree } from "element-plus";
+import { ElMessageBox, ElMessage, FormInstance, ElTree } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { checkStringEqual, debounce } from '~/utils/common';
 import RoleFlatMap from "./role/RoleFlatMap.vue";
+import RoleSelect from "./tree/RoleSelect.vue";
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
@@ -44,13 +45,13 @@ let formValues = reactive<any>({ ...defaultFormValues });
 const modalVisible = ref(false);
 const modalType = ref<any>(DrawerType.Create);
 const formRef = ref<FormInstance>();
-  const treeProps = {
-      children: 'subMenus',
-      label: 'menuName',
-      hasChildren(node: { subMenus: null; }) {
-        return node.subMenus !== null; // 当 subMenus 不为 null 时显示展开符号
-      }
-    };
+const treeProps = {
+  children: 'subMenus',
+  label: 'menuName',
+  hasChildren(node: { subMenus: null; }) {
+    return node.subMenus !== null; // 当 subMenus 不为 null 时显示展开符号
+  }
+};
 onMounted(async () => {
   fetchDataApi();
   fetchqryMenuList();
@@ -61,7 +62,7 @@ watch([currentPage, pageSize, formInline], () => {
 });
 
 
-const fetchqryroleDetail = async (id:any) => {
+const fetchqryroleDetail = async (id: any) => {
   const res = await API.roleDetail(id);
   Object.assign(formValues, res.data);
   console.log(`output->formValues`, formValues);
@@ -90,7 +91,7 @@ const delData = async (row: any) => {
     customClass: "delete-modal",
   }).then(async () => {
     let res = await API.deleteRole({
-      id:row.id
+      id: row.id
     });
     if (res?.code == 0) {
       fetchDataApi();
@@ -146,9 +147,10 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     <template #search>
       <div class="search">
         <el-form :inline="true">
-         
+
           <el-form-item>
-            <el-input v-model="formInline.roleName" placeholder="角色名称" clearable style="width:200px" :suffix-icon="Search" />
+            <el-input v-model="formInline.roleName" placeholder="角色名称" clearable style="width:200px"
+              :suffix-icon="Search" />
           </el-form-item>
 
         </el-form>
@@ -161,11 +163,11 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       <el-table :data="tableData">
         <el-table-column label="用户角色" prop="roleName" width="300" />
         <el-table-column label="角色说明" prop="describe" />
-        
+
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-space wrap>
-              <el-link type="primary"  @click="handleModal(DrawerType.Edit, scope.row)">编辑</el-link>
+              <el-link type="primary" @click="handleModal(DrawerType.Edit, scope.row)">编辑</el-link>
               <el-link type="primary" @click="delData(scope.row)">删除</el-link>
             </el-space>
 
@@ -174,20 +176,22 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       </el-table>
     </template>
     <template #pagination>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background         layout="prev, pager, next, jumper"
-      :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background
+        layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total"
+        @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </template>
   </CustomEventComponent>
 
-  <el-dialog width="650"  destroy-on-close :close-on-click-modal="false" v-model="modalVisible" :title="ModalTitleMap[modalType]">
+  <el-dialog width="650" destroy-on-close :close-on-click-modal="false" v-model="modalVisible"
+    :title="ModalTitleMap[modalType]">
     <el-form ref="formRef" :hide-required-asterisk="true" label-position="top" class="form" :model="formValues">
       <el-form-item :rules="[
-            { required: true, message: '请输入帐号名称' },
-            {
-              pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
-              message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
-            },
-          ]" label="角色名称" prop="roleName">
+    { required: true, message: '请输入帐号名称' },
+    {
+      pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
+      message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
+    },
+  ]" label="角色名称" prop="roleName">
         <el-input v-model="formValues.roleName" style="width:300px" placeholder="请输入" clearable />
       </el-form-item>
 
@@ -195,19 +199,14 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         <el-input v-model="formValues.describe" style="width:300px" placeholder="请输入" clearable />
       </el-form-item>
       <el-form-item :rules="[
-        { required: true, message: '请输入角色权限' },
-      ]" label="角色权限" prop="menuIds">
-      <div  style="height: 500px; width:100%;overflow: scroll;">
-      <el-tree
-      :data="MenuList"
-      show-checkbox
-       node-key="id"
-      :default-expand-all="true"
-      :default-checked-keys="formValues.menuIds"
-      :props="treeProps"
-    />
-        <RoleFlatMap :data="MenuList" />
-      </div>
+    { required: true, message: '请输入角色权限' },
+  ]" label="角色权限" prop="menuIds">
+        <div style="height: 500px; width:100%;overflow: scroll;">
+          <el-tree :data="MenuList" show-checkbox node-key="id" :default-expand-all="true"
+            :default-checked-keys="formValues.menuIds" :props="treeProps" />
+          <!-- <RoleSelect :data="MenuList" /> -->
+          <!-- <RoleFlatMap :data="MenuList" /> -->
+        </div>
       </el-form-item>
     </el-form>
     <template #footer>

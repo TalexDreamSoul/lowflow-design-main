@@ -9,7 +9,6 @@ import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { flatConvert2Tree } from "./flow-utils";
 import { IFlowHeader } from "./flow-types";
-import { ITEM_RENDER_EVT } from "element-plus/es/components/virtual-list/src/defaults";
 import { getmarketingTouchDetail } from "~/api/index";
 
 const route = useRoute();
@@ -19,27 +18,6 @@ const props = defineProps<{
   readonly?: boolean;
 }>();
 
-onMounted(async () => {
-  if (route.params.id) {
-    fetchDataDetails();
-  }
-});
-
-const fetchDataDetails = async () => {
-  const res = await getmarketingTouchDetail({
-    id: route.params.id,
-  });
-  const data = res.data;
-  console.log("!!!", data);
-
-  Object.assign(flowOptions.basic, {
-    touchName: data.touchName,
-    disturb: disturbReduction(data),
-    target: targetReduction(data),
-  });
-  flowOptions.p.children = flatConvert2Tree([...data.nodes!]);
-  console.log("FlowPage updated!", props.modelValue);
-};
 const flowOptions = reactive<
   {
     basic: IFlowHeader;
@@ -68,21 +46,39 @@ const flowOptions = reactive<
   },
 });
 
+async function covertData(data: any) {
+
+  console.log("!!!", data);
+
+  Object.assign(flowOptions.basic, {
+    touchName: data.touchName,
+    disturb: disturbReduction(data),
+    target: targetReduction(data),
+  });
+
+  flowOptions.p.children = flatConvert2Tree([...data.nodes!]);
+
+  const _temp = { ...data }
+
+  delete _temp.children
+  delete _temp.touchName
+
+  Object.assign(flowOptions.p, _temp)
+
+  console.log("FlowPage updated!", props.modelValue, _temp);
+}
+
 watchEffect(() => {
+  // $ignored: [props.modelValue, route.params.id]
+
   if (props.modelValue) {
-    const data = props.modelValue;
+    covertData(props.modelValue)
+  }
 
-    console.log("!!!", data);
-
-    Object.assign(flowOptions.basic, {
-      touchName: data.touchName,
-      disturb: disturbReduction(data),
-      target: targetReduction(data),
-    });
-
-    flowOptions.p.children = flatConvert2Tree([...data.nodes!]);
-
-    console.log("FlowPage updated!", props.modelValue);
+  if (route.params?.id !== void 0) {
+    getmarketingTouchDetail({
+      id: route.params.id,
+    }).then(res => res.data && covertData(res.data))
   }
 });
 
@@ -262,7 +258,8 @@ const goBack = () => {
 
 <template>
   <div class="FlowPage">
-    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
+    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }"
+      class="FlowPage-Container">
       <el-header>
         <FlowHeader v-if="!modelValue || !readonly" :basic="flowOptions.basic">
           <template #controller>
@@ -292,7 +289,8 @@ const goBack = () => {
 
   <teleport to="body">
     <el-dialog title="流程基础设置" v-model="dialogVisible">
-      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview" :basic="flowOptions.basic" />
+      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview"
+        :basic="flowOptions.basic" />
     </el-dialog>
   </teleport>
 </template>
@@ -365,7 +363,7 @@ div.el-dialog {
     align-items: center;
 
     background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
     background-size: 30px 30px;
 
     transform: translateY(80px);
@@ -384,6 +382,7 @@ div.el-dialog {
   from {
     transform: translateY(-50%) rotate3d(1, 0, 0, -90deg);
   }
+
   to {
     transform: translateY(0) rotate3d(1, 0, 0, 0deg);
   }

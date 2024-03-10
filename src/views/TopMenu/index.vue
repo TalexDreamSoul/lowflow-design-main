@@ -2,13 +2,13 @@
 <template>
   <div class="TopMenu-Container">
     <div class="TopMenu-Container-Start">
-      <img style="width: 169px; height: 39px;margin: auto 2rem" :src="HeaderIcon" alt="" />
+      <img style="width: 169px; height: 39px;margin: auto 8rem auto 1rem" :src="HeaderIcon" alt="" />
 
       <TouchMenu title="营销制作">
         <li @click="handleloca">活动编辑器</li>
       </TouchMenu>
       <TouchMenu title="营销制作" path="/strategyProcess">
-        <touchMenuItem @ctouchMenuItemck="handleloca">策略流程列表</touchMenuItem>
+        <touchMenuItem path="/strategyProcess/list">策略流程列表</touchMenuItem>
       </TouchMenu>
       <TouchMenu title="素材中心" path="/materialCenter">
         <touchMenuItem path="/materialCenter/templatePanel/all">模版总览</touchMenuItem>
@@ -36,7 +36,7 @@
       <TouchMenu title="数据中心" path="/userCenter">
         <touchMenuItem path="/userCenter/userManagement">用户管理</touchMenuItem>
         <touchMenuItem path="/userCenter/rolesManagement">角色管理</touchMenuItem>
-        <touchMenuItem path="/userCenter/personatouchMenuItemnformation">个人信息</touchMenuItem>
+        <touchMenuItem path="/userCenter/personalInformation">个人信息</touchMenuItem>
       </TouchMenu>
       <!-- <el-sub-menu index="8">
       <template #title>

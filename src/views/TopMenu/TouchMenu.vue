@@ -97,7 +97,7 @@ const active = computed(() => props.path && route.path.startsWith(props.path))
 
     }
 
-    z-index: 100;
+    z-index: 50;
     position: absolute;
     margin: 0;
     padding: 0;
