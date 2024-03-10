@@ -108,7 +108,7 @@ function transformTarget(target: typeof flowOptions.basic.target) {
 
 function targetReduction(data: Request) {
   return {
-    enable: data.containTarget ?? props.readonly,
+    enable: data.containTarget,
     targetRuleContent: data.targetRuleContent || [],
   };
 }
