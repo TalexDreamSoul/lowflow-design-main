@@ -276,8 +276,8 @@ const changeTime = (val: any) => {
             <!-- targetCount 完成目标数量
             touchCount 触达数量
             triggerCount 触发数量 -->
-            {{ scope.row.touchCount }}/
             {{ scope.row.triggerCount }}/
+           {{ scope.row.touchCount }}/
             {{ scope.row.targetCount }}
           </template>
         </el-table-column>
