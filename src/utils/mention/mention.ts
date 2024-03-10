@@ -10,7 +10,11 @@ export function message(title: Ref<string>, content: Ref<string>, loading: Ref<b
   })
 }
 
-export function reactiveMessage(title: string = '', content: string = '', loading: boolean = false) {
+export function reactiveMessage(title: string = '', content: string = '', loading: boolean = false): [any, {
+  title: Ref<string>,
+  content: Ref<string>,
+  loading: Ref<boolean>
+}] {
   const _title = ref(title)
   const _content = ref(content)
   const _loading = ref(loading)

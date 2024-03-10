@@ -10,6 +10,8 @@ import { ElMessage } from "element-plus";
 import { flatConvert2Tree } from "./flow-utils";
 import { IFlowHeader } from "./flow-types";
 import { getmarketingTouchDetail } from "~/api/index";
+import { reactiveMessage } from '~/utils/mention/mention'
+import { sleep } from "~/utils/common";
 
 const route = useRoute();
 
@@ -197,6 +199,9 @@ function flatMaps(__nodes: Array<any>) {
 async function submitReview(status: string = "approvalPending") {
   if (props.readonly) return;
 
+  const [promise, r] = reactiveMessage("请稍后", "正在传输数据中...", true)
+  const { title, content, loading } = r
+
   console.groupCollapsed("submit");
 
   console.log("transformNodes", flowOptions.p.children);
@@ -219,20 +224,22 @@ async function submitReview(status: string = "approvalPending") {
   };
   Object.assign(data, _flowOptions);
 
-  const res = await touchSubmitReview(data);
+  const res: any = await touchSubmitReview(data)
 
-  if (!+res?.code) {
-    return ElMessage({
-      message: res.msg,
-      type: "success",
-      duration: 1000,
-      onClose: () => {
-        router.go(-1);
-      },
-    });
+  await sleep(1200)
+
+  console.log('done', res)
+
+  if (!!+res?.code) {
+    promise.then(goBack)
   }
 
-  console.log(res, data);
+  loading.value = false
+
+  title.value = "提交完毕"
+  content.value = res.message || '失败'
+
+  console.log(data);
 
   console.groupEnd();
 }
