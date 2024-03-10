@@ -192,3 +192,15 @@ export const getBlackList = (data: {
     data: defaultVal,
   });
 };
+
+export const marketingTouchNodeStatistics = (data: any = {
+  id: 0,
+  pageNum: 0,
+  pageSize: 10,
+  touchNodeId: ""
+}) => {
+  return request.post({
+    url: "/api/marketingTouchNodeStatistics.do",
+    data,
+  });
+}

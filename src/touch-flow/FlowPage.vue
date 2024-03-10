@@ -281,7 +281,7 @@ const goBack = () => {
       </el-header>
       <el-main>
         <el-scrollbar>
-          <XFlow :p="flowOptions.p as any" />
+          <XFlow :readonly="readonly" :p="flowOptions.p as any" />
         </el-scrollbar>
       </el-main>
     </el-container>

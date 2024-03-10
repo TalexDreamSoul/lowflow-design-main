@@ -6,6 +6,7 @@ import DeliverySettingsAttr from "./attr/DeliverySettingsAttr.vue";
 import { _delChild } from "../flow-utils";
 import Strategist from "./attr/Strategist.vue";
 import { MarketingTouchEditDTO } from "./behavior/marketing";
+import StatisticsDisplay from './attr/StatisticsDisplay.vue'
 
 const getNode: Function = inject("getNode")!;
 const { data: _data } = getNode();
@@ -231,6 +232,9 @@ function del(p: MarketingTouchEditDTO) {
       <div v-if="pushTemplate.has" style="--theme-color: #ffb858" class="PBlock-Section">
         <p>APP推送</p>
         <span>{{ pushTemplate.val }}</span>
+      </div>
+      <div v-if="_data.$readonly">
+        <StatisticsDisplay :nodeId="_data.id" />
       </div>
     </div>
 

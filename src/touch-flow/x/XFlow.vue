@@ -26,6 +26,7 @@ interface IGraphData {
 
 const props = defineProps<{
   p: IGraphData;
+  readonly?: boolean;
 }>();
 
 let _Graph: any;
@@ -67,7 +68,7 @@ const layoutFn = () => {
         console.log("__subDiversion");
         return 450;
       }
-      return d.height ? parseInt(d.height) : 400;
+      return d.height ? parseInt(d.height) : 600;
     },
     getHGap() {
       const k = 0.07692307692307693;
@@ -102,10 +103,17 @@ const layoutFn = () => {
       if (data.data?.father?.nodeType === "subDiversion") return height - 40;
       if (data.data.nodeName === "兜底策略器") return height - 155;
 
-      if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
-        return height - 60
+      if (props.readonly) {
+        if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
+          return height - 60
 
-      return height - 160;
+        return height - 160
+      }
+
+      if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
+        return height - 260
+
+      return height - 360;
     },
     diversion: (height: number) => height - 132,
     subDiversion: (height: number, _data: any) => {
@@ -117,6 +125,10 @@ const layoutFn = () => {
         if (data?.nodeContent?.data?.$template.has) {
           calcHeight += 100;
         }
+      }
+
+      if (props.readonly) {
+        calcHeight -= 100
       }
 
       console.log("><", data);
@@ -140,7 +152,12 @@ const layoutFn = () => {
         x: data.x + 700,
         y: data.y + 200,
         shape,
-        data: { ...data, $d: getNodeReactive, $del: del },
+        data: {
+          ...data,
+          $del: del,
+          $d: getNodeReactive,
+          $readonly: props.readonly,
+        },
         width: 610,
         height: calc(data.height, data),
         ports: {
@@ -378,8 +395,7 @@ div.PBlock {
 
     padding: 16px;
     width: 280px;
-    background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%)
-      rgba(255, 255, 255, 0.4);
+    background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%) rgba(255, 255, 255, 0.4);
     border-radius: 8px 8px 8px 8px;
     opacity: 1;
   }
