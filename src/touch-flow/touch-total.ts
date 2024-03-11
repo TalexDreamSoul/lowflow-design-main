@@ -1,4 +1,4 @@
-import { addMarketingTouch } from "~/api";
+import { addMarketingTouch,updateMarketingTouch } from "~/api";
 
 /**
  * MarketingTouchEditDTO
@@ -164,10 +164,11 @@ export type SearchCondition = {
  * AttrDTO
  */
 export type AttrDTO = {
+  id: string;
   /**
    * 字段
    */
-  field: string;
+  field?: string;
   /**
    * 字段值
    */
@@ -187,12 +188,70 @@ export type AttrDTO = {
   /**
    * 字段类型
    */
-  fieldType: string;
+  fieldType?: string;
   /**
    * 字段值
    */
-  fieldValue: string;
+  fieldValue?: string;
   timeCondition?: TimeConditionDTO;
+}
+
+/**
+ * AttrDict
+ */
+export type AttrDict = {
+  /**
+   * 创建人id
+   */
+  createBy?: number;
+  /**
+   * 创建时间
+   */
+  createTime?: Date;
+  /**
+   * 是否被删除
+   */
+  deleted?: boolean;
+  /**
+   * 说明
+   */
+  describe?: string;
+  /**
+   * 属性名
+   */
+  field?: string;
+  /**
+   * 属性编码
+   */
+  fieldCode?: string;
+  /**
+   * 属性别名
+   */
+  fieldName?: string;
+  /**
+   * 字段类型：text 文本型，num 数字型， date 日期型，boolean 布尔类型
+   */
+  fieldType?: string;
+  /**
+   * 默认枚举值
+   */
+  fieldValue?: { [key: string]: { [key: string]: any } };
+  /**
+   * 主键id
+   */
+  id?: number;
+  /**
+   * 状态：available 可用，offline 下线'
+   */
+  status?: string;
+  /**
+   * 创建人id
+   */
+  updatedBy?: number;
+  /**
+   * 更新时间
+   */
+  updatedTime?: Date;
 }
 
 /**
@@ -234,6 +293,7 @@ export type TimeConditionDTO = {
  * LabelDTO
  */
 export type LabelDTO = {
+  id?: string;
   /**
    * 标签id
    */
@@ -246,8 +306,8 @@ export type LabelDTO = {
    * 标签值
    */
   labelValue?: { [key: string]: any }[];
-  [property: string]: any;
 }
+
 
 /**
  * CustomEventConditionDTO
@@ -803,4 +863,7 @@ export type EventTriggerConditionDTO = {
 
 export function touchSubmitReview(touchPageFlow: MarketingTouchNodeEditDTO) {
   return addMarketingTouch(touchPageFlow)
+}
+export function touchSubmitUpdate(touchPageFlow: MarketingTouchNodeEditDTO) {
+  return updateMarketingTouch(touchPageFlow)
 }

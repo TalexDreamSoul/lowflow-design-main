@@ -33,10 +33,13 @@ const defaultResponseInterceptors = (response: AxiosResponse) => {
   } else if (response.data.code == SUCCESS_CODE) {
     return response.data
   } else {
-    ElMessage.error(response?.data?.message)
-    if (response?.data?.code === 401) {
 
-    }
+    // if (response?.data?.code === 401) {
+
+    // }
+
+    if (response.config.url?.indexOf('addMarketingTouch.do') !== -1) return response.data
+    else ElMessage.error(response?.data?.message)
   }
 }
 

@@ -14,8 +14,8 @@ const dict = ref<any>();
 !(async () => {
   const res = await getDictFilterTree(
     {
-      pageNum:"1",
-      pageSize:"999"
+      pageNum: "1",
+      pageSize: "999"
     }
   );
 
@@ -73,34 +73,19 @@ if (!props.sizeForm?.targetRuleContent?.targetDelayed) {
       <el-switch v-model="sizeForm.containTarget" />
     </div>
 
-    <div
-      class="MainBlock-Content"
-      v-if="sizeForm.containTarget"
-    >
+    <div class="MainBlock-Content" v-if="sizeForm.containTarget">
       <div class="MainBlock-ContentItem bg-transparent">
         <el-text>该策略器的延时以及动作执行完毕后，在</el-text>&nbsp;
-        <el-input
-          :disabled="readonly"
-          v-model="sizeForm.targetRuleContent.targetDelayed.delayedTime"
-          type="number"
-          style="width: 100px"
-        />&nbsp;
-        <el-select
-          :disabled="readonly"
-          v-model="sizeForm.targetRuleContent.targetDelayed.delayedUnit"
-          style="width: 150px"
-        >
+        <el-input-number :disabled="readonly" v-model="sizeForm.targetRuleContent.targetDelayed.delayedTime" :min="0"
+          style="width: 100px" />&nbsp;
+        <el-select :disabled="readonly" v-model="sizeForm.targetRuleContent.targetDelayed.delayedUnit"
+          style="width: 150px">
           <el-option value="minute" label="分钟">分钟</el-option>
           <el-option value="hour" label="小时">小时</el-option>
-          <el-option value="day" label="天">天</el-option> </el-select
-        >&nbsp;
+          <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
         <el-text>后立即判断客户是否完成以下转化事件，则认为完成该策略器模板。</el-text>
 
-        <TargetContent
-          :readonly="readonly"
-          :target="sizeForm.targetRuleContent"
-          :dict="dict"
-        />
+        <TargetContent :readonly="readonly" :target="sizeForm.targetRuleContent" :dict="dict" />
       </div>
       <!-- <div class="MainBlock-ContentItem bg-transparent"> -->
 

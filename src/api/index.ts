@@ -43,6 +43,11 @@ export const updateMarketingTouchStatus = (data: any) => {
   return request.post({ url: "/api/updateMarketingTouchStatus.do", data });
 };
 
+// 复制
+export const copyMarketingTouch = (data: any) => {
+  return request.post({ url: "/api/copyMarketingTouch.do", data });
+};
+
 // 营销触达开始
 export const getstartMarketingTouch = (data: any) => {
   return request.post({ url: "/api/startMarketingTouch.do", data });
@@ -94,13 +99,18 @@ export const addMaterial = (data: any) => {
   });
 };
 
+export const updateMarketingTouch = (data: any) => {
+  return request.post({
+    url: "/api/updateMarketingTouch.do",
+    data,
+  });
+};
 export const addMarketingTouch = (data: any) => {
   return request.post({
     url: "/api/addMarketingTouch.do",
     data,
   });
 };
-
 export const updateMaterial = (data: any) => {
   return request.post({
     url: "/api/updateMaterial.do",
@@ -187,3 +197,15 @@ export const getBlackList = (data: {
     data: defaultVal,
   });
 };
+
+export const marketingTouchNodeStatistics = (data: any = {
+  id: 0,
+  pageNum: 0,
+  pageSize: 10,
+  touchNodeId: 0
+}) => {
+  return request.post({
+    url: "/api/marketingTouchNodeStatistics.do",
+    data,
+  });
+}

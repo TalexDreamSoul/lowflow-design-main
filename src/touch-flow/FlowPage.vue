@@ -9,8 +9,10 @@ import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { flatConvert2Tree } from "./flow-utils";
 import { IFlowHeader } from "./flow-types";
-import { ITEM_RENDER_EVT } from "element-plus/es/components/virtual-list/src/defaults";
-import { getmarketingTouchDetail } from "~/api/index";
+import { getmarketingTouchDetail, updateMarketingTouch } from "~/api/index";
+import { reactiveMessage } from "~/utils/mention/mention";
+import { sleep } from "~/utils/common";
+import { el } from "element-plus/es/locale";
 
 const route = useRoute();
 
@@ -19,27 +21,6 @@ const props = defineProps<{
   readonly?: boolean;
 }>();
 
-onMounted(async () => {
-  if (route.params.id) {
-    fetchDataDetails();
-  }
-});
-
-const fetchDataDetails = async () => {
-  const res = await getmarketingTouchDetail({
-    id: route.params.id,
-  });
-  const data = res.data;
-  console.log("!!!", data);
-
-  Object.assign(flowOptions.basic, {
-    touchName: data.touchName,
-    disturb: disturbReduction(data),
-    target: targetReduction(data),
-  });
-  flowOptions.p.children = flatConvert2Tree([...data.nodes!]);
-  console.log("FlowPage updated!", props.modelValue);
-};
 const flowOptions = reactive<
   {
     basic: IFlowHeader;
@@ -68,21 +49,53 @@ const flowOptions = reactive<
   },
 });
 
+async function covertData(data: any) {
+  console.log("!!!", data);
+
+  Object.assign(flowOptions.basic, {
+    touchName: data.touchName,
+    disturb: disturbReduction(data),
+    target: targetReduction(data),
+  });
+
+  flowOptions.p.children = flatConvert2Tree([...data.nodes!]);
+
+  const _temp = { ...data };
+
+  delete _temp.children;
+  delete _temp.touchName;
+
+  Object.assign(flowOptions.p, _temp);
+
+  console.log("FlowPage updated!", props.modelValue, _temp);
+}
+
 watchEffect(() => {
+  // $ignored: [props.modelValue, route.params.id]
+
   if (props.modelValue) {
-    const data = props.modelValue;
+    covertData(props.modelValue);
+  }
 
-    console.log("!!!", data);
+  if (route.params?.id?.length) {
+    const [, { loading, show }] = reactiveMessage(
+      "请稍后",
+      "正在转换数据",
+      true,
+      0,
+      false
+    );
 
-    Object.assign(flowOptions.basic, {
-      touchName: data.touchName,
-      disturb: disturbReduction(data),
-      target: targetReduction(data),
-    });
+    const timer = setTimeout(() => (show.value = true), 500);
 
-    flowOptions.p.children = flatConvert2Tree([...data.nodes!]);
-
-    console.log("FlowPage updated!", props.modelValue);
+    getmarketingTouchDetail({
+      id: route.params.id,
+    })
+      .then((res: any) => res.data && covertData(res.data))
+      .finally(() => {
+        clearTimeout(timer);
+        loading.value = false;
+      });
   }
 });
 
@@ -112,7 +125,7 @@ function transformTarget(target: typeof flowOptions.basic.target) {
 
 function targetReduction(data: Request) {
   return {
-    enable: data.containTarget ?? props.readonly,
+    enable: data.containTarget,
     targetRuleContent: data.targetRuleContent || [],
   };
 }
@@ -201,6 +214,9 @@ function flatMaps(__nodes: Array<any>) {
 async function submitReview(status: string = "approvalPending") {
   if (props.readonly) return;
 
+  const [promise, r] = reactiveMessage("请稍后", "正在传输数据中...", true);
+  const { title, content, loading } = r;
+
   console.groupCollapsed("submit");
 
   console.log("transformNodes", flowOptions.p.children);
@@ -221,22 +237,29 @@ async function submitReview(status: string = "approvalPending") {
   const data: Request = {
     status,
   };
-  Object.assign(data, _flowOptions);
+  if (route.params?.id?.length) {
+    Object.assign(data, { ..._flowOptions, id: route.params?.id });
+  } else {
+    Object.assign(data, _flowOptions);
+  }
+  let res: any = route.params?.id?.length
+    ? await updateMarketingTouch(data)
+    : await touchSubmitReview(data);
 
-  const res = await touchSubmitReview(data);
+  await sleep(1200);
 
-  if (!+res?.code) {
-    return ElMessage({
-      message: res.msg,
-      type: "success",
-      duration: 1000,
-      onClose: () => {
-        router.go(-1);
-      },
-    });
+  console.log("done", res);
+
+  if (!!+res?.code) {
+    promise.then(goBack);
   }
 
-  console.log(res, data);
+  loading.value = false;
+
+  title.value = "提交完毕";
+  content.value = res.message || "失败";
+
+  console.log(data);
 
   console.groupEnd();
 }
@@ -245,7 +268,15 @@ const router = useRouter();
 
 const dialogVisible = ref();
 
-console.log("total flow", flowOptions);
+// console.log("total flow", flowOptions);
+
+// @ts-ignore
+delete window.$flow;
+
+Object.defineProperty(window, "$flow", {
+  value: flowOptions,
+  configurable: true,
+});
 
 const goBack = () => {
   router.go(-1);
@@ -276,7 +307,7 @@ const goBack = () => {
       </el-header>
       <el-main>
         <el-scrollbar>
-          <XFlow :p="flowOptions.p as any" />
+          <XFlow :readonly="readonly" :p="flowOptions.p as any" />
         </el-scrollbar>
       </el-main>
     </el-container>
@@ -370,12 +401,17 @@ div.el-dialog {
   height: 100%;
 
   overflow: hidden;
+
+  .el-card__body {
+    width: 100%;
+  }
 }
 
 @keyframes header-join {
   from {
     transform: translateY(-50%) rotate3d(1, 0, 0, -90deg);
   }
+
   to {
     transform: translateY(0) rotate3d(1, 0, 0, 0deg);
   }

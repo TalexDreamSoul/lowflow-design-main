@@ -47,7 +47,7 @@ const dataObj = Object.freeze({
 const conditions = computed(() => {
   let target = props.target.targetRuleContent.customEvent.conditions[0].conditions[0];
 
-  console.log("go", target, props);
+  // console.log("go", target, props);
 
   // if (!target) {
 

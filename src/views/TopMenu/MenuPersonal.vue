@@ -1,7 +1,8 @@
 <script setup lang="ts" name="MenuPersonal">
+import { inject } from 'vue';
 import { QuestionFilled } from '@element-plus/icons-vue';
 
-
+const appOptions: any = inject('appOptions')!
 </script>
 
 <template>
@@ -13,9 +14,9 @@ import { QuestionFilled } from '@element-plus/icons-vue';
       帮助
     </span>
     <span>
-      你好 LvLv
+      你好 {{ appOptions.user?.accountName }}
     </span>
-    <span class="more">
+    <span v-if="false" class="more">
       <el-icon>
         <MoreFilled />
       </el-icon>

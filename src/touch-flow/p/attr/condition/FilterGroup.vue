@@ -39,7 +39,7 @@ function behaviorAdd() {
   const attr: EventConditionDTO[] = props.customRuleContent.customEvent!.conditions!;
 
   const obj: EventSearchCondition = {
-    action: "",
+    action: "=",
     conditions: {
       conditions: new Array<SearchCondition>(),
       logicalChar: "或",
@@ -58,7 +58,7 @@ function sequenceAdd() {
   const attr: SequenceConditionDTO[] = props.customRuleContent.eventSequence!.conditions!;
 
   const obj = {
-    action: "",
+    action: "=",
     eventCode: "",
     eventName: "",
     conditions: {

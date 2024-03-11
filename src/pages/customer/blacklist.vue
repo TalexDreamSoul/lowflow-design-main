@@ -227,8 +227,10 @@ const handleDelete = (values: any) => {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" >
 @import "~/styles/list-layout.scss";
+</style>
+<style lang="scss" scoped>
 
 .customer-blacklist {
   .flex {

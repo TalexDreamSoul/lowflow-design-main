@@ -61,7 +61,7 @@ function handleAdd() {
     props.condition.conditions || []);
 
   arr.push({
-    action: "",
+    action: "=",
     conditions: {
       conditions: new Array<SearchCondition>(),
       logicalChar: "或",
@@ -83,18 +83,30 @@ function handleAdd() {
 //   // })
 // }
 function handleSubAdd(item: any) {
-  console.log("----", item.conditions, conditionArr.value);
+  // console.log("----", item.conditions, conditionArr.value);
   const arr = (item.conditions.conditions = item.conditions.conditions || []);
 
-  arr.push({
-    attr: "",
-    label: "",
-    type: "",
-  });
+  arr.push(JSON.parse(JSON.stringify(dataObj)));
 }
 function handleSubDel(index: number) {
   props.condition.conditions.splice(index, 1);
 }
+
+function handleEventChanged(val: string, condition: any) {
+  const { events } = props.dict
+
+  const _events = events.map((item: any) => item.events).flat()
+
+  const targetEvent = _events.find((item: any) => item.eventCode === val)
+
+  console.log(val, condition, targetEvent)
+
+  condition.eventName = targetEvent.eventName
+}
+const defaultTime2: [Date, Date] = [
+  new Date(2000, 0, 0, 0, 0, 0),
+  new Date(2000, 0, 0, 23, 59, 59),
+];
 </script>
 
 <template>
@@ -103,12 +115,15 @@ function handleSubDel(index: number) {
       <el-date-picker
         @change="handleDateChange"
         :disabled="readonly"
-        v-model="timeRange"
-        type="daterange"
+        format="YYYY-MM-DD HH:mm:ss"
+        value-format="YYYY-MM-DD HH:mm:ss"
+         v-model="timeRange"
+         type="datetimerange"
         range-separator="-"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         style="width: 120px"
+        :default-time="defaultTime2"
       />
       <span style="color: #484545"> &nbsp;&nbsp; 依次做过 </span>
 
@@ -157,6 +172,7 @@ function handleSubDel(index: number) {
       :key="_index"
     >
       <el-select
+        @change="handleEventChanged($event, event)"
         style="width: 200px"
         :disabled="readonly"
         placeholder="选择事件"

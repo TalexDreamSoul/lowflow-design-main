@@ -75,7 +75,7 @@ const props = defineProps<{
 }>();
 
 const touchSettingsRef = ref();
-const sizeForm = reactive<typeof origin>(origin);
+const sizeForm = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 
 watch(
   () => sizeForm.diversionType,
@@ -86,6 +86,8 @@ watch(
 
 watchEffect(() => {
   const { nodeType, nodeId } = props.p;
+
+  console.log("w", props)
 
   if (props.new || nodeType !== "strategy") return;
 
@@ -128,7 +130,7 @@ function saveData() {
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm);
 
-  console.log("ppp", _);
+  // console.log("ppp", _);
 
   Object.defineProperty(_, "father", {
     value: markRaw(props.p),
@@ -155,7 +157,7 @@ function saveData() {
 
     _.nodeId = randomStr(12);
 
-    console.log("add", props.p);
+    // console.log("add", props.p);
 
     props.p.children.push(_);
   }
@@ -182,61 +184,38 @@ regSaveFunc(saveData);
         </el-radio-group>
       </el-form-item>
 
-      <BehaviorGroupPlus
-        title="用户属性行为分流"
-        color="#333333"
-        :class="{ animation: true, display: sizeForm.diversionType === 'attr' }"
-      >
+      <BehaviorGroupPlus title="用户属性行为分流" color="#333333"
+        :class="{ animation: true, display: sizeForm.diversionType === 'attr' }">
         <div class="titleCondition">进入该策略期的用户需要满足以下条件：</div>
-        <FilterGroup
-          :readonly="readonly"
-          :custom-rule-content="sizeForm.customRuleContent"
-        />
+        <FilterGroup :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus
-        title="触发事件分流"
-        color="#333333"
-        :class="{ animation: true, display: sizeForm.diversionType === 'event' }"
-      >
+      <BehaviorGroupPlus title="触发事件分流" color="#333333"
+        :class="{ animation: true, display: sizeForm.diversionType === 'event' }">
         <div class="flex-column titleCondition">
           <el-text>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</el-text>
-          <el-input-number
-            :min="1"
-            v-model="sizeForm.eventDelayed!.delayedTime"
-            type="number"
-            style="width: 100px"
-          />&nbsp;
+          <el-input-number :min="1" v-model="sizeForm.eventDelayed!.delayedTime" type="number"
+            style="width: 100px" />&nbsp;
           <el-select v-model="sizeForm.eventDelayed!.delayedUnit" style="width: 100px">
             <el-option value="minute" label="分钟">分钟</el-option>
             <el-option value="hour" label="小时">小时</el-option>
-            <el-option value="day" label="天">天</el-option> </el-select
-          >&nbsp;
+            <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
           <el-text>
             后判断客户
-            <el-select
-              v-model="sizeForm.eventDelayed!.delayedAction"
-              style="width: 100px"
-            >
+            <el-select v-model="sizeForm.eventDelayed!.delayedAction" style="width: 100px">
               <el-option value="=" label="做过">做过</el-option>
               <el-option value="!=" label="没做过">没做过</el-option>
             </el-select>
           </el-text>
         </div>
 
-        <FilterGroup
-          :readonly="readonly"
-          :custom-rule-content="sizeForm.eventRuleContent!"
-          :configuration="{ ignore: { attrs: true, sequence: true } }"
-        />
+        <FilterGroup :readonly="readonly" :custom-rule-content="sizeForm.eventRuleContent!"
+          :configuration="{ ignore: { attrs: true, sequence: true } }" />
       </BehaviorGroupPlus>
 
       <CommonAttr ref="touchSettingsRef" :sizeForm="sizeForm" />
 
-      <TouchEstimation
-        :readonly="readonly"
-        :custom-rule-content="sizeForm.customRuleContent"
-      />
+      <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
 
       <StrategistTargetAttr :readonly="readonly" :size-form="sizeForm" />
     </el-form>
@@ -253,6 +232,7 @@ regSaveFunc(saveData);
 
     margin-bottom: 0;
   }
+
   opacity: 0;
   pointer-events: none;
 

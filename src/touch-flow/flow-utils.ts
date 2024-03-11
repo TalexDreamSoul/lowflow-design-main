@@ -199,6 +199,8 @@ export function genIdNodeReactive(p: any) {
     while (stack.length) {
       const node = stack.pop()
 
+      // console.log("search target", id, node)
+
       if (node.id === id) {
         return node
       }
@@ -222,10 +224,14 @@ export function flatConvert2Tree(nodes: any[]) {
   [...nodes].forEach((item: any) => {
     const { preNodeId, nextNodeId } = item
 
+    item.$id = item.id
+
+    console.log("item", item)
+
     if (preNodeId) {
       const preNode = map.get(preNodeId)
       if (preNode) {
-        console.log("__preNode", preNode, preNodeId)
+        // console.log("__preNode", preNode, preNodeId)
 
         preNode.children = [...(preNode.children || []), item]
 
@@ -256,6 +262,8 @@ export function commonValidate(rule: any, value: any, callback: any) {
  */
 export function validateAES(data: CustomSearchDTO, xor: boolean = false) {
   const { customAttr, customEvent, eventSequence } = data;
+
+  console.error("validate aes", data)
 
   if (!validateObjConditions(customAttr)) {
     if (!xor) return false;

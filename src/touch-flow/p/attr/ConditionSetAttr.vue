@@ -39,9 +39,10 @@ const timeFuncs: { [func: string]: any } = {
       return obj.date3;
     },
     (obj: any) => {
-      if (!props.p._executeTime) return false;
+      const { startTime, endTime } = props.p
+      if (!startTime || !endTime) return false;
 
-      obj.date3 = props.p._executeTime;
+      obj.date3 = [startTime, endTime]//props.p._executeTime;
     },
   ],
   trigger: [
@@ -49,9 +50,10 @@ const timeFuncs: { [func: string]: any } = {
       return obj.date3;
     },
     (obj: any) => {
-      if (!props.p._executeTime) return false;
+      const { startTime, endTime } = props.p
+      if (!startTime || !endTime) return false;
 
-      obj.date3 = props.p._executeTime;
+      obj.date3 = [startTime, endTime]
     },
   ],
 };
@@ -148,7 +150,7 @@ function saveData() {
   // 判断流程开始时间
   const { repeatTime } = sizeForm;
   console.log("rt", repeatTime);
-  if (lp == "repeat" && !validatePropValue(repeatTime)) {
+  if (lp == "repeat" && !validatePropValue(repeatTime.repeatTime)) {
     ElMessage({
       message: "请正确填写流程开始时间！",
       type: "error",
@@ -167,16 +169,27 @@ function saveData() {
 
   console.log("Date Save", date, props.p);
 
-  const _format = "YYYY-MM-DD HH:MM:ss";
+  const _format = "YYYY-MM-DD HH:mm:ss";
   let timeFormat;
 
   if (Array.isArray(date)) {
-    timeFormat = [ ...date ].map(item => DayJs(item).format(_format));
-  } else timeFormat = DayJs(date).format(_format);
+    timeFormat = [...date].map(item => DayJs(item).format(_format));
+
+    props.p.startTime = timeFormat[0]
+    props.p.endTime = timeFormat[1]
+
+    props.p.executeTime = null
+  } else {
+    timeFormat = DayJs(date).format(_format);
+
+    console.log(">>>", timeFormat)
+
+    props.p.executeTime = timeFormat
+  }
 
   Object.assign(props.p, {
     _executeTime: date,
-    executeTime: timeFormat,
+    // executeTime: timeFormat,
     executeType: lp,
     repeatTime: repeatTime,
     enterType,
@@ -195,8 +208,8 @@ regSaveFunc(saveData);
 onMounted(async () => {
   const res = await getDictFilterTree(
     {
-      pageNum:"1",
-      pageSize:"999"
+      pageNum: "1",
+      pageSize: "999"
     }
   );
 
@@ -204,105 +217,56 @@ onMounted(async () => {
     dict.value = res.data;
   }
 });
+const defaultTime2: [Date, Date] = [
+  new Date(2000, 0, 0, 0, 0, 0),
+  new Date(2000, 0, 0, 23, 59, 59),
+];
 </script>
 
 <template>
-  <el-form
-    class="MainForm"
-    ref="form"
-    :model="sizeForm"
-    label-width="auto"
-    label-position="top"
-  >
+  <el-form class="MainForm" ref="form" :model="sizeForm" label-width="auto" label-position="top">
     <el-form-item label="流程类型">
       <FlowTypeSelector v-model="sizeForm.executeType" />
     </el-form-item>
     <br />
 
-    <el-form-item
-      v-if="sizeForm.executeType === 'immediately'"
-      label="流程开始时间（任务开始时间）"
-    >
+    <el-form-item v-if="sizeForm.executeType === 'immediately'" label="流程开始时间（任务开始时间）">
       <el-text> 客户在&nbsp;&nbsp; </el-text>
-      <el-date-picker
-        v-model="sizeForm.date1"
-        type="date"
-        label="选择日期"
-        placeholder="选择日期"
-        style="width: 150px"
-      />&nbsp;
-      <el-time-picker
-        v-model="sizeForm.date2"
-        label="选择时间"
-        placeholder="选择时间"
-        style="width: 120px"
-      />
+      <el-date-picker v-model="sizeForm.date1" type="date" label="选择日期" placeholder="选择日期" value-format="YYYY-MM-DD"
+        style="width: 150px" />&nbsp;
+      <el-time-picker v-model="sizeForm.date2" label="选择时间" placeholder="选择时间" style="width: 120px" />
       <el-text> &nbsp;&nbsp;进入流程 </el-text>
     </el-form-item>
 
     <div v-else-if="sizeForm.executeType === 'repeat'">
       <el-form-item label="流程有效期：">
-        <el-date-picker
-          v-model="sizeForm.date3"
-          type="datetimerange"
-          style="max-width: 382px"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        />
+        <el-date-picker v-model="sizeForm.date3" type="datetimerange" value-format="YYYY-MM-DD HH:mm:ss" style="max-width: 382px"
+          range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :default-time="defaultTime2"/>
       </el-form-item>
 
       <br />
       <el-form-item label="流程开始时间(任务开始时间)">
         <el-text> 客户在&nbsp; </el-text>
         &nbsp;
-        <el-select
-          @change="Object.assign(sizeForm.repeatTime, { repeatDay: [], repeatTime: '' })"
-          v-model="sizeForm.repeatTime.repeatType"
-          style="width: 100px"
-        >
+        <el-select @change="Object.assign(sizeForm.repeatTime, { repeatDay: [], repeatTime: '' })"
+          v-model="sizeForm.repeatTime.repeatType" style="width: 100px">
           <el-option value="month" label="月份">月</el-option>
           <el-option value="week" label="周">周</el-option>
           <el-option value="day" label="天">天</el-option>
         </el-select>
         &nbsp;&nbsp;&nbsp;
-        <el-select
-          v-if="sizeForm.repeatTime.repeatType === 'month'"
-          v-model="sizeForm.repeatTime.repeatDay"
-          placeholder="选择月份的天数"
-          style="width: 150px"
-          multiple
-          collapse-tags
-        >
-          <el-option
-            v-for="day in 30"
-            :key="day"
-            :label="`${day}号`"
-            :value="day"
-          ></el-option>
+        <el-select v-if="sizeForm.repeatTime.repeatType === 'month'" v-model="sizeForm.repeatTime.repeatDay"
+          placeholder="选择月份的天数" style="width: 150px" multiple collapse-tags>
+          <el-option v-for="day in 30" :key="day" :label="`${day}号`" :value="day"></el-option>
         </el-select>
         &nbsp;&nbsp;&nbsp;
-        <el-select
-          v-if="sizeForm.repeatTime.repeatType === 'week'"
-          v-model="sizeForm.repeatTime.repeatDay"
-          placeholder="选择星期几"
-          style="width: 150px"
-          multiple
-          collapse-tags
-        >
-          <el-option
-            v-for="(day, index) in daysOfWeek"
-            :key="index"
-            :label="`星期${day}`"
-            :value="day"
-          ></el-option>
+        <el-select v-if="sizeForm.repeatTime.repeatType === 'week'" v-model="sizeForm.repeatTime.repeatDay"
+          placeholder="选择星期几" style="width: 150px" multiple collapse-tags>
+          <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="index+1"></el-option>
         </el-select>
 
-        <el-time-picker
-          v-model="sizeForm.repeatTime.repeatTime"
-          placeholder="选择时间"
-          style="width: 120px"
-        ></el-time-picker>
+        <el-time-picker v-model="sizeForm.repeatTime.repeatTime" value-format="HH:mm" placeholder="选择时间"
+          style="width: 120px"></el-time-picker>
         &nbsp;&nbsp;
         <el-text>进入流程(启动任务) </el-text>
       </el-form-item>
@@ -311,13 +275,8 @@ onMounted(async () => {
     <div v-else-if="sizeForm.executeType === 'trigger'">
       <el-form-item label="流程有效期">
         <el-col :span="12">
-          <el-date-picker
-            v-model="sizeForm.date3"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          />
+          <el-date-picker v-model="sizeForm.date3" type="datetimerange" value-format="YYYY-MM-DD" range-separator="至"
+            start-placeholder="开始日期" end-placeholder="结束日期" />
         </el-col>
       </el-form-item>
 
@@ -336,20 +295,9 @@ onMounted(async () => {
       </el-form-item>
       <div class="flex-column" v-if="sizeForm.enterType === 'multi'">
         <el-text>当前流程，同一客户</el-text>&nbsp;
-        <el-input-number
-          :max="30"
-          :min="1"
-          style="width: 100px"
-          v-model="sizeForm.enterDay"
-          placeholder="天数"
-        />
+        <el-input-number :max="30" :min="1" style="width: 100px" v-model="sizeForm.enterDay" placeholder="天数" />
         <el-text>&nbsp;天内，最多进入</el-text>&nbsp;
-        <el-input-number
-          :min="1"
-          style="width: 100px"
-          v-model="sizeForm.enterCount"
-          placeholder="次数"
-        />
+        <el-input-number :min="1" style="width: 100px" v-model="sizeForm.enterCount" placeholder="次数" />
         <el-text> &nbsp;次 </el-text>
       </div>
     </template>

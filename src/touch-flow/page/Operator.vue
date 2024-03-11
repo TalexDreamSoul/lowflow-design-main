@@ -5,7 +5,7 @@ import { useVModel } from "@vueuse/core";
 const $props = defineProps<{
   modelValue: string;
   item: any;
-  obj: any;
+  obj?: any;
   attrs: any;
   selected?: string;
 }>();
@@ -94,7 +94,7 @@ const operators = computed(() =>
 //   $_ignored: $props
 
 //   data.value = ''
-// }, { deep: true })
+// }, { deep: true })F
 </script>
 
 <template>
