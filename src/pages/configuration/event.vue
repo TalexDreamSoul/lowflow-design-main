@@ -371,9 +371,10 @@ const handleAttrDelete = (index: number) => {
   });
 };
 </script>
-
-<style lang="scss" scoped>
+<style lang="scss" >
 @import "~/styles/list-layout.scss";
+</style>
+<style lang="scss" scoped>
 
 .event {
   .attr-content {

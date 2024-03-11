@@ -456,8 +456,11 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 @import "~/styles/list-layout.scss";
+</style>
+<style lang="scss" scoped>
+
 .customer-list {
   .flex {
     gap: 16px;
