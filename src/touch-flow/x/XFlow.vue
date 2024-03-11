@@ -423,7 +423,7 @@ div.PBlock {
 
         position: relative;
 
-        width: 280px;
+        width: 100%;
         border: none;
         border-left: 4px solid var(--theme-color, red);
 

@@ -185,7 +185,7 @@ function del(p: MarketingTouchEditDTO) {
           <el-button size="small" type="primary" @click="del(__data)">确认</el-button>
         </div>
         <template #reference>
-          <el-button @click="visible = true" text type="primary">
+          <el-button v-if="!_data.$readonly" @click="visible = true" text type="primary">
             <el-icon>
               <Delete />
             </el-icon>
@@ -268,6 +268,7 @@ function del(p: MarketingTouchEditDTO) {
   </el-card>
 
   <el-button @click="dialogVisible = true" :class="{
+        disabled: _data.$readonly,
         display:
           data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate,
       }" class="start-add" type="primary" :icon="Plus" circle />

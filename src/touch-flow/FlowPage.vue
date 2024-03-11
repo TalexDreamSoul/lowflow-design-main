@@ -391,6 +391,10 @@ div.el-dialog {
   height: 100%;
 
   overflow: hidden;
+
+  .el-card__body {
+    width: 100%;
+  }
 }
 
 @keyframes header-join {

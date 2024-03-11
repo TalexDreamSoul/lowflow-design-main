@@ -40,7 +40,7 @@ async function handleClick() {
   <div @click.stop="handleClick" class="StatisticsDisplay" :class="{ active: data._fetched }">
     <div class="StatisticsDisplay-Title">
       <p>数据统计</p>
-      <el-button plain text>
+      <el-button type="primary" plain text>
         查看策略器数据详情
         <el-icon>
           <ArrowRight />
@@ -61,6 +61,7 @@ async function handleClick() {
   &-Title {
     display: flex;
 
+    align-items: center;
     justify-content: space-between;
   }
 
