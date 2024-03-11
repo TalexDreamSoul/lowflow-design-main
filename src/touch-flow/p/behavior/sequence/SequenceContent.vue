@@ -103,6 +103,10 @@ function handleEventChanged(val: string, condition: any) {
 
   condition.eventName = targetEvent.eventName
 }
+const defaultTime2: [Date, Date] = [
+  new Date(2000, 0, 0, 0, 0, 0),
+  new Date(2000, 0, 0, 23, 59, 59),
+];
 </script>
 
 <template>
@@ -111,13 +115,15 @@ function handleEventChanged(val: string, condition: any) {
       <el-date-picker
         @change="handleDateChange"
         :disabled="readonly"
-        value-format="YYYY-MM-DD"
+        format="YYYY-MM-DD HH:mm:ss"
+        value-format="YYYY-MM-DD HH:mm:ss"
          v-model="timeRange"
-        type="daterange"
+         type="datetimerange"
         range-separator="-"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         style="width: 120px"
+        :default-time="defaultTime2"
       />
       <span style="color: #484545"> &nbsp;&nbsp; 依次做过 </span>
 

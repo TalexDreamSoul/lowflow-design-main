@@ -169,7 +169,7 @@ function saveData() {
 
   console.log("Date Save", date, props.p);
 
-  const _format = "YYYY-MM-DD HH:MM:ss";
+  const _format = "YYYY-MM-DD HH:mm:ss";
   let timeFormat;
 
   if (Array.isArray(date)) {
@@ -217,6 +217,10 @@ onMounted(async () => {
     dict.value = res.data;
   }
 });
+const defaultTime2: [Date, Date] = [
+  new Date(2000, 0, 0, 0, 0, 0),
+  new Date(2000, 0, 0, 23, 59, 59),
+];
 </script>
 
 <template>
@@ -236,8 +240,8 @@ onMounted(async () => {
 
     <div v-else-if="sizeForm.executeType === 'repeat'">
       <el-form-item label="流程有效期：">
-        <el-date-picker v-model="sizeForm.date3" type="datetimerange" value-format="YYYY-MM-DD" style="max-width: 382px"
-          range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" />
+        <el-date-picker v-model="sizeForm.date3" type="datetimerange" value-format="YYYY-MM-DD HH:mm:ss" style="max-width: 382px"
+          range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :default-time="defaultTime2"/>
       </el-form-item>
 
       <br />
@@ -258,7 +262,7 @@ onMounted(async () => {
         &nbsp;&nbsp;&nbsp;
         <el-select v-if="sizeForm.repeatTime.repeatType === 'week'" v-model="sizeForm.repeatTime.repeatDay"
           placeholder="选择星期几" style="width: 150px" multiple collapse-tags>
-          <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="day"></el-option>
+          <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="index+1"></el-option>
         </el-select>
 
         <el-time-picker v-model="sizeForm.repeatTime.repeatTime" value-format="HH:mm" placeholder="选择时间"
