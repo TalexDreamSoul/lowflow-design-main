@@ -29,7 +29,7 @@ const subDataObj = Object.freeze({
     labelName: "",
     labelValue: [],
   },
-  type: "attr",
+  type: "event",
 });
 
 const refreshTree: Function = inject("refreshTree")!;
