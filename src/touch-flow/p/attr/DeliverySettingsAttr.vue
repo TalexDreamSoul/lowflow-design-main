@@ -6,14 +6,14 @@ import { markRaw } from "vue";
 import { Delete } from '@element-plus/icons-vue'
 
 const origin = {
-  branchName: "",
+  nodeName: "",
   nodeType: "diversion",
   height: 200,
   nodeId: "",
   diversionRuleContent: {
     data: [
-      { branchName: "流量策略器1", branchRatio: 50, children: [] },
-      { branchName: "流量策略器2", branchRatio: 50, children: [] },
+      { nodeName: "流量策略器1", branchName: "", branchRatio: 50, children: [] },
+      { nodeName: "流量策略器2", branchName: "", branchRatio: 50, children: [] },
     ],
   },
 };
@@ -33,6 +33,7 @@ const sizeForm = reactive<typeof origin>(origin);
 
     children.forEach((child: any) => {
       origin.diversionRuleContent.data.push({
+        nodeName: child.branchName,
         branchName: child.branchName,
         branchRatio: child.branchRatio,
         children: child.children,
@@ -44,7 +45,7 @@ const sizeForm = reactive<typeof origin>(origin);
 watchEffect(() => {
   const { nodeType, nodeId } = props.p
 
-  if ( nodeType !== 'diversion' ) return
+  if (nodeType !== 'diversion') return
 
   if (nodeId) {
     sizeForm.nodeId = nodeId;
@@ -54,7 +55,7 @@ watchEffect(() => {
 const totalBranchRatio = computed(() => sizeForm.diversionRuleContent.data.reduce((acc: number, curVal) => acc + +curVal.branchRatio, 0))
 
 function saveData() {
-  if (!sizeForm.branchName) {
+  if (!sizeForm.nodeName) {
     ElMessage.warning({
       message: "请输入流量策略器名称",
     });
@@ -72,7 +73,7 @@ function saveData() {
   }
 
   const _map: any = {}
-  if (sizeForm.diversionRuleContent.data.filter(branch => (branch.branchRatio === 0 || branch.branchName.length < 1) || ((m: any) => m[branch.branchName] === 1 ? true : ((m[branch.branchName] = 1) && false))(_map)).length) {
+  if (sizeForm.diversionRuleContent.data.filter(branch => (branch.branchRatio === 0 || branch.nodeName.length < 1) || ((m: any) => m[branch.nodeName] === 1 ? true : ((m[branch.nodeName] = 1) && false))(_map)).length) {
     ElMessage.warning({
       message: "不能存在重复、未命名或配比为0%的流量",
     });
@@ -92,12 +93,14 @@ function saveData() {
   sizeForm.diversionRuleContent.data.forEach((branch) => {
     const child = {
       nodeType: "subDiversion",
-      branchName: branch.branchName,
+      nodeName: branch.nodeName,
       branchRatio: branch.branchRatio,
       nodeId: randomStr(12),
       children: branch.children || [],
       // father: _
     }
+
+    branch.branchName = branch.nodeName
 
     Object.defineProperty(child, 'father', {
       value: markRaw(_),
@@ -109,11 +112,11 @@ function saveData() {
 
   if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {
 
-      Object.assign(props.p, _)
+    Object.assign(props.p, _)
 
   }
 
-  else /* if (!_.id?.length)  */{
+  else /* if (!_.id?.length)  */ {
     _.nodeId = randomStr(12)
 
     props.p.children.push(_);
@@ -129,7 +132,9 @@ const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
 const addBranch = () => {
-  sizeForm.diversionRuleContent.data.push({ branchName: "流量策略器" + (sizeForm.diversionRuleContent.data.length + 1), branchRatio: 0, children: [] });
+  const name = "流量策略器" + (sizeForm.diversionRuleContent.data.length + 1)
+
+  sizeForm.diversionRuleContent.data.push({ branchName: name, nodeName: name, branchRatio: 0, children: [] });
 };
 
 const deleteBranch = (index: number) => {
@@ -144,7 +149,7 @@ const deleteBranch = (index: number) => {
         客户将流量分配比例随机进入任一分支，流量总和为100%。如果同一个客户多次进入该流程，每次都默认分配到同一个组内。
       </div>
       <el-form-item label="分流器名称：">
-        <el-input v-model="sizeForm.branchName" placeholder="填写名称" style="width: 400px" />
+        <el-input v-model="sizeForm.nodeName" placeholder="填写名称" style="width: 400px" />
       </el-form-item>
 
       <div class="blockbg">
@@ -155,12 +160,12 @@ const deleteBranch = (index: number) => {
           <el-row :gutter="20">
             <el-col :span="14">分支名称</el-col>
             <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ 100 - +totalBranchRatio
-            }}%</span>）</el-col>
+                }}%</span>）</el-col>
           </el-row>
           <el-row :gutter="20" style="    align-items: center;
           margin-top: 16px;" v-for="(branch, index) in sizeForm.diversionRuleContent.data" :key="index">
             <el-col :span="12">
-              <el-input v-model="branch.branchName" />
+              <el-input v-model="branch.nodeName" />
             </el-col>
             <el-col :span="7">
               <el-input-number :min="0" :max="100 - +totalBranchRatio + branch.branchRatio" placeholder="百分比"
