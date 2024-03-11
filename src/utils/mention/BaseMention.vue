@@ -1,9 +1,9 @@
 <script setup lang="ts" name="BaseMention">
 import { ElMessage } from "element-plus";
-import { ref, onMounted, Ref } from "vue";
+import { ref, watch, Ref } from "vue";
 import { Close } from "@element-plus/icons-vue";
 import { addMaterial, updateMaterial } from "~/api/index";
-import { useVModel } from "@vueuse/core";
+import { throttledRef } from "@vueuse/core";
 import { validatePropValue } from "~/touch-flow/flow-utils";
 import TitleMention from "./TitleMention.vue";
 
@@ -11,12 +11,38 @@ const props = defineProps<{
   title: Ref<string>;
   content: Ref<string>;
   loading: Ref<boolean>;
+  show: Ref<boolean>;
   close: Function;
+  countdown: Ref<number>
 }>();
 
-console.log(props)
-
 const out = ref(false);
+const countdown = ref(0);
+
+watch(() => props.countdown.value, () => {
+  countdown.value = props.countdown.value || 0
+}, { immediate: true })
+
+let _timer: any
+watch(() => props.loading.value, (val) => {
+  if (!val) {
+    countdown.value >= 0 && cnt()
+  } else clearTimeout(_timer)
+}, { immediate: true })
+
+function cnt() {
+  clearTimeout(_timer)
+
+  if (countdown.value == 0) {
+    return destroy()
+  }
+
+  _timer = setTimeout(() => {
+    cnt()
+  }, 1000);
+
+  countdown.value -= 1
+}
 
 function destroy() {
   out.value = true;
@@ -37,7 +63,9 @@ function destroy() {
 
     <div @click="destroy" class="BaseMention-Footer">
       <div class="mention-button" :class="{ loading: loading.value }" />
-      <el-button :class="{ loading: loading.value }" round class="primaryStyle">确定</el-button>
+      <el-button :class="{ loading: loading.value }" round class="primaryStyle">
+        <span>确定<span v-if="props.countdown.value && countdown + 1">({{ countdown + 1 }}s)</span></span>
+      </el-button>
     </div>
   </div>
 </template>

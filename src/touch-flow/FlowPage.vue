@@ -77,10 +77,18 @@ watchEffect(() => {
     covertData(props.modelValue)
   }
 
-  if (route.params?.id !== void 0) {
+  if (route.params?.id?.length) {
+    const [, { loading, show }] = reactiveMessage("请稍后", "正在转换数据", true, 0, false)
+
+    const timer = setTimeout(() => show.value = true, 500)
+
     getmarketingTouchDetail({
       id: route.params.id,
-    }).then(res => res.data && covertData(res.data))
+    }).then((res: any) => res.data && covertData(res.data))
+      .finally(() => {
+        clearTimeout(timer)
+        loading.value = false
+      })
   }
 });
 

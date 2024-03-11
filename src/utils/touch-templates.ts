@@ -1,4 +1,4 @@
-import { createApp, Component, Ref } from "vue";
+import { createApp, Component, Ref, watch } from "vue";
 import BaseTemplateVue from "./templates/BaseTemplate.vue";
 import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 
@@ -131,22 +131,28 @@ export function createPopover(
     e.preventDefault();
   }
 
-  Object.assign(dom.style, {
-    zIndex: "1000",
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    left: "0",
-    top: "0",
-    transition: '.25s',
-    opacity: '0',
-    backgroundColor: "rgba(0, 0, 0, .5)",
-  });
+  const { show } = data!
 
-  setTimeout(() => dom.style.opacity = '1', 50)
+  watch(() => show.value, (val) => {
+    if (!val) return
 
-  document.body.appendChild(dom);
-  app.mount(dom);
+    Object.assign(dom.style, {
+      zIndex: "1000",
+      position: "absolute",
+      width: "100%",
+      height: "100%",
+      left: "0",
+      top: "0",
+      transition: '.25s',
+      opacity: '0',
+      backgroundColor: "rgba(0, 0, 0, .5)",
+    });
+
+    document.body.appendChild(dom);
+    app.mount(dom);
+
+    setTimeout(() => dom.style.opacity = '1', 50)
+  }, { immediate: true })
 
   return new Promise((resolve) => {
     __resolve = resolve;
