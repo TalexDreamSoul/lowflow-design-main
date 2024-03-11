@@ -4,7 +4,7 @@
     <div class="search">
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
-          <el-select v-model="pageParams.source" placeholder="类别" clearable>
+          <el-select v-model="pageParams.source" style="width:200px" placeholder="类别" clearable>
             <el-option
               v-for="item of PEOPLE_SOURCE"
               :label="item.label"
@@ -14,7 +14,8 @@
         </el-form-item>
         <el-form-item>
           <el-input
-            v-model="pageParams.value"
+          style="width:400px !important"
+           v-model="pageParams.value"
             placeholder="请输入客户姓名或者手机号"
             clearable
             :suffix-icon="Search"
