@@ -7,7 +7,8 @@ import { watchEffect } from 'vue';
 import { Delete, Upload, Download } from '@element-plus/icons-vue';
 
 const props = defineProps<{
-  modelValue?: Array<any>,
+  modelValue?: Array<any>;
+  readonly?: boolean;
 }>()
 
 const emits = defineEmits(['update:modelValue', 'delete', 'upload', 'download'])
@@ -61,29 +62,47 @@ function getBlockSectionName(item: any) {
 
 <template>
   <div class="MicroEnterpriseDrag">
-    <TransitionGroup ref="el" type="transition" tag="ul" :name="!drag ? 'fade' : undefined"
-      class="flex flex-col gap-2 p-4 w-300px bg-gray-500/5 rounded">
+    <TransitionGroup
+      ref="el"
+      type="transition"
+      tag="ul"
+      :name="!drag ? 'fade' : undefined"
+      class="flex flex-col gap-2 p-4 w-300px bg-gray-500/5 rounded"
+    >
       <!-- draggable="true" -->
-      <li class="drag-item" :data-ind="item.name" :key="index" v-for="(item, index) in thisList">
+      <li
+        class="drag-item"
+        :data-ind="item.name"
+        :key="index"
+        v-for="(item, index) in thisList"
+      >
         <div class="drag-item-header">
           <el-tooltip placement="top" :content="getBlockSectionName(item)">
             <span class="text-2xl name-label">{{ getBlockSectionName(item) }}</span>
           </el-tooltip>
 
           <div class="header-controller">
-            <el-button type="text" v-if="index !== 0" @click="emits('upload', item, index)">
+            <el-button
+              type="text"
+              v-if="!readonly && index !== 0"
+              @click="emits('upload', item, index)"
+            >
               <el-icon>
                 <Upload />
               </el-icon>
               上移
             </el-button>
-            <el-button type="text" v-if="index + 1 < (thisList?.length ?? 0)" @click="emits('download', item, index)">
+            <el-button
+              type="text"
+              v-if="!readonly && index + 1 < (thisList?.length ?? 0)"
+              @click="emits('download', item, index)"
+            >
               <el-icon>
                 <Download />
               </el-icon>
               下移
             </el-button>
-            <el-button type="text" @click="emits('delete', item, index)">
+            <el-button v-if="!readonly" type="text" @click="emits('delete', item, index)">
               <el-icon>
                 <Delete />
               </el-icon>
@@ -91,15 +110,18 @@ function getBlockSectionName(item: any) {
           </div>
         </div>
         <div class="content-container">
-        <!-- {{ item }} -->
           <img v-if="item.type === 'image'" :src="item.imgUrl" alt="AddonPic" />
-          <TouchSettingContents content="content" variables="variables" :modelValue="item"
-            v-else-if="item.type === 'content'" />
+          <TouchSettingContents
+            :disabled="readonly"
+            :ignore-id="true"
+            content="content"
+            variables="variables"
+            :modelValue="item"
+            v-else-if="item.type === 'content'"
+          />
           <span v-else>{{ item }} ERROR</span>
         </div>
-        <div class="drag-trigger-area">
-
-        </div>
+        <div class="drag-trigger-area"></div>
       </li>
     </TransitionGroup>
   </div>
@@ -139,7 +161,7 @@ function getBlockSectionName(item: any) {
     border-radius: 0 8px 8px 0;
 
     &::after {
-      content: '';
+      content: "";
       position: absolute;
 
       width: 20px;
@@ -150,8 +172,7 @@ function getBlockSectionName(item: any) {
 
       transform: translate(-50%, -50%);
 
-      background:
-        radial-gradient(circle at 50% 50%, #7D7D7D80 2px, transparent 3px);
+      background: radial-gradient(circle at 50% 50%, #7d7d7d80 2px, transparent 3px);
       // background-repeat: repeat-y;
       background-size: 10px 10px;
     }
@@ -165,7 +186,7 @@ function getBlockSectionName(item: any) {
 
         text-overflow: ellipsis;
         white-space: nowrap;
-        font-size: .85rem;
+        font-size: 0.85rem;
         overflow: hidden;
       }
 
@@ -180,7 +201,7 @@ function getBlockSectionName(item: any) {
 
       position: relative;
       display: flex;
-      padding: 0 .5rem;
+      padding: 0 0.5rem;
       // margin-bottom: .25rem;
 
       justify-content: space-between;
@@ -192,7 +213,7 @@ function getBlockSectionName(item: any) {
 
       box-sizing: border-box;
       border-radius: 4px 4px 0 0;
-      background-color: #ECF1FC;
+      background-color: #ecf1fc;
     }
 
     &.ghost {
@@ -212,11 +233,11 @@ function getBlockSectionName(item: any) {
         opacity: 0;
       }
 
-      background-color: #FAFAFA80;
+      background-color: #fafafa80;
     }
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
 
       width: 100%;
@@ -226,10 +247,10 @@ function getBlockSectionName(item: any) {
       top: 0;
 
       opacity: 0;
-      transition: .25s;
+      transition: 0.25s;
       transform: scale(1.05);
       border-radius: 8px;
-      border: 2px dashed #7D7D7D50;
+      border: 2px dashed #7d7d7d50;
     }
 
     .content-container {
@@ -257,12 +278,12 @@ function getBlockSectionName(item: any) {
     // padding: .5rem;
 
     min-height: 80px;
-    transition: .25s;
+    transition: 0.25s;
     list-style: none;
     border-radius: 4px;
     box-sizing: border-box;
-    border: 1px solid #D4D4D4;
-    background-color: #FAFAFA;
+    border: 1px solid #d4d4d4;
+    background-color: #fafafa;
   }
 
   ul {

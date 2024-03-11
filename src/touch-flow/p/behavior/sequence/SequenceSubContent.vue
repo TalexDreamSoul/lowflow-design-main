@@ -5,24 +5,46 @@ import LogicalLine from "../LogicalLine.vue";
 import AttrRender from "../../../page/AttrRender.vue";
 import Operator from "../../../page/Operator.vue";
 import Trigger from "../../../page/Trigger.vue";
+import { AttrConditionDTO } from "~/touch-flow/touch-total";
 
 const props = defineProps<{
-  condition: any;
+  condition: AttrConditionDTO;
+  eventCode: string;
   index: number;
   dict: any;
 }>();
 
-function getConditions() {
-  return (props.condition.conditions = props.condition.conditions || []);
-}
+const dataObj = Object.freeze({
+  attr: {
+    field: "",
+    fieldMultiValue: [],
+    fieldName: "",
+    fieldOp: "",
+    fieldRangeValue: "",
+    fieldType: "",
+    fieldValue: "",
+  },
+  label: {
+    labelId: 0,
+    labelName: "",
+    labelValue: [],
+  },
+  type: "event",
+});
 
-const addCondition = () => {
-  getConditions().push({
-    field: null,
-    operator: "equal",
-    fieldValue: null,
-  });
-};
+function getConditions() {
+  const arr = props.condition.conditions || [];
+
+  console.log("got", arr);
+
+  for (let item of arr) {
+    if (!item.type) {
+      Object.assign(item, { ...dataObj });
+    }
+  }
+
+  return arr;
+}
 
 /**
  * 删除条件
@@ -35,68 +57,61 @@ const handleDel = (index: number) => {
 const attrs = computed(() => {
   const { events } = props.dict;
 
-  const flattedEvents = [...events].map((e: any) => e.events)
+  const flattedEvents = [...events].map((e: any) => e.events);
 
-  const targetEvent = flattedEvents.flat().find((item: any) => item.eventCode === props.condition.delayedAction)
+  const targetEvent = flattedEvents
+    .flat()
+    .find((item: any) => item.eventCode === props.eventCode);
 
   return targetEvent?.eventAttr?.attrs;
 });
 </script>
 
 <template>
-  <div class="BehaviorSubContent">
-    <LogicalLine v-model="condition.logicalChar"
-      :display="condition.conditions ? !(condition.conditions.length > 1) : !0">
-      <div v-if="attrs" class="filter-option-content">
-        <el-form :label-width="0" :inline="true" :model="condition.conditions">
-          <el-row v-for="(item, index) in condition.conditions" :key="`${item.field}-${index}`" :gutter="5"
-            class="filter-item-rule">
-            <el-col :xs="24" :sm="7">
-              <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                <trigger v-model="item.field" :attrs="attrs" />
-              </el-form-item>
-            </el-col>
-            <el-col :xs="24" :sm="5" v-if="item.field">
-              <el-form-item :prop="'conditions.' + index + '.operator'" style="width: 100%">
-                <operator :attrs="attrs" :item="item" ref="operatorRef" v-model="item.fieldOp" />
-              </el-form-item>
-            </el-col>
-            <el-col :xs="24" :sm="6" v-if="item.field">
-              <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <AttrRender :item="item" :attrs="attrs" />
-              </el-form-item>
-            </el-col>
-            <el-col :xs="24" :sm="2">
-              <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
-                <el-icon size="14">
-                  <Delete />
-                </el-icon>
-              </el-text>
-            </el-col>
-          </el-row>
+  <div class="SequenceSubContent">
+    <LogicalLine
+      v-model="condition.logicalChar"
+      :display="condition.conditions?.length < 2"
+    >
+      <div
+        class="SequenceSubContent-Line"
+        v-if="attrs"
+        v-for="(item, index) in getConditions()"
+        :key="index"
+      >
+        <trigger :item="item" v-model="item.attr.field" :attrs="attrs" />
+        <operator
+          :attrs="attrs"
+          :item="item"
+          ref="operatorRef"
+          v-model="item.attr.fieldOp"
+        />
 
-          <div v-if="!(
-            condition?.filterRules?.groups?.length |
-            condition?.filterRules?.conditions?.length
-          )
-            " class="filter-item-rule" />
-        </el-form>
+        <AttrRender :item="item.attr" :attrs="attrs" />
+
+        <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
+          <el-icon size="14">
+            <Delete />
+          </el-icon>
+          删除
+        </el-text>
       </div>
     </LogicalLine>
   </div>
 </template>
 
 <style scoped lang="scss">
-.BehaviorSubContent {
-  margin: 10px 0;
+.SequenceSubContent {
+  &-Line {
+    display: flex;
+
+    gap: 0.5rem;
+    align-items: center;
+  }
+  // margin: 10px 0;
 
   border-radius: 8px;
 
   background-color: #f7f8fa;
-}
-
-:deep(.el-form-item) {
-  margin-right: 0;
-  margin-bottom: 0;
 }
 </style>

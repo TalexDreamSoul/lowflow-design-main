@@ -6,9 +6,12 @@ import {
   getqryTouchStatusCount,
   getstartMarketingTouch,
   getpauseMarketingTouch,
+  updateMarketingTouchStatus,
+  copyMarketingTouch
 } from "~/api/index";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
+import dayjs from "dayjs";
 
 const formInline = reactive({
   touchName: "",
@@ -107,21 +110,50 @@ const pauseData = async (row: any) => {
 };
 
 const updateData = async (row: any) => {
-  await getpauseMarketingTouch({ id: row.id }).finally(() => {});
-  getmarketingTouchNode();
-  fetchDataApi();
+  router.push(`/design/${row.id}`);
 };
 const detailsData = async (row: any) => {
   router.push(`/strategyProcess/details/${row.id}`);
 };
+
+const successData = async (row: any) => {
+  let res=await updateMarketingTouchStatus({
+    id: row.id,
+    status: "approvalSuccess",
+  }).finally(() => {
+    fetchDataApi();
+    getmarketingTouchNode();
+  });
+  ElMessage.success(res.message)
+
+};
+
+
 const copyData = async (row: any) => {
-  // await getcopyMarketingTouch({ id: row.id }).finally(() => {});
+  let res=await copyMarketingTouch({
+    id: row.id,
+  }).finally(() => {
+    fetchDataApi();
+    getmarketingTouchNode();
+  });
+  ElMessage.success(res.message)
+
 };
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);
 };
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
+};
+const changeTime = (val: any) => {
+  console.log(val, "change");
+  if (val == null) {
+    formInline.beginTime = "";
+    formInline.endTime = "";
+  } else {
+    formInline.beginTime = dayjs(val[0]).format("YYYY-MM-DD");
+    formInline.endTime = dayjs(val[1]).format("YYYY-MM-DD");
+  }
 };
 </script>
 
@@ -132,10 +164,7 @@ const handleCurrentChange = (val: number) => {
       <el-form :inline="true" class="demo-form-inline">
 
         <el-form-item label="创建时间：">
-          <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="(val) => {
-              formInline.beginTime = val[0];
-              formInline.endTime = val[1];
-            }" />
+          <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
         </el-form-item>
         <el-form-item>
 
@@ -247,15 +276,15 @@ const handleCurrentChange = (val: number) => {
             <!-- targetCount 完成目标数量
             touchCount 触达数量
             triggerCount 触发数量 -->
-            {{ scope.row.touchCount }}/
             {{ scope.row.triggerCount }}/
+           {{ scope.row.touchCount }}/
             {{ scope.row.targetCount }}
           </template>
         </el-table-column>
 
         <el-table-column label="创建人" prop="createBy" />
 
-        <el-table-column label="操作" width="250" fixed="right">
+        <el-table-column label="操作" width="300" fixed="right">
           <template #default="scope">
             <el-space wrap>
               <!-- 
@@ -273,11 +302,12 @@ const handleCurrentChange = (val: number) => {
               <el-link type="primary" @click="copyData(scope.row)">复制</el-link>
               <el-link type="primary" v-if="scope.row.status=='approvalRefuse'||scope.row.status=='draft'" @click="updateData(scope.row)">编辑</el-link>
               <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+              <el-link type="primary" @click="successData(scope.row)">审核通过</el-link>
             </el-space>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background" layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background" layout="prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
 
     </div>
 

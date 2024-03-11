@@ -58,17 +58,20 @@ const expand = ref(false);
     .addon-icon {
       opacity: 1;
       transform: translateX(0%);
+
+      pointer-events: all;
     }
 
-    max-height: 500px;
+    max-height: 5000px;
 
-    transition: 0.2s;
+    transition: max-height 1s ease-in-out;
   }
 
   .addon-icon {
     opacity: 0;
     transform: translateX(10%);
 
+    pointer-events: none;
     transition: cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.25s;
   }
 
@@ -109,11 +112,11 @@ const expand = ref(false);
   }
 
   margin: 0.8rem 0;
-  max-height: 48px;
+  max-height: 40px;
 
   overflow: hidden;
   border-radius: 4px;
-  transition: 0.2s;
+  transition: max-height .5s cubic-bezier(0, 1, 0, 1);
   background-color: #f7f8fb;
 }
 </style>

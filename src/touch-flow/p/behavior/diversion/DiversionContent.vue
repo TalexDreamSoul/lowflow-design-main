@@ -75,10 +75,10 @@ const attrs = computed(() => {
               </el-col>
 
               &nbsp;
-              <el-col :xs="24" :sm="3">
+              <el-col :xs="24" :sm="3" style="zoom:.8">
                 <el-text
                   type="primary"
-                  style="cursor: pointer; zoom: 0.8"
+                  style="cursor: pointer"
                   @click="handleSubAdd(item)"
                 >
                   <el-icon size="12">
@@ -92,7 +92,7 @@ const attrs = computed(() => {
               <el-col
                 :xs="24"
                 :sm="1"
-                style="display: flex; align-items: center; flex-direction: row-reverse"
+                style="display: flex; align-items: center; flex-direction: row-reverse;zoom:.8"
               >
                 <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
                   <el-icon size="14">

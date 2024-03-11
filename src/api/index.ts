@@ -6,8 +6,11 @@ export interface Role {
 }
 
 // 分割线api/营销触达
-export const dictFilterTree = () => {
-  return request.post({ url: "/api/dictFilterTree.do" });
+export const dictFilterTree = (data: any = {
+  pageNum: "1",
+  pageSize: "999"
+}) => {
+  return request.post({ url: "/api/dictFilterTree.do", data });
 };
 // 营销触达节点统计
 export const getmarketingTouchEstimate = (data: any) => {
@@ -34,6 +37,15 @@ export const marketingTouchStatistics = (data: any) => {
 // 营销触达暂停
 export const getpauseMarketingTouch = (data: any) => {
   return request.post({ url: "/api/pauseMarketingTouch.do", data });
+};
+// 营销触达列表审核通过
+export const updateMarketingTouchStatus = (data: any) => {
+  return request.post({ url: "/api/updateMarketingTouchStatus.do", data });
+};
+
+// 复制
+export const copyMarketingTouch = (data: any) => {
+  return request.post({ url: "/api/copyMarketingTouch.do", data });
 };
 
 // 营销触达开始
@@ -87,13 +99,18 @@ export const addMaterial = (data: any) => {
   });
 };
 
+export const updateMarketingTouch = (data: any) => {
+  return request.post({
+    url: "/api/updateMarketingTouch.do",
+    data,
+  });
+};
 export const addMarketingTouch = (data: any) => {
   return request.post({
     url: "/api/addMarketingTouch.do",
     data,
   });
 };
-
 export const updateMaterial = (data: any) => {
   return request.post({
     url: "/api/updateMaterial.do",
@@ -180,3 +197,15 @@ export const getBlackList = (data: {
     data: defaultVal,
   });
 };
+
+export const marketingTouchNodeStatistics = (data: any = {
+  id: 0,
+  pageNum: 0,
+  pageSize: 10,
+  touchNodeId: 0
+}) => {
+  return request.post({
+    url: "/api/marketingTouchNodeStatistics.do",
+    data,
+  });
+}

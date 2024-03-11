@@ -26,12 +26,15 @@ axiosInstance.interceptors.response.use(
   (res: AxiosResponse) => {
     const url = res.config.url || ''
     abortControllerMap.delete(url)
+
+    console.log("?res", res)
+
     // 这里不能做任何处理，否则后面的 interceptors 拿不到完整的上下文了
     return res
   },
   (error: AxiosError) => {
     console.log('err： ' + error) // for debug
-    ElMessage.error(error.message)
+    // ElMessage.error(error.message)
     return Promise.reject(error)
   }
 )
@@ -41,19 +44,15 @@ axiosInstance.interceptors.response.use(defaultResponseInterceptors)
 
 const service = {
   request: (config: RequestConfig) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (config.interceptors?.requestInterceptors) {
         config = config.interceptors.requestInterceptors(config as any)
       }
 
-      axiosInstance
-        .request(config)
-        .then((res) => {
-          resolve(res)
-        })
-        .catch((err: any) => {
-          reject(err)
-        })
+      axiosInstance.request(config)
+        .then(res => resolve(res))
+        .catch(err => reject(err))
+
     })
   },
   cancelRequest: (url: string | string[]) => {

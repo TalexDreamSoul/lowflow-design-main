@@ -1,4 +1,4 @@
-import { addMarketingTouch } from "~/api";
+import { addMarketingTouch,updateMarketingTouch } from "~/api";
 
 /**
  * MarketingTouchEditDTO
@@ -112,13 +112,12 @@ export type TouchBlacklistDTO = {
  */
 export type CustomSearchDTO = {
   customAttr?: CustomAttrConditionDTO;
-  customEvent?: CustomEventConditionDTO;
+  customEvent: CustomEventConditionDTO;
   eventSequence?: EventSequenceConditionDTO;
   /**
    * 逻辑符号
    */
   logicalChar: string;
-  [property: string]: any;
 }
 
 /**
@@ -128,12 +127,11 @@ export type CustomAttrConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: AttrConditionDTO[];
+  conditions: AttrConditionDTO[];
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
-  [property: string]: any;
+  logicalChar: string;
 }
 
 /**
@@ -143,31 +141,30 @@ export type AttrConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: SearchCondition[];
+  conditions: SearchCondition[];
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
-  [property: string]: any;
+  logicalChar: string;
 }
 
 /**
  * SearchCondition
  */
 export type SearchCondition = {
-  attr?: AttrDTO;
-  label?: LabelDTO;
+  attr: AttrDTO;
+  label: LabelDTO;
   /**
    * 类型 1：基础属性 2：客户标签
    */
-  type?: string;
-  [property: string]: any;
+  type: "attr" | "label";
 }
 
 /**
  * AttrDTO
  */
 export type AttrDTO = {
+  id: string;
   /**
    * 字段
    */
@@ -183,7 +180,7 @@ export type AttrDTO = {
   /**
    * 运算符号
    */
-  fieldOp?: string;
+  fieldOp: string;
   /**
    * 字段范围值
    */
@@ -197,7 +194,64 @@ export type AttrDTO = {
    */
   fieldValue?: string;
   timeCondition?: TimeConditionDTO;
-  [property: string]: any;
+}
+
+/**
+ * AttrDict
+ */
+export type AttrDict = {
+  /**
+   * 创建人id
+   */
+  createBy?: number;
+  /**
+   * 创建时间
+   */
+  createTime?: Date;
+  /**
+   * 是否被删除
+   */
+  deleted?: boolean;
+  /**
+   * 说明
+   */
+  describe?: string;
+  /**
+   * 属性名
+   */
+  field?: string;
+  /**
+   * 属性编码
+   */
+  fieldCode?: string;
+  /**
+   * 属性别名
+   */
+  fieldName?: string;
+  /**
+   * 字段类型：text 文本型，num 数字型， date 日期型，boolean 布尔类型
+   */
+  fieldType?: string;
+  /**
+   * 默认枚举值
+   */
+  fieldValue?: { [key: string]: { [key: string]: any } };
+  /**
+   * 主键id
+   */
+  id?: number;
+  /**
+   * 状态：available 可用，offline 下线'
+   */
+  status?: string;
+  /**
+   * 创建人id
+   */
+  updatedBy?: number;
+  /**
+   * 更新时间
+   */
+  updatedTime?: Date;
 }
 
 /**
@@ -239,6 +293,7 @@ export type TimeConditionDTO = {
  * LabelDTO
  */
 export type LabelDTO = {
+  id?: string;
   /**
    * 标签id
    */
@@ -251,8 +306,8 @@ export type LabelDTO = {
    * 标签值
    */
   labelValue?: { [key: string]: any }[];
-  [property: string]: any;
 }
+
 
 /**
  * CustomEventConditionDTO
@@ -261,12 +316,11 @@ export type CustomEventConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: EventConditionDTO[];
+  conditions: EventConditionDTO[];
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
-  [property: string]: any;
+  logicalChar: string;
 }
 
 /**
@@ -276,12 +330,11 @@ export type EventConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: EventSearchCondition[];
+  conditions: EventSearchCondition[];
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
-  [property: string]: any;
+  logicalChar: string;
 }
 
 /**
@@ -291,8 +344,8 @@ export type EventSearchCondition = {
   /**
    * 操作
    */
-  action?: string;
-  conditions?: AttrConditionDTO;
+  action: string;
+  conditions: AttrConditionDTO;
   /**
    * 结束时间
    */
@@ -300,16 +353,15 @@ export type EventSearchCondition = {
   /**
    * 事件编码
    */
-  eventCode?: string;
+  eventCode: string;
   /**
    * 事件名
    */
-  eventName?: string;
+  eventName: string;
   /**
    * 开始时间
    */
   startTime?: Date;
-  [property: string]: any;
 }
 
 /**
@@ -319,12 +371,11 @@ export type EventSequenceConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: SequenceConditionDTO[];
+  conditions: SequenceConditionDTO[];
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
-  [property: string]: any;
+  logicalChar: string;
 }
 
 /**
@@ -334,7 +385,7 @@ export type SequenceConditionDTO = {
   /**
    * 搜索条件
    */
-  conditions?: SequenceCondition[];
+  conditions: SequenceCondition[];
   /**
    * 结束时间
    */
@@ -342,12 +393,11 @@ export type SequenceConditionDTO = {
   /**
    * 逻辑符号
    */
-  logicalChar?: string;
+  logicalChar: string;
   /**
    * 开始时间
    */
   startTime?: Date;
-  [property: string]: any;
 }
 
 /**
@@ -357,17 +407,16 @@ export type SequenceCondition = {
   /**
    * 操作
    */
-  action?: string;
-  conditions?: AttrConditionDTO;
+  action: string;
+  conditions: AttrConditionDTO;
   /**
    * 事件编码
    */
-  eventCode?: string;
+  eventCode: string;
   /**
    * 事件名
    */
-  eventName?: string;
-  [property: string]: any;
+  eventName: string;
 }
 
 /**
@@ -530,9 +579,8 @@ export type JsonStructObject = {
  * MarketingTouchTargetDTO
  */
 export type MarketingTouchTargetDTO = {
-  targetDelayed?: DelayedDTO;
-  targetRuleContent?: CustomSearchDTO;
-  [property: string]: any;
+  targetDelayed: DelayedDTO;
+  targetRuleContent: CustomSearchDTO;
 }
 
 /**
@@ -815,4 +863,7 @@ export type EventTriggerConditionDTO = {
 
 export function touchSubmitReview(touchPageFlow: MarketingTouchNodeEditDTO) {
   return addMarketingTouch(touchPageFlow)
+}
+export function touchSubmitUpdate(touchPageFlow: MarketingTouchNodeEditDTO) {
+  return updateMarketingTouch(touchPageFlow)
 }

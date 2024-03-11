@@ -54,7 +54,7 @@ const attrs = computed(() => {
             class="filter-item-rule">
             <el-col :xs="24" :sm="7">
               <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                <trigger v-model="item.field" :attrs="attrs" />
+                <trigger :item="item" v-model="item.field" :attrs="attrs" />
               </el-form-item>
             </el-col>
             <el-col :xs="24" :sm="4" v-if="item.field">
@@ -67,8 +67,8 @@ const attrs = computed(() => {
                 <AttrRender :item="item" :attrs="attrs" />
               </el-form-item>
             </el-col>
-            <el-col class="add-filter__inner" :xs="24" :sm="3">
-              <el-text type="primary" style="cursor: pointer;zoom: 0.8;    display: inline-block;width: 100px;"
+            <el-col class="add-filter__inner" :xs="24" :sm="3" style="zoom:.8">
+              <el-text type="primary" style="cursor: pointer;    display: inline-block;width: 100px;"
                 @click="addCondition">
                 <el-icon size="14">
                   <CirclePlusFilled />
@@ -76,7 +76,7 @@ const attrs = computed(() => {
                 添加筛选
               </el-text>
             </el-col>
-            <el-col :xs="24" :sm="1">
+            <el-col :xs="24" :sm="1" style="zoom:.8">
               <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
                 <el-icon size="14">
                   <Delete />

@@ -2,11 +2,12 @@
 import { computed, ref, inject, reactive, onMounted, watch } from "vue";
 import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-
+import DayJs from 'dayjs'
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
 import TouchBlockGenre from "~/touch-flow/p/genre/TouchBlockGenre.vue";
 import FlowTypeSelector from "./condition/FlowTypeSelector.vue";
 import { validatePropValue } from "~/touch-flow/flow-utils";
+import EventGroup from "./condition/EventGroup.vue";
 
 const dict = ref<any>();
 const timeFuncs: { [func: string]: any } = {
@@ -26,9 +27,9 @@ const timeFuncs: { [func: string]: any } = {
       return date;
     },
     (obj: any) => {
-      if (!props.p.executeTime) return false;
+      if (!props.p._executeTime) return false;
 
-      const date = new Date(props.p.executeTime);
+      const date = new Date(props.p._executeTime);
       obj.date1 = date.toString();
       obj.date2 = date.toString();
     },
@@ -38,9 +39,10 @@ const timeFuncs: { [func: string]: any } = {
       return obj.date3;
     },
     (obj: any) => {
-      if (!props.p.executeTime) return false;
+      const { startTime, endTime } = props.p
+      if (!startTime || !endTime) return false;
 
-      obj.date3 = props.p.executeTime;
+      obj.date3 = [startTime, endTime]//props.p._executeTime;
     },
   ],
   trigger: [
@@ -48,9 +50,10 @@ const timeFuncs: { [func: string]: any } = {
       return obj.date3;
     },
     (obj: any) => {
-      if (!props.p.executeTime) return false;
+      const { startTime, endTime } = props.p
+      if (!startTime || !endTime) return false;
 
-      obj.date3 = props.p.executeTime;
+      obj.date3 = [startTime, endTime]
     },
   ],
 };
@@ -76,7 +79,7 @@ const sizeForm = reactive({
       customEvent: {
         conditions: [
           {
-            conditions: [{}],
+            conditions: [],
             logicalChar: "或",
           },
         ],
@@ -88,7 +91,7 @@ const sizeForm = reactive({
       customEvent: {
         conditions: [
           {
-            conditions: [{}],
+            conditions: [],
             logicalChar: "或",
           },
         ],
@@ -147,7 +150,7 @@ function saveData() {
   // 判断流程开始时间
   const { repeatTime } = sizeForm;
   console.log("rt", repeatTime);
-  if (lp !== 'immediately' && !validatePropValue(repeatTime)) {
+  if (lp == "repeat" && !validatePropValue(repeatTime.repeatTime)) {
     ElMessage({
       message: "请正确填写流程开始时间！",
       type: "error",
@@ -164,15 +167,35 @@ function saveData() {
     return false;
   }
 
-  // TODO 触发型：触发时间组A B以及delayed 非空测试
+  console.log("Date Save", date, props.p);
+
+  const _format = "YYYY-MM-DD HH:mm:ss";
+  let timeFormat;
+
+  if (Array.isArray(date)) {
+    timeFormat = [...date].map(item => DayJs(item).format(_format));
+
+    props.p.startTime = timeFormat[0]
+    props.p.endTime = timeFormat[1]
+
+    props.p.executeTime = null
+  } else {
+    timeFormat = DayJs(date).format(_format);
+
+    console.log(">>>", timeFormat)
+
+    props.p.executeTime = timeFormat
+  }
 
   Object.assign(props.p, {
-    executeTime: date,
+    _executeTime: date,
+    // executeTime: timeFormat,
     executeType: lp,
     repeatTime: repeatTime,
     enterType,
     enterCount,
     enterDay,
+    triggerRuleContent: sizeForm.triggerRuleContent,
   });
 
   return true;
@@ -183,125 +206,67 @@ const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
 onMounted(async () => {
-  const res = await getDictFilterTree();
+  const res = await getDictFilterTree(
+    {
+      pageNum: "1",
+      pageSize: "999"
+    }
+  );
 
   if (res.data) {
     dict.value = res.data;
   }
 });
-
-function addEventA() {
-  props.p.triggerRuleContent.eventA.customEvent.conditions.push({
-    conditions: [{}],
-    logicalChar: "或",
-  });
-}
-
-function addEventB() {
-  props.p.triggerRuleContent.eventB.customEvent.conditions.push({
-    conditions: [{}],
-    logicalChar: "或",
-  });
-}
+const defaultTime2: [Date, Date] = [
+  new Date(2000, 0, 0, 0, 0, 0),
+  new Date(2000, 0, 0, 23, 59, 59),
+];
 </script>
 
 <template>
-  <el-form
-    class="MainForm"
-    ref="form"
-    :model="sizeForm"
-    label-width="auto"
-    label-position="top"
-  >
+  <el-form class="MainForm" ref="form" :model="sizeForm" label-width="auto" label-position="top">
     <el-form-item label="流程类型">
       <FlowTypeSelector v-model="sizeForm.executeType" />
     </el-form-item>
     <br />
 
-    <el-form-item
-      v-if="sizeForm.executeType === 'immediately'"
-      label="流程开始时间（任务开始时间）"
-    >
+    <el-form-item v-if="sizeForm.executeType === 'immediately'" label="流程开始时间（任务开始时间）">
       <el-text> 客户在&nbsp;&nbsp; </el-text>
-      <el-date-picker
-        v-model="sizeForm.date1"
-        type="date"
-        label="选择日期"
-        placeholder="选择日期"
-        style="width: 150px"
-      />&nbsp;
-      <el-time-picker
-        v-model="sizeForm.date2"
-        label="选择时间"
-        placeholder="选择时间"
-        style="width: 120px"
-      />
+      <el-date-picker v-model="sizeForm.date1" type="date" label="选择日期" placeholder="选择日期" value-format="YYYY-MM-DD"
+        style="width: 150px" />&nbsp;
+      <el-time-picker v-model="sizeForm.date2" label="选择时间" placeholder="选择时间" style="width: 120px" />
       <el-text> &nbsp;&nbsp;进入流程 </el-text>
     </el-form-item>
 
     <div v-else-if="sizeForm.executeType === 'repeat'">
       <el-form-item label="流程有效期：">
-        <el-date-picker
-          v-model="sizeForm.date3"
-          type="daterange"
-          style="max-width: 382px"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        />
+        <el-date-picker v-model="sizeForm.date3" type="datetimerange" value-format="YYYY-MM-DD HH:mm:ss" style="max-width: 382px"
+          range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :default-time="defaultTime2"/>
       </el-form-item>
 
       <br />
       <el-form-item label="流程开始时间(任务开始时间)">
         <el-text> 客户在&nbsp; </el-text>
         &nbsp;
-        <el-select
-          @change="Object.assign(sizeForm.repeatTime, { repeatDay: [], repeatTime: '' })"
-          v-model="sizeForm.repeatTime.repeatType"
-          style="width: 100px"
-        >
+        <el-select @change="Object.assign(sizeForm.repeatTime, { repeatDay: [], repeatTime: '' })"
+          v-model="sizeForm.repeatTime.repeatType" style="width: 100px">
           <el-option value="month" label="月份">月</el-option>
           <el-option value="week" label="周">周</el-option>
           <el-option value="day" label="天">天</el-option>
         </el-select>
         &nbsp;&nbsp;&nbsp;
-        <el-select
-          v-if="sizeForm.repeatTime.repeatType === 'month'"
-          v-model="sizeForm.repeatTime.repeatDay"
-          placeholder="选择月份的天数"
-          style="width: 150px"
-          multiple
-          collapse-tags
-        >
-          <el-option
-            v-for="day in 30"
-            :key="day"
-            :label="`${day}号`"
-            :value="day"
-          ></el-option>
+        <el-select v-if="sizeForm.repeatTime.repeatType === 'month'" v-model="sizeForm.repeatTime.repeatDay"
+          placeholder="选择月份的天数" style="width: 150px" multiple collapse-tags>
+          <el-option v-for="day in 30" :key="day" :label="`${day}号`" :value="day"></el-option>
         </el-select>
         &nbsp;&nbsp;&nbsp;
-        <el-select
-          v-if="sizeForm.repeatTime.repeatType === 'week'"
-          v-model="sizeForm.repeatTime.repeatDay"
-          placeholder="选择星期几"
-          style="width: 150px"
-          multiple
-          collapse-tags
-        >
-          <el-option
-            v-for="(day, index) in daysOfWeek"
-            :key="index"
-            :label="`星期${day}`"
-            :value="day"
-          ></el-option>
+        <el-select v-if="sizeForm.repeatTime.repeatType === 'week'" v-model="sizeForm.repeatTime.repeatDay"
+          placeholder="选择星期几" style="width: 150px" multiple collapse-tags>
+          <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="index+1"></el-option>
         </el-select>
 
-        <el-time-picker
-          v-model="sizeForm.repeatTime.repeatTime"
-          placeholder="选择时间"
-          style="width: 120px"
-        ></el-time-picker>
+        <el-time-picker v-model="sizeForm.repeatTime.repeatTime" value-format="HH:mm" placeholder="选择时间"
+          style="width: 120px"></el-time-picker>
         &nbsp;&nbsp;
         <el-text>进入流程(启动任务) </el-text>
       </el-form-item>
@@ -310,117 +275,13 @@ function addEventB() {
     <div v-else-if="sizeForm.executeType === 'trigger'">
       <el-form-item label="流程有效期">
         <el-col :span="12">
-          <el-date-picker
-            v-model="sizeForm.date3"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          />
+          <el-date-picker v-model="sizeForm.date3" type="datetimerange" value-format="YYYY-MM-DD" range-separator="至"
+            start-placeholder="开始日期" end-placeholder="结束日期" />
         </el-col>
       </el-form-item>
 
       <br />
-      <el-form-item>
-        <div class="pannel">
-          <div class="toppannel">触发事件组A</div>
-          <div class="garyblock">
-            <el-text>在流程有效期内依次完成下列事件后</el-text>&nbsp; &nbsp;
-            <el-text type="primary" style="cursor: pointer" @click="addEventA">
-              <el-icon size="14">
-                <CirclePlusFilled />
-              </el-icon>
-              添加事件
-            </el-text>
-          </div>
-
-          <!-- props.p.triggerRuleContent.eventA.customEvent.conditions -->
-          <TouchBlockGenre
-            v-if="dict"
-            :condition="sizeForm.triggerRuleContent.eventA.customEvent"
-            :dict="dict"
-          />
-        </div>
-      </el-form-item>
-
-      <br />
-      <div
-        class="underright"
-        v-show="!sizeForm.triggerRuleContent.delayed.isDelayed"
-        @click="
-          sizeForm.triggerRuleContent.delayed.isDelayed = !sizeForm.triggerRuleContent
-            .delayed.isDelayed
-        "
-      >
-        <el-icon size="14">
-          <CirclePlusFilled />
-        </el-icon>
-        添加事件组b
-      </div>
-      <el-form-item v-show="sizeForm.triggerRuleContent.delayed.isDelayed">
-        <div class="pannel">
-          <div class="toppannel" style="display: flex; justify-content: space-between">
-            触发事件组B
-
-            <el-text
-              type="primary"
-              style="cursor: pointer"
-              @click="
-                sizeForm.triggerRuleContent.delayed.isDelayed = !sizeForm
-                  .triggerRuleContent.delayed.isDelayed
-              "
-            >
-              <el-icon size="14">
-                <Delete />
-              </el-icon>
-              删除事件
-            </el-text>
-          </div>
-          <div class="garyblock" style="display: flex; justify-content: space-between">
-            <div>
-              <el-text>且在</el-text>&nbsp;
-              <el-input
-                placeholder="输入值"
-                v-model="sizeForm.triggerRuleContent.delayed.delayedTime"
-                type="number"
-                style="width: 100px"
-              />&nbsp;
-              <el-select
-                placeholder="选择单位"
-                v-model="sizeForm.triggerRuleContent.delayed.delayedUnit"
-                style="width: 150px"
-              >
-                <el-option value="month" label="月份">分钟</el-option>
-                <el-option value="week" label="周">小时</el-option>
-                <el-option value="day" label="天">天</el-option> </el-select
-              >&nbsp;
-              <el-text>后立即判断</el-text>
-              &nbsp;
-              <el-select
-                placeholder="是否做过"
-                v-model="sizeForm.triggerRuleContent.delayed.delayedAction"
-                style="width: 150px"
-              >
-                <el-option value="=" label="月份">做过</el-option>
-                <el-option value="!=" label="周">未做过</el-option> </el-select
-              >&nbsp;
-            </div>
-            <el-text type="primary" style="cursor: pointer" @click="addEventB">
-              <el-icon size="14">
-                <CirclePlusFilled />
-              </el-icon>
-              添加事件
-            </el-text>
-          </div>
-
-          <TouchBlockGenre
-            v-if="dict"
-            :condition="sizeForm.triggerRuleContent.eventB.customEvent"
-            :dict="dict"
-          />
-        </div>
-      </el-form-item>
-      <div></div>
+      <EventGroup :p="sizeForm" />
     </div>
 
     <template v-if="sizeForm.executeType !== 'immediately'">
@@ -434,20 +295,9 @@ function addEventB() {
       </el-form-item>
       <div class="flex-column" v-if="sizeForm.enterType === 'multi'">
         <el-text>当前流程，同一客户</el-text>&nbsp;
-        <el-input-number
-          :max="30"
-          :min="1"
-          style="width: 100px"
-          v-model="sizeForm.enterDay"
-          placeholder="天数"
-        />
+        <el-input-number :max="30" :min="1" style="width: 100px" v-model="sizeForm.enterDay" placeholder="天数" />
         <el-text>&nbsp;天内，最多进入</el-text>&nbsp;
-        <el-input-number
-          :min="1"
-          style="width: 100px"
-          v-model="sizeForm.enterCount"
-          placeholder="次数"
-        />
+        <el-input-number :min="1" style="width: 100px" v-model="sizeForm.enterCount" placeholder="次数" />
         <el-text> &nbsp;次 </el-text>
       </div>
     </template>

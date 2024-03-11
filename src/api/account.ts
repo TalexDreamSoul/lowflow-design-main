@@ -6,8 +6,9 @@ const customerAPI = {
     return request.post({ url: "/api/qryAccountList.do", data });
   },
   // 账户详情
-  accountDetail(data: any) {
-    return request.get({ url: "/api/accountDetail.do", data });
+  accountDetail(data?: any) {
+    return  data? request.get({ url: `/api/accountDetail.do?id=${data}` }):
+     request.get({ url: `/api/accountDetail.do` });
   },
   // 账户包含的菜单列表
   accountContainMenuList(data: any) {
@@ -33,12 +34,12 @@ const customerAPI = {
   login(data: any)  {
     return request.post({ url: "/api/login.do", data });
   },
-  logout(data: any) {
-    return request.post({ url: "/api/logout.do", data });
+  logout() {
+    return request.post({ url: "/api/logout.do"});
   },
   // 菜单列表
-  qryMenuList(data: any) {
-    return request.post({ url: "/api/qryMenuList.do", data });
+  qryMenuList() {
+    return request.post({ url: "/api/qryMenuList.do" });
   },
   // 权限列表
   qryRoleList(data: any) {
@@ -46,7 +47,7 @@ const customerAPI = {
   },
   // 权限详情
   roleDetail(data: any) {
-    return request.get({ url: "/api/roleDetail.do", data });
+    return request.get({ url: `/api/roleDetail.do?id=${data}` });
   },
   // 更新账户
   updateAccount(data: any) {
@@ -56,6 +57,7 @@ const customerAPI = {
   updateRole(data: any) {
     return request.put({ url: "/api/updateRole.do", data });
   },
+
 };
 
 export default customerAPI;

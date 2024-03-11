@@ -45,7 +45,7 @@ const attrs = computed(() => {
             <el-row class="filter-item-rule">
               &nbsp;<el-col :xs="24" :sm="6">
                 <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                  <el-select v-model="item.action">
+                  <el-select v-model="item.eventCode">
                     <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
                       <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
                     </el-option-group> </el-select>
@@ -53,9 +53,9 @@ const attrs = computed(() => {
               </el-col>
 
               &nbsp;
-              <el-col :xs="24" :sm="3" >
+              <el-col :xs="24" :sm="3" style="zoom:.8">
 
-                <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="handleSubAdd(item)">
+                <el-text type="primary" style="cursor: pointer" @click="handleSubAdd(item)">
                   <el-icon size="12">
                     <Plus />
                   </el-icon>
@@ -66,7 +66,7 @@ const attrs = computed(() => {
               <el-col :xs="24" :sm="1" style="
                 display: flex;
                 align-items: center;
-                flex-direction: row-reverse;
+                flex-direction: row-reverse;zoom:.8
               ">
               <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
                   <el-icon size="14">

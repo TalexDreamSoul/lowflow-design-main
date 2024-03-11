@@ -1,21 +1,25 @@
 <script setup lang="ts">
-import { ref, reactive, computed, provide, inject, markRaw } from "vue";
+import { ref, reactive, computed, provide, inject, watch } from "vue";
 import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
 import ConditionSetAttr from "./attr/ConditionSetAttr.vue";
 import CustomersAttr from "./attr/CustomersAttr.vue";
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
-import DeliverySettingsAttr from "../p/start/DeliverySettingsAttr.vue";
-import Strategist from "./start/Strategist.vue";
+import DeliverySettingsAttr from "../p/attr/DeliverySettingsAttr.vue";
+import Strategist from "./attr/Strategist.vue";
 
-const getNode: Function = inject('getNode')!
-const { data: _data  } = getNode()
-const __data = _data.$d(_data.id)
-const data = reactive(_data.data)
+const getNode: Function = inject("getNode")!;
+const { data: _data } = getNode();
+const __data = _data.$d(_data.id);
+const data = reactive(_data.data);
 
 const dialogVisible = ref(false);
 const drawerOptions = reactive<any>({
   visible: false,
 });
+
+Object.assign(data, __data)
+
+console.log("PStart setup!", getNode(), __data, data)
 
 function openCondition() {
   openDrawer({
@@ -56,33 +60,32 @@ const flowType = computed(() => {
 
 const flowTime = computed(() => {
   const _time = data.executeTime;
-  if (!_time) return "-";
+  // if (!_time) return "-";
 
-  if (_time instanceof Date) {
+  if (_time) {
     const s: Date = _time;
 
     return s.toLocaleString().replaceAll("/", "-");
   }
 
-  const [date1, date2] = _time;
-  if (!date1 || !date2) return "-";
+  // const [date1, date2] = _time;
+  const { startTime, endTime } = data;
+  if (!startTime || !endTime) return "-";
 
-  const date1Text = date1.toLocaleDateString().replaceAll("/", "-");
-  const date2Text = date2.toLocaleDateString().replaceAll("/", "-");
+  const date1Text = startTime; //.toLocaleDateString().replaceAll("/", "-");
+  const date2Text = endTime; //.toLocaleDateString().replaceAll("/", "-");
 
   return `${date1Text} 至 ${date2Text}`;
 });
 
-const conditioned = computed(
-  () => flowType.value !== "-" && flowTime.value !== "-"
-);
+const conditioned = computed(() => flowType.value !== "-" && flowTime.value !== "-");
 
 const doDiverse = computed(() => {
   const { children } = data;
 
   if (!children?.length) return false;
 
-  return [...children].find((child) => "strategy" === child?.nodeType) ?? true
+  return [...children].find((child) => "strategy" === child?.nodeType) ?? true;
 });
 
 const haveDiverse = computed(() => {
@@ -93,29 +96,35 @@ const haveDiverse = computed(() => {
   if (!children?.length) return false;
 
   return [...children].find((child) => "diversion" === child?.nodeType);
-})
+});
 
 const haveReveal = computed(() => {
   const { children } = data;
 
   if (!children?.length) return false;
 
-  return [...children].find((child) => "strategy" === child?.nodeType && child?.reveal) ?? false
-})
+  return (
+    [...children].find((child) => "strategy" === child?.nodeType && child?.reveal) ??
+    false
+  );
+});
 
 const customerConditioned = computed(() => {
-  const { customAttr, customEvent } = (data?.customRuleContent ?? {})
+  const { customAttr, customEvent } = data?.customRuleContent ?? {};
 
   const _obj = {
     customAttr: customAttr?.conditions?.length ?? 0,
     customEvent: customEvent?.conditions?.length ?? 0,
-  }
+  };
 
   return {
-    display: _obj.customAttr && _obj.customEvent,
-    ..._obj
-  }
-})
+    display:
+      (data.blacklist || data.customRuleContent) ||
+      _obj.customAttr ||
+      _obj.customEvent,
+    ..._obj,
+  };
+});
 
 const _comps = [
   {
@@ -155,15 +164,11 @@ let _saveFunc: (() => boolean) | null = null;
 function handleSave() {
   if (!_saveFunc || !_saveFunc()) return;
 
-  Object.assign(__data, data)
+  Object.assign(__data, data);
 
-  // console.log("assign", data)
+  __data.children = data.children
 
-  // // define father
-  // Object.defineProperty(__data, 'father', {
-  //   value: markRaw(data.father),
-  //   enumerable: false
-  // })
+  console.log("__data", __data)
 
   dialogVisible.value = false;
   drawerOptions.visible = false;
@@ -179,7 +184,7 @@ function handleClick(e: Event) {
   // @ts-ignore exist
   if (window.__clickListen) {
     // @ts-ignore exist
-    window.__clickListen(e)
+    window.__clickListen(e);
   }
 }
 </script>
@@ -256,8 +261,10 @@ function handleClick(e: Event) {
     </teleport>
   </el-card>
   <!-- && !customerConditioned.display -->
-  <el-button :class="{ display: conditioned && customerConditioned.display, disabled: haveDiverse }"
-    @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
+  <el-button :class="{
+        display: conditioned && customerConditioned.display,
+        disabled: haveDiverse,
+      }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">
@@ -273,7 +280,7 @@ function handleClick(e: Event) {
 
 .PBlock-Section {
   &.disabled {
-    opacity: .5;
+    opacity: 0.5;
     border: 1px solid var(--el-border-color);
     pointer-events: none;
   }

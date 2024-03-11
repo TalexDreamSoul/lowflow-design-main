@@ -3,10 +3,21 @@ import { onMounted, ref, provide } from "vue";
 import BehaviorContent from "./BehaviorContent.vue";
 import LogicalLine from "./LogicalLine.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
+import {
+  CustomEventConditionDTO,
+  EventSearchCondition,
+  SearchCondition,
+} from "~/touch-flow/touch-total";
+
 const props = defineProps<{
-  custom: any;
+  custom: CustomEventConditionDTO;
   readonly?: boolean;
 }>();
+
+// for (let item of props.custom.conditions) {
+//   // @ts-ignore
+//   if ( item.conditions.length === 0) item.conditions.push({})
+// }
 
 const dict = ref<any>();
 
@@ -18,12 +29,36 @@ onMounted(async () => {
   }
 });
 
+// 删除某一项为空
+// { conditions: [] } => 仍然会显示 => 删除掉 不要去显示仅剩的一个 或
 const refreshTree = () => {
   [...props.custom.conditions].forEach(
     (condition, index) =>
       !condition.conditions.length && props.custom.conditions.splice(index, 1)
   );
 };
+
+function handleAdd(condition: any) {
+  console.log("q", condition);
+
+  const obj: EventSearchCondition = {
+    action: "",
+    conditions: {
+      conditions: new Array<SearchCondition>(),
+      logicalChar: "或",
+    },
+    eventCode: "",
+    eventName: "",
+  };
+
+  condition.conditions.push(JSON.parse(JSON.stringify(obj)));
+}
+
+function handleDel(ind: number, condition: any) {
+  condition.conditions.splice(ind, 1);
+
+  refreshTree();
+}
 
 provide("refreshTree", refreshTree);
 </script>
@@ -32,12 +67,25 @@ provide("refreshTree", refreshTree);
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
       <div v-if="dict && custom.conditions?.length" class="Target-Block">
-        <LogicalLine :display="custom.conditions?.length" v-model="custom.LogicalLine">
-          <div v-for="condition in custom.conditions" :key="condition.id">
-            <BehaviorContent :readonly="readonly" v-if="condition?.conditions?.length" :condition="condition" :dict="dict">
-              <slot :condition="condition" :dict="dict" />
-            </BehaviorContent>
-          </div>
+        <LogicalLine :display="!custom.conditions?.length" v-model="custom.logicalChar">
+          <LogicalLine
+            v-model="condition.logicalChar"
+            v-for="(condition, index) in custom.conditions"
+            :display="condition?.conditions?.length < 2"
+            :key="index"
+          >
+            <BehaviorContent
+              v-for="(item, ind) in condition.conditions"
+              :key="ind"
+              @addSub="handleAdd(condition)"
+              @del="handleDel(ind, condition)"
+              :readonly="readonly"
+              :condition="item"
+              :index="ind"
+              :length="condition.conditions.length"
+              :dict="dict"
+            />
+          </LogicalLine>
         </LogicalLine>
       </div>
     </div>

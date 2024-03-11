@@ -190,8 +190,10 @@ const onSubmitAttr = async (formEl: FormInstance | undefined) => {
   }
 }
 </script>
-<style lang="scss">
-@import '~/styles/list-layout.scss';
+<style lang="scss" >
+@import "~/styles/list-layout.scss";
+</style>
+<style lang="scss" scoped>
 
 .attr {
   .attr-modal {

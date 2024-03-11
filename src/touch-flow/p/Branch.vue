@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref, reactive, provide, inject, computed } from 'vue'
 import { Stamp, Plus, Delete } from '@element-plus/icons-vue'
-import ConditionSetAttr from './attr/ConditionSetAttr.vue'
 import PolicySettingsAttr from './attr/PolicySettingsAttr.vue'
-import DeliverySettingsAttr from './start/DeliverySettingsAttr.vue'
-import Strategist from "./start/Strategist.vue";
-import { delChild } from '../flow-utils'
+import DeliverySettingsAttr from './attr/DeliverySettingsAttr.vue'
+import Strategist from "./attr/Strategist.vue";
+import { MarketingTouchEditDTO } from './behavior/marketing';
 
 const getNode: Function = inject('getNode')!
 const { data: _data } = getNode()
@@ -126,12 +125,10 @@ provide('save', (regFunc: () => boolean) => {
 })
 
 const visible = ref(false)
-function del(p: any) {
-  delChild(p)
+function del(p: MarketingTouchEditDTO) {
+  _data.$del(p);
 
-  window.$refreshLayout()
-
-  visible.value = false
+  visible.value = false;
 }
 </script>
 
@@ -147,7 +144,7 @@ function del(p: any) {
           <el-button size="small" type="primary" @click="del(__data)">确认</el-button>
         </div>
         <template #reference>
-          <el-button @click="visible = true" text type="primary">
+          <el-button v-if="!_data.$readonly" @click="visible = true" text type="primary">
             <el-icon>
               <Delete />
             </el-icon>
@@ -167,7 +164,8 @@ function del(p: any) {
     <teleport to="body">
       <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section" :class="{ disabled: item.disabled?.value }">
+          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section"
+            :class="{ disabled: item.disabled?.value }">
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />

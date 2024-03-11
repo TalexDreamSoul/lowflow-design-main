@@ -1,33 +1,45 @@
 <script setup lang="ts">
-import { onMounted, ref, nextTick } from "vue";
+import { onMounted, ref, nextTick, computed } from "vue";
 import TargetContent from "./TargetContent.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
-import { IHeaderTarget } from '../flow-types'
+import { IHeaderTarget } from "../flow-types";
 
 interface ITargetProp {
-  target: IHeaderTarget,
-  readonly?: boolean,
-  expand: boolean
+  target: IHeaderTarget;
+  readonly?: boolean;
+  expand: boolean;
 }
 
 const props = defineProps<ITargetProp>();
 
-if ( !props.readonly && !props.target.targetRuleContent.data.length ) {
-  addTarget()
+if (!props.readonly && !props.target.targetRuleContent.data?.length) {
+  addTarget();
 }
 
-const dict = ref<any>()
+const dict = ref<any>();
 
-onMounted(async () => {
-  const res = await getDictFilterTree()
+!(async () => {
+  const res = await getDictFilterTree(
+    {
+      pageNum:"1",
+      pageSize:"999"
+    }
+  );
 
   if (res.data) {
     dict.value = res.data;
+  } else {
+    console.log(res);
+
+    window.history.back()
+
+    throw new Error('获取字典失败,无法完成流程!')
   }
-});
+})();
 
 function addTarget() {
-  let arr = (props.target.targetRuleContent.data = props.target.targetRuleContent.data || []);
+  let arr = (props.target.targetRuleContent.data =
+    props.target.targetRuleContent.data || []);
 
   arr.push({
     targetDelayed: {
@@ -35,36 +47,75 @@ function addTarget() {
       delayedAction: "",
       delayedTime: 0,
       delayedUnit: "day",
-      isDelayed: false
+      isDelayed: false,
     },
-    targetRuleContent: {}
-  })
+    targetRuleContent: {
+      customEvent: {
+        conditions: [
+          {
+            conditions: [
+              {
+                action: "",
+                conditions: {
+                  conditions: [],
+                  logicalChar: "或",
+                },
+                eventCode: "",
+                eventName: "",
+              },
+            ],
+            logicalChar: "或",
+          },
+        ],
+        logicalChar: "或",
+      },
+      logicalChar: "或",
+    },
+  });
 
   const ind = arr.length - 1;
-  const id = `touch-target-${ind}`
+  const id = `touch-target-${ind}`;
 
   nextTick(() => {
-
-    const el = document.getElementById(id)
+    const el = document.getElementById(id);
+    if ( !el ) return
 
     el!.scrollIntoView({
       behavior: "smooth",
       block: "center",
     });
-
-  })
+  });
 }
+
+function handleDel(index: number) {
+  props.target.targetRuleContent.data.splice(index, 1);
+}
+
+const doDisable = computed<boolean>(
+  () => props.readonly || props.target.targetRuleContent.data?.length > 1
+);
 </script>
 
 <template>
-  <el-form-item class="Basic-Block transition-item" :class="{ expand }">
+  <el-form-item v-if="dict" class="Basic-Block transition-item" :class="{ expand }">
     <template #label>
       <div class="Basic-Block-Head">
         <label class="el-form-item__label">目标设置</label>
-        <el-switch :disabled="readonly" inline-prompt v-model="target.enable"
-          style="margin-top: -4px;--el-switch-on-color: #4078e0" />
-        <el-button :class="{ display: target.enable }" :disabled="readonly" @click="addTarget" type="primary" text plain
-          style="color: #4078e0">
+        <el-switch
+          :disabled="readonly"
+          inline-prompt
+          v-model="target.enable"
+          style="margin-top: -4px; --el-switch-on-color: #4078e0"
+        />
+        <el-button
+          :class="{ display: target.enable }"
+          :disabled="doDisable"
+          @click="addTarget"
+          type="primary"
+          text
+          plain
+          style="color: #4078e0"
+        >
           <el-icon>
             <CirclePlusFilled />
           </el-icon>
@@ -73,9 +124,19 @@ function addTarget() {
       </div>
     </template>
     <div class="Basic-Block-Content" v-show="target.enable">
-      <div :id="`touch-target-${index}`" v-for="(item, index) in target.targetRuleContent.data" :key="index"
-        class="Target-Block">
-        <TargetContent :readonly="readonly" :index="index" :target="item" :dict="dict" />
+      <div
+        :id="`touch-target-${index}`"
+        v-for="(item, index) in target.targetRuleContent.data"
+        :key="index"
+        class="Target-Block"
+      >
+        <TargetContent
+          @del="handleDel(index)"
+          :readonly="readonly"
+          :index="index"
+          :target="item"
+          :dict="dict"
+        />
       </div>
     </div>
   </el-form-item>
@@ -98,11 +159,22 @@ function addTarget() {
   transition: all 0.3s;
 }
 
+:deep(.el-form-item__label) {
+  z-index: 1;
+  position: sticky;
+
+  top: 0;
+
+  background-color: #ffffff80;
+  backdrop-filter: saturate(180%) blur(18px);
+}
+
 .Basic-Block {
   &-Content {
-
     width: calc(100% - 30px);
 
+    overflow: hidden;
+    transition: 0.25s;
     background-color: transparent !important;
   }
 
@@ -110,6 +182,6 @@ function addTarget() {
     margin: 0 !important;
   }
 
-  --t-delay: .3s;
+  --t-delay: 0.3s;
 }
 </style>

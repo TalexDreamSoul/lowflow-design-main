@@ -1,7 +1,8 @@
 import service from './service'
 import { CONTENT_TYPE } from '~/constants'
+import { AxiosResponse, RequestConfig } from './types'
 
-const request = (option: AxiosConfig) => {
+const request = (option: RequestConfig<AxiosResponse<any, any>>) => {
   const { url, method, params, data, headers, responseType } = option
   return service.request({
     url: url,
@@ -11,24 +12,24 @@ const request = (option: AxiosConfig) => {
     responseType: responseType,
     headers: {
       'Content-Type': CONTENT_TYPE,
-      ['Authorization']:'',
+      ['Authorization']: '',
       ...headers
     }
   })
 }
 
 export default {
-  get: <T = any>(option: AxiosConfig) => {
-    return request({ method: 'get', ...option }) as Promise<IResponse<T>>
+  get: <T = any>(option: RequestConfig<AxiosResponse<any, any>>) => {
+    return request({ method: 'get', ...option })
   },
-  post: <T = any>(option: AxiosConfig) => {
-    return request({ method: 'post', ...option }) as Promise<IResponse<T>>
+  post: <T = any>(option: any) => {
+    return request({ method: 'post', ...option })
   },
-  delete: <T = any>(option: AxiosConfig) => {
-    return request({ method: 'delete', ...option }) as Promise<IResponse<T>>
+  delete: <T = any>(option: RequestConfig<AxiosResponse<any, any>>) => {
+    return request({ method: 'delete', ...option })
   },
-  put: <T = any>(option: AxiosConfig) => {
-    return request({ method: 'put', ...option }) as Promise<IResponse<T>>
+  put: <T = any>(option: RequestConfig<AxiosResponse<any, any>>) => {
+    return request({ method: 'put', ...option })
   },
   cancelRequest: (url: string | string[]) => {
     return service.cancelRequest(url)

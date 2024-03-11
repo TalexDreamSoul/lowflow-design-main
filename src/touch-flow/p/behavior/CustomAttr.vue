@@ -1,16 +1,30 @@
 <script setup lang="ts">
-import { onMounted, ref, provide } from "vue";
+import { onMounted, ref, provide, watchEffect } from "vue";
 import CustomContent from "./CustomContent.vue";
 import LogicalLine from "./LogicalLine.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
+import { CustomAttrConditionDTO } from "../../touch-total";
+
 const props = defineProps<{
-  custom: any;
+  custom: CustomAttrConditionDTO;
 }>();
 
 const dict = ref<any>();
 
+watchEffect(() => {
+  for (let item of props.custom.conditions) {
+    // @ts-ignore
+    if (item.conditions.length === 0) item.conditions.push({});
+  }
+});
+
 onMounted(async () => {
-  const res = await getDictFilterTree();
+  const res = await getDictFilterTree(
+    {
+      pageNum:"1",
+      pageSize:"999"
+    }
+  );
 
   if (res.data) {
     dict.value = res.data;
@@ -18,8 +32,9 @@ onMounted(async () => {
 });
 
 const refreshTree = () => {
-  [...props.custom].forEach(
-    (condition, index) => !condition.conditions.length && props.custom.splice(index, 1)
+  [...props.custom.conditions].forEach(
+    (condition, index) =>
+      !condition.conditions.length && props.custom.conditions.splice(index, 1)
   );
 };
 
@@ -30,10 +45,9 @@ provide("refreshTree", refreshTree);
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
       <div v-if="dict && custom?.conditions?.length" class="Target-Block">
-        <LogicalLine :display="!custom?.conditions?.length" v-model="custom.LogicalLine">
-          <div v-for="condition in custom.conditions" :key="condition.id">
-            {{ condition }}
-            <CustomContent v-if="condition?.length" :condition="condition" :dict="dict" />
+        <LogicalLine :display="!custom?.conditions?.length" v-model="custom.logicalChar">
+          <div v-for="(condition, index) in custom.conditions" :key="index">
+            <CustomContent :condition="condition" :dict="dict" />
           </div>
         </LogicalLine>
       </div>

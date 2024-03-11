@@ -1,228 +1,177 @@
 <script setup lang="ts" name="CustomContent">
-import { computed, inject, ref } from "vue";
-import { Delete } from "@element-plus/icons-vue";
+import { watch, inject, ref } from "vue";
+import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 import BehaviorSubContent from "./BehaviorSubContent.vue";
 import LogicalLine from "./LogicalLine.vue";
+import { EventSearchCondition } from "~/touch-flow/touch-total";
 
 const props = defineProps<{
-  condition: any;
+  condition: EventSearchCondition;
+  length: number;
+  index: number;
   dict: any;
-  readonly?: boolean
+  readonly?: boolean;
 }>();
+const emits = defineEmits(["addSub", "del"]);
+
+const subDataObj = Object.freeze({
+  attr: {
+    field: "",
+    fieldMultiValue: [],
+    fieldName: "",
+    fieldOp: "",
+    fieldRangeValue: "",
+    fieldType: "",
+    fieldValue: "",
+  },
+  label: {
+    labelId: 0,
+    labelName: "",
+    labelValue: [],
+  },
+  type: "event",
+});
 
 const refreshTree: Function = inject("refreshTree")!;
-const timeRange = ref()
+const timeRange = ref();
 
 function handleDateChange(item: any) {
-  const [startTime, endTime] = timeRange.value
+  const [startTime, endTime] = timeRange.value;
 
-  item.startTime = startTime
-  item.endTime = endTime
+  item.startTime = startTime;
+  item.endTime = endTime;
 }
 
-const handleDel = (index: number) => {
-  props.condition.conditions.splice(index, 1);
+// const handleDel = (index: number) => {
+//   console.log('aaa', props.condition, index)
+//   // props.condition.conditions.splice(index, 1);
 
-  refreshTree();
-};
+//   // refreshTree();
+// };
 
-const conditionArr = computed(() => props.condition.conditions);
+// const conditionArr = computed(() => props.condition.conditions);
 
-function handleAdd() {
-  props.condition.conditions.push({});
+function handleAdd(item: EventSearchCondition) {
+  const arr = (item.conditions.conditions = item.conditions.conditions || []);
+
+  arr.push(JSON.parse(JSON.stringify(subDataObj)));
 }
 
-function handleSubAdd(item: any) {
-  console.log("sub add", item)
+function handleChange(val: string, condition: any) {
+  const { events } = props.dict
 
-  const arr = (item.conditions = item.conditions || []);
+  const _events = events.map((item: any) => item.events).flat()
 
-  arr.push({});
+  const targetEvent = _events.find((item: any) => item.eventCode === val)
+
+  // console.log(val, condition, targetEVent)
+
+  condition.eventName = targetEvent.eventName
 }
 
-const attrs = computed(() => {
-  const { events } = props.dict;
+watch(props.condition, (val) => {
+  const { startTime, endTime } = val
+  if (!startTime || !endTime) return
 
-  return events;
-});
+  timeRange.value = [startTime, endTime]
+}, { immediate: true })
+const defaultTime2: [Date, Date] = [
+  new Date(2000, 0, 0, 0, 0, 0),
+  new Date(2000, 0, 0, 23, 59, 59),
+];
 </script>
 
 <template>
-  <div class="CustomContent">
-    <LogicalLine :display="conditionArr?.length" v-model="condition.logicalChar">
-      <div v-if="conditionArr" class="filter-option-content">
-        <el-form :label-width="0" :inline="true" :model="condition.conditions">
-          <div v-for="(item, index) in conditionArr" :key="`${item.field}-${index}`" class="CustomBehavior-Main">
-            <el-row class="filter-item-rule">
-              <el-col :xs="24" :sm="6">
-                <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                  <el-date-picker @change="handleDateChange(item)" :disabled="readonly" v-model="timeRange" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />
-                </el-form-item>
-              </el-col>
-              &nbsp;<el-col :xs="24" :sm="6">
-                <el-form-item :prop="'conditions.' + index + '.field'" style="width: 100%">
-                  <el-select :disabled="readonly" placeholder="是否做过" v-model="item.action">
-                    <el-option label="做过" value="=" />
-                    <el-option label="未做过" value="!=" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              &nbsp;<el-col :xs="24" :sm="6">
-                <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                  <el-select :disabled="readonly" placeholder="选择事件" v-model="item.eventCode">
-                    <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
-                      <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
-                    </el-option-group> </el-select>
-                </el-form-item>
-              </el-col>
+  <div class="CustomBehavior">
+    <!-- <LogicalLine :display="conditionArr?.length < 2" v-model="condition.logicalChar"> -->
+    <!-- <div v-for="(item, index) in conditionArr" :key="index" class="CustomBehavior-Main"> -->
+    <div class="CustomBehavior-Line">
+      <el-date-picker @change="handleDateChange(condition)" :disabled="readonly" format="YYYY-MM-DD HH:mm:ss"
+      value-format="YYYY-MM-DD HH:mm:ss"
+      type="datetimerange"
+      :default-time="defaultTime2"
+      v-model="timeRange"  range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"
+        style="width: 50px" />
+      <el-select style="width: 100px" :disabled="readonly" placeholder="是否做过" v-model="condition.action">
+        <el-option label="做过" value="=" />
+        <el-option label="未做过" value="!=" />
+      </el-select>
+      <el-select @change="handleChange($event, condition)" style="width: 150px" :disabled="readonly" placeholder="选择事件"
+        v-model="condition.eventCode">
+        <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
+          <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
+        </el-option-group>
+      </el-select>
 
-              &nbsp;
-              <el-col :xs="24" :sm="3" >
-
-                <el-text type="primary" style="cursor: pointer;zoom: 0.8;" @click="handleSubAdd(item)">
-                  <el-icon size="12">
-                    <Plus />
-                  </el-icon>
-                  添加筛选
-                </el-text> &nbsp;
-              </el-col>
-              &nbsp;&nbsp;
-              <el-col :xs="24" :sm="1" style="
-                display: flex;
-                align-items: center;
-                flex-direction: row-reverse;
-              ">
-              <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
-                  <el-icon size="14">
-                    <Delete />
-                  </el-icon>
-                </el-text>
-                &nbsp;&nbsp;
-                <el-text type="primary" style="cursor: pointer" @click="handleAdd">
-                  <el-icon size="14">
-                    <CirclePlus />
-                  </el-icon>
-                </el-text>
-                &nbsp;&nbsp;
-
-              </el-col>
-
-            </el-row>
-
-            <BehaviorSubContent :index="index" :dict="dict" :condition="item" />
-          </div>
-
-          <div v-if="!(
-            condition?.filterRules?.groups?.length |
-            condition?.filterRules?.conditions?.length
-          )
-            " class="filter-item-rule" />
-        </el-form>
+      <div class="CustomBehavior-Line-Group" style="zoom:.8">
+        <el-text v-if="condition.eventCode" type="primary" style="cursor: pointer" @click="handleAdd(condition)">
+          <el-icon size="12">
+            <CirclePlusFilled />
+          </el-icon>
+          添加筛选
+        </el-text>
+        <div class="CustomBehavior-Line-Group-Sticky">
+          <el-text v-if="condition.eventCode && length === index + 1" type="primary" style="cursor: pointer"
+            @click="emits('addSub')">
+            <el-icon size="12">
+              <CirclePlusFilled />
+            </el-icon>
+            添加同组
+          </el-text>
+          <el-text type="primary" style="cursor: pointer" @click="emits('del')">
+            <el-icon size="14">
+              <Delete />
+            </el-icon>
+            删除
+          </el-text>
+        </div>
       </div>
-    </LogicalLine>
+    </div>
+
+    <BehaviorSubContent title="并且满足" :index="index" :dict="dict" :condition="condition" />
+
+    <!-- </div> -->
+    <!-- </LogicalLine> -->
   </div>
 </template>
 
 <style scoped lang="scss">
-.CustomContent {
+.CustomBehavior {
+  &-Main {
+    display: flex;
+
+    flex-direction: column;
+  }
+
+  &-Line {
+    &-Group {
+      &-Sticky {
+        display: flex;
+
+        gap: 0.5rem;
+      }
+
+      display: flex;
+      padding: 0 1rem 0 0.5rem;
+
+      flex: 1;
+
+      gap: 1rem;
+      align-items: center;
+      box-sizing: border-box;
+      justify-content: space-between;
+    }
+
+    display: flex;
+
+    flex: 1;
+    gap: 0.5rem;
+
+    align-items: center;
+  }
+
   margin: 10px 0;
 
   border-radius: 8px;
-
-  .filter-container {
-    //background-color: #f5f8fc;
-    //border-radius: 3px;
-    display: flex;
-
-    .fontstyle {
-      font-size: 12px;
-      font-weight: 400;
-      color: #000000;
-      position: relative;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      min-width: 70px;
-    }
-
-    .logical-operator {
-      position: relative;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      min-width: 40px;
-
-      .logical-operator__line {
-        position: absolute;
-        left: calc(38% - 1px);
-        border-width: 1px 0 1px 1px;
-        border-top-style: solid;
-        border-bottom-style: solid;
-        border-left-style: solid;
-        border-left-color: #4078e0;
-        border-image: initial;
-        border-right-style: initial;
-        border-right-color: initial;
-        border-radius: 5px 0 0 5px;
-        height: calc(100% - 22px);
-      }
-    }
-
-    .filter-option-content {
-      position: relative;
-      width: 100%;
-
-      .filter-item-rule {
-        display: flex;
-        align-items: center;
-        //min-height: 48px;
-      }
-
-      .filter-filter-item__add {
-        border-style: dashed;
-        width: 100%;
-      }
-    }
-  }
-}
-.filter-item-rule {
-  display: flex;
-  align-items: center;
-  //min-height: 48px;
-}
-.TargetContent-TopBanner {
-  background: #ebeff3;
-  border-radius: 4px 4px 0px 0px;
-  font-size: 12px;
-  font-weight: 400;
-  color: #000000;
-  padding: 0px 24px;
-}
-
-:deep(.el-form-item) {
-  margin-right: 0;
-  margin-bottom: 0;
-}
-
-.custom-switch {
-  border: 1px solid #4078e0;
-  color: #fff;
-  width: 24px;
-  height: 24px;
-  background: #fff;
-  font-weight: 500;
-  color: #4078e0;
-  font-size: 14px;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.el-form-item {
-  margin-right: 0;
-  margin-bottom: unset !important;
 }
 </style>

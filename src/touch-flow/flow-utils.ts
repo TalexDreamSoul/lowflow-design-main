@@ -65,6 +65,7 @@ export function delChild(child: {
   children: any[];
   [key: string]: any;
 }) {
+  console.log("Del", child)
   return _delChild(child.father, child);
 }
 
@@ -90,7 +91,7 @@ export function validateSingleCondition(condition: SearchCondition) {
   const { attr, label, type } = condition
 
   switch (type) {
-    case 'event':
+    case 'attr':
       return validateAttr(attr!);
     case 'label':
       return validateLabel(label!);
@@ -198,6 +199,8 @@ export function genIdNodeReactive(p: any) {
     while (stack.length) {
       const node = stack.pop()
 
+      // console.log("search target", id, node)
+
       if (node.id === id) {
         return node
       }
@@ -221,10 +224,14 @@ export function flatConvert2Tree(nodes: any[]) {
   [...nodes].forEach((item: any) => {
     const { preNodeId, nextNodeId } = item
 
+    item.$id = item.id
+
+    console.log("item", item)
+
     if (preNodeId) {
       const preNode = map.get(preNodeId)
       if (preNode) {
-        console.log("__preNode", preNode, preNodeId)
+        // console.log("__preNode", preNode, preNodeId)
 
         preNode.children = [...(preNode.children || []), item]
 
@@ -253,20 +260,22 @@ export function commonValidate(rule: any, value: any, callback: any) {
  * 1. 只要下一层还存在 condition 就会走 conditionValidate
  * 2. 任意一项都可以直接或者间接为空
  */
-export function validateAES(data: CustomSearchDTO) {
+export function validateAES(data: CustomSearchDTO, xor: boolean = false) {
   const { customAttr, customEvent, eventSequence } = data;
 
+  console.error("validate aes", data)
+
   if (!validateObjConditions(customAttr)) {
-    return false;
-  }
+    if (!xor) return false;
+  } else if (xor) return true;
 
   if (!validateObjConditions(customEvent)) {
-    return false;
-  }
+    if (!xor) return false;
+  } else if (xor) return true;
 
   if (!validateObjConditions(eventSequence)) {
-    return false;
-  }
+    if (!xor) return false;
+  } else if (xor) return true;
 
   return true;
 }
