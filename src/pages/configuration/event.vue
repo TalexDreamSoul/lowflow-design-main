@@ -372,7 +372,7 @@ const handleAttrDelete = (index: number) => {
 };
 </script>
 
-<style lang="scss" >
+<style lang="scss" scoped>
 @import "~/styles/list-layout.scss";
 
 .event {
