@@ -1,4 +1,4 @@
-import { addMarketingTouch } from "~/api";
+import { addMarketingTouch,updateMarketingTouch } from "~/api";
 
 /**
  * MarketingTouchEditDTO
@@ -863,4 +863,7 @@ export type EventTriggerConditionDTO = {
 
 export function touchSubmitReview(touchPageFlow: MarketingTouchNodeEditDTO) {
   return addMarketingTouch(touchPageFlow)
+}
+export function touchSubmitUpdate(touchPageFlow: MarketingTouchNodeEditDTO) {
+  return updateMarketingTouch(touchPageFlow)
 }

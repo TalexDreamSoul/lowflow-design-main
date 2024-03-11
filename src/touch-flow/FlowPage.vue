@@ -9,9 +9,10 @@ import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { flatConvert2Tree } from "./flow-utils";
 import { IFlowHeader } from "./flow-types";
-import { getmarketingTouchDetail } from "~/api/index";
-import { reactiveMessage } from '~/utils/mention/mention'
+import { getmarketingTouchDetail, updateMarketingTouch } from "~/api/index";
+import { reactiveMessage } from "~/utils/mention/mention";
 import { sleep } from "~/utils/common";
+import { el } from "element-plus/es/locale";
 
 const route = useRoute();
 
@@ -49,7 +50,6 @@ const flowOptions = reactive<
 });
 
 async function covertData(data: any) {
-
   console.log("!!!", data);
 
   Object.assign(flowOptions.basic, {
@@ -60,12 +60,12 @@ async function covertData(data: any) {
 
   flowOptions.p.children = flatConvert2Tree([...data.nodes!]);
 
-  const _temp = { ...data }
+  const _temp = { ...data };
 
-  delete _temp.children
-  delete _temp.touchName
+  delete _temp.children;
+  delete _temp.touchName;
 
-  Object.assign(flowOptions.p, _temp)
+  Object.assign(flowOptions.p, _temp);
 
   console.log("FlowPage updated!", props.modelValue, _temp);
 }
@@ -74,21 +74,28 @@ watchEffect(() => {
   // $ignored: [props.modelValue, route.params.id]
 
   if (props.modelValue) {
-    covertData(props.modelValue)
+    covertData(props.modelValue);
   }
 
   if (route.params?.id?.length) {
-    const [, { loading, show }] = reactiveMessage("请稍后", "正在转换数据", true, 0, false)
+    const [, { loading, show }] = reactiveMessage(
+      "请稍后",
+      "正在转换数据",
+      true,
+      0,
+      false
+    );
 
-    const timer = setTimeout(() => show.value = true, 500)
+    const timer = setTimeout(() => (show.value = true), 500);
 
     getmarketingTouchDetail({
       id: route.params.id,
-    }).then((res: any) => res.data && covertData(res.data))
+    })
+      .then((res: any) => res.data && covertData(res.data))
       .finally(() => {
-        clearTimeout(timer)
-        loading.value = false
-      })
+        clearTimeout(timer);
+        loading.value = false;
+      });
   }
 });
 
@@ -207,8 +214,8 @@ function flatMaps(__nodes: Array<any>) {
 async function submitReview(status: string = "approvalPending") {
   if (props.readonly) return;
 
-  const [promise, r] = reactiveMessage("请稍后", "正在传输数据中...", true)
-  const { title, content, loading } = r
+  const [promise, r] = reactiveMessage("请稍后", "正在传输数据中...", true);
+  const { title, content, loading } = r;
 
   console.groupCollapsed("submit");
 
@@ -230,22 +237,27 @@ async function submitReview(status: string = "approvalPending") {
   const data: Request = {
     status,
   };
-  Object.assign(data, _flowOptions);
+  if (route.params?.id?.length) {
+    Object.assign(data, { ..._flowOptions, id: route.params?.id });
+  } else {
+    Object.assign(data, _flowOptions);
+  }
+  let res: any = route.params?.id?.length
+    ? await updateMarketingTouch(data)
+    : await touchSubmitReview(data);
 
-  const res: any = await touchSubmitReview(data)
+  await sleep(1200);
 
-  await sleep(1200)
-
-  console.log('done', res)
+  console.log("done", res);
 
   if (!!+res?.code) {
-    promise.then(goBack)
+    promise.then(goBack);
   }
 
-  loading.value = false
+  loading.value = false;
 
-  title.value = "提交完毕"
-  content.value = res.message || '失败'
+  title.value = "提交完毕";
+  content.value = res.message || "失败";
 
   console.log(data);
 
@@ -259,12 +271,12 @@ const dialogVisible = ref();
 // console.log("total flow", flowOptions);
 
 // @ts-ignore
-delete window.$flow
+delete window.$flow;
 
-Object.defineProperty(window, '$flow', {
+Object.defineProperty(window, "$flow", {
   value: flowOptions,
-  configurable: true
-})
+  configurable: true,
+});
 
 const goBack = () => {
   router.go(-1);
@@ -273,8 +285,7 @@ const goBack = () => {
 
 <template>
   <div class="FlowPage">
-    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }"
-      class="FlowPage-Container">
+    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
       <el-header>
         <FlowHeader v-if="!modelValue || !readonly" :basic="flowOptions.basic">
           <template #controller>
@@ -304,8 +315,7 @@ const goBack = () => {
 
   <teleport to="body">
     <el-dialog title="流程基础设置" v-model="dialogVisible">
-      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview"
-        :basic="flowOptions.basic" />
+      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview" :basic="flowOptions.basic" />
     </el-dialog>
   </teleport>
 </template>
@@ -378,7 +388,7 @@ div.el-dialog {
     align-items: center;
 
     background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
     background-size: 30px 30px;
 
     transform: translateY(80px);
