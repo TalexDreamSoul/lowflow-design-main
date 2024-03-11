@@ -84,6 +84,21 @@ watch(
   }
 );
 
+watch(props.p, () => {
+  const { nodeType, children } = props.p;
+
+  if (nodeType === 'strategy') return;
+
+  if (!children.length || children[0].nodeType !== 'strategy') return
+
+  sizeForm.$index = children.length
+
+  sizeForm.diversionType = children[0].diversionType
+
+  sizeForm.eventDelayed!.delayedTime = children[0].eventDelayed.delayedTime
+  sizeForm.eventDelayed!.delayedUnit = children[0].eventDelayed.delayedUnit
+}, { immediate: true })
+
 watchEffect(() => {
   const { nodeType, nodeId } = props.p;
 
@@ -174,15 +189,23 @@ regSaveFunc(saveData);
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
       <el-form-item label="选择策略器名称：">
-        <el-input v-model="sizeForm.nodeName" placeholder="填写名称" />
+        <el-input :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" />
       </el-form-item>
       <el-form-item label="分流类型：">
-        <el-radio-group v-model="sizeForm.diversionType">
+        <el-radio-group :disabled="readonly || sizeForm.$index" v-model="sizeForm.diversionType">
           <el-radio label="noDiversion">不分流</el-radio>
           <el-radio label="attr">按属性用户行为分流</el-radio>
           <el-radio label="event">按触发事件分流</el-radio>
         </el-radio-group>
       </el-form-item>
+      <span style="display: block;text-indent: 8rem;font-size: 12px;opacity: .75">
+        <span v-if="sizeForm.$index">
+          不支持切换，同一父级策略器下只有一个非其他型策略器时可以切换
+        </span>
+        <span v-else>
+          请仔细确认首个策略器的类型，同一父级策略器下只能添加同类型的策略器或其他策略器
+        </span>
+      </span>
 
       <BehaviorGroupPlus title="用户属性行为分流" color="#333333"
         :class="{ animation: true, display: sizeForm.diversionType === 'attr' }">
@@ -194,15 +217,16 @@ regSaveFunc(saveData);
         :class="{ animation: true, display: sizeForm.diversionType === 'event' }">
         <div class="flex-column titleCondition">
           <el-text>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</el-text>
-          <el-input-number :min="1" v-model="sizeForm.eventDelayed!.delayedTime" type="number"
-            style="width: 100px" />&nbsp;
-          <el-select v-model="sizeForm.eventDelayed!.delayedUnit" style="width: 100px">
+          <el-input-number :disabled="readonly || sizeForm.$index" :min="1" v-model="sizeForm.eventDelayed!.delayedTime"
+            type="number" style="width: 100px" />&nbsp;
+          <el-select :disabled="readonly || sizeForm.$index" v-model="sizeForm.eventDelayed!.delayedUnit"
+            style="width: 100px">
             <el-option value="minute" label="分钟">分钟</el-option>
             <el-option value="hour" label="小时">小时</el-option>
             <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
           <el-text>
             后判断客户
-            <el-select v-model="sizeForm.eventDelayed!.delayedAction" style="width: 100px">
+            <el-select :disabled="readonly" v-model="sizeForm.eventDelayed!.delayedAction" style="width: 100px">
               <el-option value="=" label="做过">做过</el-option>
               <el-option value="!=" label="没做过">没做过</el-option>
             </el-select>

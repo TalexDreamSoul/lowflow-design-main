@@ -21,6 +21,22 @@ Object.assign(data, __data)
 
 console.log("PStart setup!", getNode(), __data, data)
 
+watch(data, () => {
+  const { children } = data;
+
+  [...children].forEach((item, index) => {
+    if (!index) return
+
+    item.$index = index
+
+    item.diversionType = children[0].diversionType
+    item.eventDelayed.delayedTime = children[0].eventDelayed.delayedTime
+    item.eventDelayed.delayedUnit = children[0].eventDelayed.delayedUnit
+
+    console.log("each", item)
+  })
+}, { immediate: true })
+
 function openCondition() {
   openDrawer({
     title: "流程类型设置",

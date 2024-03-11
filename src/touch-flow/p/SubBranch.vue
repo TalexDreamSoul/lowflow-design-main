@@ -1,5 +1,5 @@
 <script setup lang="ts" name="SubBranch">
-import { ref, reactive, provide, inject, computed } from 'vue'
+import { ref, reactive, provide, inject, computed, watch } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import SubDiversionAttr from './attr/SubDiversionAttr.vue';
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
@@ -18,6 +18,21 @@ const drawerOptions = reactive<any>({
 })
 
 Object.assign(data, __data)
+
+watch(data, () => {
+  const { children } = data;
+
+  [...children].forEach((item, index) => {
+    if (!index) return
+
+    item.$index = index
+
+    item.diversionType = children[0].diversionType
+
+    item.eventDelayed.delayedTime = children[0].eventDelayed.delayedTime
+    item.eventDelayed.delayedUnit = children[0].eventDelayed.delayedUnit
+  })
+}, { immediate: true })
 
 console.log("SubBranch setup!", getNode(), __data, data)
 

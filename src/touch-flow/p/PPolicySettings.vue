@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, provide, computed, inject } from "vue";
+import { ref, reactive, provide, computed, inject, watch } from "vue";
 import { Stamp, Plus, Delete } from "@element-plus/icons-vue";
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "./attr/DeliverySettingsAttr.vue";
@@ -22,6 +22,18 @@ const drawerOptions = reactive<any>({
 Object.assign(data, __data)
 
 console.log("PolicySettings setup!", getNode(), __data, data)
+
+watch(data, () => {
+  const { children } = data;
+
+  [...children].forEach((item, index) => {
+    if (!index) return
+
+    item.$index = index
+
+    item.diversionType = children[0].diversionType
+  })
+}, { immediate: true })
 
 const doDiverse = computed(() => {
   const { children } = data;
