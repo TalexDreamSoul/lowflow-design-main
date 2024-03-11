@@ -262,7 +262,7 @@ function handleClick(e: Event) {
   </el-card>
   <!-- && !customerConditioned.display -->
   <el-button :class="{
-        display: conditioned && customerConditioned.display,
+        display: _data.$readonly || conditioned && customerConditioned.display,
         disabled: haveDiverse,
       }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
