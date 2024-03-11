@@ -234,7 +234,7 @@ regSaveFunc(saveData);
         </div>
 
         <FilterGroup :readonly="readonly" :custom-rule-content="sizeForm.eventRuleContent!"
-          :configuration="{ ignore: { attrs: true, sequence: true } }" />
+          :configuration="{ ignore: { attrs: true, sequence: true }, subIgnore: { event: { time: true, action: true } } }" />
       </BehaviorGroupPlus>
 
       <CommonAttr ref="touchSettingsRef" :sizeForm="sizeForm" />

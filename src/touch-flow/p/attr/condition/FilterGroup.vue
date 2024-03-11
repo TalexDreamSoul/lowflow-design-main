@@ -17,6 +17,12 @@ export interface IPropConfig {
   ignore: {
     attrs: boolean
     sequence: boolean
+  },
+  subIgnore: {
+    event: {
+      time: boolean,
+      action: boolean
+    }
   }
 }
 
@@ -78,25 +84,16 @@ function sequenceAdd() {
 <template>
   <LogicalLine :display="!!configuration?.ignore" v-model="customRuleContent!.logicalChar">
     <BehaviorGroup v-if="!configuration?.ignore?.attrs" @add="attrsAdd" title="客户属性满足">
-      <CustomAttr
-        v-if="customRuleContent.customAttr?.conditions?.length"
-        :readonly="readonly"
-        :custom="customRuleContent.customAttr"
-      />
+      <CustomAttr v-if="customRuleContent.customAttr?.conditions?.length" :readonly="readonly"
+        :custom="customRuleContent.customAttr" />
     </BehaviorGroup>
     <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-      <CustomBehavior
-        v-if="customRuleContent.customEvent?.conditions?.length"
-        :readonly="readonly"
-        :custom="customRuleContent.customEvent"
-      />
+      <CustomBehavior :configuration="configuration?.subIgnore?.event" v-if="customRuleContent.customEvent?.conditions?.length" :readonly="readonly"
+        :custom="customRuleContent.customEvent" />
     </BehaviorGroup>
     <BehaviorGroup v-if="!configuration?.ignore?.sequence" @add="sequenceAdd" title="行为序列满足">
-      <CustomBehaviorSequence
-        v-if="customRuleContent.eventSequence?.conditions?.length"
-        :readonly="readonly"
-        :custom="customRuleContent.eventSequence"
-      />
+      <CustomBehaviorSequence v-if="customRuleContent.eventSequence?.conditions?.length" :readonly="readonly"
+        :custom="customRuleContent.eventSequence" />
     </BehaviorGroup>
   </LogicalLine>
 </template>
