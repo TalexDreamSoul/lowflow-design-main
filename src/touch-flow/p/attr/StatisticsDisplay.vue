@@ -15,6 +15,8 @@ const data = ref({
 })
 
 async function handleClick() {
+  if (data.value._fetched) return
+
   const id = +location.href.split('/').at(-1)!
 
   const res: any = await marketingTouchNodeStatistics({
