@@ -51,7 +51,7 @@ watchEffect(() => {
   }
 })
 
-const totalbranchRatio = computed(() => sizeForm.diversionRuleContent.data.reduce((acc: number, curVal) => acc + +curVal.branchRatio, 0))
+const totalBranchRatio = computed(() => sizeForm.diversionRuleContent.data.reduce((acc: number, curVal) => acc + +curVal.branchRatio, 0))
 
 function saveData() {
   if (!sizeForm.branchName) {
@@ -63,7 +63,7 @@ function saveData() {
   }
 
   // validate branch branchRatio summary
-  if (totalbranchRatio.value !== 100) {
+  if (totalBranchRatio.value !== 100) {
     ElMessage.warning({
       message: "流量配比必须为100",
     });
@@ -118,7 +118,7 @@ function saveData() {
 
     props.p.children.push(_);
 
-    window.$refreshLayout()
+    //window.$refreshLayout()
   }
 
   return true;
@@ -154,7 +154,7 @@ const deleteBranch = (index: number) => {
         <div class="underbg">
           <el-row :gutter="20">
             <el-col :span="14">分支名称</el-col>
-            <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ 100 - +totalbranchRatio
+            <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ 100 - +totalBranchRatio
             }}%</span>）</el-col>
           </el-row>
           <el-row :gutter="20" style="    align-items: center;
@@ -163,7 +163,7 @@ const deleteBranch = (index: number) => {
               <el-input v-model="branch.branchName" />
             </el-col>
             <el-col :span="7">
-              <el-input-number :min="0" :max="100 - +totalbranchRatio + branch.branchRatio" placeholder="百分比"
+              <el-input-number :min="0" :max="100 - +totalBranchRatio + branch.branchRatio" placeholder="百分比"
                 v-model="branch.branchRatio" />
             </el-col>
             <el-col :span="5">

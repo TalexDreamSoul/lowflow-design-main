@@ -201,7 +201,7 @@ function destroy() {
   top: 2%;
 
   width: 24rem;
-  height: 10rem;
+  min-height: 10rem;
 
   border-radius: 0.5rem;
   background: #fff;
