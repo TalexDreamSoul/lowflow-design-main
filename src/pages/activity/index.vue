@@ -73,7 +73,7 @@
         <el-table-column prop="creatorName" label="操作">
           <template #default="scope">
             <el-button link type="primary">编辑</el-button>
-            <el-button link type="primary" @click="delTem(scope.row.activityId)">删除</el-button>
+            <el-button link type="primary" @click="del(scope.row.activityId)">删除</el-button>
             <el-button link type="primary" @click="addTem(scope.row.activityId)">存为模板</el-button>
           </template>
         </el-table-column>
@@ -90,7 +90,7 @@
 </template>
 <script lang="ts" setup>
 import { reactive, ref, watch, onMounted, watchEffect } from "vue";
-import { pageActivityList,saveActivityTemplate } from "~/api/activity";
+import { pageActivityList,saveActivityTemplate,deleteActivityInfo } from "~/api/activity";
 import dayjs from "dayjs";
 import { Search } from "@element-plus/icons-vue";
 import {  ElMessageBox ,ElMessage } from 'element-plus'
@@ -157,6 +157,32 @@ const addTem = async(activityId:number) => {
       ElMessage.error("添加失败");
     }
 }
+const del = async(activityId: number) => {
+  ElMessageBox.alert('活动删除后将无法恢复', "确认删除", {
+    showCancelButton: true,
+    roundButton: true,
+    cancelButtonClass: "pd-button",
+    confirmButtonClass: "pd-button",
+    customClass: "delete-modal",
+  }).then(async () => {
+    try {
+      let res = await deleteActivityInfo({
+        activityId,
+      });
+      if (res) {
+        console.log(res,'ppp');
+        ElMessage.success("删除成功");
+        pageParams.pageNum = 1;
+        getActivityList();
+      }
+    } catch (error) {
+      console.log(error);
+      ElMessage.error("删除失败");
+    }
+    
+  });
+}
+
 const delTem = async(activityId: number) => {
   ElMessageBox.alert('模板删除后将无法恢复', "确认删除", {
     showCancelButton: true,
