@@ -125,6 +125,10 @@ export const routes: RouterOptions["routes"] = [
       }
     ],
   },
+  {
+    path: "/activityList",
+    component: () => import("~/pages/activity/index.vue"),
+  },
   // 添加需要隐藏 TopMenu 的页面，并设置 meta.hideTopMenu 为 true
 ];
 

@@ -17,7 +17,7 @@
             <CaretBottom />
           </el-icon></div>
       </template>
-      <el-menu-item @click="handleloca">活动编辑器</el-menu-item>
+      <el-menu-item index="/activityList">H5活动列表</el-menu-item>
     </el-sub-menu>
     <el-sub-menu index="3">
       <template #title>
