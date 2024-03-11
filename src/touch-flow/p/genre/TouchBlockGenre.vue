@@ -2,11 +2,41 @@
 import TouchGenre from "~/touch-flow/p/genre/TouchGenre.vue";
 import LogicalLine from "../behavior/LogicalLine.vue";
 import { CirclePlusFilled, Delete } from "@element-plus/icons-vue";
+import { CustomEventConditionDTO, EventSearchCondition } from "~/touch-flow/touch-total";
+import { computed } from "vue";
+import BehaviorSubContent from "../behavior/BehaviorSubContent.vue";
 
 const props = defineProps<{
-  condition: any;
+  condition: CustomEventConditionDTO;
   dict: any;
 }>();
+
+console.log("props", props.condition)
+
+const conditionList = computed<EventSearchCondition[]>(() => {
+  if (!props.condition.conditions.length) {
+    props.condition.conditions = [{
+      conditions: new Array<any>(),
+      logicalChar: '或'
+    }]
+  }
+
+  const arr: EventSearchCondition[] = []
+  for (let item of props.condition.conditions[0].conditions) {
+    console.log('each', item)
+
+    if (!item?.conditions?.conditions) {
+      item.conditions = {
+        conditions: new Array<any>(),
+        logicalChar: '或'
+      }
+    }
+
+    arr.push(item)
+  }
+
+  return arr
+})
 
 const dataObj = Object.freeze({
   attr: {
@@ -28,7 +58,7 @@ const dataObj = Object.freeze({
 
 function addCondition(event: any) {
   console.log("e", event);
-  event.conditions.push(JSON.parse(JSON.stringify(dataObj)));
+  event.conditions.conditions.push(JSON.parse(JSON.stringify(dataObj)));
 }
 
 function delEvent(index: number) {
@@ -53,20 +83,12 @@ function handleSelectChanged(val: string, event: any) {
 <template>
   <div class="TouchBlockGenre">
     <LogicalLine v-model="condition.logicalChar">
-      <div class="EventA-Wrapper" v-for="(event, index) in condition.conditions">
+      <div class="EventA-Wrapper" v-for="(event, index) in conditionList">
         <div class="EventA-Wrapper-Head">
-          <el-select @change="handleSelectChanged($event, event)" placeholder="选择事件" v-model="event.eventCode"  style="width: 200px">
-            <el-option-group
-              v-for="group in dict?.events"
-              :key="group.eventType"
-              :label="group.eventTypeName"
-            >
-              <el-option
-                v-for="item in group.events"
-                :key="item.id"
-                :label="item.eventName"
-                :value="item.eventCode"
-              />
+          <el-select @change="handleSelectChanged($event, event)" placeholder="选择事件" v-model="event.eventCode"
+            style="width: 200px">
+            <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
+              <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
             </el-option-group>
           </el-select>
 
@@ -86,7 +108,8 @@ function handleSelectChanged(val: string, event: any) {
           </span>
         </div>
 
-        <TouchGenre :condition="event" :dict="dict" />
+        <BehaviorSubContent title="并且满足" :index="index" :dict="dict" :condition="event" />
+        <!-- <TouchGenre :condition="event" :dict="dict" /> -->
       </div>
     </LogicalLine>
   </div>
@@ -96,12 +119,13 @@ function handleSelectChanged(val: string, event: any) {
 .EventA {
   &-Wrapper {
     &-Head {
-      & > span {
+      &>span {
         display: flex;
 
         gap: .5rem;
         align-items: center;
       }
+
       display: flex;
 
       gap: 1rem;

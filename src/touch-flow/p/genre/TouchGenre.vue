@@ -5,15 +5,16 @@ import LogicalLine from "../behavior/LogicalLine.vue";
 import AttrRender from "../../page/AttrRender.vue";
 import Operator from "../../page/Operator.vue";
 import Trigger from "../../page/Trigger.vue";
+import { EventSearchCondition } from "~/touch-flow/touch-total";
 
 const props = defineProps<{
-  condition: any;
+  condition: EventSearchCondition;
   // index: number;
   dict: any;
 }>();
 
 function getConditions() {
-  return (props.condition.conditions = props.condition.conditions || []);
+  return (props.condition.conditions.conditions = props.condition.conditions.conditions || []);
 }
 
 /**
@@ -37,7 +38,7 @@ const attrs = computed(() => {
   const targetEvents =
     [...events]
       .map((e: any) => e.events)
-      .find((_: any) => (_e: any) => _e.id === props.condition.delayedAction)?.[0]
+      .find((_: any) => (_e: any) => _e.eventCode === props.condition.eventCode)?.[0]
       ?.eventAttr?.attrs ?? null;
 
   return targetEvents;
@@ -48,14 +49,14 @@ const attrs = computed(() => {
   <div class="TouchGenre">
     <LogicalLine
       title="并且满足"
-      v-model="condition.logicalChar"
+      v-model="condition.conditions.logicalChar"
       :display="condition.conditions.length < 2"
     >
       <li
         v-if="attrs"
         class="TouchGenre-Line"
         v-for="(item, index) in condition.conditions"
-        :key="`${item.field}-${index}`"
+        :key="index"
       >
       <!-- {{ item }} -->
         <trigger :item="item" v-model="item.attr.field" :attrs="attrs" />
