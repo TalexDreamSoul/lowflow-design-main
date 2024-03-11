@@ -75,6 +75,10 @@ watch(props.condition, (val) => {
 
   timeRange.value = [startTime, endTime]
 }, { immediate: true })
+const defaultTime2: [Date, Date] = [
+  new Date(2000, 0, 0, 0, 0, 0),
+  new Date(2000, 0, 0, 23, 59, 59),
+];
 </script>
 
 <template>
@@ -82,8 +86,11 @@ watch(props.condition, (val) => {
     <!-- <LogicalLine :display="conditionArr?.length < 2" v-model="condition.logicalChar"> -->
     <!-- <div v-for="(item, index) in conditionArr" :key="index" class="CustomBehavior-Main"> -->
     <div class="CustomBehavior-Line">
-      <el-date-picker @change="handleDateChange(condition)" :disabled="readonly" value-format="YYYY-MM-DD"
-        v-model="timeRange" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"
+      <el-date-picker @change="handleDateChange(condition)" :disabled="readonly" format="YYYY-MM-DD HH:mm:ss"
+      value-format="YYYY-MM-DD HH:mm:ss"
+      type="datetimerange"
+      :default-time="defaultTime2"
+      v-model="timeRange"  range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"
         style="width: 50px" />
       <el-select style="width: 100px" :disabled="readonly" placeholder="是否做过" v-model="condition.action">
         <el-option label="做过" value="=" />
