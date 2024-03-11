@@ -224,6 +224,10 @@ export function flatConvert2Tree(nodes: any[]) {
   [...nodes].forEach((item: any) => {
     const { preNodeId, nextNodeId } = item
 
+    item.$id = item.id
+
+    console.log("item", item)
+
     if (preNodeId) {
       const preNode = map.get(preNodeId)
       if (preNode) {

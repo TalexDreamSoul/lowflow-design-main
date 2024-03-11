@@ -234,7 +234,7 @@ function del(p: MarketingTouchEditDTO) {
         <span>{{ pushTemplate.val }}</span>
       </div>
       <div v-if="_data.$readonly">
-        <StatisticsDisplay :nodeId="_data.id" />
+        <StatisticsDisplay :nodeId="data.$id" />
       </div>
     </div>
 

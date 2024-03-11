@@ -17,11 +17,11 @@ const data = ref({
 async function handleClick() {
   const id = +location.href.split('/').at(-1)!
 
-  const res = await marketingTouchNodeStatistics({
+  const res: any = await marketingTouchNodeStatistics({
     id,
     pageNum: 1,
     pageSize: 10,
-    touchNodeId: 0//props.nodeId
+    touchNodeId: props.nodeId
   })
 
   console.log("res", res)

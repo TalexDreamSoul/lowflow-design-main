@@ -197,7 +197,7 @@ export const marketingTouchNodeStatistics = (data: any = {
   id: 0,
   pageNum: 0,
   pageSize: 10,
-  touchNodeId: ""
+  touchNodeId: 0
 }) => {
   return request.post({
     url: "/api/marketingTouchNodeStatistics.do",
