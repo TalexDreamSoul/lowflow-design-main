@@ -19,17 +19,17 @@
         <touchMenuItem path="/materialCenter/templatePanel/znx">站内信模版</touchMenuItem>
       </TouchMenu>
       <TouchMenu title="客户中心" path="/customer">
-        <touchMenuItem path="/customer/touchMenuItemst">客户列表</touchMenuItem>
+        <touchMenuItem path="/customer/list">客户列表</touchMenuItem>
         <touchMenuItem path="/customer/tag">客户标签</touchMenuItem>
-        <touchMenuItem path="/customer/blackTouchMenuItemst">黑名单管理</touchMenuItem>
+        <touchMenuItem path="/customer/blackList">黑名单管理</touchMenuItem>
       </TouchMenu>
-      <TouchMenu title="配置中心" path="/dataCenter">
-        <touchMenuItem path="/dataCenter/event">事件管理</touchMenuItem>
-        <touchMenuItem path="/dataCenter/attr">属性管理</touchMenuItem>
+      <TouchMenu title="配置中心" path="/configuration">
+        <touchMenuItem path="/configuration/event">事件管理</touchMenuItem>
+        <touchMenuItem path="/configuration/attr">属性管理</touchMenuItem>
       </TouchMenu>
       <TouchMenu title="数据中心" path="/channelManagement">
-        <touchMenuItem path="/channelManagement/transactionTouchMenuItemst">交易明细</touchMenuItem>
-        <touchMenuItem path="/channelManagement/reconcitouchMenuItemationTouchMenuItemst">交易对账</touchMenuItem>
+        <touchMenuItem path="/channelManagement/transactionList">交易明细</touchMenuItem>
+        <touchMenuItem path="/channelManagement/reconciliationList">交易对账</touchMenuItem>
         <touchMenuItem path="/channelManagement/channelDisturb">渠道勿扰设置</touchMenuItem>
         <touchMenuItem path="/channelManagement/equityManagement">权益管理</touchMenuItem>
       </TouchMenu>
