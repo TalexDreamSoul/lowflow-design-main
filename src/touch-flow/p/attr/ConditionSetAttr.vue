@@ -258,7 +258,7 @@ onMounted(async () => {
         &nbsp;&nbsp;&nbsp;
         <el-select v-if="sizeForm.repeatTime.repeatType === 'week'" v-model="sizeForm.repeatTime.repeatDay"
           placeholder="选择星期几" style="width: 150px" multiple collapse-tags>
-          <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="day"></el-option>
+          <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="index+1"></el-option>
         </el-select>
 
         <el-time-picker v-model="sizeForm.repeatTime.repeatTime" value-format="HH:mm" placeholder="选择时间"
