@@ -367,7 +367,22 @@ window.$refreshLayout = layoutFn;
   transition: 0.25s;
 }
 
+body:has(.PBlock) .el-drawer {
+  div.ListWrapper {
+    position: relative !important;
+  }
+
+  div.MicroEnterpriseDrag {
+    margin-bottom: 10rem !important;
+  }
+
+  .FloatFixed {
+    bottom: 0;
+  }
+}
+
 div.PBlock {
+
   p {
     &.title {
       .el-button {

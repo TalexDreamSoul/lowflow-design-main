@@ -56,9 +56,11 @@ watchEffect(() => {
   const _data = props.data?.value || props.data;
   if (!_data) return setTimeout(() => assignData('addFriend'), 200);
 
+  console.log("_data", _data)
+
   Object.assign(data, _data);
-  list.value = _data.content.digitalTemplateDetails;
-  data.digitalTemplate.type = _data.content.type;
+  list.value = _data.content?.digitalTemplateDetails || [];
+  data.digitalTemplate.type = _data.content?.type || 'addFriend';
 });
 
 function saveData() {
@@ -76,18 +78,18 @@ function saveData() {
 
   return props.type == "details" || props.type == "update"
     ? {
-        id,
-        name,
-        type: data.type,
-        status: "available",
-        digitalTemplate,
-      }
+      id,
+      name,
+      type: data.type,
+      status: "available",
+      digitalTemplate,
+    }
     : {
-        name,
-        type: data.type,
-        status: "available",
-        digitalTemplate,
-      };
+      name,
+      type: data.type,
+      status: "available",
+      digitalTemplate,
+    };
 }
 
 defineExpose({ saveData });
@@ -173,37 +175,21 @@ function assignData(val: any) {
       <el-input :disabled="readonly" v-model="data.name" style="width: 50%"></el-input>
     </el-form-item>
     <el-form-item label="企微触达方式">
-      <el-select
-        :disabled="readonly"
-        @change="assignData"
-        placeholder="请选择"
-        v-model="data.digitalTemplate.type"
-        style="width: 50%"
-      >
+      <el-select :disabled="readonly" @change="assignData" placeholder="请选择" v-model="data.digitalTemplate.type"
+        style="width: 50%">
         <el-option label="发送消息" value="message" />
         <el-option label="添加好友" value="addFriend" />
       </el-select>
     </el-form-item>
 
-    <MicroEnterpriseDrag
-      :readonly="readonly"
-      @delete="onDelete"
-      @upload="onUpload"
-      @download="onDownload"
-      style="margin-bottom: 6.5rem"
-      v-model="list"
-    />
+    <MicroEnterpriseDrag :readonly="readonly" @delete="onDelete" @upload="onUpload" @download="onDownload"
+      style="margin-bottom: 6.5rem" v-model="list" />
 
-    <div v-if="data.digitalTemplate.type != 'addFriend'">
+    <div class="ListWrapper" v-if="data.digitalTemplate.type != 'addFriend'">
       <div v-if="!readonly" class="FloatFixed">
-        <el-upload
-          :action="action"
-          :on-success="addPic"
-          :auto-upload="true"
-          :data="{ type: 'material', date: getCurrentDate() }"
-          :show-file-list="false"
-          class="upload-demo button-groupupload"
-        >
+        <el-upload :action="action" :on-success="addPic" :auto-upload="true"
+          :data="{ type: 'material', date: getCurrentDate() }" :show-file-list="false"
+          class="upload-demo button-groupupload">
           <el-text type="primary" style="cursor: pointer">
             <el-icon size="14">
               <CirclePlusFilled />
@@ -225,13 +211,13 @@ function assignData(val: any) {
 </template>
 <style lang="scss" scoped>
 .FloatFixed {
-  & > div {
+  &>div {
     height: 40px;
   }
 
   position: absolute;
 
-  width: calc(100% - 4rem);
+  width: 100%; //calc(100% - 4rem);
   bottom: 3.5rem;
 
   background-color: #fff;

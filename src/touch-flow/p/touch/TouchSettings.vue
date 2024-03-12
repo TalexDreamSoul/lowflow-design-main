@@ -103,6 +103,8 @@ async function refreshMaterialTemplate(clearStatus: boolean = true) {
       },
       ...res.data.records,
     ];
+
+    assignData(-1)
   }
 }
 
