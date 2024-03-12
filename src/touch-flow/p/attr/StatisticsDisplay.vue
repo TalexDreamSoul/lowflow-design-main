@@ -71,36 +71,39 @@ async function handleClickqryNodeTouchCustom() {
       <li>策略器目标完成率：<span class="bold">0%</span></li>
     </ul>
   </div>
-  <el-dialog  destroy-on-close v-model="modalVisible" title="触达详情">
 
-    <div >
-      <div >
-        <div style="    
+  <teleport to="body">
+    <el-dialog destroy-on-close v-model="modalVisible" title="触达详情">
+
+      <div>
+        <div>
+          <div style="    
         display: flex;
         flex-direction: row;
         justify-content: flex-start;">
-          <div style="    padding: 24px;
+            <div style="    padding: 24px;
           background: rgb(242, 244, 248);
        ">累计进入(人)<div class="bold">{{ data.accumulateEntryCount }}</div>
-          </div>
-          <div style="      padding: 24px;
+            </div>
+            <div style="      padding: 24px;
           background: rgb(242, 244, 248);
           margin-left: 24px;
         ">累计触达(人)<div class="bold">{{ data.accumulateTouchCount }}</div>
+            </div>
           </div>
-        </div>
           <el-table :data="tableData" row-style="background: rgb(242, 244, 248);" style="width: 100%;
           background: rgb(242, 244, 248);
           ">
-          <el-table-column prop="id" label="客户ID" width="120" />
-          <el-table-column prop="name" label="客户名" min-width="72" />
-          <el-table-column prop="itFinCode" label="互金客户号" width="120" />
-          <el-table-column prop="phone" label="手机号" width="120"></el-table-column>
-          <el-table-column prop="updatedTime" label="触达时间" width="120"></el-table-column>
-        </el-table>
+            <el-table-column prop="id" label="客户ID" width="120" />
+            <el-table-column prop="name" label="客户名" min-width="72" />
+            <el-table-column prop="itFinCode" label="互金客户号" width="120" />
+            <el-table-column prop="phone" label="手机号" width="120"></el-table-column>
+            <el-table-column prop="updatedTime" label="触达时间" width="120"></el-table-column>
+          </el-table>
+        </div>
       </div>
-    </div>
-  </el-dialog>
+    </el-dialog>
+  </teleport>
 </template>
 
 <style lang="scss" scoped>
