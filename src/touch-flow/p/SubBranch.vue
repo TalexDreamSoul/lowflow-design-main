@@ -27,6 +27,9 @@ watch(data, () => {
 
     item.$index = index
 
+    const { nodeName } = item
+    if (nodeName === '兜底策略器') return
+
     item.diversionType = children[0].diversionType
 
     item.eventDelayed.delayedTime = children[0].eventDelayed.delayedTime
