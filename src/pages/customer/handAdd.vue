@@ -216,11 +216,12 @@ const handleSelect = (selection: any, row: any) => {
 };
 
 const getSelectData = async (params: any) => {
+  console.log(`output->type`,props.drawerType)
   let res = await API.blacklistContainCustoms({
     id: props.formValues.id,
     ...params,
     pageSize: 5,
-    addType: BlackAddTypeEnum.Manual,
+    addType: props.drawerType!=="detail"? BlackAddTypeEnum.Manual:"",
   });
   if (checkStringEqual(res?.code, 0)) {
     console.log(res);
