@@ -133,7 +133,7 @@ watchEffect(() => {
       if (!checkStringEqual(res?.code, 0)) return;
       console.log("a", res);
       Object.assign(formValues, res?.data);
-      Object.assign(eventContent, res?.data?.eventContent);
+      Object.assign(eventContent.triggerRuleContent, res?.data?.eventContent);
       Object.assign(ruleContent, res?.data?.ruleContent);
     }
 
