@@ -402,13 +402,8 @@ function handleAdd() {
 
 <template>
   <div :class="{ disabled }" tabindex="1" class="TouchSettingsContentWrapper">
-    <div
-      @click="handleClick"
-      @input="handleBlur"
-      ref="contentRef"
-      class="TouchSettingsContent"
-      contenteditable="true"
-    />
+    <div @click="handleClick" @input="handleBlur" ref="contentRef" class="TouchSettingsContent"
+      contenteditable="true" />
 
     <el-button @click="addLabel">
       <el-icon color="#326DD7">
@@ -424,38 +419,21 @@ function handleAdd() {
   <el-dialog append-to-body align-center v-model="variableModal" title="设置赋值">
     <template #footer>
       <el-button round @click="variableModal = false">取消</el-button>
-      <el-button round class="primaryStyle" type="primary" @click="variableDone"
-        >确定</el-button
-      >
+      <el-button round class="primaryStyle" type="primary" @click="variableDone">确定</el-button>
     </template>
 
     <div class="DialogWrapper">
-      <div
-        :id="`variable-item-${index}`"
-        v-for="(item, index) in dialogVariable?.variables"
-        class="TouchFloatingContent"
-      >
-        <Operator
-          style="width: 100px"
-          :item="item"
-          :attrs="attrs.attrs"
-          v-model="item.fieldOp"
-        />
+      <div :id="`variable-item-${index}`" v-for="(item, index) in dialogVariable?.variables"
+        class="TouchFloatingContent">
+        <Operator style="width: 100px" :item="item" :attrs="attrs.attrs" v-model="item.fieldOp" />
         <!-- && item.fieldOp?.indexOf('等于') === -1 -->
-        <AttrRender
-          v-if="item.fieldOp?.indexOf('空') === -1"
-          style="width: 300px"
-          :item="item"
-          :attrs="attrs.attrs"
-        />
+        <AttrRender v-if="item.fieldOp?.indexOf('空') === -1" style="width: 300px" :item="item" :attrs="attrs.attrs" />
         <div class="ContentSingleLine">
           <span>赋值为</span>
           <el-input v-model="item.compareValue" />
         </div>
-        <el-icon
-          @click="dialogVariable?.variables?.splice(index, 1)"
-          :style="!index ? `opacity: 0;pointer-events: none` : ''"
-        >
+        <el-icon @click="dialogVariable?.variables?.splice(index, 1)"
+          :style="!index ? `opacity: 0;pointer-events: none` : ''">
           <Delete />
         </el-icon>
       </div>
@@ -469,11 +447,7 @@ function handleAdd() {
 
       <div style="margin-top: 1rem" class="ContentSingleLine">
         该属性空值或无法匹配时显示
-        <el-input
-          style="width: 30%"
-          placeholder="属性值"
-          v-model="dialogVariable!.defaultValue"
-        />
+        <el-input style="width: 30%" placeholder="属性值" v-model="dialogVariable!.defaultValue" />
       </div>
     </div>
   </el-dialog>

@@ -59,18 +59,18 @@ function saveData() {
 
   return props.type == "details" || props.type == "update"
     ? {
-        id,
-        name,
-        type: data.type,
-        status: "available",
-        smsTemplate,
-      }
+      id,
+      name,
+      type: data.type,
+      status: "available",
+      smsTemplate,
+    }
     : {
-        name,
-        type: data.type,
-        status: "available",
-        smsTemplate,
-      };
+      name,
+      type: data.type,
+      status: "available",
+      smsTemplate,
+    };
 }
 
 defineExpose({ saveData });
@@ -87,13 +87,8 @@ defineExpose({ saveData });
       <el-input :disabled="readonly" v-model="data.sceneCode"></el-input>
     </el-form-item>
     <el-form-item label="短信内容">
-      <TouchSettingContents
-        :disabled="readonly"
-        variables="variables"
-        content="content"
-        v-model="data"
-        buttonTitle="输入变量"
-      />
+      <TouchSettingContents :disabled="readonly" variables="variables" content="content" v-model="data"
+        buttonTitle="输入变量" />
     </el-form-item>
   </el-form>
 </template>
