@@ -42,7 +42,7 @@
                 }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="211">
+          <el-table-column label="操作" width="280" fixed="right">
             <template #default="scope">
               <el-button @click="handleSetStatus(scope.row)" link type="primary" class="action-btn">{{
                   checkStringEqual(scope.row.status, ConfigStatus.Available)

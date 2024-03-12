@@ -75,7 +75,7 @@
           label="创建人"
           width="165"
         ></el-table-column>
-        <el-table-column label="操作" min-width="243">
+        <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-button
               @click="handleSetStatus(scope.row)"
