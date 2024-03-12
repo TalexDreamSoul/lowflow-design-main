@@ -186,7 +186,7 @@ function transformNodes(__nodes: Array<any>) {
     res.push(node);
   });
 
-  return res;
+  return res.reverse();
 }
 
 function flatMaps(__nodes: Array<any>) {

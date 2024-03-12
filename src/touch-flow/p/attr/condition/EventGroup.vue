@@ -27,18 +27,20 @@ function addEventB() {
   });
 }
 
-!(async () => {
-  const res = await getDictFilterTree(
-    {
-      pageNum: "1",
-      pageSize: "999"
-    }
-  );
+// !(async () => {
+//   console.error('demo')
+  
+//   const res = await getDictFilterTree(
+//     {
+//       pageNum: "1",
+//       pageSize: "999"
+//     }
+//   );
 
-  if (res.data) {
-    dict.value = res.data;
-  }
-})();
+//   if (res.data) {
+//     dict.value = res.data;
+//   }
+// })();
 </script>
 
 <template>

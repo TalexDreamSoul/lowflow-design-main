@@ -77,7 +77,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
-          <!-- <EventGroup :p="eventContent" /> -->
+          <EventGroup :p="eventContent" />
         </el-tab-pane>
       </el-tabs>
       <div class="detail" v-if="drawerType === DrawerType.Detail">
