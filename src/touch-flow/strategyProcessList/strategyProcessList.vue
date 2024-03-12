@@ -282,7 +282,7 @@ const changeTime = (val: any) => {
           </template>
         </el-table-column>
 
-        <el-table-column label="创建人" prop="createBy" />
+        <el-table-column label="创建人" prop="createUserName" />
 
         <el-table-column label="操作" width="300" fixed="right">
           <template #default="scope">

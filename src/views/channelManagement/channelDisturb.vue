@@ -176,7 +176,7 @@ const handleCurrentChange = (val: number) => {
           </el-table-column>
           <el-table-column label="更新时间" width="180" prop="updatedTime" />
           <el-table-column label="创建时间" width="180" prop="createTime" />
-          <el-table-column label="创建人" prop="createBy" />
+          <el-table-column label="创建人" prop="createUserName" />
          
           <el-table-column label="操作" width="280" fixed="right">
             <template #default="scope">

@@ -40,7 +40,7 @@ export type AttrDict = {
   /**
    * 创建人id
    */
-  createBy?: number;
+  createUserName?: number;
   /**
    * 创建时间
    */
@@ -115,7 +115,7 @@ export type EventDict = {
   /**
    * 创建人id
    */
-  createBy?: number;
+  createUserName?: number;
   /**
    * 创建时间
    */
@@ -205,7 +205,7 @@ export type CustomLabel = {
   /**
    * 创建人id
    */
-  createBy?: number;
+  createUserName?: number;
   /**
    * 创建时间
    */

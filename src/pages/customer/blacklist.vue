@@ -71,7 +71,7 @@
           width="238"
         ></el-table-column>
         <el-table-column
-          prop="createBy"
+          prop="createUserName"
           label="创建人"
           width="165"
         ></el-table-column>

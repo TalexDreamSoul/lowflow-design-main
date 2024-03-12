@@ -69,7 +69,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="creatorName" label="创建人" />
+        <el-table-column prop="createUserName" label="创建人" />
         <el-table-column prop="creatorName" label="操作">
           <template #default="scope">
             <el-button link type="primary">编辑</el-button>

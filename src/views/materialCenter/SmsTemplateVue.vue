@@ -236,7 +236,7 @@ const changeTime = (val: any) => {
         </el-table-column>
         <el-table-column label="更新时间" width="180" prop="updatedTime" />
         <el-table-column label="创建时间" width="180" prop="createTime" />
-        <el-table-column label="创建人" prop="createBy" />
+        <el-table-column label="创建人" prop="createUserName" />
         <el-table-column label="正在使用" prop="usedCount">
           <template #default="scope">
             <span :style="scope.row.usedCount > 0 ? 'color: #00C068' : 'color: #333'">{{
