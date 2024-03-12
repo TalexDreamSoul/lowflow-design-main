@@ -121,6 +121,10 @@ const props = defineProps<{
 
 Object.assign(sizeForm, props.p);
 
+if (props.p.executeTime) {
+  props.p._executeTime = DayJs(props.p.executeTime).format("YYYY-MM-DD HH:mm:ss");
+}
+
 if (props.p.executeType) {
   const [, analyze] = sizeForm.time.funcs[props.p.executeType!.toLowerCase()];
 
