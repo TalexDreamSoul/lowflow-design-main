@@ -30,8 +30,8 @@ watch(data, () => {
     item.$index = index
 
     item.diversionType = children[0].diversionType
-    item.eventDelayed.delayedTime = children[0].eventDelayed.delayedTime
-    item.eventDelayed.delayedUnit = children[0].eventDelayed.delayedUnit
+    // item.eventDelayed.delayedTime = children[0].eventDelayed.delayedTime
+    // item.eventDelayed.delayedUnit = children[0].eventDelayed.delayedUnit
 
     console.log("each", item)
   })

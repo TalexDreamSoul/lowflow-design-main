@@ -45,9 +45,12 @@ watchEffect(() => {
 
   if (props.new || nodeType !== "strategy") return;
 
-  if (nodeId) {
-    sizeForm.nodeId = nodeId;
-  }
+  sizeForm.nodeId = nodeId;
+
+if (props.p.touchTemplateContent)
+  sizeForm.touchTemplateContent = props.p.touchTemplateContent;
+
+console.log("aqwqsdadas", props.p, sizeForm)
 });
 
 function saveData() {
@@ -58,6 +61,7 @@ function saveData() {
 
     return false;
   }
+  touchSettingsRef.value.updateData();
 
   const _: any = { nodeId: "", children: [], reveal: true };
   Object.assign(_, sizeForm);
