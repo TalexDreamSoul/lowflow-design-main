@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElMessage } from "element-plus";
-import { inject, reactive, ref, watchEffect } from "vue";
+import { inject, reactive, ref, toRaw, watchEffect } from "vue";
 import CommonAttr from "../attr/CommonAttr.vue";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
 import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
@@ -60,7 +60,8 @@ watchEffect(() => {
   if (props.new || nodeType !== "subDiversion") return;
 
   if (nodeId) {
-    Object.assign(sizeForm, props.p);
+    Object.assign(sizeForm, JSON.parse(JSON.stringify(toRaw(props.p))));
+    // Object.assign(sizeForm, props.p);
 
     sizeForm.nodeId = nodeId;
 

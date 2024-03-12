@@ -47,10 +47,10 @@ watchEffect(() => {
 
   sizeForm.nodeId = nodeId;
 
-if (props.p.touchTemplateContent)
-  sizeForm.touchTemplateContent = props.p.touchTemplateContent;
+  if (props.p.touchTemplateContent)
+    sizeForm.touchTemplateContent = props.p.touchTemplateContent;
 
-console.log("aqwqsdadas", props.p, sizeForm)
+  console.log("aqwqsdadas", props.p, sizeForm)
 });
 
 function saveData() {

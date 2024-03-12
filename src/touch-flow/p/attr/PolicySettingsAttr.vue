@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, reactive, watchEffect, watch } from "vue";
+import { inject, ref, reactive, watchEffect, watch, toRaw } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import FilterGroup from "./condition/FilterGroup.vue";
@@ -102,12 +102,12 @@ watch(props.p, () => {
 watchEffect(() => {
   const { nodeType, nodeId } = props.p;
 
-  console.log("w", props)
+  console.log("w", props, toRaw(props.p))
 
   if (props.new || nodeType !== "strategy") return;
 
   if (nodeId) {
-    Object.assign(sizeForm, props.p);
+    Object.assign(sizeForm, JSON.parse(JSON.stringify(toRaw(props.p))));
 
     sizeForm.nodeId = nodeId;
 
