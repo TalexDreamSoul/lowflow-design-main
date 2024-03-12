@@ -88,7 +88,7 @@ const pageParams = reactive({
 });
 const drawerOptions = reactive<{
   id: number,
-  type: 'create' | 'edit' | 'detail' | undefined
+  type: "create" | "edit" | "detail" | undefined
 }>({
   id: -1,
   type: undefined,
@@ -98,6 +98,10 @@ const pageNum = ref(1);
 const total = ref(0);
 const tableData = ref<any[]>([]);
 
+const currentChange = (value: number) => {
+  pageNum.value = value;
+  getData({ ...pageParams, pageNum: value });
+};
 watch(
   pageParams,
   debounce(() => {
@@ -109,10 +113,6 @@ onMounted(() => {
   getData({ ...pageParams, pageNum: 1 });
 });
 
-const currentChange = (value: number) => {
-  pageNum.value = value;
-  getData({ ...pageParams, pageNum: value });
-};
 
 const getData = async (params: any) => {
   try {

@@ -16,7 +16,6 @@ function addEventA() {
     conditions: [],
     logicalChar: "或",
   });
-
   console.log(props.p)
 }
 
@@ -27,20 +26,20 @@ function addEventB() {
   });
 }
 
-// !(async () => {
-//   console.error('demo')
+!(async () => {
+  console.error('demo')
   
-//   const res = await getDictFilterTree(
-//     {
-//       pageNum: "1",
-//       pageSize: "999"
-//     }
-//   );
+  const res = await getDictFilterTree(
+    {
+      pageNum: "1",
+      pageSize: "999"
+    }
+  );
 
-//   if (res.data) {
-//     dict.value = res.data;
-//   }
-// })();
+  if (res.data) {
+    dict.value = res.data;
+  }
+})();
 </script>
 
 <template>

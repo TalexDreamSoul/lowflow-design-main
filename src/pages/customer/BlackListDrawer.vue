@@ -1,6 +1,13 @@
 <script setup lang="ts" name="BlackListDrawer">
 import EventGroup from "~/touch-flow/p/attr/condition/EventGroup.vue";
-import { reactive, ref, defineProps, defineExpose, computed, watchEffect } from "vue";
+import {
+  reactive,
+  ref,
+  defineProps,
+  defineExpose,
+  computed,
+  watchEffect,
+} from "vue";
 import { BlackAddTypeEnum, BLACK_LIST_TYPE } from "~/constants";
 import API from "~/api/customer";
 import { checkStringEqual } from "~/utils/common";
@@ -13,58 +20,60 @@ const props = defineProps<{
   // data: any;
   type: "create" | "detail" | "edit";
   id: number;
-}>()
-const emits = defineEmits(['getData'])
+}>();
+const emits = defineEmits(["getData"]);
 
-console.log('加载组件')
+console.log("加载组件");
 
 const drawerTitle = (() => {
   const map = {
     create: "新建黑名单",
     detail: "黑名单详情",
     edit: "编辑黑名单",
-  }
+  };
 
   return computed(() => {
-    const { type } = props
+    const { type } = props;
 
     return map[type];
-  })
-})()
+  });
+})();
 
 const handAddRef = ref<any>();
 
 const defaultEventContent = {
-  delayed: {
-    delayedAction: "",
-    delayedTime: 0,
-    delayedType: "",
-    delayedUnit: "",
-    isDelayed: false,
-  },
-  eventA: {
-    customEvent: {
-      conditions: [
-        {
-          conditions: [],
-          logicalChar: "或",
-        },
-      ],
+  triggerRuleContent: {
+    delayed: {
+      delayedAction: "",
+      delayedTime: 0,
+      delayedType: "",
+      delayedUnit: "",
+      isDelayed: false,
+    },
+    eventA: {
+      customEvent: {
+        conditions: [
+          {
+            conditions: [],
+            logicalChar: "或",
+          },
+        ],
+        logicalChar: "或",
+      },
       logicalChar: "或",
     },
-    logicalChar: "或",
-  },
-  eventB: {
-    customEvent: {
-      conditions: [
-        {
-          conditions: [],
-          logicalChar: "或",
-        },
-      ],
+    eventB: {
+      customEvent: {
+        conditions: [
+          {
+            conditions: [],
+            logicalChar: "或",
+          },
+        ],
+        logicalChar: "或",
+      },
       logicalChar: "或",
     },
-    logicalChar: "或",
   },
 };
 const eventContent = reactive({ ...defaultEventContent });
@@ -108,17 +117,16 @@ const onCancel = () => {
 };
 
 watchEffect(() => {
-  $ignored: props
+  $ignored: props;
 
-  if (!props.type) return
+  if (!props.type) return;
 
-  console.log("UPDATED")
+  console.log("UPDATED");
 
   async function _() {
-
     addType.value = BlackAddTypeEnum.Manual;
 
-    if (props.type === 'create') {
+    if (props.type === "create") {
       Object.assign(formValues, defaultFormValues);
     } else {
       let res: any = await API.blacklistDetail({ id: props.id });
@@ -132,9 +140,8 @@ watchEffect(() => {
     modalVisible.value = true;
   }
 
-  if (props.type === 'create' || props.id !== -1)
-    _()
-})
+  if (props.type === "create" || props.id !== -1) _();
+});
 
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
@@ -143,38 +150,35 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     await formEl.validate();
     let res: any;
     let customIds = handAddRef.value?.multipleSelection;
-    if (props.type === 'create') {
+    if (props.type === "create") {
       res = await API.addBlacklist({
         ...formValues,
         customIds,
         ruleContent,
-        eventContent,
+        eventContent:eventContent.triggerRuleContent,
       });
     } else {
       res = await API.updateBlacklist({
         ...formValues,
         ruleContent,
-        eventContent,
+        eventContent:eventContent.triggerRuleContent,
       });
     }
     if (checkStringEqual(res?.code, 0)) {
-      await emits('getData');
+      await emits("getData");
       onCancel();
     }
   } catch (error) {
     console.error(error);
   }
 };
-
 </script>
 
 <template>
-  <el-drawer :destroy-on-close="true" :close-on-click-modal="false" :size="946" v-model="modalVisible"
-    :with-header="false" class="pd-drawer">
+  <el-drawer :destroy-on-close="true" :close-on-click-modal="false" :size="946" v-model="modalVisible" :with-header="false" class="pd-drawer">
     <div class="pd-drawer-header">{{ drawerTitle }}</div>
     <div class="pd-drawer-content">
-      <el-form :disabled="type === 'detail'" ref="formRef" :hide-required-asterisk="true" label-position="top"
-        :model="formValues" class="form">
+      <el-form :disabled="type === 'detail'" ref="formRef" :hide-required-asterisk="true" label-position="top" :model="formValues" class="form">
         <el-form-item :rules="[
     { required: true, message: '请输入黑名单名称' },
     {
@@ -190,8 +194,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
           </el-select>
         </el-form-item>
         <el-form-item :rules="[{ max: 40, message: '最多可输入40字' }]" label="黑名单说明" prop="blacklistDesc">
-          <el-input v-model="formValues.blacklistDesc" :autosize="{ minRows: 4 }" type="textarea"
-            :show-word-limit="true" placeholder="请输入" />
+          <el-input v-model="formValues.blacklistDesc" :autosize="{ minRows: 4 }" type="textarea" :show-word-limit="true" placeholder="请输入" />
         </el-form-item>
       </el-form>
       <el-tabs v-model="addType" type="card" v-if="type !== 'detail'" class="add-type-tabs">
@@ -200,12 +203,10 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         </el-tab-pane>
         <el-tab-pane label="规则添加（每天11点更新数据）" :name="BlackAddTypeEnum.StaticRule">
           <FilterGroup :custom-rule-content="ruleContent" />
-          <!-- <div class="pannel">
-
-          </div> -->
+        
         </el-tab-pane>
         <el-tab-pane label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
-          <!-- <EventGroup :p="eventContent" /> -->
+          <EventGroup :p="eventContent" />
         </el-tab-pane>
       </el-tabs>
       <div class="detail" v-if="type === 'detail'">
@@ -213,7 +214,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
           <FilterGroup :custom-rule-content="ruleContent" />
         </div>
         <div class="item">
-          <!-- <EventGroup :p="eventContent" /> -->
+          <EventGroup :p="eventContent" />
         </div>
         <div class="item">
           <HandAdd ref="handAddRef" :drawerType="type" :formValues="formValues" />
