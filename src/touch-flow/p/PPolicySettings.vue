@@ -26,7 +26,7 @@ console.log("PolicySettings setup!", getNode(), __data, data)
 watch(data, () => {
   const { children } = data;
 
-  [...children].forEach((item, index) => {
+  children&&[...children].forEach((item, index) => {
     if (!index) return
 
     item.$index = index
