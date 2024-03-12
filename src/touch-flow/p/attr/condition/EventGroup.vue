@@ -84,10 +84,10 @@ function addEventB() {
           <el-text>且在</el-text>&nbsp;
           <el-input-number :min="1" placeholder="输入值" v-model="p.triggerRuleContent.delayed.delayedTime"
             style="width: 100px" />
-          <el-select placeholder="选择单位" v-model="p.triggerRuleContent.delayed.delayedUnit" style="width: 150px">
-            <el-option value="month" label="月">月</el-option>
-            <el-option value="week" label="周">周</el-option>
-            <el-option value="day" label="天">天</el-option>
+          <el-select placeholder="选择单位" v-model="p.triggerRuleContent.delayed.delayedUnit"  style="width: 100px">
+            <el-option value="minute" label="分钟">分钟</el-option>
+            <el-option value="hour" label="小时">小时</el-option>
+            <el-option value="day" label="天">天</el-option> 
           </el-select>
           <el-text>后立即判断</el-text>
           <el-select placeholder="是否做过" v-model="p.triggerRuleContent.delayed.delayedAction" style="width: 150px">
