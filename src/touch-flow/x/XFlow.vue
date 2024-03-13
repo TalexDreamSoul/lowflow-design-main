@@ -9,12 +9,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, toRefs, provide, watchEffect } from "vue";
+import { onMounted, ref, toRefs, provide, watchEffect, computed } from "vue";
 import Hierarchy from "@antv/hierarchy";
 import initGraph from "./graph";
 import { _delChild, genIdNodeReactive } from "./../flow-utils";
 import { MarketingTouchEditDTO } from "../p/behavior/marketing";
 import { ElMessage } from "element-plus";
+import { useRoute } from "vue-router";
 
 interface IGraphData {
   id: string;
@@ -33,6 +34,8 @@ let _Graph: any;
 
 let treeMap = props.p;
 
+const route = useRoute()
+const _edit = computed(() => route.params?.id)
 const getNodeReactive = genIdNodeReactive(props.p);
 
 const del = (p: MarketingTouchEditDTO) => {
@@ -155,6 +158,7 @@ const layoutFn = () => {
         data: {
           ...data,
           $del: del,
+          $edit: _edit,
           $d: getNodeReactive,
           $readonly: props.readonly,
         },
