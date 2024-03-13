@@ -7,7 +7,7 @@ import {
   getstartMarketingTouch,
   getpauseMarketingTouch,
   updateMarketingTouchStatus,
-  copyMarketingTouch
+  copyMarketingTouch,
 } from "~/api/index";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
@@ -117,27 +117,24 @@ const detailsData = async (row: any) => {
 };
 
 const successData = async (row: any) => {
-  let res=await updateMarketingTouchStatus({
+  let res = await updateMarketingTouchStatus({
     id: row.id,
     status: "approvalSuccess",
   }).finally(() => {
     fetchDataApi();
     getmarketingTouchNode();
   });
-  ElMessage.success(res.message)
-
+  ElMessage.success(res.message);
 };
 
-
 const copyData = async (row: any) => {
-  let res=await copyMarketingTouch({
+  let res = await copyMarketingTouch({
     id: row.id,
   }).finally(() => {
     fetchDataApi();
     getmarketingTouchNode();
   });
-  ElMessage.success(res.message)
-
+  ElMessage.success(res.message);
 };
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);
@@ -159,9 +156,7 @@ const changeTime = (val: any) => {
 const changeStatus = (val: any) => {
   console.log(val, "change");
   formInline.status = val;
-
 };
-
 </script>
 
 <template>
@@ -205,41 +200,41 @@ const changeStatus = (val: any) => {
           total
           waitStart -->
 
-        <div class="showCount allcount" @click="changeStatus('')" >
+        <div class="showCount  " @click="changeStatus('')" :class="formInline.status==''?'bgblue':''">
           <div class="topcount">{{ StatisticsList.total !== undefined ? StatisticsList.total : '--' }}
           </div>
           <div class="undercount">全部</div>
         </div>
-        <div class="showCount" @click="changeStatus('running')">
+        <div class="showCount" :class="formInline.status=='running'?'bgblue':''" @click="changeStatus('running')">
           <div class="topcount">
             {{ StatisticsList.running !== undefined ? StatisticsList.running : '--' }}
           </div>
           <div class="undercount">运行中</div>
         </div>
-        <div class="showCount" @click="changeStatus('suspend')">
+        <div class="showCount" @click="changeStatus('suspend')" :class="formInline.status=='suspend'?'bgblue':''">
           <div class="topcount">
             {{ StatisticsList.suspend !== undefined ? StatisticsList.suspend : '--' }}
           </div>
           <div class="undercount">暂停中</div>
         </div>
-        <div class="showCount" @click="changeStatus('approvalPending')">
+        <div class="showCount" @click="changeStatus('approvalPending')" :class="formInline.status=='approvalPending'?'bgblue':''">
           <div class="topcount">
             {{ StatisticsList.approvalPending !== undefined ? StatisticsList.approvalPending : '--' }}
           </div>
           <div class="undercount">待审批</div>
         </div>
-        <div class="showCount" @click="changeStatus('done')">
+        <div class="showCount" @click="changeStatus('done')" :class="formInline.status=='done'?'bgblue':''">
           <div class="topcount">
             {{ StatisticsList.done !== undefined ? StatisticsList.done : '--' }}</div>
           <div class="undercount">已结束</div>
         </div>
-        <div class="showCount" @click="changeStatus('draft')">
+        <div class="showCount" @click="changeStatus('draft')" :class="formInline.status=='draft'?'bgblue':''">
           <div class="topcount">
             {{ StatisticsList.draft !== undefined ? StatisticsList.draft : '--' }}
           </div>
           <div class="undercount">草稿</div>
         </div>
-        <div class="showCount" @click="changeStatus('approvalRefuse')">
+        <div class="showCount" @click="changeStatus('approvalRefuse')" :class="formInline.status=='approvalRefuse'?'bgblue':''">
           <div class="topcount">
             {{ StatisticsList.approvalRefuse !== undefined ? StatisticsList.approvalRefuse : '--' }}
           </div>
@@ -284,7 +279,7 @@ const changeStatus = (val: any) => {
             touchCount 触达数量
             triggerCount 触发数量 -->
             {{ scope.row.triggerCount }}/
-           {{ scope.row.touchCount }}/
+            {{ scope.row.touchCount }}/
             {{ scope.row.targetCount }}
           </template>
         </el-table-column>
@@ -387,11 +382,18 @@ const changeStatus = (val: any) => {
     color: #7f8080;
   }
 }
-
-.allcount {
+.bgblue {
+  background: linear-gradient(180deg, #2258bb 0%, #4078e0 100%);
   color: #ffffff;
 
-  background: linear-gradient(180deg, #2258bb 0%, #4078e0 100%);
+  .undercount {
+    font-weight: 400;
+    font-size: 14px;
+    color: #bed1f4;
+  }
+}
+.allcount {
+  color: #ffffff;
 
   .undercount {
     font-weight: 400;
