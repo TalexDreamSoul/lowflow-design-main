@@ -144,7 +144,7 @@ function del(p: MarketingTouchEditDTO) {
           <el-button size="small" type="primary" @click="del(__data)">确认</el-button>
         </div>
         <template #reference>
-          <el-button @click="visible = true" text type="primary">
+          <el-button v-if="!_data.$readonly" @click="visible = true" text type="primary">
             <el-icon>
               <Delete />
             </el-icon>
@@ -164,7 +164,8 @@ function del(p: MarketingTouchEditDTO) {
     <teleport to="body">
       <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section" :class="{ disabled: item.disabled?.value }">
+          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section"
+            :class="{ disabled: item.disabled?.value }">
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />

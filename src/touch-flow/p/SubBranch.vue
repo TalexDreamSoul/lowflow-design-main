@@ -1,5 +1,5 @@
 <script setup lang="ts" name="SubBranch">
-import { ref, reactive, provide, inject, computed } from 'vue'
+import { ref, reactive, provide, inject, computed, watch } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import SubDiversionAttr from './attr/SubDiversionAttr.vue';
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
@@ -16,6 +16,28 @@ const dialogVisible = ref(false)
 const drawerOptions = reactive<any>({
   visible: false
 })
+
+Object.assign(data, __data)
+
+watch(data, () => {
+  const { children } = data;
+
+  [...children].forEach((item, index) => {
+    if (!index) return
+
+    item.$index = index
+
+    const { nodeName } = item
+    if (nodeName === '兜底策略器') return
+
+    item.diversionType = children[0].diversionType
+
+    item.eventDelayed.delayedTime = children[0].eventDelayed.delayedTime
+    item.eventDelayed.delayedUnit = children[0].eventDelayed.delayedUnit
+  })
+}, { immediate: true })
+
+console.log("SubBranch setup!", getNode(), __data, data)
 
 const doDiverse = computed(() => {
   const { children } = data;
@@ -173,25 +195,28 @@ provide('save', (regFunc: () => boolean) => {
       流量策略器
       <span style="float: right">
         {{ data.nodeName }}
-        <span style="color: green;font-weight: 600">{{ data.ratio }}%</span>
+        <span style="color: green;font-weight: 600">{{ data.branchRatio }}%</span>
       </span>
     </p>
     <div @click="openCondition" class="PBlock-Content theme">
       <template v-if="data.nodeDelayed?.delayedAction || pushTemplate?.has">
         <div style="display: flex; flex-direction: column; gap: 1rem">
           <!-- v-if="data.nodeDelayed?.isDelayed" -->
-          <div style="--theme-color: #7DC757" class="PBlock-Section">
-            <p>
-              延迟设置
-            </p>
+          <div style="--theme-color: #7dc757" class="PBlock-Section">
+            <p>延迟设置</p>
             <span v-if="data.nodeDelayed?.isDelayed">
-              符合该策略器 {{ data.nodeDelayed.delayedTime }} {{ data.nodeDelayed.delayedUnit }} 后 {{
-                delayedActionStr }}
+              符合该策略器 {{ data.nodeDelayed.delayedTime }}
+              <span>
+                <span v-if="data.nodeDelayed.delayedUnit === 'day'"> 天 </span>
+                <span v-else-if="data.nodeDelayed.delayedUnit === 'hour'"> 小时 </span>
+                <span v-else-if="data.nodeDelayed.delayedUnit === 'minute'"> 分钟 </span>
+              </span>
+              后
+              <!-- {{ delayedActionStr }} -->
             </span>
-            <span v-else>
-              <span v-if="data.nodeDelayed.delayedAction === 'nothing'">不执行任何动作</span>
-              <span v-else>立即针对符合该策略器条件的客户发送触达</span>
-            </span>
+            <!-- <span v-else-if="data.nodeDelayed.delayedAction === 'nothing'">不执行动作</span> -->
+            <span v-else>立即针对符合该策略器条件的客户</span>
+            <span>{{ delayedActionStr }}</span>
           </div>
           <div v-if="pushTemplate.has" style="--theme-color: #FFB858" class="PBlock-Section">
             <p>
@@ -241,7 +266,7 @@ provide('save', (regFunc: () => boolean) => {
   </el-card>
 
   <el-button
-    :class="{ display: data.diversionType || data.nodeDelayed?.isDelayed || pushTemplate?.has, disabled: haveDiverse }"
+    :class="{ display: data.nodeDelayed?.isDelayed !== undefined || pushTemplate?.has, disabled: _data.$readonly || haveDiverse }"
     @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 

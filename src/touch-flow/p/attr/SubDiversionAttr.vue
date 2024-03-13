@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElMessage } from "element-plus";
-import { inject, reactive, ref } from "vue";
+import { inject, reactive, ref, toRaw, watchEffect } from "vue";
 import CommonAttr from "../attr/CommonAttr.vue";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
 import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
@@ -48,17 +48,29 @@ const props = defineProps<{
 }>();
 
 const touchSettingsRef = ref();
-const sizeForm = reactive<typeof origin>(origin);
+const sizeForm = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 
 console.log("分流器", sizeForm, props.p);
 
-const { nodeType, nodeId } = props.p;
+watchEffect(() => {
+  const { nodeType, nodeId } = props.p;
 
-if (!props.new && nodeType === "subDiversion") {
+  console.log("sa", props)
+
+  if (props.new || nodeType !== "subDiversion") return;
+
   if (nodeId) {
-    Object.assign(sizeForm, props.p);
+    Object.assign(sizeForm, JSON.parse(JSON.stringify(toRaw(props.p))));
+    // Object.assign(sizeForm, props.p);
+
+    sizeForm.nodeId = nodeId;
+
+    if (props.p.touchTemplateContent)
+      sizeForm.touchTemplateContent = props.p.touchTemplateContent;
+
+    console.log("aqwqsdadas", props.p, sizeForm)
   }
-}
+});
 
 function saveData() {
   if (!sizeForm.nodeName) {
@@ -108,12 +120,9 @@ regSaveFunc(saveData);
 
       <CommonAttr ref="touchSettingsRef" :size-form="sizeForm" />
 
-      <TouchEstimation
-        :readonly="readonly"
-        :custom-rule-content="sizeForm.customRuleContent"
-      />
+      <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
 
-      <StrategistTargetAttr :size-form="sizeForm" />
+      <StrategistTargetAttr :readonly="readonly" :size-form="sizeForm" />
     </el-form>
   </div>
 </template>

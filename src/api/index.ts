@@ -43,6 +43,11 @@ export const updateMarketingTouchStatus = (data: any) => {
   return request.post({ url: "/api/updateMarketingTouchStatus.do", data });
 };
 
+// 营销触达节点触达客户
+export const qryNodeTouchCustom = (data: any) => {
+  return request.post({ url: "/api/qryNodeTouchCustom.do", data });
+};
+
 // 复制
 export const copyMarketingTouch = (data: any) => {
   return request.post({ url: "/api/copyMarketingTouch.do", data });

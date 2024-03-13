@@ -329,6 +329,20 @@ window.$refreshLayout = layoutFn;
     pointer-events: unset;
   }
 
+  &::before {
+    content: "";
+    position: absolute;
+    margin: -1rem;
+
+    width: 150%;
+    height: 150%;
+
+    left: -25%;
+    top: -25%;
+
+    border-radius: 50%;
+  }
+
   &.disabled {
     opacity: 0.85;
     filter: invert(0.1) brightness(95%);
@@ -353,7 +367,22 @@ window.$refreshLayout = layoutFn;
   transition: 0.25s;
 }
 
+body:has(.PBlock) .el-drawer {
+  div.ListWrapper {
+    position: relative !important;
+  }
+
+  div.MicroEnterpriseDrag {
+    margin-bottom: 10rem !important;
+  }
+
+  .FloatFixed {
+    bottom: 0;
+  }
+}
+
 div.PBlock {
+
   p {
     &.title {
       .el-button {

@@ -74,7 +74,7 @@ export function createTemplatePopover(
   }
 
   Object.assign(dom.style, {
-    zIndex: "3",
+    zIndex: "2000",
     position: "absolute",
     width: "100%",
     height: "100%",

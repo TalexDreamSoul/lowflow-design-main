@@ -75,6 +75,10 @@ const comp = ref<TemplateComponents>();
 const showComp = ref<boolean>(false);
 const touchOptions = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 
+const disabled = computed(() => {
+  return props.readonly || (touchOptions.id !== -1);
+});
+
 watchEffect(() => {
   if (!props.touch?.id) return;
 
@@ -103,6 +107,8 @@ async function refreshMaterialTemplate(clearStatus: boolean = true) {
       },
       ...res.data.records,
     ];
+
+    assignData(-1)
   }
 }
 
@@ -273,7 +279,7 @@ defineExpose({ updateData });
       </el-form-item>
 
       <template v-if="curPlatform && showComp">
-        <component ref="comp" :disabled="readonly" :is="curPlatform.template"
+        <component ref="comp" :readonly="disabled" :is="curPlatform.template"
           :data="touchOptions[curPlatform.propKey]" />
       </template>
     </el-form>
