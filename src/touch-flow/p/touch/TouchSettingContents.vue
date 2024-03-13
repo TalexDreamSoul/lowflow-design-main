@@ -185,7 +185,7 @@ const getCurrSelected = (condition: any) =>
 let _floating: any;
 
 onBeforeMount(() => {
-  console.log("disposed unmounted");
+  // console.log("disposed unmounted");
 
   _floating?.();
 });

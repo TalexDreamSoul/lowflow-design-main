@@ -64,6 +64,7 @@ const origin: MaterialTemplateEditDTO = {
     variables: [],
   },
   type: "",
+  id: -1
 };
 
 const props = defineProps<{
@@ -82,11 +83,15 @@ const disabled = computed(() => {
 watchEffect(() => {
   if (!props.touch?.id) return;
 
-  Object.assign(touchOptions, props.touch);
+  setTimeout(() => {
 
-  nextTick(() => {
-    assignData(touchOptions.id);
-  });
+    Object.assign(touchOptions, props.touch);
+
+    // console.log("touch", Object.freeze({ ...props.touch }), Object.freeze({ ...touchOptions }), touchOptions)
+    nextTick(() => {
+      refreshMaterialTemplate(false).then(() => assignData(touchOptions.id))
+    });
+  })
 });
 
 async function refreshMaterialTemplate(clearStatus: boolean = true) {
@@ -108,7 +113,7 @@ async function refreshMaterialTemplate(clearStatus: boolean = true) {
       ...res.data.records,
     ];
 
-    assignData(-1)
+    assignData(touchOptions.id)
   }
 }
 

@@ -102,7 +102,7 @@ watch(props.p, () => {
 watchEffect(() => {
   const { nodeType, nodeId } = props.p;
 
-  console.log("w", props, toRaw(props.p))
+  console.log("w", props, JSON.parse(JSON.stringify(toRaw(props.p))), sizeForm)
 
   if (props.new || nodeType !== "strategy") return;
 
@@ -111,10 +111,9 @@ watchEffect(() => {
 
     sizeForm.nodeId = nodeId;
 
-    if (props.p.touchTemplateContent)
-      sizeForm.touchTemplateContent = props.p.touchTemplateContent;
+    // if (props.p.touchTemplateContent)
+    //   sizeForm.touchTemplateContent = props.p.touchTemplateContent;
 
-    console.log("aqwqsdadas", props.p, sizeForm)
   }
 });
 

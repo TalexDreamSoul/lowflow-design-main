@@ -113,8 +113,6 @@ function openDrawer(comp: any, doNew: boolean = false) {
 
   Object.assign(drawerOptions, { ...comp, new: doNew });
 
-  console.log("op", comp)
-
   if (!data.executeType) data.executeType = "immediately";
 
   drawerOptions.visible = true;
@@ -269,7 +267,7 @@ function del(p: MarketingTouchEditDTO) {
     </teleport>
 
     <teleport to="body">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
+      <el-drawer v-if="drawerOptions.visible" v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :new="drawerOptions?.new" :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
