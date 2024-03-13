@@ -155,6 +155,13 @@ const changeTime = (val: any) => {
     formInline.endTime = dayjs(val[1]).format("YYYY-MM-DD");
   }
 };
+
+const changeStatus = (val: any) => {
+  console.log(val, "change");
+  formInline.status = val;
+
+};
+
 </script>
 
 <template>
@@ -198,41 +205,41 @@ const changeTime = (val: any) => {
           total
           waitStart -->
 
-        <div class="showCount allcount">
+        <div class="showCount allcount" @click="changeStatus('')" >
           <div class="topcount">{{ StatisticsList.total !== undefined ? StatisticsList.total : '--' }}
           </div>
           <div class="undercount">全部</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" @click="changeStatus('running')">
           <div class="topcount">
             {{ StatisticsList.running !== undefined ? StatisticsList.running : '--' }}
           </div>
           <div class="undercount">运行中</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" @click="changeStatus('suspend')">
           <div class="topcount">
             {{ StatisticsList.suspend !== undefined ? StatisticsList.suspend : '--' }}
           </div>
           <div class="undercount">暂停中</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" @click="changeStatus('approvalPending')">
           <div class="topcount">
             {{ StatisticsList.approvalPending !== undefined ? StatisticsList.approvalPending : '--' }}
           </div>
           <div class="undercount">待审批</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" @click="changeStatus('done')">
           <div class="topcount">
             {{ StatisticsList.done !== undefined ? StatisticsList.done : '--' }}</div>
           <div class="undercount">已结束</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" @click="changeStatus('draft')">
           <div class="topcount">
             {{ StatisticsList.draft !== undefined ? StatisticsList.draft : '--' }}
           </div>
           <div class="undercount">草稿</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" @click="changeStatus('approvalRefuse')">
           <div class="topcount">
             {{ StatisticsList.approvalRefuse !== undefined ? StatisticsList.approvalRefuse : '--' }}
           </div>
@@ -355,6 +362,7 @@ const changeTime = (val: any) => {
 }
 
 .showCount {
+  cursor: pointer;
   min-width: 150px;
   margin-right: 16px;
   background: linear-gradient(
