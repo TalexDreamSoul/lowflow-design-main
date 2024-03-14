@@ -16,6 +16,7 @@ import { _delChild, genIdNodeReactive } from "./../flow-utils";
 import { MarketingTouchEditDTO } from "../p/behavior/marketing";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
+import { useWindowSize } from "@vueuse/core";
 
 interface IGraphData {
   id: string;
@@ -35,6 +36,7 @@ let _Graph: any;
 let treeMap = props.p;
 
 const route = useRoute()
+const { width, height } = useWindowSize()
 const _edit = computed(() => route.params?.id)
 const getNodeReactive = genIdNodeReactive(props.p);
 
@@ -152,7 +154,7 @@ const layoutFn = () => {
 
       model.nodes?.push({
         id: `${data.id}`,
-        x: data.x + 700,
+        x: 0, //data.x + 800,
         y: data.y + 200,
         shape,
         data: {
@@ -233,6 +235,12 @@ const layoutFn = () => {
   console.groupEnd();
 
   _Graph.fromJSON(model);
+  // _Graph.fitToContent();
+  _Graph.center();
+  // _Graph.centerContent();
+
+  console.log(_Graph.centerContent)
+  _Graph.positionContent("top");
 };
 
 onMounted(() => {
@@ -240,6 +248,7 @@ onMounted(() => {
 
   // layoutFn();
   watchEffect(() => {
+    $ignored: [width.value + height.value]
     const { p } = toRefs(props);
 
     layoutFn();

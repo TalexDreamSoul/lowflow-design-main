@@ -309,9 +309,9 @@ const goBack = () => {
         </div>
       </el-header>
       <el-main>
-        <el-scrollbar>
-          <XFlow :readonly="readonly" :p="flowOptions.p as any" />
-        </el-scrollbar>
+        <!-- <el-scrollbar> -->
+        <XFlow :readonly="readonly" :p="flowOptions.p as any" />
+        <!-- </el-scrollbar> -->
       </el-main>
     </el-container>
   </div>
