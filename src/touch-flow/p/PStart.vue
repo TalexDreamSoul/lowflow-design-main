@@ -30,7 +30,7 @@ watch(data, () => {
     item.$index = index
 
     const { nodeName } = item
-    if ( nodeName === '兜底策略器' ) return
+    if (nodeName === '兜底策略器') return
 
     item.diversionType = children[0].diversionType
     item.eventDelayed.delayedTime = children[0].eventDelayed.delayedTime
@@ -252,7 +252,7 @@ function handleClick(e: Event) {
     </div>
 
     <teleport to="body">
-      <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
+      <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
             class="PBlock-Section">
@@ -295,6 +295,7 @@ function handleClick(e: Event) {
   display: flex;
 
   gap: 2rem;
+  justify-content: center;
 }
 
 .PBlock-Section {
