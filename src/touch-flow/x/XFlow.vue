@@ -154,7 +154,7 @@ const layoutFn = () => {
 
       model.nodes?.push({
         id: `${data.id}`,
-        x: 0, //data.x + 800,
+        x: data.x + 800,
         y: data.y + 200,
         shape,
         data: {
@@ -236,7 +236,7 @@ const layoutFn = () => {
 
   _Graph.fromJSON(model);
   // _Graph.fitToContent();
-  _Graph.center();
+  // _Graph.center();
   // _Graph.centerContent();
 
   console.log(_Graph.centerContent)
