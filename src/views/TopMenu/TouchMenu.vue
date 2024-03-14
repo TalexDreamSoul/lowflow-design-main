@@ -117,7 +117,8 @@ const active = computed(() => props.path && route.path.startsWith(props.path))
 
     border-radius: 0 0 8px 8px;
     box-shadow: var(--el-box-shadow);
-    background-color: #fff;
+    background-color: #ffffffAA;
+    backdrop-filter: blur(18px) saturate(180%);
 
     overflow: hidden;
   }
