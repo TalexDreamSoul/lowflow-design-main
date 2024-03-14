@@ -39,7 +39,7 @@ const active = computed(() => props.path && route.path.startsWith(props.path))
     ul {
       opacity: 1;
       pointer-events: all;
-      transform: translateY(0);
+      transform: scale(1) translateY(0);
     }
 
     .el-icon {
@@ -51,6 +51,7 @@ const active = computed(() => props.path && route.path.startsWith(props.path))
 
   &__title {
     z-index: 1000;
+
     .active & {
       &::before {
         opacity: 1;
@@ -111,7 +112,7 @@ const active = computed(() => props.path && route.path.startsWith(props.path))
 
     opacity: 0;
     pointer-events: none;
-    transform: translateY(-10%);
+    transform: scale(1.01) translateY(-10%);
     transition: .25s;
 
     border-radius: 0 0 8px 8px;
