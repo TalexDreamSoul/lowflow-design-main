@@ -113,8 +113,6 @@ function openDrawer(comp: any, doNew: boolean = false) {
 
   Object.assign(drawerOptions, { ...comp, new: doNew });
 
-  console.log("op", comp)
-
   if (!data.executeType) data.executeType = "immediately";
 
   drawerOptions.visible = true;
@@ -251,7 +249,7 @@ function del(p: MarketingTouchEditDTO) {
     </div>
 
     <teleport to="body">
-      <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
+      <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item, true)" v-for="item in comps" class="PBlock-Section"
             :class="{ disabled: item.disabled?.value }">
@@ -269,7 +267,7 @@ function del(p: MarketingTouchEditDTO) {
     </teleport>
 
     <teleport to="body">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
+      <el-drawer v-if="drawerOptions.visible" v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :new="drawerOptions?.new" :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
@@ -290,7 +288,8 @@ function del(p: MarketingTouchEditDTO) {
 .Dialog-Sections {
   display: flex;
 
-  gap: 0.5rem;
+  gap: 2rem;
+  justify-content: center;
 }
 
 .PBlock-Section {

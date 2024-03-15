@@ -19,7 +19,7 @@ const defaultProps = {
   label: 'menuName',
 }
 
-console.log("rs", props, data1.value)
+console.log("rs", props)
 
 function transformData(data: any) {
 
@@ -48,7 +48,8 @@ watchEffect(() => {
 function select(data: any, floor: number) {
   if (floor === 0) {
     // 第一层
-    const floor1Checked = [data] //dom1.value.getCheckedNodes()
+    const floor1Checked = dom1.value.getCheckedNodes()
+    props.select[0] = [...dom1.value.getCheckedNodes()].forEach(item => item.id)
 
     const pendingList: any[] = []
 
@@ -59,16 +60,16 @@ function select(data: any, floor: number) {
 
         pendingList.push(() => select(_each, 1))
 
-        console.log("_Each", _each)
-
         return _each.id
       })
     }).flat()
 
-    dom2.value.setCheckedKeys(arr)
+    props.select[1] = new Set([...props.select[1], ...arr])
 
     setTimeout(() => {
       pendingList.forEach(a => a())
+
+      floor1Change(dom1.value.getCurrentNode())
     }, 0);
 
     console.log("1", floor1Checked, arr, dom2)
@@ -80,7 +81,8 @@ function select(data: any, floor: number) {
 
     const arr = [...data.subMenus].map(each => each.id)
 
-    dom3.value.setCheckedKeys(arr)
+    // dom3.value.setCheckedKeys(arr)
+    props.select[2] = new Set([...props.select[2], ...arr])
 
     // const floor2Checked = dom2.value.getCheckedNodes()
 
@@ -97,8 +99,6 @@ function select(data: any, floor: number) {
 
     console.log('3', arr, data)
   }
-
-
 }
 
 function handleSave() {
@@ -122,12 +122,18 @@ function floor1Check(checkedNodes: any) {
 function floor1Change(data: any) {
   console.log("floor1", data)
 
+  dom2.value.setCheckedKeys(props.select[1])
+
+  console.log(props.select)
+
   data2.value = [...data.subMenus]
   data3.value = []
 }
 
 function floor2Change(data: any, node: any) {
   console.log("floor2", data, node)
+
+  dom3.value.setCheckedKeys(props.select[2])
 
   data3.value = [...data.subMenus]
 }

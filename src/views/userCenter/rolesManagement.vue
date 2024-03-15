@@ -43,6 +43,7 @@ const defaultFormValues = {
 };
 let formValues = reactive<any>({ ...defaultFormValues });
 const modalVisible = ref(false);
+const selectList = ref([[], [], []])
 const modalType = ref<any>(DrawerType.Create);
 const formRef = ref<FormInstance>();
 const treeProps = {
@@ -204,7 +205,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         <div style="height: 500px; width:100%;overflow: scroll;">
           <el-tree :data="MenuList" show-checkbox node-key="id" :default-expand-all="true"
             :default-checked-keys="formValues.menuIds" :props="treeProps" />
-          <!-- <RoleSelect :data="MenuList" /> -->
+          <RoleSelect :select="selectList" :data="MenuList" />
           <!-- <RoleFlatMap :data="MenuList" /> -->
         </div>
       </el-form-item>

@@ -78,6 +78,7 @@ function _displayRender() {
       variableMap.set(index, {
         field,
         fieldName: variable.fieldName,
+        fieldType: variable.fieldType,
         defaultValue: variable.defaultValue,
         index,
         labelId: variable.labelId,
@@ -185,7 +186,7 @@ const getCurrSelected = (condition: any) =>
 let _floating: any;
 
 onBeforeMount(() => {
-  console.log("disposed unmounted");
+  // console.log("disposed unmounted");
 
   _floating?.();
 });
@@ -302,15 +303,21 @@ function _handleBlur() {
     if (node.nodeName === "BUTTON") {
       const id = (node as HTMLElement).dataset.id;
       const obj = variableMap.get(id!)!
-      if ( obj.labelName || obj.fieldName )
-      {
+      if (obj.labelName || obj.fieldName) {
         console.log("aaa", obj)
         content += `$$${id}$$`;
       } else variableMap.delete(id!)
     } else content += node.nodeValue;
   });
 
+  // variableMap
+  for (let item of variableMap.keys()) {
+    if (content.indexOf(`$$${item}$$`) < 0) variableMap.delete(item);
+  }
+
   props.modelValue[props.content] = content;
+  // update variable map
+  props.modelValue[props.variables] = [...variableMap.values()];
 
   console.log("____", content, contentDom.innerText);
 
@@ -505,7 +512,7 @@ function handleAdd() {
   padding: 0.5rem;
 
   width: 160px;
-  height: 300px;
+  height: 160px;
 
   overflow: hidden;
   border-radius: 4px;

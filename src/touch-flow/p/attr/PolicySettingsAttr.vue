@@ -5,11 +5,12 @@ import { randomStr } from "~/utils/common";
 import FilterGroup from "./condition/FilterGroup.vue";
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
-import { markRaw } from "vue";
+import { markRaw, computed } from "vue";
 import CommonAttr from "./CommonAttr.vue";
 import { validateCommonDays } from "~/touch-flow/flow-utils";
 import { MarketingTouchNodeEditDTO } from "~/touch-flow/touch-total";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
+import { useRoute } from "vue-router";
 
 const origin: MarketingTouchNodeEditDTO = {
   nodeId: "",
@@ -75,6 +76,18 @@ const props = defineProps<{
 }>();
 
 const touchSettingsRef = ref();
+const _edit = computed(() => {
+  const splits = location.pathname.split('/')
+
+  // 取最后两个
+  const [, design, id] = splits
+
+  if (design !== 'design' || !id) return false
+
+  // console.log("11212121212121212", splits, design, id)
+
+  return true
+})
 const sizeForm = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 
 watch(
@@ -102,7 +115,7 @@ watch(props.p, () => {
 watchEffect(() => {
   const { nodeType, nodeId } = props.p;
 
-  console.log("w", props, toRaw(props.p))
+  console.log("w", props, JSON.parse(JSON.stringify(toRaw(props.p))), sizeForm)
 
   if (props.new || nodeType !== "strategy") return;
 
@@ -111,10 +124,9 @@ watchEffect(() => {
 
     sizeForm.nodeId = nodeId;
 
-    if (props.p.touchTemplateContent)
-      sizeForm.touchTemplateContent = props.p.touchTemplateContent;
+    // if (props.p.touchTemplateContent)
+    //   sizeForm.touchTemplateContent = props.p.touchTemplateContent;
 
-    console.log("aqwqsdadas", props.p, sizeForm)
   }
 });
 
@@ -192,7 +204,7 @@ regSaveFunc(saveData);
         <el-input :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" />
       </el-form-item>
       <el-form-item label="分流类型：">
-        <el-radio-group :disabled="readonly || sizeForm.$index" v-model="sizeForm.diversionType">
+        <el-radio-group :disabled="_edit || readonly || sizeForm.$index" v-model="sizeForm.diversionType">
           <el-radio label="noDiversion">不分流</el-radio>
           <el-radio label="attr">按属性用户行为分流</el-radio>
           <el-radio label="event">按触发事件分流</el-radio>
