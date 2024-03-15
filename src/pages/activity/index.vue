@@ -45,27 +45,35 @@
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
         <el-table-column
-          prop="activityName"
-          label="H5活动名称"
+          prop="activityId"
+          label="H5活动ID"
+          width="220"
           show-overflow-tooltip
         />
-        <el-table-column label="状态">
+        <el-table-column
+          prop="activityName"
+          label="H5活动名称"
+          width="220"
+          show-overflow-tooltip
+        />
+        <el-table-column label="状态" width="120">
           <template #default="scope">
             <span>{{ activityStatus[scope.row.activityStatus] }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="活动有效期">
+        <el-table-column label="活动有效期" width="220">
           <template #default="scope">
-            <div>
+            <div v-if="scope.row.activityBeginTime">
               <span
                 >{{ scope.row.activityBeginTime }}至{{
                   scope.row.activityEndTime
                 }}</span
               >
             </div>
+            <div v-else>-</div>
           </template>
         </el-table-column>
-        <el-table-column label="包含玩法">
+        <el-table-column label="包含玩法" width="220" show-overflow-tooltip>
           <template #default="scope">
             <div>
               <span v-if="!scope.row.playTypeList.length">-</span>
@@ -75,12 +83,12 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="活动链接" show-overflow-tooltip>
+        <el-table-column label="活动链接" show-overflow-tooltip width="250">
           <template #default="scope">
             <span>{{ scope.row.diffuseUrl }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="二维码">
+        <el-table-column label="二维码" width="120">
           <template #default="scope">
             <el-image
               preview-teleported
@@ -97,8 +105,8 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="creatorName" label="创建人" />
-        <el-table-column prop="creatorName" label="操作">
+        <el-table-column prop="creatorName" label="创建人" width="120"/>
+        <el-table-column prop="creatorName" label="操作" fixed="right" width="220">
           <template #default="scope">
             <el-button link type="primary" @click="openUrl(scope.row.activityId,'true')">编辑</el-button>
             <el-button link type="primary" @click="del(scope.row.activityId)"
