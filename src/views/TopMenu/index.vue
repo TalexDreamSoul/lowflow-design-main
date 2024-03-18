@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { inject, watchEffect, reactive } from "vue";
 import MenuPersonal from "./MenuPersonal.vue";
 import { useRouter } from "vue-router";
 import HeaderIcon from "~/assets/header-icon.png";
@@ -63,7 +63,48 @@ import { CaretBottom } from "@element-plus/icons-vue";
 import TouchMenu from "./TouchMenu.vue";
 import TouchMenuItem from "./TouchMenuItem.vue";
 
-const router = useRouter();
+const appOptions: any = inject('appOptions')!
+
+watchEffect(() => {
+  // $ignored: appOptions.value
+  if (!appOptions.value?.menu) return
+
+  const { menus, menuIds } = appOptions.value.menu
+  const filteredMenu = [...menus].filter((item: any) => menuIds.includes(item.id))
+
+  const map: any = {}
+
+  filteredMenu.forEach((item: any) => map[item.menuCode] = reactive({
+    children: [],
+    ...item,
+  }))
+
+  const clearCodes: string[] = []
+
+  // 将flat array转成tree map
+  Object.values(map).forEach((item: any) => {
+    const { id, menuCode, parentMenuCode } = item
+
+    if (menuCode !== parentMenuCode && parentMenuCode?.length) {
+      const p = map[parentMenuCode]
+
+      if (p) {
+        const c = p.children
+
+        c.push(item)
+      }
+
+      clearCodes.push(menuCode)
+      // delete map[menuCode]
+    }
+
+  });
+
+  [...clearCodes ].forEach((code: string) => delete map[code])
+
+  console.log(filteredMenu, map)
+
+})
 
 const handleloca = () => {
   window.open('http://172.30.3.6:18700/', '_blank');

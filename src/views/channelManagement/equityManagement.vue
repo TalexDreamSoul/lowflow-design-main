@@ -216,13 +216,17 @@ const handleCurrentChange = (val: number) => {
         <el-table-column label="权益ID" prop="id" />
         <el-table-column label="权益编号" prop="skuCode" />
         <el-table-column label="权益展示名称" prop="equityName">
-
+          <template v-slot="{ row }">
+            {{ row.equityName }}
+            <br />
+            <el-image style="width: 40px;height: 40px" :src="row.equityImageUrl" />
+          </template>
         </el-table-column>
         <el-table-column label="权益展示金额" width="180" prop="equityAmount" />
         <el-table-column label="状态" prop="usedCount">
           <template #default="scope">
-            <el-tag class="mx-1" :type="statusLabels[scope.row.status].type ? statusLabels[scope.row.status].type : 'info'"
-              effect="light">
+            <el-tag class="mx-1"
+              :type="statusLabels[scope.row.status].type ? statusLabels[scope.row.status].type : 'info'" effect="light">
               {{ statusLabels[scope.row.status].Text }}
             </el-tag>
           </template>

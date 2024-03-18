@@ -22,8 +22,9 @@ import { computed, reactive, provide, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { reactiveMessage } from "./utils/mention/mention";
 import { useLocalStorage } from "@vueuse/core";
+import customerAPI from '~/api/account'
 
-const appOptions = useLocalStorage('app-options', { user: {}  })
+const appOptions = useLocalStorage('app-options', { user: {}, menu: {} })
 const route = useRoute()
 const router = useRouter()
 
@@ -32,11 +33,19 @@ const meta = computed(() => route.meta)
 watchEffect(() => {
   $ignored: appOptions
 
-  const { user } = appOptions.value
+  const { user }: any = appOptions.value
   if (!user) {
     const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false)
 
     promise.then(() => router.push('/userCenter/personalInformation'))
+  } else {
+    const { id } = user
+
+    setTimeout(async () => {
+      const { data: res }: any = await customerAPI.accountContainMenuList({ id, accountId: id })
+
+      appOptions.value.menu = res
+    })
   }
 })
 
