@@ -175,6 +175,12 @@ const getData = async (params: any) => {
 const handleModaldrawer = async (values?: any) => {
   drawerRef.value?.handleModal?.(values);
 };
+
+function formatDate(value: number) {
+  const format = "YYYY-MM-DD HH:mm";
+
+  return dayjs(value).format(format);
+}
 </script>
 
 <template>
@@ -203,8 +209,16 @@ const handleModaldrawer = async (values?: any) => {
     <template #table="{ tableData }">
 
       <el-table :data="tableData">
-        <el-table-column label="交易日期" prop="trsDate" />
-        <el-table-column label="校对时间" prop="checkDate" />
+        <el-table-column label="交易日期" prop="trsDate">
+          <template #default="{ row }">
+            {{ formatDate(row.trsDate) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="校对时间" prop="checkDate">
+          <template #default="{ row }">
+            {{ formatDate(row.checkDate) }}
+          </template>
+        </el-table-column>
         <el-table-column label="请求积分交易笔数" width="180" prop="reqPointsCount">
         </el-table-column>
         <el-table-column label="请求权益交易笔数" width="180" prop="reqEquityCount" />
