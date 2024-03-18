@@ -217,8 +217,8 @@ const handleCurrentChange = (val: number) => {
         <el-table-column label="权益编号" prop="skuCode" />
         <el-table-column label="权益展示名称" prop="equityName">
           <template v-slot="{ row }">
-            {{ row.equityName }}
-            <br />
+            <!-- {{ row.equityName }} -->
+            <!-- <br /> -->
             <el-image style="width: 40px;height: 40px" :src="row.equityImageUrl" />
           </template>
         </el-table-column>
