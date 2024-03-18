@@ -44,6 +44,7 @@ const defaultFormValues = {
 let formValues = reactive<any>({ ...defaultFormValues });
 const modalVisible = ref(false);
 const selectList = ref([[], [], []])
+const checked = ref([])
 const modalType = ref<any>(DrawerType.Create);
 const formRef = ref<FormInstance>();
 const treeProps = {
@@ -203,10 +204,10 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     { required: true, message: '请输入角色权限' },
   ]" label="角色权限" prop="menuIds">
         <div style="height: 500px; width:100%;overflow: scroll;">
-          <el-tree :data="MenuList" show-checkbox node-key="id" :default-expand-all="true"
-            :default-checked-keys="formValues.menuIds" :props="treeProps" />
-          <RoleSelect :select="selectList" :data="MenuList" />
-          <!-- <RoleFlatMap :data="MenuList" /> -->
+          <!-- <el-tree :data="MenuList" show-checkbox node-key="id" :default-expand-all="true"
+            :default-checked-keys="formValues.menuIds" :props="treeProps" /> -->
+          <!-- <RoleSelect :select="selectList" :data="MenuList" /> -->
+          <RoleFlatMap :checked="checked" :data="MenuList" />
         </div>
       </el-form-item>
     </el-form>

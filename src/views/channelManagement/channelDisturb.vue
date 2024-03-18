@@ -48,9 +48,9 @@ function getNameByValue(data: any[], val: string) {
 const materialTypeName = ref(getNameByValue(materialType, route.params.type));
 
 console.log(materialTypeName); // 输出：短信
-// onMounted(async () => {
-//   fetchDataApi();
-// });
+onMounted(async () => {
+  fetchDataApi();
+});
 
 // watch(
 //   () => route.fullPath,

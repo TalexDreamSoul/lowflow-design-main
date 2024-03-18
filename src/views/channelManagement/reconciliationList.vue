@@ -109,13 +109,11 @@ const updateMaterialStatusData = async (row: any, status: String) => {
 
 const detailsData = async (row: any) => {
   value.value = row;
-  // createTemplatePopover('新建企微模版', 'digital')
-  // createTemplatePopover('新建站内信模版', 'znx', value)
+
   console.log(`output->row`, row);
-  let name = `${materialTypeName}模版详情`;
+
   createTemplatePopover("模版详情", row.type, value, "details");
-  // createTemplatePopover('新建APP Push模版', 'app')
-  // createTemplatePopover('新建外呼模版', 'outbound')
+
 };
 
 const addData = async () => {
@@ -185,7 +183,8 @@ const handleModaldrawer = async (values?: any) => {
       <div class="search">
         <el-form :inline="true">
           <el-form-item label="创建时间：">
-            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
+            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期"
+              end-placeholder="结束日期" :size="size" @change="changeTime" />
           </el-form-item>
           <el-form-item>
             <el-select v-model="formInline.status" clearable style="width:200px" placeholder="校对结果">
@@ -221,7 +220,8 @@ const handleModaldrawer = async (values?: any) => {
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-space wrap>
-              <el-link type="primary" v-if="scope.row.status=='nq'" @click="handleModaldrawer(scope.row)">查看误差详情</el-link>
+              <el-link type="primary" v-if="scope.row.status == 'nq'"
+                @click="handleModaldrawer(scope.row)">查看误差详情</el-link>
               <el-link @click="detailsData(scope.row)" v-else disabled>查看误差详情</el-link>
               <el-link type="primary" @click="updateData(scope.row)">重新校对</el-link>
             </el-space>
@@ -230,7 +230,9 @@ const handleModaldrawer = async (values?: any) => {
       </el-table>
     </template>
     <template #pagination>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background
+        layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total"
+        @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </template>
   </CustomEventComponent>
   <DrawerSerach ref="drawerRef" />

@@ -214,3 +214,14 @@ export const marketingTouchNodeStatistics = (data: any = {
     data,
   });
 }
+
+export const getQryNqList = (data: any = {
+  pageNum: 0,
+  pageSize: 10,
+  trsDate: ""
+}) => {
+  return request.post({
+    url: "/api/qryNqTrsList.do",
+    data
+  })
+}
