@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { ref, unref, reactive, onMounted, watch } from "vue";
-import dayjs from "dayjs";
-import {
-  getQryMaterial,
-  setDeleteMaterial,
-  setUpdateMaterialStatus,
-} from "~/api/index";
+
 import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
-import { ElMessageBox, ElMessage, ElTag, FormInstance } from "element-plus";
+import {
+  ElMessageBox,
+  ElMessage,
+  ElTag,
+  FormInstance,
+  UploadFile,
+  UploadFiles,
+} from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 
 import API from "~/api/channelManagement";
 import { checkStringEqual, debounce } from "~/utils/common";
+const action = `/api/uploadMaterialFile`;
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
@@ -103,6 +106,10 @@ const delData = async (row: any) => {
     }
   });
 };
+function getCurrentDate() {
+  const currentDate = new Date().toISOString().split("T")[0];
+  return currentDate;
+}
 // 上线素材
 const updateMaterialStatusData = async (row: any, status: String) => {
   let res = await API.updateEquityStatus({
@@ -115,6 +122,16 @@ const updateMaterialStatusData = async (row: any, status: String) => {
   }
 };
 
+function addPic(
+  response: any,
+  uploadFile: UploadFile,
+  uploadFiles: UploadFiles
+) {
+
+  // console.log("addPic", response, uploadFile, uploadFiles)
+  formValues.equityImageUrl = response.data;
+}
+
 let modalData = reactive<any>({});
 
 const handleModal = async (type: string, values?: any) => {
@@ -126,12 +143,14 @@ const handleModal = async (type: string, values?: any) => {
   } else if (type === DrawerType.Edit) {
     Object.assign(formValues, values);
   } else {
+
     let res = await API.equityDetail({
       id: values?.id,
       status: values?.status,
     });
     if (!checkStringEqual(res?.code, 0)) return;
-    Object.assign(modalData, res?.data);
+    Object.assign(formValues, res?.data);
+    // Object.assign(modalData, res?.data);
   }
   modalType.value = type;
   modalVisible.value = true;
@@ -201,7 +220,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       <el-table :data="tableData">
         <el-table-column label="权益ID" prop="id" />
         <el-table-column label="权益编号" prop="skuCode" />
-        <el-table-column label="权益展示名称" prop="equityName"/>
+        <el-table-column label="权益展示名称" prop="equityName" />
 
         <el-table-column label="权益展示主图" prop="equityImageUrl">
           <template v-slot="{ row }">
@@ -258,8 +277,29 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         <el-input v-model="formValues.equityName" placeholder="请输入权益展示名称" clearable />
       </el-form-item>
       <el-form-item :rules="[{ required: true, message: '请输入权益展示主图' }]" label="权益展示主图" prop="equityImageUrl">
-        <el-input v-model="formValues.equityImageUrl" placeholder="请输入权益展示主图" clearable />
-        只能上传jpg/png文件，且不超过500kb
+        <div style="width: 100%;">
+          <el-upload   :action="action" :on-success="addPic" :auto-upload="true" :data="{ type: 'material', date: getCurrentDate() }" :show-file-list="false"
+          >
+          <img  v-if="formValues.equityImageUrl" class="equityImageUrl" :src="formValues.equityImageUrl" alt="" />
+        
+          <div v-if="!checkStringEqual(modalType, DrawerType.Detail)" class="upload-demo button-groupupload">
+
+            <el-text type="primary" style="cursor: pointer">
+              <span v-if="!formValues.equityImageUrl">
+                <el-icon size="14">
+                  <CirclePlusFilled />
+                </el-icon>
+                添加图片
+              </span>
+              <span v-else>
+                重新上传
+              </span>
+              </el-text>
+          </div>
+          </el-upload>
+          <div class="desc"> 只能上传jpg/png文件，且不超过500kb</div>
+        </div>
+        <!-- <el-input v-model="formValues.equityImageUrl" placeholder="请输入权益展示主图" clearable /> -->
       </el-form-item>
 
       <el-form-item :rules="[{ required: true, message: '请输入权益展示金额（米粒）' }]" label="权益展示金额（米粒）" prop="equityAmount">
@@ -287,4 +327,27 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
 <style lang="scss" scoped>
 @import "./material.scss";
+.button-groupupload {
+  padding: 5px 12px;
+  background: #ecf1fc;
+  align-items: center;
+  border-radius: 4px;
+  border: 1px dashed #b3aaaa;
+  margin: 12px 0;
+  cursor: pointer;
+
+}
+.desc{
+font-weight: 400;
+font-size: 14px;
+color: rgba(0,0,0,0.4);
+line-height: 16px;
+text-align: left;
+}
+.equityImageUrl{
+  width: 160px;
+height: 120px;
+border-radius: 8px 8px 8px 8px;
+margin-right: 12px;
+}
 </style>
