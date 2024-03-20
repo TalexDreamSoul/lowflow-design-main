@@ -8,7 +8,7 @@
         <touchMenuItem path="/activityList">H5活动列表</touchMenuItem>
         <!-- <li @click="handleloca">活动编辑器</li> -->
       </TouchMenu>
-      <TouchMenu title="营销制作" path="/strategyProcess">
+      <TouchMenu title="营销触达" path="/strategyProcess">
         <touchMenuItem path="/strategyProcess/list">策略流程列表</touchMenuItem>
       </TouchMenu>
       <TouchMenu title="素材中心" path="/materialCenter">
@@ -28,13 +28,13 @@
         <touchMenuItem path="/configuration/event">事件管理</touchMenuItem>
         <touchMenuItem path="/configuration/attr">属性管理</touchMenuItem>
       </TouchMenu>
-      <TouchMenu title="数据中心" path="/channelManagement">
+      <TouchMenu title="渠道管理" path="/channelManagement">
         <touchMenuItem path="/channelManagement/transactionList">交易明细</touchMenuItem>
         <touchMenuItem path="/channelManagement/reconciliationList">交易对账</touchMenuItem>
         <touchMenuItem path="/channelManagement/channelDisturb">渠道勿扰设置</touchMenuItem>
         <touchMenuItem path="/channelManagement/equityManagement">权益管理</touchMenuItem>
       </TouchMenu>
-      <TouchMenu title="数据中心" path="/userCenter">
+      <TouchMenu title="用户管理" path="/userCenter">
         <touchMenuItem path="/userCenter/userManagement">用户管理</touchMenuItem>
         <touchMenuItem path="/userCenter/rolesManagement">角色管理</touchMenuItem>
         <touchMenuItem path="/userCenter/personalInformation">个人信息</touchMenuItem>
