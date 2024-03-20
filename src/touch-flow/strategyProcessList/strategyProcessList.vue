@@ -80,7 +80,6 @@ const getmarketingTouchNode = async () => {
   StatisticsList.value = res.data;
   console.log(StatisticsList, "res");
 };
-
 const delData = async (row: any) => {
   ElMessageBox.alert("删除后将无法恢复", "确认删除", {
     showCancelButton: true,
