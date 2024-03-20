@@ -56,10 +56,9 @@ const disabled = ref(false);
 const time = ref(null);
 const statusLabels = {
   available: { Text: "可用", type: "primary" },
-  offline: { Text: "下线", type: "info" },
+  offline: { Text: "已下线", type: "info" },
 };
 const modalVisible = ref(false);
-
 
 onMounted(async () => {
   fetchDataApi();
@@ -144,7 +143,7 @@ const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`);
 };
 const formRef = ref<FormInstance>();
-  const onCancel = () => {
+const onCancel = () => {
   for (const key in formValues) {
     formValues[key] = null;
   }
@@ -166,14 +165,13 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       });
     }
     if (checkStringEqual(res?.code, 0)) {
-      await  fetchDataApi();
-        onCancel();
+      await fetchDataApi();
+      onCancel();
     }
   } catch (error) {
     console.error(error);
   }
 };
-
 </script>
 
 <template>
@@ -203,14 +201,20 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       <el-table :data="tableData">
         <el-table-column label="权益ID" prop="id" />
         <el-table-column label="权益编号" prop="skuCode" />
-        <el-table-column label="权益展示名称" prop="equityName">
+        <el-table-column label="权益展示名称" prop="equityName"/>
+
+        <el-table-column label="权益展示主图" prop="equityImageUrl">
           <template v-slot="{ row }">
             <!-- {{ row.equityName }} -->
             <!-- <br /> -->
             <el-image style="width: 40px;height: 40px" :src="row.equityImageUrl" />
           </template>
         </el-table-column>
-        <el-table-column label="权益展示金额" width="180" prop="equityAmount" />
+        <el-table-column label="权益展示金额" width="180" prop="equityAmount">
+          <template #default="scope">
+            {{  scope.row.equityAmount }}米粒
+          </template>
+        </el-table-column>
         <el-table-column label="状态" prop="usedCount">
           <template #default="scope">
             <el-tag class="mx-1" :type="statusLabels[scope.row.status].type ? statusLabels[scope.row.status].type : 'info'" effect="light">
@@ -261,13 +265,12 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       <el-form-item :rules="[{ required: true, message: '请输入权益展示金额（米粒）' }]" label="权益展示金额（米粒）" prop="equityAmount">
         <el-input v-model="formValues.equityAmount" placeholder="请输入权益展示金额（米粒）" clearable />
       </el-form-item>
-    
+
       <el-form-item :rules="[{ required: true, message: '请输入权益类别' }]" label="权益类别" prop="equityType">
         <el-input v-model="formValues.equityType" placeholder="请输入权益类别" clearable />
       </el-form-item>
-        <el-form-item :rules="[{ required: true, message: '请输入权益规则' }]" label="权益规则" prop="equityRule">
-        <el-input v-model="formValues.equityRule" placeholder="请输入权益规则" 
-        type="textarea" clearable :row="5"/>
+      <el-form-item :rules="[{ required: true, message: '请输入权益规则' }]" label="权益规则" prop="equityRule">
+        <el-input v-model="formValues.equityRule" placeholder="请输入权益规则" type="textarea" clearable :row="5" />
       </el-form-item>
 
     </el-form>
@@ -275,7 +278,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       <span class="dialog-footer">
         <el-button v-if="modalType === DrawerType.Detail" round @click="modalVisible = false">返回</el-button>
         <el-button v-if="modalType !== DrawerType.Detail" round @click="modalVisible = false">取消</el-button>
-        <el-button v-if="modalType !== DrawerType.Detail"    @click.prevent="onSubmit(formRef)" round type="primary">保存</el-button>
+        <el-button v-if="modalType !== DrawerType.Detail" @click.prevent="onSubmit(formRef)" round type="primary">保存</el-button>
       </span>
     </template>
   </el-dialog>
