@@ -42,7 +42,7 @@
       <el-pagination background layout="prev, pager, next, jumper" :total='total' :page-sizes="[10]"
         v-model:current-page="pageNum" />
     </div>
-    <el-dialog class="attr-modal" destroy-on-close :close-on-click-modal="false" v-model="modalVisible"
+    <el-dialog class="attr-modal pd-modal" destroy-on-close :close-on-click-modal="false" v-model="modalVisible"
       :title='ModalTitleMap[modalType]'>
       <el-form :disabled="checkStringEqual(modalType, DrawerType.Detail)" ref="attrFormRef" :hide-required-asterisk="true"
         label-position='top' class="form" :model="formValues">
@@ -196,7 +196,7 @@ const onSubmitAttr = async (formEl: FormInstance | undefined) => {
 <style lang="scss" scoped>
 
 .attr {
-  .attr-modal {
+  :deep(.attr-modal) {
     border-radius: 8px;
 
     .el-dialog__title {
@@ -209,10 +209,6 @@ const onSubmitAttr = async (formEl: FormInstance | undefined) => {
     .el-dialog__close {
       font-size: 24px;
       color: #90A0B8;
-    }
-
-    .el-dialog__body {
-      padding-top: 14px;
     }
   }
 

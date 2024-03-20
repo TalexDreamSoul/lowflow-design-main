@@ -39,6 +39,11 @@
         <touchMenuItem path="/userCenter/rolesManagement">角色管理</touchMenuItem>
         <touchMenuItem path="/userCenter/personalInformation">个人信息</touchMenuItem>
       </TouchMenu>
+      <TouchMenu title="审核中心" path="/approve">
+        <touchMenuItem path="/approve/activity">H5活动审核</touchMenuItem>
+        <touchMenuItem path="/approve/strategyProcess">策略流程审核</touchMenuItem>
+        <touchMenuItem path="/approve/configuration">审核流程配置</touchMenuItem>
+      </TouchMenu>
       <!-- <el-sub-menu index="8">
       <template #title>
         <div class="title">审核中心 <el-icon :size="12">
@@ -70,7 +75,8 @@ watchEffect(() => {
   if (!appOptions.value?.menu) return
 
   const { menus, menuIds } = appOptions.value.menu
-  const filteredMenu = [...menus].filter((item: any) => menuIds.includes(item.id))
+  // const filteredMenu = [...menus].filter((item: any) => menuIds.includes(item.id))
+  const filteredMenu = [];
 
   const map: any = {}
 
