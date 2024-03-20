@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import {
-  getGlobalDisturbDetail,getBlackList
+  getGlobalDisturbDetail, getBlackList
 } from "~/api/index";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 
@@ -61,7 +61,7 @@ function transformBlackListData() {
     });
 
     // 去重
-    blackList.list = [ ...new Set(blackList.list) ]
+    blackList.list = [...new Set(blackList.list)]
   }
 }
 (() => {
@@ -69,10 +69,60 @@ function transformBlackListData() {
   [...types].forEach(async (item) => {
     const res: any = await getGlobalDisturbDetail({ type: item.type })
 
-    tableData.value.push({
+    const obj = {
       ...res.data,
       name: item.name
+    }
+
+    Object.defineProperty(obj, '$blacklistLimit', {
+      // value: obj.blacklistLimit,
+      enumerable: true,
+      get() {
+        return String(+obj.blacklistLimit)
+      },
+      set(val) {
+        obj.blacklistLimit = val
+      }
     })
+
+    Object.defineProperty(obj, '$touchLimit', {
+      enumerable: true,
+      get() {
+        return String(+obj.touchLimit)
+      },
+      set(val) {
+        obj.touchLimit = val
+      }
+    })
+
+    Object.defineProperty(obj, '$date', {
+      enumerable: true,
+      get() {
+        const { startDate, endDate } = obj
+
+        return [startDate, endDate]
+      },
+      set(val) {
+        obj.startDate = val[0]
+        obj.endDate = val[1]
+      }
+    })
+
+    obj._enable = !!obj.blacklistList.length
+
+    Object.defineProperty(obj, '$enable', {
+      enumerable: true,
+      get() {
+        return obj._enable ? "过滤" : "不过滤"
+      },
+      set(val) {
+        obj._enable = val === "过滤"
+      }
+    })
+
+    console.log(obj)
+
+    tableData.value.push(obj)
   })
 
 })()
@@ -130,67 +180,49 @@ function detailsData(data: any) {
   <template v-if="dialogVisible">
     <el-dialog :title="dialogOptions?.type === 'update' ? '编辑渠道勿扰设置' : '查看渠道勿扰设置'" align-center v-model="dialogVisible"
       append-to-body>
+      {{ dialogOptions.data.$blacklistLimit }}
       <div class="line">
         <span>1.每个客户触达次数限制：</span>
         <span>
-          <el-radio-group v-model="dialogOptions.blacklistLimit" class="ml-4">
-            <el-radio :value="false">不限制</el-radio>
-            <el-radio :value="true">限制</el-radio>
+          <el-radio-group :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$blacklistLimit" class="ml-4">
+            <el-radio label="0">不限制</el-radio>
+            <el-radio label="1">限制</el-radio>
           </el-radio-group>
         </span>
       </div>
       <div class="line">
-        <span>当前渠道客户 
-          <el-input-number
-          :min="1"
-          placeholder="填写次数"
-          style="width: 120px"
-          controls-position="right" />&nbsp;天内，最多通过营销平台触达 
-        <el-input-number
-        :min="1"
-        placeholder="填写次数"
-        style="width: 120px"
-        controls-position="right" />&nbsp;次
+        <span>当前渠道客户
+          <el-input-number v-model="dialogOptions.data.limitDay" :disabled="dialogOptions?.disabled" :min="1"
+            placeholder="填写次数" style="width: 120px" controls-position="right" />&nbsp;天内，最多通过营销平台触达
+          <el-input-number v-model="dialogOptions.data.limitCount" :disabled="dialogOptions?.disabled" :min="1"
+            placeholder="填写次数" style="width: 120px" controls-position="right" />&nbsp;次
         </span>
       </div>
       <div class="line">
         <span>2.勿扰时段限制：</span>
         <span>
-          <el-radio-group v-model="dialogOptions.blacklistLimit" class="ml-4">
-            <el-radio :value="false">不限制</el-radio>
-            <el-radio :value="true">限制</el-radio>
+          <el-radio-group :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$touchLimit" class="ml-4">
+            <el-radio label="0">不限制</el-radio>
+            <el-radio label="1">限制</el-radio>
           </el-radio-group>
         </span>
       </div>
       <div class="line">
-        <el-date-picker
-        type="daterange"
-        range-separator="-"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-      />&nbsp;
-       <span>为该渠道的默认勿扰时段
+        <el-date-picker v-model="dialogOptions.data.$date" :disabled="dialogOptions?.disabled" type="daterange"
+          range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />&nbsp;
+        <span>为该渠道的默认勿扰时段
         </span>
       </div>
       <div class="line">
         3.过滤黑名单
-        <el-select  v-model="blackList._enable" style="width: 100px">
-          <el-option value="no" label="不过滤">不过滤</el-option>
-          <el-option value="yes" label="过滤">过滤</el-option>
+        <el-select :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$enable" style="width: 100px">
+          <el-option label="不过滤" value="不过滤">不过滤</el-option>
+          <el-option label="过滤" value="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select
-          placeholder="请选择"
-          v-model="blackList.list"
-          multiple
-          v-if="blackList?._enable === 'yes'"
-          style="width: 300px"
-        >
-          <el-option
-            v-for="item in blackListFields.records"
-            :value="item.id"
-            :label="item.blacklistName"
-          >
+        <el-select :disabled="dialogOptions?.disabled" placeholder="请选择" v-model="dialogOptions.list" multiple
+          v-if="dialogOptions.data._enable" style="width: 300px">
+          <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
             <!-- <p>{{ item.blacklistDesc }}</p> -->
           </el-option>
@@ -203,7 +235,7 @@ function detailsData(data: any) {
 
 
 <style lang="scss" scoped>
-.line{
+.line {
   font-weight: 400;
   font-size: 14px;
   color: rgba(0, 0, 0, 0.9);
@@ -213,5 +245,4 @@ function detailsData(data: any) {
   margin: 12px;
   letter-spacing: 0.5px;
 }
-
 </style>
