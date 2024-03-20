@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import {
-  getGlobalDisturbDetail
+  getGlobalDisturbDetail,getBlackList
 } from "~/api/index";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 
@@ -30,7 +30,40 @@ const types = [
 const tableData = ref<any[]>([]);
 const dialogVisible = ref<boolean>(false);
 const dialogOptions = ref<{ type: 'update' | 'detail' } & any>({});
+const blackListFields = ref();
 
+!(async () => {
+  const res = await getBlackList({});
+
+  if (res.data) {
+    blackListFields.value = res.data;
+
+    transformBlackListData();
+  }
+})();
+const blackList = reactive<{
+  _enable: "no" | "yes";
+  list: Array<any>;
+  data: Array<any>;
+}>({
+  _enable: "no",
+  list: [],
+  data: [],
+});
+
+function transformBlackListData() {
+  // console.log("transform blacklist", blackList);
+
+
+  if (blackList.data.length) {
+    [...blackList.data].forEach((item) => {
+      blackList.list.push(item.id);
+    });
+
+    // 去重
+    blackList.list = [ ...new Set(blackList.list) ]
+  }
+}
 (() => {
 
   [...types].forEach(async (item) => {
@@ -107,7 +140,17 @@ function detailsData(data: any) {
         </span>
       </div>
       <div class="line">
-        <span>当前渠道客户 天内，最多通过营销平台触达 次
+        <span>当前渠道客户 
+          <el-input-number
+          :min="1"
+          placeholder="填写次数"
+          style="width: 100px"
+          controls-position="right" />&nbsp;天内，最多通过营销平台触达 
+        <el-input-number
+        :min="1"
+        placeholder="填写次数"
+        style="width: 100px"
+        controls-position="right" />&nbsp;次
         </span>
       </div>
       <div class="line">
@@ -120,8 +163,38 @@ function detailsData(data: any) {
         </span>
       </div>
       <div class="line">
-        <span>为该渠道的默认勿扰时段
+        <el-date-picker
+        type="daterange"
+        range-separator="-"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+      />&nbsp;
+       <span>为该渠道的默认勿扰时段
         </span>
+      </div>
+      <div class="line">
+        3.过滤黑名单
+        <el-select  v-model="blackList._enable" style="width: 100px">
+          <el-option value="no" label="不过滤">不过滤</el-option>
+          <el-option value="yes" label="过滤">过滤</el-option>
+        </el-select>
+        &nbsp;
+        <el-select
+          placeholder="请选择"
+          v-model="blackList.list"
+          multiple
+          v-if="blackList?._enable === 'yes'"
+          style="width: 300px"
+        >
+          <el-option
+            v-for="item in blackListFields.records"
+            :value="item.id"
+            :label="item.blacklistName"
+          >
+            <span>{{ item.blacklistName }}</span>
+            <!-- <p>{{ item.blacklistDesc }}</p> -->
+          </el-option>
+        </el-select>
       </div>
       {{ dialogOptions.data }}
     </el-dialog>
@@ -129,4 +202,16 @@ function detailsData(data: any) {
 </template>
 
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.line{
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 16px;
+  text-align: left;
+  margin: 12px;
+  margin: 12px;
+  letter-spacing: 0.5px;
+}
+
+</style>
