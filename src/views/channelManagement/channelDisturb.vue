@@ -5,6 +5,7 @@ import {
 } from "~/api/index";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import DayJs from "dayjs";
+import API from "~/api/channelManagement";
 
 const types = [
   {
@@ -148,6 +149,14 @@ function detailsData(data: any) {
 
   dialogVisible.value = true
 }
+
+const onSubmit = async () => {
+    let res;
+      res = await API.updateGlobalDisturb({
+        ...dialogOptions
+      });
+ 
+};
 </script>
 
 <template>
@@ -231,6 +240,14 @@ function detailsData(data: any) {
           </el-option>
         </el-select>
       </div>
+
+      <template #footer>
+        <el-button @click="dialogVisible = false" round>
+          {{ dialogOptions?.type === 'detail' ? '返回' : '取消' }}
+        </el-button>
+        <el-button v-if="dialogOptions?.type !== 'detail'" @click.prevent="onSubmit()" round type="primary">保存</el-button>
+    
+      </template>
     </el-dialog>
   </template>
 </template>
