@@ -209,12 +209,12 @@ function formatDate(value: number) {
     <template #table="{ tableData }">
 
       <el-table :data="tableData">
-        <el-table-column label="交易日期" prop="trsDate">
+        <el-table-column label="交易日期" prop="trsDate" width="200">
           <template #default="{ row }">
             {{ formatDate(row.trsDate) }}
           </template>
         </el-table-column>
-        <el-table-column label="校对时间" prop="checkDate">
+        <el-table-column label="校对时间" prop="checkDate" width="200">
           <template #default="{ row }">
             {{ formatDate(row.checkDate) }}
           </template>
