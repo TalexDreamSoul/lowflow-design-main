@@ -4,6 +4,7 @@ import {
   getGlobalDisturbDetail, getBlackList
 } from "~/api/index";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
+import DayJs from "dayjs";
 
 const types = [
   {
@@ -103,12 +104,13 @@ function transformBlackListData() {
         return [startDate, endDate]
       },
       set(val) {
-        obj.startDate = val[0]
-        obj.endDate = val[1]
+        console.log(`output->val`,val)
+        obj.startDate = DayJs(val[0]).format("HH:MM")
+        obj.endDate =  DayJs(val[1]).format("HH:MM")
       }
     })
 
-    obj._enable = !!obj.blacklistList.length
+    obj._enable = !!obj.blacklistList?.length
 
     Object.defineProperty(obj, '$enable', {
       enumerable: true,
@@ -180,7 +182,7 @@ function detailsData(data: any) {
   <template v-if="dialogVisible">
     <el-dialog :title="dialogOptions?.type === 'update' ? '编辑渠道勿扰设置' : '查看渠道勿扰设置'" align-center v-model="dialogVisible"
       append-to-body>
-      {{ dialogOptions.data.$blacklistLimit }}
+      <!-- {{ dialogOptions.data.$blacklistLimit }} -->
       <div class="line">
         <span>1.每个客户触达次数限制：</span>
         <span>
@@ -208,8 +210,9 @@ function detailsData(data: any) {
         </span>
       </div>
       <div class="line">
-        <el-date-picker v-model="dialogOptions.data.$date" :disabled="dialogOptions?.disabled" type="daterange"
-          range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />&nbsp;
+        <el-time-picker is-range  format="HH:mm" style="width: 200px" v-model="dialogOptions.data.$date" :disabled="dialogOptions?.disabled"
+         type="daterange" unlink-panels range-separator="-" start-placeholder="开始时间"
+        end-placeholder="结束时间" />&nbsp;
         <span>为该渠道的默认勿扰时段
         </span>
       </div>
@@ -228,7 +231,6 @@ function detailsData(data: any) {
           </el-option>
         </el-select>
       </div>
-      {{ dialogOptions.data }}
     </el-dialog>
   </template>
 </template>
