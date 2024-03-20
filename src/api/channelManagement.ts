@@ -46,7 +46,7 @@ const customerAPI = {
   },
   // 更新权益
   updateEquity(data: any) {
-    return request.get({ url: `/api/updateEquity.do?id=${data}` });
+    return request.post({ url: `/api/updateEquity.do`, data });
   },
   // 权益上下线
   updateEquityStatus(data: any) {

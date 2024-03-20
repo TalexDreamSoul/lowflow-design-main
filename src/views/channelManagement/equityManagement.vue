@@ -176,11 +176,11 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     let res;
     if (modalType.value === DrawerType.Create) {
       res = await API.addEquity({
-        ...formValues,
+        ...formValues
       });
     } else {
       res = await API.updateEquity({
-        ...formValues,
+        ...formValues
       });
     }
     if (checkStringEqual(res?.code, 0)) {
@@ -303,7 +303,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       </el-form-item>
 
       <el-form-item :rules="[{ required: true, message: '请输入权益展示金额（米粒）' }]" label="权益展示金额（米粒）" prop="equityAmount">
-        <el-input v-model="formValues.equityAmount" placeholder="请输入权益展示金额（米粒）" clearable />
+        <el-input type="number" v-model="formValues.equityAmount" placeholder="请输入权益展示金额（米粒）" clearable />
       </el-form-item>
 
       <el-form-item :rules="[{ required: true, message: '请输入权益类别' }]" label="权益类别" prop="equityType">
