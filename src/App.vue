@@ -34,7 +34,8 @@ watchEffect(() => {
   $ignored: appOptions
 
   const { user }: any = appOptions.value
-  if (!user) {
+  console.log("user", user)
+  if (!user?.accountName?.length) {
     const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false)
 
     promise.then(() => router.push('/userCenter/personalInformation'))

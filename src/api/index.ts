@@ -225,3 +225,10 @@ export const getQryNqList = (data: any = {
     data
   })
 }
+
+export const getGlobalDisturbDetail = (data: any) => {
+  return request.post({
+    url: '/api/globalDisturbDetail.do',
+    data
+  })
+}
