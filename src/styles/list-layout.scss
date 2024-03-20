@@ -19,6 +19,10 @@
     display: flex;
   }
 
+  .el-select .el-select__wrapper, .el-input .el-input__wrapper, .el-date-editor {
+    min-height: 40px;
+  }
+
   .search {
     display: flex;
     justify-content: space-between;
@@ -34,6 +38,14 @@
 
       &-form-item {
         margin-bottom: 16px !important;
+        &__label {
+          height: 40px;
+          line-height: 40px;
+        }
+      }
+      
+      &-button {
+        height: 40px;
       }
 
       &-input {
@@ -175,6 +187,10 @@
 
     .el-dialog__body {
       padding-top: 14px;
+      padding-bottom: 24px;
+    }
+    .el-dialog__footer {
+      padding-top: 0px;
     }
   }
 }

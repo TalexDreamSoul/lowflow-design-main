@@ -126,6 +126,24 @@ export const routes: RouterOptions["routes"] = [
     ],
   },
   {
+    path: "/approve",
+    redirect: "/approve/activity",
+    children: [
+      {
+        path: "activity",
+        component: () => import("~/pages/approve/activity.vue"),
+      },
+      {
+        path: 'strategyProcess',
+        component: () => import("~/pages/approve/strategyProcess.vue"),
+      },
+      {
+        path: 'configuration',
+        component: () => import("~/pages/approve/configuration.vue"),
+      }
+    ],
+  },
+  {
     path: "/activityList",
     component: () => import("~/pages/activity/index.vue"),
   },
