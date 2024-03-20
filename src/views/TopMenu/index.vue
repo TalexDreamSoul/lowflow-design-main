@@ -34,15 +34,15 @@
         <touchMenuItem path="/channelManagement/channelDisturb">渠道勿扰设置</touchMenuItem>
         <touchMenuItem path="/channelManagement/equityManagement">权益管理</touchMenuItem>
       </TouchMenu>
-      <TouchMenu title="用户管理" path="/userCenter">
-        <touchMenuItem path="/userCenter/userManagement">用户管理</touchMenuItem>
-        <touchMenuItem path="/userCenter/rolesManagement">角色管理</touchMenuItem>
-        <touchMenuItem path="/userCenter/personalInformation">个人信息</touchMenuItem>
-      </TouchMenu>
       <TouchMenu title="审核中心" path="/approve">
         <touchMenuItem path="/approve/activity">H5活动审核</touchMenuItem>
         <touchMenuItem path="/approve/strategyProcess">策略流程审核</touchMenuItem>
         <touchMenuItem path="/approve/configuration">审核流程配置</touchMenuItem>
+      </TouchMenu>
+       <TouchMenu title="用户管理" path="/userCenter">
+        <touchMenuItem path="/userCenter/userManagement">用户管理</touchMenuItem>
+        <touchMenuItem path="/userCenter/rolesManagement">角色管理</touchMenuItem>
+        <touchMenuItem path="/userCenter/personalInformation">个人信息</touchMenuItem>
       </TouchMenu>
       <!-- <el-sub-menu index="8">
       <template #title>
