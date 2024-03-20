@@ -144,12 +144,12 @@ function detailsData(data: any) {
           <el-input-number
           :min="1"
           placeholder="填写次数"
-          style="width: 100px"
+          style="width: 120px"
           controls-position="right" />&nbsp;天内，最多通过营销平台触达 
         <el-input-number
         :min="1"
         placeholder="填写次数"
-        style="width: 100px"
+        style="width: 120px"
         controls-position="right" />&nbsp;次
         </span>
       </div>
