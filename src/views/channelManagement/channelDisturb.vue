@@ -4,6 +4,8 @@ import {
   getGlobalDisturbDetail, getBlackList
 } from "~/api/index";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
+import DayJs from "dayjs";
+import API from "~/api/channelManagement";
 
 const types = [
   {
@@ -109,12 +111,13 @@ function transformBlackListData() {
         return [startDate, endDate]
       },
       set(val) {
-        obj.startDate = val[0]
-        obj.endDate = val[1]
+        console.log(`output->val`,val)
+        obj.startDate = DayJs(val[0]).format("HH:MM")
+        obj.endDate =  DayJs(val[1]).format("HH:MM")
       }
     })
 
-    obj._enable = !!obj.blacklistList.length
+    obj._enable = !!obj.blacklistList?.length
 
     Object.defineProperty(obj, '$enable', {
       enumerable: true,
@@ -158,6 +161,14 @@ function detailsData(data: any) {
 
   dialogVisible.value = true
 }
+
+const onSubmit = async () => {
+    let res;
+      res = await API.updateGlobalDisturb({
+        ...dialogOptions.value
+      });
+ 
+};
 </script>
 
 <template>
@@ -219,8 +230,9 @@ function detailsData(data: any) {
         </span>
       </div>
       <div class="line">
-        <el-date-picker v-model="dialogOptions.data.$date" :disabled="dialogOptions?.disabled" type="daterange"
-          range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />&nbsp;
+        <el-time-picker is-range  format="HH:mm" style="width: 200px" v-model="dialogOptions.data.$date" :disabled="dialogOptions?.disabled"
+         type="daterange" unlink-panels range-separator="-" start-placeholder="开始时间"
+        end-placeholder="结束时间" />&nbsp;
         <span>为该渠道的默认勿扰时段
         </span>
       </div>
@@ -239,7 +251,14 @@ function detailsData(data: any) {
           </el-option>
         </el-select>
       </div>
-      {{ dialogOptions.data }}
+
+      <template #footer>
+        <el-button @click="dialogVisible = false" round>
+          {{ dialogOptions?.type === 'detail' ? '返回' : '取消' }}
+        </el-button>
+        <el-button v-if="dialogOptions?.type !== 'detail'" @click.prevent="onSubmit()" round type="primary">保存</el-button>
+    
+      </template>
     </el-dialog>
   </template>
 </template>

@@ -205,7 +205,7 @@ export const getBlackList = (data: {
 
 export const marketingTouchNodeStatistics = (data: any = {
   id: 0,
-  pageNum: 0,
+  pageNum: 1,
   pageSize: 10,
   touchNodeId: 0
 }) => {
@@ -216,7 +216,7 @@ export const marketingTouchNodeStatistics = (data: any = {
 }
 
 export const getQryNqList = (data: any = {
-  pageNum: 0,
+  pageNum: 1,
   pageSize: 10,
   trsDate: ""
 }) => {

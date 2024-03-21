@@ -72,8 +72,8 @@ function handleChange(value: any) {
     </template>
     <div class="Basic-Block-Content" v-show="disturb.enable">
       <el-form-item>
-        <el-time-picker is-range @change="handleChange" format="HH:MM" style="width: 200px" :disabled="readonly"
-          v-model="timeRange" type="daterange" unlink-panels range-separator="-" start-placeholder="开始时间"
+        <el-time-picker is-range @change="handleChange"   :disabled="readonly"
+          v-model="timeRange" type="daterange" range-separator="-" start-placeholder="开始时间"
           end-placeholder="结束时间" />
       </el-form-item>
       <el-text>为客户勿扰时间段，勿扰时间内触达则</el-text>
