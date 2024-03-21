@@ -6,6 +6,7 @@ import {
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import DayJs from "dayjs";
 import API from "~/api/channelManagement";
+import { ElMessage } from "element-plus";
 
 const types = [
   {
@@ -68,6 +69,7 @@ function transformBlackListData() {
 
   if (dialogOptions.value.data?.blacklistList?.length) {
     [...dialogOptions.value.data.blacklistList].forEach((item) => {
+      if ( !item ) return
       blackList.value.push(item.id);
     });
   }
@@ -111,9 +113,9 @@ function transformBlackListData() {
         return [startDate, endDate]
       },
       set(val) {
-        console.log(`output->val`,val)
+        console.log(`output->val`, val)
         obj.startDate = DayJs(val[0]).format("HH:MM")
-        obj.endDate =  DayJs(val[1]).format("HH:MM")
+        obj.endDate = DayJs(val[1]).format("HH:MM")
       }
     })
 
@@ -163,11 +165,20 @@ function detailsData(data: any) {
 }
 
 const onSubmit = async () => {
-    let res;
-      res = await API.updateGlobalDisturb({
-        ...dialogOptions.value
-      });
- 
+  let res: any;
+  res = await API.updateGlobalDisturb({
+    ...dialogOptions.value.data
+  });
+
+  if (res.data) {
+    ElMessage({
+      message: "修改成功！",
+      type: "info"
+    })
+
+    location.reload()
+  }
+
 };
 </script>
 
@@ -230,9 +241,9 @@ const onSubmit = async () => {
         </span>
       </div>
       <div class="line">
-        <el-time-picker is-range  format="HH:mm" style="width: 200px" v-model="dialogOptions.data.$date" :disabled="dialogOptions?.disabled"
-         type="daterange" unlink-panels range-separator="-" start-placeholder="开始时间"
-        end-placeholder="结束时间" />&nbsp;
+        <el-time-picker is-range format="HH:mm" style="width: 200px" v-model="dialogOptions.data.$date"
+          :disabled="dialogOptions?.disabled" type="daterange" unlink-panels range-separator="-"
+          start-placeholder="开始时间" end-placeholder="结束时间" />&nbsp;
         <span>为该渠道的默认勿扰时段
         </span>
       </div>
@@ -256,8 +267,9 @@ const onSubmit = async () => {
         <el-button @click="dialogVisible = false" round>
           {{ dialogOptions?.type === 'detail' ? '返回' : '取消' }}
         </el-button>
-        <el-button v-if="dialogOptions?.type !== 'detail'" @click.prevent="onSubmit()" round type="primary">保存</el-button>
-    
+        <el-button v-if="dialogOptions?.type !== 'detail'" @click.prevent="onSubmit()" round
+          type="primary">保存</el-button>
+
       </template>
     </el-dialog>
   </template>
