@@ -238,9 +238,13 @@ function formatDate(value: number) {
       </el-table>
       <el-pagination v-model:current-page="colmPage" v-model:page-size="colmpageSize" background layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="colmDatatotal" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </div>
-    <div class="pd-drawer-footer">
-      <el-button @click="modalVisible = false" round>返回</el-button>
-    </div>
+
+    <template #footer>
+
+      <div class="pd-drawer-footer">
+        <el-button @click="modalVisible = false" round>返回</el-button>
+      </div>
+    </template>
   </el-drawer>
 </template>
 
