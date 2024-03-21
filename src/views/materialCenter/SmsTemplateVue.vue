@@ -119,7 +119,7 @@ const updateMaterialStatusData = async (row: any, status: String) => {
 };
 
 const detailsData = async (row: any) => {
-  updateData(row, true);
+  updateData(row, true,'details');
 };
 
 const addData = async () => {
@@ -129,7 +129,7 @@ const addData = async () => {
   // @ts-ignore force
   createTemplatePopover(name, route.params.type).then(fetchDataApi);
 };
-const updateData = (row: any, readonly: boolean = false) => {
+const updateData = (row: any, readonly: boolean = false,type?: any) => {
   const { content, ...rest } = row;
   if (route.params.type == "digital") {
     value.value = row;
@@ -137,7 +137,7 @@ const updateData = (row: any, readonly: boolean = false) => {
     value.value = { ...content, ...rest };
   }
 
-  if (row.usedCount > 0) {
+  if (row.usedCount > 0&&type!= "details") {
     ElMessageBox.alert(
       `当前有${row.usedCount}个策略流程正在使用该模版（流程${row.usedTouchNames}正在使用），确认后该修改内容会更新至正在使用的流程中`,
       "确认编辑",
