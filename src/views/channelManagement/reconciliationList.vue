@@ -204,7 +204,7 @@ function formatDate(value: number) {
     <div class="pd-drawer-header">误差详情</div>
     <div class=" pd-drawer-content">
       <el-table :data="colmData">
-        <el-table-column label="请求ID" prop="id	" width="200">
+        <el-table-column label="请求ID" prop="id" width="200">
 
         </el-table-column>
         <el-table-column label="客户ID" prop="customId" width="200">
