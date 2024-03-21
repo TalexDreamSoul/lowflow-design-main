@@ -79,24 +79,19 @@ const setignoreTrsRecord = async (params: any) => {
     customClass: "delete-modal",
   }).then(async () => {
     let res = await API.ignoreTrsRecord({
-      id:params.id,
-      status:'ignore'
-
+      id: params.id,
+      status: "ignore",
     });
-     if (res?.code == 0) {
-      // colmData.value = res?.data?.total;
-      // colmDatatotal.value = res?.data?.records;
+    if (res?.code == 0) {
       ElMessage.success(res.message);
+      getData();
     }
   });
   try {
-   
- 
   } catch (error) {
     console.error(error);
   }
 };
-
 
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);
@@ -117,17 +112,20 @@ const colmDatatotal = ref(0); // 总数
 const colmData = ref([]); // 表格数据
 const colmPage = ref(1);
 const colmpageSize = ref(10);
+const colmtrsDate = ref("");
 
-const getData = async (params: any) => {
+const getData = async (params?: any) => {
+  if (params.trsDate) colmtrsDate.value = formatDate(params.trsDate);
   try {
     let res = await API.qryNqTrsList({
-      trsDate: formatDate(params.trsDate),
+      trsDate: colmtrsDate.value,
       pageNum: 1,
       pageSize: 10,
     });
     if (checkStringEqual(res?.code, 0)) {
-      colmData.value = res?.data?.total;
-      colmDatatotal.value = res?.data?.records;
+      colmData.value = res?.data?.records;
+      colmDatatotal.value = res?.data?.total;
+      console.error(colmDatatotal, "colmDatatotal");
     }
   } catch (error) {
     console.error(error);
@@ -135,7 +133,7 @@ const getData = async (params: any) => {
 };
 
 function formatDate(value: number) {
-  const format = "YYYY-MM-DD HH:mm";
+  const format = "YYYY-MM-DD";
 
   return dayjs(value).format(format);
 }
@@ -207,15 +205,15 @@ function formatDate(value: number) {
     <div class=" pd-drawer-content">
       <el-table :data="colmData">
         <el-table-column label="请求ID" prop="id	" width="200">
-        
+
         </el-table-column>
         <el-table-column label="客户ID" prop="customId" width="200">
-        
+
         </el-table-column>
         <el-table-column label="请求类型" width="180" prop="trsSourceType">
           <!-- touch 触达、h5 内容制作 -->
           <template #default="scope">
-              {{ scope.row.trsSourceType=='touch'?'触达':'内容制作' }}
+            {{ scope.row.trsSourceType=='touch'?'触达':'内容制作' }}
           </template>
         </el-table-column>
         <el-table-column label="请求内容" width="180" prop="trsContent" />
@@ -227,13 +225,13 @@ function formatDate(value: number) {
           </template>
         </el-table-column>
         <el-table-column label="误差原因" width="180" prop="trsChatContent">
-        
+
         </el-table-column>
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-space wrap>
-              <el-link type="primary" @click="fetchDataApi()">重新发送请求</el-link>
-              <el-link type="primary" @click="setignoreTrsRecord(scope.row)" >忽略</el-link>
+              <el-link type="primary" @click="getData()">重新发送请求</el-link>
+              <el-link type="primary" @click="setignoreTrsRecord(scope.row)">忽略</el-link>
             </el-space>
           </template>
         </el-table-column>

@@ -153,7 +153,7 @@ function detailsData(data: any) {
 const onSubmit = async () => {
     let res;
       res = await API.updateGlobalDisturb({
-        ...dialogOptions
+        ...dialogOptions.value
       });
  
 };
