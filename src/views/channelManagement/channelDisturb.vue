@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { reactive, ref, watch } from "vue";
 import {
   getGlobalDisturbDetail, getBlackList
 } from "~/api/index";
@@ -33,7 +33,7 @@ const dialogOptions = ref<{ type: 'update' | 'detail' } & any>({});
 const blackListFields = ref();
 
 !(async () => {
-  const res = await getBlackList({});
+  const res: any = await getBlackList({});
 
   if (res.data) {
     blackListFields.value = res.data;
@@ -41,27 +41,33 @@ const blackListFields = ref();
     transformBlackListData();
   }
 })();
-const blackList = reactive<{
-  _enable: "no" | "yes";
-  list: Array<any>;
-  data: Array<any>;
-}>({
-  _enable: "no",
-  list: [],
-  data: [],
-});
+const blackList = ref<Array<any>>([]);
+
+watch(() => blackList.value, val => {
+  if (!val?.length) return
+
+  dialogOptions.value.data.blacklistList = blackList.value.map((item) => {
+    const res = [...blackListFields.value.records].find((each) => +each.id === +item);
+
+    if (!res) return
+
+    return {
+      id: res.id,
+      blacklistName: res.blacklistName,
+    };
+  })
+
+  console.log('233', dialogOptions.value.data)
+
+}, { immediate: true })
 
 function transformBlackListData() {
-  // console.log("transform blacklist", blackList);
+  blackList.value.length = 0
 
-
-  if (blackList.data.length) {
-    [...blackList.data].forEach((item) => {
-      blackList.list.push(item.id);
+  if (dialogOptions.value.data?.blacklistList?.length) {
+    [...dialogOptions.value.data.blacklistList].forEach((item) => {
+      blackList.value.push(item.id);
     });
-
-    // 去重
-    blackList.list = [...new Set(blackList.list)]
   }
 }
 (() => {
@@ -134,6 +140,10 @@ function updateData(data: any) {
     data
   })
 
+  transformBlackListData()
+
+  console.log(blackList)
+
   dialogVisible.value = true
 }
 
@@ -143,6 +153,8 @@ function detailsData(data: any) {
     disabled: true,
     data
   })
+
+  transformBlackListData()
 
   dialogVisible.value = true
 }
@@ -180,7 +192,6 @@ function detailsData(data: any) {
   <template v-if="dialogVisible">
     <el-dialog :title="dialogOptions?.type === 'update' ? '编辑渠道勿扰设置' : '查看渠道勿扰设置'" align-center v-model="dialogVisible"
       append-to-body>
-      {{ dialogOptions.data.$blacklistLimit }}
       <div class="line">
         <span>1.每个客户触达次数限制：</span>
         <span>
@@ -220,7 +231,7 @@ function detailsData(data: any) {
           <el-option label="过滤" value="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select :disabled="dialogOptions?.disabled" placeholder="请选择" v-model="dialogOptions.list" multiple
+        <el-select :disabled="dialogOptions?.disabled" placeholder="请选择" v-model="blackList" multiple
           v-if="dialogOptions.data._enable" style="width: 300px">
           <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
