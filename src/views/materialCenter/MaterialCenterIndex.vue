@@ -55,7 +55,7 @@ function getNameByValue(data: any[], val: string) {
   return item ? item.name : "";
 }
 
-const materialTypeName = ref(getNameByValue(materialType, route.params.type));
+const materialTypeName = ref(getNameByValue(materialType,  String(route.params.type).replace('Template', '')));
 
 console.log(materialTypeName); // 输出：短信
 onMounted(async () => {
@@ -66,8 +66,8 @@ watch(
   () => route.fullPath,
   (val) => {
     console.log(`output->val`, val);
-    materialTypeName.value = getNameByValue(materialType, route.params.type);
-    formInline.type = route.params.type;
+    materialTypeName.value = getNameByValue(materialType, String(route.params.type).replace('Template', ''));
+    formInline.type = String(route.params.type).replace('Template', '')
     fetchDataApi();
   }
 );
@@ -130,11 +130,11 @@ const addData = async () => {
   let name = "新建" + materialTypeName.value + "模版";
 
   // @ts-ignore force
-  createTemplatePopover(name, route.params.type).then(fetchDataApi);
+  createTemplatePopover(name, formInline.type).then(fetchDataApi);
 };
 const updateData = (row: any, readonly: boolean = false, type?: any) => {
   const { content, ...rest } = row;
-  if (route.params.type == "digital") {
+  if (formInline.type == "digital") {
     value.value = row;
   } else {
     value.value = { ...content, ...rest };
@@ -156,7 +156,7 @@ const updateData = (row: any, readonly: boolean = false, type?: any) => {
         (!readonly ? "编辑" : "查看") + materialTypeName.value + "模版";
       createTemplatePopover(
         name,
-        !readonly ? route.params.type : row.type,
+        !readonly ? formInline.type : row.type,
         value,
         readonly ? "details" : "update",
         readonly
@@ -167,7 +167,7 @@ const updateData = (row: any, readonly: boolean = false, type?: any) => {
     let name = (!readonly ? "编辑" : "查看") + materialTypeName.value + "模版";
     createTemplatePopover(
       name,
-      !readonly ? route.params.type : row.type,
+      !readonly ? formInline.type : row.type,
       value,
       readonly ? "details" : "update",
       readonly
@@ -193,7 +193,7 @@ const changeTime = (val: any) => {
 </script>
 
 <template>
-  <CustomEventComponent :title="route.params.type == 'all' ? `${materialTypeName}` : `${materialTypeName}模版列表`
+  <CustomEventComponent :title="formInline.type == 'all' ? `${materialTypeName}` : `${materialTypeName}模版列表`
     " :tableData="tableData" :total="total">
     <template #search>
       <div class="search">
@@ -202,7 +202,7 @@ const changeTime = (val: any) => {
             <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期"
               end-placeholder="结束日期" :size="size" @change="changeTime" />
           </el-form-item>
-          <el-form-item v-if="route.params.type == 'all'">
+          <el-form-item v-if="formInline.type == 'all'">
             <el-select v-model="formInline.type" style="width: 200px" placeholder="模板类型">
               <el-option v-for="item in materialType" :label="item.name" :value="item.value" />
             </el-select>
@@ -218,7 +218,7 @@ const changeTime = (val: any) => {
               style="width: 200px" :suffix-icon="Search" />
           </el-form-item>
         </el-form>
-        <div v-if="route.params.type != 'all'">
+        <div v-if="formInline.type != 'all'">
           <el-button type="primary" class="add" @click="addData()" round>新建{{ materialTypeName }}模版</el-button>
         </div>
       </div>
@@ -249,7 +249,7 @@ const changeTime = (val: any) => {
         </el-table-column>
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
-            <el-space wrap v-if="route.params.type != 'all'">
+            <el-space wrap v-if="formInline.type != 'all'">
               <el-link type="primary" v-if="scope.row.status == 'offline'"
                 @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
               <el-link type="primary" v-if="scope.row.status !== 'offline'"

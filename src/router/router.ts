@@ -48,7 +48,7 @@ export const routes: RouterOptions["routes"] = [
     redirect: "/dictCenter/event",
     children: [
       {
-        path: "event",
+        path: "eventDict",
         component: () => import("~/pages/configuration/event.vue"),
       },
       {
@@ -62,11 +62,11 @@ export const routes: RouterOptions["routes"] = [
     redirect: "/customCenter/list",
     children: [
       {
-        path: "list",
+        path: "customList",
         component: () => import("~/pages/customer/list.vue"),
       },
       {
-        path: "tag",
+        path: "customLabel",
         component: () => import("~/pages/customer/tag.vue"),
       },
       {
@@ -113,7 +113,7 @@ export const routes: RouterOptions["routes"] = [
     redirect: "/userCenter/userManagement",
     children: [
       {
-        path: "userManagement",
+        path: "userManage",
         component: () => import("~/views/userCenter/userManagement.vue"),
       },
       {
@@ -121,7 +121,7 @@ export const routes: RouterOptions["routes"] = [
         component: () => import("~/views/userCenter/rolesManagement.vue"),
       },
       {
-        path: "personalInformation",
+        path: "userDetail",
         component: () => import("~/views/userCenter/personalInformation.vue"),
       }
     ],
