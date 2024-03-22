@@ -4,11 +4,13 @@ import dayjs from "dayjs";
 import API from "~/api/account";
 import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
-import { ElMessageBox, ElMessage, FormInstance, ElTree } from "element-plus";
+import {
+  ElMessageBox,
+  ElMessage,
+  FormInstance,
+} from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
-import { checkStringEqual, debounce } from '~/utils/common';
-import RoleFlatMap from "./role/RoleFlatMap.vue";
-import RoleSelect from "./tree/RoleSelect.vue";
+import { checkStringEqual, debounce } from "~/utils/common";
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
@@ -43,17 +45,10 @@ const defaultFormValues = {
 };
 let formValues = reactive<any>({ ...defaultFormValues });
 const modalVisible = ref(false);
-const selectList = ref([[], [], []])
-const checked = ref([])
 const modalType = ref<any>(DrawerType.Create);
 const formRef = ref<FormInstance>();
-const treeProps = {
-  children: 'subMenus',
-  label: 'menuName',
-  hasChildren(node: { subMenus: null; }) {
-    return node.subMenus !== null; // 当 subMenus 不为 null 时显示展开符号
-  }
-};
+
+
 onMounted(async () => {
   fetchDataApi();
   fetchqryMenuList();
@@ -62,7 +57,6 @@ onMounted(async () => {
 watch([currentPage, pageSize, formInline], () => {
   fetchDataApi();
 });
-
 
 const fetchqryroleDetail = async (id: any) => {
   const res = await API.roleDetail(id);
@@ -93,7 +87,7 @@ const delData = async (row: any) => {
     customClass: "delete-modal",
   }).then(async () => {
     let res = await API.deleteRole({
-      id: row.id
+      id: row.id,
     });
     if (res?.code == 0) {
       fetchDataApi();
@@ -116,13 +110,15 @@ const handleModal = async (type: string, values?: any) => {
     }
     Object.assign(formValues, defaultFormValues);
   } else if (type === DrawerType.Edit) {
-    fetchqryroleDetail(values?.id)
+    fetchqryroleDetail(values?.id);
   }
   modalType.value = type;
   modalVisible.value = true;
 };
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
+  console.error(formValues, "formValues");
+  formValues.menuIds = formValues.menuIds.flat(1);
   try {
     await formEl.validate();
     let res = { code: "0000" };
@@ -151,8 +147,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         <el-form :inline="true">
 
           <el-form-item>
-            <el-input v-model="formInline.roleName" placeholder="角色名称" clearable style="width:200px"
-              :suffix-icon="Search" />
+            <el-input v-model="formInline.roleName" placeholder="角色名称" clearable style="width:200px" :suffix-icon="Search" />
           </el-form-item>
 
         </el-form>
@@ -178,14 +173,11 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       </el-table>
     </template>
     <template #pagination>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background
-        layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total"
-        @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </template>
   </CustomEventComponent>
 
-  <el-dialog width="650" destroy-on-close :close-on-click-modal="false" v-model="modalVisible"
-    :title="ModalTitleMap[modalType]">
+  <el-dialog width="650" destroy-on-close :close-on-click-modal="false" v-model="modalVisible" :title="ModalTitleMap[modalType]">
     <el-form ref="formRef" :hide-required-asterisk="true" label-position="top" class="form" :model="formValues">
       <el-form-item :rules="[
     { required: true, message: '请输入帐号名称' },
@@ -203,12 +195,26 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       <el-form-item :rules="[
     { required: true, message: '请输入角色权限' },
   ]" label="角色权限" prop="menuIds">
-        <div style="height: 500px; width:100%;overflow: scroll;">
-          <!-- <el-tree :data="MenuList" show-checkbox node-key="id" :default-expand-all="true"
-            :default-checked-keys="formValues.menuIds" :props="treeProps" /> -->
-          <!-- <RoleSelect :select="selectList" :data="MenuList" /> -->
-          <RoleFlatMap :checked="checked" :data="MenuList" />
-        </div>
+
+        <el-cascader-panel v-model="formValues.menuIds" class="custom-cascader" :options="MenuList" :props="{
+    expandTrigger: 'hover',
+    multiple: true,
+    checkStrictly: false,
+    emitPath: true,
+    lazy: false,
+    lazyLoad: false,
+    value: 'id', // 根据实际情况填写
+    label: 'menuName', // 根据实际情况填写
+    children: 'subMenus',
+    disabled: false,
+    leaf: true
+  }">
+          <template #default="{ node, data }">
+            <span>{{ data.menuName }}</span>
+            <span v-if="data.subMenus?.length>=1"> ({{ data.subMenus?.length }}) </span>
+          </template>
+        </el-cascader-panel>
+
       </el-form-item>
     </el-form>
     <template #footer>
@@ -223,4 +229,11 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
 <style lang="scss" scoped>
 @import "./material.scss";
+.custom-cascader {
+  background: #f7f8fb;
+  width: 100%;
+}
+.el-cascader-menu {
+  min-width: 300px !important; /* 设置每列的宽度 */
+}
 </style>
