@@ -16,12 +16,15 @@ import { de, el } from "element-plus/es/locale";
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
+
+console.log("1", String(route.params.type).replace('Template', ''))
+
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
 const formInline = reactive({
   name: "",
   // type	素材类型：sms 短信，appPush app消息，digital 数字员工，outbound 智能外呼，znx 站内信
-  type: route.params.type,
+  type: String(route.params.type).replace('Template', ''),
   beginTime: "",
   endTime: "",
   status: "",
@@ -119,7 +122,7 @@ const updateMaterialStatusData = async (row: any, status: String) => {
 };
 
 const detailsData = async (row: any) => {
-  updateData(row, true,'details');
+  updateData(row, true, 'details');
 };
 
 const addData = async () => {
@@ -129,7 +132,7 @@ const addData = async () => {
   // @ts-ignore force
   createTemplatePopover(name, route.params.type).then(fetchDataApi);
 };
-const updateData = (row: any, readonly: boolean = false,type?: any) => {
+const updateData = (row: any, readonly: boolean = false, type?: any) => {
   const { content, ...rest } = row;
   if (route.params.type == "digital") {
     value.value = row;
@@ -137,7 +140,7 @@ const updateData = (row: any, readonly: boolean = false,type?: any) => {
     value.value = { ...content, ...rest };
   }
 
-  if (row.usedCount > 0&&type!= "details") {
+  if (row.usedCount > 0 && type != "details") {
     ElMessageBox.alert(
       `当前有${row.usedCount}个策略流程正在使用该模版（流程${row.usedTouchNames}正在使用），确认后该修改内容会更新至正在使用的流程中`,
       "确认编辑",
@@ -190,14 +193,14 @@ const changeTime = (val: any) => {
 </script>
 
 <template>
-  <CustomEventComponent :title="
-      route.params.type == 'all' ? `${materialTypeName}` : `${materialTypeName}模版列表`
+  <CustomEventComponent :title="route.params.type == 'all' ? `${materialTypeName}` : `${materialTypeName}模版列表`
     " :tableData="tableData" :total="total">
     <template #search>
       <div class="search">
         <el-form :inline="true">
           <el-form-item label="创建时间：">
-            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime " />
+            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期"
+              end-placeholder="结束日期" :size="size" @change="changeTime" />
           </el-form-item>
           <el-form-item v-if="route.params.type == 'all'">
             <el-select v-model="formInline.type" style="width: 200px" placeholder="模板类型">
@@ -211,7 +214,8 @@ const changeTime = (val: any) => {
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width: 200px" :suffix-icon="Search" />
+            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable
+              style="width: 200px" :suffix-icon="Search" />
           </el-form-item>
         </el-form>
         <div v-if="route.params.type != 'all'">
@@ -225,11 +229,10 @@ const changeTime = (val: any) => {
         <el-table-column label="模版名称" prop="name" />
         <el-table-column label="状态">
           <template #default="scope">
-            <el-tag class="mx-1" :type="
-                statusLabels[scope.row.status].type
-                  ? statusLabels[scope.row.status].type
-                  : 'info'
-              " effect="light">
+            <el-tag class="mx-1" :type="statusLabels[scope.row.status].type
+    ? statusLabels[scope.row.status].type
+    : 'info'
+    " effect="light">
               {{ statusLabels[scope.row.status].Text }}
             </el-tag>
           </template>
@@ -240,15 +243,17 @@ const changeTime = (val: any) => {
         <el-table-column label="正在使用" prop="usedCount">
           <template #default="scope">
             <span :style="scope.row.usedCount > 0 ? 'color: #00C068' : 'color: #333'">{{
-              scope.row.usedCount
-            }}</span>
+    scope.row.usedCount
+  }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-space wrap v-if="route.params.type != 'all'">
-              <el-link type="primary" v-if="scope.row.status == 'offline'" @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
-              <el-link type="primary" v-if="scope.row.status !== 'offline'" @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
+              <el-link type="primary" v-if="scope.row.status == 'offline'"
+                @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
+              <el-link type="primary" v-if="scope.row.status !== 'offline'"
+                @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
               <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
               <el-link type="primary" @click="delData(scope.row)">删除</el-link>
 
@@ -260,7 +265,9 @@ const changeTime = (val: any) => {
       </el-table>
     </template>
     <template #pagination>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background
+        layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total"
+        @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </template>
   </CustomEventComponent>
 </template>

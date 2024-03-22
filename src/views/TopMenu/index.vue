@@ -4,14 +4,12 @@
     <div class="TopMenu-Container-Start">
       <img style="width: 169px; height: 39px;margin: auto 8rem auto 1rem" :src="HeaderIcon" alt="" />
 
-      <TouchMenu title="营销制作">
-        <touchMenuItem path="/activityList">H5活动列表</touchMenuItem>
-        <!-- <li @click="handleloca">活动编辑器</li> -->
+      <TouchMenu :title="item.menuName" v-for="item in menuMap">
+        <touchMenuItem v-for="each in item.children" :path="`/${item.menuCode}/${each.menuCode}`">{{ each.menuName }}
+        </touchMenuItem>
       </TouchMenu>
-      <TouchMenu title="营销触达" path="/strategyProcess">
-        <touchMenuItem path="/strategyProcess/list">策略流程列表</touchMenuItem>
-      </TouchMenu>
-      <TouchMenu title="素材中心" path="/materialCenter">
+
+      <!-- <TouchMenu title="素材中心" path="/materialCenter">
         <touchMenuItem path="/materialCenter/templatePanel/all">模版总览</touchMenuItem>
         <touchMenuItem path="/materialCenter/templatePanel/sms">短信模版</touchMenuItem>
         <touchMenuItem path="/materialCenter/templatePanel/outbound">外呼模版</touchMenuItem>
@@ -39,11 +37,12 @@
         <touchMenuItem path="/approve/strategyProcess">策略流程审核</touchMenuItem>
         <touchMenuItem path="/approve/configuration">审核流程配置</touchMenuItem>
       </TouchMenu>
-       <TouchMenu title="用户管理" path="/userCenter">
+      <TouchMenu title="用户管理" path="/userCenter">
         <touchMenuItem path="/userCenter/userManagement">用户管理</touchMenuItem>
         <touchMenuItem path="/userCenter/rolesManagement">角色管理</touchMenuItem>
         <touchMenuItem path="/userCenter/personalInformation">个人信息</touchMenuItem>
-      </TouchMenu>
+      </TouchMenu> -->
+
       <!-- <el-sub-menu index="8">
       <template #title>
         <div class="title">审核中心 <el-icon :size="12">
@@ -60,7 +59,7 @@
 </template>
 
 <script lang="ts" setup>
-import { inject, watchEffect, reactive } from "vue";
+import { inject, watchEffect, reactive, ref } from "vue";
 import MenuPersonal from "./MenuPersonal.vue";
 import { useRouter } from "vue-router";
 import HeaderIcon from "~/assets/header-icon.png";
@@ -69,14 +68,14 @@ import TouchMenu from "./TouchMenu.vue";
 import TouchMenuItem from "./TouchMenuItem.vue";
 
 const appOptions: any = inject('appOptions')!
+const menuMap = ref()
 
 watchEffect(() => {
   // $ignored: appOptions.value
   if (!appOptions.value?.menu) return
 
   const { menus, menuIds } = appOptions.value.menu
-  // const filteredMenu = [...menus].filter((item: any) => menuIds.includes(item.id))
-  const filteredMenu = [];
+  const filteredMenu = [...menus].filter((item: any) => menuIds.includes(item.id))
 
   const map: any = {}
 
@@ -106,9 +105,11 @@ watchEffect(() => {
 
   });
 
-  [...clearCodes ].forEach((code: string) => delete map[code])
+  [...clearCodes].forEach((code: string) => delete map[code])
 
-  console.log(filteredMenu, map)
+  menuMap.value = map
+
+  console.log("1", map)
 
 })
 
