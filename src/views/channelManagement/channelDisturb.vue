@@ -138,6 +138,10 @@ function transformBlackListData() {
 
 })()
 
+function genDate(num: any) {
+  
+}
+
 function updateData(data: any) {
   Object.assign(dialogOptions.value, {
     type: 'update',

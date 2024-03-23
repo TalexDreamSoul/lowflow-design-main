@@ -175,14 +175,19 @@ const pushTemplate = computed(() => {
 })
 
 const delayedActionStr = computed(() => {
-  const action = data?.nodeDelayed?.delayedAction
-  if (!action) return ''
+  const action = data?.nodeDelayed?.delayedAction;
+  if (!action) return "";
 
-  if (action === 'touch') return '发送触达'
-  if (action === 'label') return '打上标签'
-  if (action === 'touchAndLabel') return '发送触达并打上标签'
-  return '不执行动作'
-})
+  if (action === "touch") return "发送触达";
+
+  const { labelName, labelValue } = data?.labelContent || {}
+
+  const _LABEL = (labelName) ? `${labelName}:${labelValue}` : ""
+
+  if (action === "label") return "打上标签" + _LABEL;
+  if (action === "touchAndLabel") return "发送触达并打上标签" + _LABEL;
+  return "不执行动作";
+});
 
 provide('save', (regFunc: () => boolean) => {
   _saveFunc = regFunc

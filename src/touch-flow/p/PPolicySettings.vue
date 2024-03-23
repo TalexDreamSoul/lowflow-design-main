@@ -170,8 +170,13 @@ const delayedActionStr = computed(() => {
   if (!action) return "";
 
   if (action === "touch") return "发送触达";
-  if (action === "label") return "打上标签";
-  if (action === "touchAndLabel") return "发送触达并打上标签";
+
+  const { labelName, labelValue } = data?.labelContent || {}
+
+  const _LABEL = (labelName) ? `${labelName}:${labelValue}` : ""
+
+  if (action === "label") return "打上标签" + _LABEL;
+  if (action === "touchAndLabel") return "发送触达并打上标签" + _LABEL;
   return "不执行动作";
 });
 
