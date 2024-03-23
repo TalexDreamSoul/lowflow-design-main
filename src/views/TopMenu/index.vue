@@ -4,7 +4,7 @@
     <div class="TopMenu-Container-Start">
       <img style="width: 169px; height: 39px;margin: auto 8rem auto 1rem" :src="HeaderIcon" alt="" />
 
-      <TouchMenu :title="item.menuName" v-for="item in menuMap">
+      <TouchMenu :path="`/${item.menuCode}`" :title="item.menuName" v-for="item in menuMap">
         <touchMenuItem v-for="each in item.children" :path="`/${item.menuCode}/${each.menuCode}`">{{ each.menuName }}
         </touchMenuItem>
       </TouchMenu>
