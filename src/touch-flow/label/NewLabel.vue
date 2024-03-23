@@ -82,7 +82,7 @@ watch(() => props.p.labelContent?.labelName, () => {
         </el-select>
         &nbsp;
         <el-select v-if="selectItem?.labelValue?.data?.[0]?.length" v-model="p.labelContent.labelValue" placeholder="标签值"
-          style="width: 150px">
+          style="width: 150px" multiple>
           <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
         </el-select>
         标签
