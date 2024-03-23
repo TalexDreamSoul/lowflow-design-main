@@ -19,7 +19,7 @@ const defaultProps = {
   label: 'menuName',
 }
 
-console.log("rs", props, data1.value)
+console.log("rs", props)
 
 function transformData(data: any) {
 
@@ -48,30 +48,42 @@ watchEffect(() => {
 function select(data: any, floor: number) {
   if (floor === 0) {
     // 第一层
-    const floor1Checked = [data] //dom1.value.getCheckedNodes()
+    const floor1Checked = dom1.value.getCheckedNodes()
+    const totalData = props.data
+
+    // 筛选出没有选中的node
+    const checkoutList = [...totalData].filter((item: any) => floor1Checked.some((each: any) => each.id === item.id))
+    props.select[0] = [...checkoutList].map(item => item.id)
 
     const pendingList: any[] = []
 
-    const arr = [...floor1Checked].map(each => {
+    // 对每一个选中的递归去选中子元素
+    const arr = [...checkoutList].map(each => {
       const { subMenus } = each
 
-      return subMenus.map(_each => {
+      return subMenus.map((_each: any) => {
 
         pendingList.push(() => select(_each, 1))
-
-        console.log("_Each", _each)
 
         return _each.id
       })
     }).flat()
 
-    dom2.value.setCheckedKeys(arr)
+    props.select[1] = new Set([...props.select[1], ...arr])
 
     setTimeout(() => {
       pendingList.forEach(a => a())
-    }, 0);
 
-    console.log("1", floor1Checked, arr, dom2)
+      floor1Change(dom1.value.getCurrentNode())
+
+      // 清空没有选中node的id => 递归
+      const checkoutListNodes = [...checkoutList].map(item => item.subMenus).flat()
+
+      props.select[1] = new Set([...props.select[1]].filter(item => !checkoutListNodes.some(each => each.id === item)))
+      dom2.value.setCheckedKeys(props.select[1])
+
+      console.log("HERE", checkoutListNodes)
+    }, 0);
   } else if (floor === 1) {
     // 第二层
     // const floor2Checked = data //dom2.value.getCheckedNodes()
@@ -80,7 +92,8 @@ function select(data: any, floor: number) {
 
     const arr = [...data.subMenus].map(each => each.id)
 
-    dom3.value.setCheckedKeys(arr)
+    // dom3.value.setCheckedKeys(arr)
+    props.select[2] = new Set([...props.select[2], ...arr])
 
     // const floor2Checked = dom2.value.getCheckedNodes()
 
@@ -97,8 +110,6 @@ function select(data: any, floor: number) {
 
     console.log('3', arr, data)
   }
-
-
 }
 
 function handleSave() {
@@ -108,11 +119,9 @@ function handleSave() {
 function floor1Check(checkedNodes: any) {
   const { $treeNodeId } = checkedNodes
 
-  console.log("checkedNodes", checkedNodes)
+  console.log("第一层选中", checkedNodes)
 
   dom1.value.setCurrentKey($treeNodeId)
-
-  // const node = dom1.value.getNode($treeNodeId)
 
   floor1Change(checkedNodes)
 
@@ -122,6 +131,10 @@ function floor1Check(checkedNodes: any) {
 function floor1Change(data: any) {
   console.log("floor1", data)
 
+  dom2.value.setCheckedKeys(props.select[1])
+
+  console.log(props.select)
+
   data2.value = [...data.subMenus]
   data3.value = []
 }
@@ -129,7 +142,35 @@ function floor1Change(data: any) {
 function floor2Change(data: any, node: any) {
   console.log("floor2", data, node)
 
+  dom3.value.setCheckedKeys(props.select[2])
+
   data3.value = [...data.subMenus]
+}
+
+function areArraysEqual(arr1, arr2) {
+  // 使用 every() 方法检查两个数组是否完全一样
+  return arr1.every((item, index) => [ ...arr2 ].includes(item));
+}
+
+/**
+ * 返回三个数字
+ * 2: 代表全选
+ * 1: 代表半选
+ * 0: 代表未选
+ */
+function getCheckStatus(data: any, floor: number = 1) {
+  const selected = props.select[1]
+  const thisArr = [...data.subMenus].map((item: any) => item.id)
+
+  // 判断选中是否为空
+  if (!selected.length) return 0;
+
+  // 判断 selected 和 thisArr 必须完全一样
+  if (areArraysEqual(selected, thisArr)) {
+    return 2
+  }
+
+  return 1
 }
 
 defineExpose({ handleSave })
@@ -137,8 +178,12 @@ defineExpose({ handleSave })
 
 <template>
   <div class="RoleSelect">
-    <el-tree @check="floor1Check" @current-change="floor1Change" ref="dom1" :props="defaultProps" :data="data1"
-      show-checkbox node-key="id" />
+    <el-tree @current-change="floor1Change" ref="dom1" :props="defaultProps" :data="data1" node-key="id">
+      <template v-slot="{ node, data }">
+        <el-checkbox v-model="data.$check" :indeterminate="getCheckStatus(data) === 1" @change="floor1Check(data)" />
+        {{ data.menuName }}
+      </template>
+    </el-tree>
     <el-tree @current-change="floor2Change" ref="dom2" :props="defaultProps" :data="data2" show-checkbox
       node-key="id" />
     <!-- v-if="data3?.length" -->

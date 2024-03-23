@@ -45,12 +45,12 @@ watch(() => model.value, () => {
 
   <div class="TouchSelectable">
     <el-scrollbar>
-      <div v-for="node in data">
+      <!-- <div v-for="node in data"> -->
         <!-- <p class="title">
           {{ node.label }}
         </p> -->
-        <ForTree :node="node" />
-      </div>
+        <ForTree :node="data[0]" />
+      <!-- </div> -->
     </el-scrollbar>
   </div>
 </template>

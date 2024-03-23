@@ -203,7 +203,7 @@ export type AttrDict = {
   /**
    * 创建人id
    */
-  createBy?: number;
+  createUserName?: number;
   /**
    * 创建时间
    */

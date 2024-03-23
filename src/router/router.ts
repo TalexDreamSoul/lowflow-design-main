@@ -12,7 +12,8 @@ export const routes: RouterOptions["routes"] = [
     component: () => import("~/views/login/login.vue"),
     meta: {
       hideTopMenu: true,
-    },},
+    },
+  },
   {
     path: "/design/:id?",
     component: () => import("~/touch-flow/FlowPage.vue"),
@@ -28,11 +29,11 @@ export const routes: RouterOptions["routes"] = [
     },
   },
   {
-    path: "/strategyProcess",
-    redirect: "/strategyProcess/List",
+    path: "/touchCenter",
+    redirect: "/touchCenter/List",
     children: [
       {
-        path: "List",
+        path: "touchList",
         component: () => import("~/touch-flow/strategyProcessList/strategyProcessList.vue"),
       },
       {
@@ -43,33 +44,33 @@ export const routes: RouterOptions["routes"] = [
   },
 
   {
-    path: "/configuration",
-    redirect: "/configuration/event",
+    path: "/dictCenter",
+    redirect: "/dictCenter/event",
     children: [
       {
-        path: "event",
+        path: "eventDict",
         component: () => import("~/pages/configuration/event.vue"),
       },
       {
-        path: "attr",
+        path: "attrDict",
         component: () => import("~/pages/configuration/attr.vue"),
       },
     ],
   },
   {
-    path: "/customer",
-    redirect: "/customer/list",
+    path: "/customCenter",
+    redirect: "/customCenter/list",
     children: [
       {
-        path: "list",
+        path: "customList",
         component: () => import("~/pages/customer/list.vue"),
       },
       {
-        path: "tag",
+        path: "customLabel",
         component: () => import("~/pages/customer/tag.vue"),
       },
       {
-        path: "blackList",
+        path: "customBlacklist",
         component: () => import("~/pages/customer/blacklist.vue"),
       },
     ],
@@ -77,32 +78,32 @@ export const routes: RouterOptions["routes"] = [
   // * 素材类型：sms 短信，app app消息，digital 数字员工，outbound 智能外呼，znx 站内信
   {
     path: "/materialCenter",
-    redirect: "/materialCenter/SmsTemplateVue",
+    redirect: "/materialCenter/smsTemplate",
     children: [
       {
-        path: "templatePanel/:type",
-        component: () => import("~/views/materialCenter/SmsTemplateVue.vue"),
+        path: ":type",
+        component: () => import("~/views/materialCenter/MaterialCenterIndex.vue"),
       },
     ],
   },
   {
-    path: "/channelManagement",
-    redirect: "/channelManagement/transactionList",
+    path: "/channelCenter",
+    redirect: "/channelCenter/transactionList",
     children: [
       {
-        path: "transactionList",
+        path: "trsDetail",
         component: () => import("~/views/channelManagement/transactionList.vue"),
       },
       {
-        path: "reconciliationList",
+        path: "trsCheck",
         component: () => import("~/views/channelManagement/reconciliationList.vue"),
       },
       {
-        path: "equityManagement",
+        path: "equityManage",
         component: () => import("~/views/channelManagement/equityManagement.vue"),
       },
       {
-        path: "channelDisturb",
+        path: "globalDisturb",
         component: () => import("~/views/channelManagement/channelDisturb.vue"),
       }
     ],
@@ -112,21 +113,39 @@ export const routes: RouterOptions["routes"] = [
     redirect: "/userCenter/userManagement",
     children: [
       {
-        path: "userManagement",
+        path: "userManage",
         component: () => import("~/views/userCenter/userManagement.vue"),
       },
       {
-        path: "rolesManagement",
+        path: "roleManage",
         component: () => import("~/views/userCenter/rolesManagement.vue"),
       },
       {
-        path: "personalInformation",
+        path: "userDetail",
         component: () => import("~/views/userCenter/personalInformation.vue"),
       }
     ],
   },
   {
-    path: "/activityList",
+    path: "/approve",
+    redirect: "/approve/activity",
+    children: [
+      {
+        path: "activity",
+        component: () => import("~/pages/approve/activity.vue"),
+      },
+      {
+        path: 'strategyProcess',
+        component: () => import("~/pages/approve/strategyProcess.vue"),
+      },
+      {
+        path: 'configuration',
+        component: () => import("~/pages/approve/configuration.vue"),
+      }
+    ],
+  },
+  {
+    path: "/activityCenter/activityList",
     component: () => import("~/pages/activity/index.vue"),
   },
   // 添加需要隐藏 TopMenu 的页面，并设置 meta.hideTopMenu 为 true

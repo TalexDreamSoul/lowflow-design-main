@@ -43,6 +43,11 @@ export const updateMarketingTouchStatus = (data: any) => {
   return request.post({ url: "/api/updateMarketingTouchStatus.do", data });
 };
 
+// 营销触达节点触达客户
+export const qryNodeTouchCustom = (data: any) => {
+  return request.post({ url: "/api/qryNodeTouchCustom.do", data });
+};
+
 // 复制
 export const copyMarketingTouch = (data: any) => {
   return request.post({ url: "/api/copyMarketingTouch.do", data });
@@ -200,7 +205,7 @@ export const getBlackList = (data: {
 
 export const marketingTouchNodeStatistics = (data: any = {
   id: 0,
-  pageNum: 0,
+  pageNum: 1,
   pageSize: 10,
   touchNodeId: 0
 }) => {
@@ -208,4 +213,22 @@ export const marketingTouchNodeStatistics = (data: any = {
     url: "/api/marketingTouchNodeStatistics.do",
     data,
   });
+}
+
+export const getQryNqList = (data: any = {
+  pageNum: 1,
+  pageSize: 10,
+  trsDate: ""
+}) => {
+  return request.post({
+    url: "/api/qryNqTrsList.do",
+    data
+  })
+}
+
+export const getGlobalDisturbDetail = (data: any) => {
+  return request.post({
+    url: '/api/globalDisturbDetail.do',
+    data
+  })
 }

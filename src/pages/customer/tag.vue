@@ -105,7 +105,7 @@
             {{ scope.row.coverRatio * 100 + "%" }}
           </template></el-table-column
         >
-        <el-table-column label="操作" min-width="214">
+        <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-button
               @click="handleSetStatus(scope.row)"
@@ -343,15 +343,18 @@ const submitUpload = () => {
 const onSuccess = () => {
   modalVisible.value = false;
   getData({ ...pageParams, pageNum: pageNum.value });
-}
+};
 
-const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-    ElMessage.error('请上传制定类型文件')
-    return false
+const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
+  if (
+    rawFile.type !==
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  ) {
+    ElMessage.error("请上传制定类型文件");
+    return false;
   }
-  return true
-}
+  return true;
+};
 
 const getData = async (params: any) => {
   try {
@@ -449,12 +452,10 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 };
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 @import "~/styles/list-layout.scss";
 </style>
 <style lang="scss" scoped>
-
-
 .customer-tag {
   .flex {
     gap: 16px;
@@ -463,36 +464,38 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       flex: 1;
     }
   }
-  .tag-detail {
-    background-color: rgba(144, 160, 184, 0.1);
-    padding: 24px;
-    .desc {
-      margin-bottom: 8px;
-      > div {
-        margin-bottom: 16px;
+  :deep(.pd-modal) {
+    .tag-detail {
+      background-color: rgba(144, 160, 184, 0.1);
+      padding: 24px;
+      .desc {
+        margin-bottom: 8px;
+        > div {
+          margin-bottom: 16px;
+        }
       }
-    }
-    .el-table {
-      border-radius: 0;
+      .el-table {
+        border-radius: 0;
 
-      .el-table__cell {
-        background-color: rgba(242, 244, 248, 1);
+        .el-table__cell, .el-table__empty-block {
+          background-color: rgba(242, 244, 248, 1);
+        }
       }
     }
-  }
-  .el-upload {
-    width: 100%;
-  }
-  .add {
-    background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
-    transition: 0.25s;
-  }
-  .upload-btn {
-    border: 1px dashed rgba(0, 0, 0, 0.2);
-    background: rgba(64,120,224,0.1);
-    height: 64px;
-    color: #4078E0;
-    justify-content: flex-start;
+    .el-upload {
+      width: 100%;
+    }
+    .add {
+      background: linear-gradient(rgb(32, 92, 203) 0%, rgb(89, 143, 241) 100%);
+      transition: 0.25s;
+    }
+    .upload-btn {
+      border: 1px dashed rgba(0, 0, 0, 0.2);
+      background: rgba(64, 120, 224, 0.1);
+      height: 64px;
+      color: #4078e0;
+      justify-content: flex-start;
+    }
   }
 }
 </style>

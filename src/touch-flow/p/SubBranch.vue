@@ -1,5 +1,5 @@
 <script setup lang="ts" name="SubBranch">
-import { ref, reactive, provide, inject, computed } from 'vue'
+import { ref, reactive, provide, inject, computed, watch } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import SubDiversionAttr from './attr/SubDiversionAttr.vue';
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
@@ -18,6 +18,24 @@ const drawerOptions = reactive<any>({
 })
 
 Object.assign(data, __data)
+
+watch(data, () => {
+  const { children } = data;
+
+  [...children].forEach((item, index) => {
+    if (!index) return
+
+    item.$index = index
+
+    const { nodeName } = item
+    if (nodeName === '兜底策略器') return
+
+    item.diversionType = children[0].diversionType
+
+    item.eventDelayed.delayedTime = children[0].eventDelayed.delayedTime
+    item.eventDelayed.delayedUnit = children[0].eventDelayed.delayedUnit
+  })
+}, { immediate: true })
 
 console.log("SubBranch setup!", getNode(), __data, data)
 
@@ -157,14 +175,19 @@ const pushTemplate = computed(() => {
 })
 
 const delayedActionStr = computed(() => {
-  const action = data?.nodeDelayed?.delayedAction
-  if (!action) return ''
+  const action = data?.nodeDelayed?.delayedAction;
+  if (!action) return "";
 
-  if (action === 'touch') return '发送触达'
-  if (action === 'label') return '打上标签'
-  if (action === 'touchAndLabel') return '发送触达并打上标签'
-  return '不执行动作'
-})
+  if (action === "touch") return "发送触达";
+
+  const { labelName, labelValue } = data?.labelContent || {}
+
+  const _LABEL = (labelName) ? `${labelName}:${labelValue}` : ""
+
+  if (action === "label") return "打上标签" + _LABEL;
+  if (action === "touchAndLabel") return "发送触达并打上标签" + _LABEL;
+  return "不执行动作";
+});
 
 provide('save', (regFunc: () => boolean) => {
   _saveFunc = regFunc
@@ -219,7 +242,7 @@ provide('save', (regFunc: () => boolean) => {
     </div>
 
     <teleport to="body">
-      <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
+      <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section"
             :class="{ disabled: item.disabled?.value }">
@@ -256,7 +279,8 @@ provide('save', (regFunc: () => boolean) => {
 .Dialog-Sections {
   display: flex;
 
-  gap: .5rem;
+  gap: 1rem;
+  justify-content: center;
 }
 
 .PBlock-Section {

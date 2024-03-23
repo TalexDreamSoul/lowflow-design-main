@@ -11,10 +11,10 @@
     <div class="content">
       <el-watermark content="11111" :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
         <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="field" label="属性编码" width="113" />
+          <el-table-column prop="field" label="属性编码" width="200" />
           <el-table-column prop="fieldName" label="属性名称" width="240" />
-          <el-table-column prop="describe" label="属性说明" width="566" />
-          <el-table-column prop="fieldType" label="数据类型" width="161">
+          <el-table-column prop="describe" label="属性说明" width="500" />
+          <el-table-column prop="fieldType" label="数据类型" width="200">
             <template #default="scope">
               {{ ATTR_FIELD_TYPE.find(v => checkStringEqual(v.value, scope.row.fieldType))?.label }}
             </template>
@@ -26,7 +26,7 @@
                   checkStringEqual(scope.row.status, ConfigStatus.Available) ? '可用' : '已下线' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="240">
+          <el-table-column label="操作" width="280" fixed="right">
             <template #default="scope">
               <el-button class="action-btn" @click="handleSetStatus(scope.row)" link type="primary">{{
                 checkStringEqual(scope.row.status,
@@ -42,7 +42,7 @@
       <el-pagination background layout="prev, pager, next, jumper" :total='total' :page-sizes="[10]"
         v-model:current-page="pageNum" />
     </div>
-    <el-dialog class="attr-modal" destroy-on-close :close-on-click-modal="false" v-model="modalVisible"
+    <el-dialog class="attr-modal pd-modal" destroy-on-close :close-on-click-modal="false" v-model="modalVisible"
       :title='ModalTitleMap[modalType]'>
       <el-form :disabled="checkStringEqual(modalType, DrawerType.Detail)" ref="attrFormRef" :hide-required-asterisk="true"
         label-position='top' class="form" :model="formValues">
@@ -196,7 +196,7 @@ const onSubmitAttr = async (formEl: FormInstance | undefined) => {
 <style lang="scss" scoped>
 
 .attr {
-  .attr-modal {
+  :deep(.attr-modal) {
     border-radius: 8px;
 
     .el-dialog__title {
@@ -209,10 +209,6 @@ const onSubmitAttr = async (formEl: FormInstance | undefined) => {
     .el-dialog__close {
       font-size: 24px;
       color: #90A0B8;
-    }
-
-    .el-dialog__body {
-      padding-top: 14px;
     }
   }
 

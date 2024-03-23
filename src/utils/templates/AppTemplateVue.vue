@@ -97,7 +97,7 @@ defineExpose({ saveData });
       </el-radio-group>
     </div>
     <el-form-item label="跳转页面位置参数">
-      <el-input :disabled="readonly" v-model="data.pageLink" placeholder="填写Code"></el-input>
+      <el-input :disabled="readonly" v-model="data.pageLink" placeholder="填写Json"></el-input>
     </el-form-item>
 
   </el-form>

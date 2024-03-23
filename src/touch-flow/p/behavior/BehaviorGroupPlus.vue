@@ -27,16 +27,12 @@ watchEffect(() => {
 
       <slot name="toggle">
         <span @click="expand = !expand" v-if="!hideToggleButton" class="addon-icon">
-          <el-text class="mx-1" type="primary"
-            >{{ expand ? "收起" : "展开" }}
-            <el-icon
-              class="icondown"
-              :style="{
-                transform: expand ? 'rotate(-90deg)' : 'rotate(90deg)',
-              }"
-            >
-              <DArrowRight /> </el-icon
-          ></el-text>
+          <el-text class="mx-1" type="primary">{{ expand ? "收起" : "展开" }}
+            <el-icon class="icondown" :style="{
+    transform: expand ? 'rotate(-90deg)' : 'rotate(90deg)',
+  }">
+              <DArrowRight />
+            </el-icon></el-text>
         </span>
       </slot>
     </div>
@@ -62,12 +58,15 @@ watchEffect(() => {
       border-radius: 8px 0 0 8px;
       background-color: var(--c, red);
     }
+
     .addon-icon {
       cursor: pointer;
     }
+
     .icondown {
       transition: 0.25s;
     }
+
     position: relative;
     padding: 8px 18px;
     display: flex;
@@ -82,15 +81,18 @@ watchEffect(() => {
     & .BehaviorGroupPlus-Main {
       padding: 0.5rem;
     }
-    max-height: 1000px;
 
-    transition: 0.35s ease-in;
+    max-height: 10000px;
+
+    transition: max-height .5s ease-in-out;
   }
 
   &-Main {
     padding: 0;
 
     height: 100%;
+
+    transition: .25s ease-in-out;
   }
 
   margin: 0.8rem 0;
@@ -98,7 +100,7 @@ watchEffect(() => {
 
   overflow: hidden;
   border-radius: 4px;
-  transition: 0.35s ease-out;
+  transition: max-height .25s cubic-bezier(0, 1, 0, 1);
   background-color: var(--el-fill-color-lighter);
 }
 </style>

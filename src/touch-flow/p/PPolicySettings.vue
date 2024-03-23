@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, provide, computed, inject } from "vue";
+import { ref, reactive, provide, computed, inject, watch } from "vue";
 import { Stamp, Plus, Delete } from "@element-plus/icons-vue";
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "./attr/DeliverySettingsAttr.vue";
@@ -22,6 +22,18 @@ const drawerOptions = reactive<any>({
 Object.assign(data, __data)
 
 console.log("PolicySettings setup!", getNode(), __data, data)
+
+watch(data, () => {
+  const { children } = data;
+
+  children && [...children].forEach((item, index) => {
+    if (!index) return
+
+    item.$index = index
+
+    item.diversionType = children[0].diversionType
+  })
+}, { immediate: true })
 
 const doDiverse = computed(() => {
   const { children } = data;
@@ -101,8 +113,6 @@ function openDrawer(comp: any, doNew: boolean = false) {
 
   Object.assign(drawerOptions, { ...comp, new: doNew });
 
-  console.log("op", comp)
-
   if (!data.executeType) data.executeType = "immediately";
 
   drawerOptions.visible = true;
@@ -160,8 +170,13 @@ const delayedActionStr = computed(() => {
   if (!action) return "";
 
   if (action === "touch") return "发送触达";
-  if (action === "label") return "打上标签";
-  if (action === "touchAndLabel") return "发送触达并打上标签";
+
+  const { labelName, labelValue } = data?.labelContent || {}
+
+  const _LABEL = (labelName) ? `${labelName}:${labelValue}` : ""
+
+  if (action === "label") return "打上标签" + _LABEL;
+  if (action === "touchAndLabel") return "发送触达并打上标签" + _LABEL;
   return "不执行动作";
 });
 
@@ -239,7 +254,7 @@ function del(p: MarketingTouchEditDTO) {
     </div>
 
     <teleport to="body">
-      <el-dialog v-model="dialogVisible" width="30%" title="请选择添加类型" align-center>
+      <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item, true)" v-for="item in comps" class="PBlock-Section"
             :class="{ disabled: item.disabled?.value }">
@@ -257,7 +272,7 @@ function del(p: MarketingTouchEditDTO) {
     </teleport>
 
     <teleport to="body">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
+      <el-drawer v-if="drawerOptions.visible" v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :new="drawerOptions?.new" :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>
@@ -278,7 +293,8 @@ function del(p: MarketingTouchEditDTO) {
 .Dialog-Sections {
   display: flex;
 
-  gap: 0.5rem;
+  gap: 2rem;
+  justify-content: center;
 }
 
 .PBlock-Section {

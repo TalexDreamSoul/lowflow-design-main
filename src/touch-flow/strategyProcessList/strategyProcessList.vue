@@ -7,7 +7,7 @@ import {
   getstartMarketingTouch,
   getpauseMarketingTouch,
   updateMarketingTouchStatus,
-  copyMarketingTouch
+  copyMarketingTouch,
 } from "~/api/index";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
@@ -80,7 +80,6 @@ const getmarketingTouchNode = async () => {
   StatisticsList.value = res.data;
   console.log(StatisticsList, "res");
 };
-
 const delData = async (row: any) => {
   ElMessageBox.alert("删除后将无法恢复", "确认删除", {
     showCancelButton: true,
@@ -113,31 +112,28 @@ const updateData = async (row: any) => {
   router.push(`/design/${row.id}`);
 };
 const detailsData = async (row: any) => {
-  router.push(`/strategyProcess/details/${row.id}`);
+  router.push(`/touchCenter/details/${row.id}`);
 };
 
 const successData = async (row: any) => {
-  let res=await updateMarketingTouchStatus({
+  let res = await updateMarketingTouchStatus({
     id: row.id,
     status: "approvalSuccess",
   }).finally(() => {
     fetchDataApi();
     getmarketingTouchNode();
   });
-  ElMessage.success(res.message)
-
+  ElMessage.success(res.message);
 };
 
-
 const copyData = async (row: any) => {
-  let res=await copyMarketingTouch({
+  let res = await copyMarketingTouch({
     id: row.id,
   }).finally(() => {
     fetchDataApi();
     getmarketingTouchNode();
   });
-  ElMessage.success(res.message)
-
+  ElMessage.success(res.message);
 };
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);
@@ -154,6 +150,11 @@ const changeTime = (val: any) => {
     formInline.beginTime = dayjs(val[0]).format("YYYY-MM-DD");
     formInline.endTime = dayjs(val[1]).format("YYYY-MM-DD");
   }
+};
+
+const changeStatus = (val: any) => {
+  console.log(val, "change");
+  formInline.status = val;
 };
 </script>
 
@@ -198,41 +199,41 @@ const changeTime = (val: any) => {
           total
           waitStart -->
 
-        <div class="showCount allcount">
+        <div class="showCount  " @click="changeStatus('')" :class="formInline.status==''?'bgblue':''">
           <div class="topcount">{{ StatisticsList.total !== undefined ? StatisticsList.total : '--' }}
           </div>
           <div class="undercount">全部</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" :class="formInline.status=='running'?'bgblue':''" @click="changeStatus('running')">
           <div class="topcount">
             {{ StatisticsList.running !== undefined ? StatisticsList.running : '--' }}
           </div>
           <div class="undercount">运行中</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" @click="changeStatus('suspend')" :class="formInline.status=='suspend'?'bgblue':''">
           <div class="topcount">
             {{ StatisticsList.suspend !== undefined ? StatisticsList.suspend : '--' }}
           </div>
           <div class="undercount">暂停中</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" @click="changeStatus('approvalPending')" :class="formInline.status=='approvalPending'?'bgblue':''">
           <div class="topcount">
             {{ StatisticsList.approvalPending !== undefined ? StatisticsList.approvalPending : '--' }}
           </div>
           <div class="undercount">待审批</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" @click="changeStatus('done')" :class="formInline.status=='done'?'bgblue':''">
           <div class="topcount">
             {{ StatisticsList.done !== undefined ? StatisticsList.done : '--' }}</div>
           <div class="undercount">已结束</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" @click="changeStatus('draft')" :class="formInline.status=='draft'?'bgblue':''">
           <div class="topcount">
             {{ StatisticsList.draft !== undefined ? StatisticsList.draft : '--' }}
           </div>
           <div class="undercount">草稿</div>
         </div>
-        <div class="showCount">
+        <div class="showCount" @click="changeStatus('approvalRefuse')" :class="formInline.status=='approvalRefuse'?'bgblue':''">
           <div class="topcount">
             {{ StatisticsList.approvalRefuse !== undefined ? StatisticsList.approvalRefuse : '--' }}
           </div>
@@ -277,12 +278,12 @@ const changeTime = (val: any) => {
             touchCount 触达数量
             triggerCount 触发数量 -->
             {{ scope.row.triggerCount }}/
-           {{ scope.row.touchCount }}/
+            {{ scope.row.touchCount }}/
             {{ scope.row.targetCount }}
           </template>
         </el-table-column>
 
-        <el-table-column label="创建人" prop="createBy" />
+        <el-table-column label="创建人" prop="createUserName" />
 
         <el-table-column label="操作" width="300" fixed="right">
           <template #default="scope">
@@ -355,6 +356,7 @@ const changeTime = (val: any) => {
 }
 
 .showCount {
+  cursor: pointer;
   min-width: 150px;
   margin-right: 16px;
   background: linear-gradient(
@@ -379,11 +381,18 @@ const changeTime = (val: any) => {
     color: #7f8080;
   }
 }
-
-.allcount {
+.bgblue {
+  background: linear-gradient(180deg, #2258bb 0%, #4078e0 100%);
   color: #ffffff;
 
-  background: linear-gradient(180deg, #2258bb 0%, #4078e0 100%);
+  .undercount {
+    font-weight: 400;
+    font-size: 14px;
+    color: #bed1f4;
+  }
+}
+.allcount {
+  color: #ffffff;
 
   .undercount {
     font-weight: 400;

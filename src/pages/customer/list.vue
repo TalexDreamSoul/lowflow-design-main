@@ -4,7 +4,12 @@
     <div class="search">
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
-          <el-select v-model="pageParams.source" style="width:200px" placeholder="类别" clearable>
+          <el-select
+            v-model="pageParams.source"
+            style="width: 200px"
+            placeholder="类别"
+            clearable
+          >
             <el-option
               v-for="item of PEOPLE_SOURCE"
               :label="item.label"
@@ -14,8 +19,8 @@
         </el-form-item>
         <el-form-item>
           <el-input
-          style="width:400px !important"
-           v-model="pageParams.value"
+            style="width: 400px !important"
+            v-model="pageParams.value"
             placeholder="请输入客户姓名或者手机号"
             clearable
             :suffix-icon="Search"
@@ -74,7 +79,7 @@
             }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" min-width="158">
+        <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-button
               v-if="scope.row.source === peopleSourceEnum.Manual"
@@ -436,7 +441,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   try {
     await formEl.validate();
-    let res = { code: '0000' };
+    let res = { code: "0000" };
     let values = {
       ...formValues,
       source: peopleSourceEnum.Manual,
@@ -444,7 +449,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     if (modalType.value === DrawerType.Create) {
       res = await API.addCustom(values);
     } else {
-      res = await API.updateCustom(values)
+      res = await API.updateCustom(values);
     }
     if (checkStringEqual(res?.code, 0)) {
       getData(pageParams);
@@ -456,11 +461,10 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 };
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 @import "~/styles/list-layout.scss";
 </style>
 <style lang="scss" scoped>
-
 .customer-list {
   .flex {
     gap: 16px;
@@ -468,55 +472,57 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       flex: 1;
     }
   }
-  .people-detail {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    > div > .title {
-      color: rgba(0, 0, 0, 0.9);
-    }
-    .info {
-      background-color: rgba(144, 160, 184, 0.1);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .tag-content {
+  :deep(.pd-modal) {
+    .people-detail {
       display: flex;
-      gap: 4px;
-      margin-top: 8px;
-      .el-tag {
-        padding: 8px;
-        font-size: 14px;
-        line-height: 16px;
-      }
-    }
-    .user {
-      display: flex;
-      padding: 16px;
+      flex-direction: column;
       gap: 16px;
-      align-items: center;
-      .avatar {
-        width: 60px;
-        height: 60px;
-        overflow: hidden;
-        border-radius: 50%;
-        background-color: black;
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-      .name {
-        font-size: 18px;
-        font-weight: 500;
+      > div > .title {
         color: rgba(0, 0, 0, 0.9);
       }
-    }
-    .el-table {
-      border-radius: 0;
+      .info {
+        background-color: rgba(144, 160, 184, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .tag-content {
+        display: flex;
+        gap: 4px;
+        margin-top: 8px;
+        .el-tag {
+          padding: 8px;
+          font-size: 14px;
+          line-height: 16px;
+        }
+      }
+      .user {
+        display: flex;
+        padding: 16px;
+        gap: 16px;
+        align-items: center;
+        .avatar {
+          width: 60px;
+          height: 60px;
+          overflow: hidden;
+          border-radius: 50%;
+          background-color: black;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .name {
+          font-size: 18px;
+          font-weight: 500;
+          color: rgba(0, 0, 0, 0.9);
+        }
+      }
+      .el-table {
+        border-radius: 0;
 
-      .el-table__cell {
-        background-color: rgba(242, 244, 248, 1);
+        .el-table__cell {
+          background-color: rgba(242, 244, 248, 1);
+        }
       }
     }
   }
