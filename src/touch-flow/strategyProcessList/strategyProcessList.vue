@@ -112,7 +112,7 @@ const updateData = async (row: any) => {
   router.push(`/design/${row.id}`);
 };
 const detailsData = async (row: any) => {
-  router.push(`/strategyProcess/details/${row.id}`);
+  router.push(`/touchCenter/details/${row.id}`);
 };
 
 const successData = async (row: any) => {
