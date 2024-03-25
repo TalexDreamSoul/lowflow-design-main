@@ -4,14 +4,30 @@
     <div class="search">
       <el-form :inline="true" :model="pageParams">
         <el-form-item label="创建日期">
-          <el-date-picker v-model="pageParams.time" type="daterange" range-separator="-" start-placeholder="开始日期"
-            end-placeholder="结束日期" />
+          <el-date-picker
+            v-model="pageParams.time"
+            type="daterange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          />
         </el-form-item>
         <el-form-item>
-          <el-input v-model="pageParams.blacklistName" placeholder="标签名称" clearable :suffix-icon="Search" />
+          <el-input
+            v-model="pageParams.blacklistName"
+            placeholder="标签名称"
+            clearable
+            :suffix-icon="Search"
+          />
         </el-form-item>
       </el-form>
-      <el-button class="add" round type="primary" @click="handleModal(DrawerType.Create)">新建黑名单</el-button>
+      <el-button
+        class="add"
+        round
+        type="primary"
+        @click="handleModal(DrawerType.Create)"
+        >新建黑名单</el-button
+      >
     </div>
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
@@ -20,48 +36,95 @@
         </el-table-column>
         <el-table-column prop="status" label="状态" width="159">
           <template #default="scope">
-            <el-tag v-if="!!scope.row.status" :type="checkStringEqual(scope.row.status, ConfigStatus.Available)
-        ? ''
-        : 'info'
-        ">{{
-        checkStringEqual(scope.row.status, ConfigStatus.Available)
-          ? "可用"
-          : "已下线"
-      }}</el-tag>
+            <el-tag
+              v-if="!!scope.row.status"
+              :type="
+                checkStringEqual(scope.row.status, ConfigStatus.Available)
+                  ? ''
+                  : 'info'
+              "
+              >{{
+                checkStringEqual(scope.row.status, ConfigStatus.Available)
+                  ? "可用"
+                  : "已下线"
+              }}</el-tag
+            >
           </template>
         </el-table-column>
         <el-table-column prop="blacklistType" label="黑名单类型" width="249">
           <template #default="scope">
             {{
-        BLACK_LIST_TYPE.find((v) =>
-          checkStringEqual(v.value, scope.row.blacklistType)
-        )?.label || "-"
-      }}
+              BLACK_LIST_TYPE.find((v) =>
+                checkStringEqual(v.value, scope.row.blacklistType)
+              )?.label || "-"
+            }}
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="238"></el-table-column>
-        <el-table-column prop="updatedTime" label="更新时间" width="238"></el-table-column>
-        <el-table-column prop="createUserName" label="创建人" width="165"></el-table-column>
+        <el-table-column
+          prop="createTime"
+          label="创建时间"
+          width="238"
+        ></el-table-column>
+        <el-table-column
+          prop="updatedTime"
+          label="更新时间"
+          width="238"
+        ></el-table-column>
+        <el-table-column
+          prop="createUserName"
+          label="创建人"
+          width="165"
+        ></el-table-column>
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
-            <el-button @click="handleSetStatus(scope.row)" link type="primary" class="action-btn">{{
-        checkStringEqual(scope.row.status, ConfigStatus.Available)
-          ? "下线"
-          : "上线"
-      }}</el-button>
-            <el-button link type="primary" class="action-btn"
-              @click="handleModal(DrawerType.Edit, scope.row)">编辑</el-button>
-            <el-button link type="primary" class="action-btn" @click="handleDelete(scope.row)">删除</el-button>
-            <el-button @click="handleModal(DrawerType.Detail, scope.row)" link type="primary"
-              class="action-btn">查看详情</el-button>
+            <el-button
+              @click="handleSetStatus(scope.row)"
+              link
+              type="primary"
+              class="action-btn"
+              >{{
+                checkStringEqual(scope.row.status, ConfigStatus.Available)
+                  ? "下线"
+                  : "上线"
+              }}</el-button
+            >
+            <el-button
+              link
+              type="primary"
+              class="action-btn"
+              @click="handleModal(DrawerType.Edit, scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+              link
+              type="primary"
+              class="action-btn"
+              @click="handleDelete(scope.row)"
+              >删除</el-button
+            >
+            <el-button
+              @click="handleModal(DrawerType.Detail, scope.row)"
+              link
+              type="primary"
+              class="action-btn"
+              >查看详情</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination background layout="prev, pager, next, jumper" :total="total" :page-sizes="[10]"
-        @current-change="currentChange" />
+      <el-pagination
+        background
+        layout="prev, pager, next, jumper"
+        :total="total"
+        :page-sizes="[10]"
+        @current-change="currentChange"
+      />
     </div>
-    <BlackListDrawer :id="drawerOptions.id" :type="drawerOptions.type"
-      @getData="() => getData({ ...pageParams, pageNum })" />
+    <BlackListDrawer
+      :id="drawerOptions.id"
+      :type="drawerOptions.type"
+      @getData="() => getData({ ...pageParams, pageNum })"
+    />
     <!-- <PdDrawer ref="drawerRef" :getData="() => getData({ ...pageParams, pageNum })" /> -->
   </div>
 </template>
@@ -87,12 +150,12 @@ const pageParams = reactive({
   time: "",
 });
 const drawerOptions = reactive<{
-  id: number,
-  type: "create" | "edit" | "detail" | undefined
+  id: number;
+  type: "create" | "edit" | "detail" | undefined;
 }>({
   id: -1,
   type: undefined,
-})
+});
 
 const pageNum = ref(1);
 const total = ref(0);
@@ -112,7 +175,6 @@ watch(
 onMounted(() => {
   getData({ ...pageParams, pageNum: 1 });
 });
-
 
 const getData = async (params: any) => {
   try {
@@ -139,8 +201,8 @@ const getData = async (params: any) => {
 };
 
 const handleModal = async (type: typeof drawerOptions.type, values?: any) => {
-  drawerOptions.id = values?.id || -1
-  drawerOptions.type = type
+  drawerOptions.id = values?.id || -1;
+  drawerOptions.type = type;
 
   // drawerRef.value?.handleModal?.(type, values);
 };
@@ -182,57 +244,58 @@ const handleDelete = (values: any) => {
   .flex {
     gap: 16px;
 
-    >div {
+    > div {
       flex: 1;
     }
   }
+  :deep(.pd-drawer) {
+    .add-type-tabs {
+      width: 100%;
 
-  .add-type-tabs {
-    width: 100%;
+      &.detail {
+        .el-tabs__header {
+          display: none;
+        }
+      }
 
-    &.detail {
       .el-tabs__header {
-        display: none;
-      }
-    }
-
-    .el-tabs__header {
-      border-bottom: none;
-      margin: 0;
-    }
-
-    .el-tabs__content {
-      padding-top: 24px;
-      background-color: #f2f4f8;
-    }
-
-    .el-tabs__item {
-      border-bottom: 1px solid #e4e7ed;
-      box-sizing: border-box;
-
-      &.is-active {
-        background: linear-gradient(180deg, #205ccb 0%, #598ff1 100%);
-        color: white;
         border-bottom: none;
+        margin: 0;
       }
 
-      &:not(.is-active):hover {
-        color: #303133;
+      .el-tabs__content {
+        padding-top: 24px;
+        background-color: #f2f4f8;
+      }
+
+      .el-tabs__item {
+        border-bottom: 1px solid #e4e7ed;
+        box-sizing: border-box;
+
+        &.is-active {
+          background: linear-gradient(180deg, #205ccb 0%, #598ff1 100%);
+          color: white;
+          border-bottom: none;
+        }
+
+        &:not(.is-active):hover {
+          color: #303133;
+        }
       }
     }
-  }
 
-  .item {
-    padding: 24px 16px 0;
-    background-color: #f2f4f8;
-    margin-bottom: 16px;
-  }
+    .item {
+      padding: 24px 16px 0;
+      background-color: #f2f4f8;
+      margin-bottom: 16px;
+    }
 
-  .el-table {
-    border-radius: 0;
+    .el-table {
+      border-radius: 0;
 
-    .el-table__cell {
-      background-color: rgba(242, 244, 248, 1);
+      .el-table__cell {
+        background-color: rgba(242, 244, 248, 1);
+      }
     }
   }
 }

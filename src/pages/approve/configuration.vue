@@ -65,7 +65,7 @@
           <el-input :disabled="true" />
         </el-form-item>
         <el-form-item label="审核层级" prop="labelSource">
-          <el-input :disabled="true" />
+          <el-input :disabled="true" :model-value="formValues.domains.length" />
         </el-form-item>
         <el-form-item
           v-for="(domain, index) in formValues.domains"
@@ -95,6 +95,7 @@
         <el-button
             v-if="modalType !== DrawerType.Detail"
             class="add-people"
+            @click="addDomain"
             ><el-icon><CirclePlusFilled /></el-icon>添加审核人</el-button
           >
       </el-form>
@@ -145,8 +146,6 @@ const ModalTitleMap: any = {
 
 const pageParams = reactive({
   labelName: "",
-  labelSource: "",
-  time: "",
 });
 
 const defaultFormValues = {
@@ -154,7 +153,6 @@ const defaultFormValues = {
   domains: [{ value: '' }],
 };
 let formValues = reactive({ ...defaultFormValues });
-let modalData = reactive<any>([]);
 const pageNum = ref(1);
 
 const formRef = ref<FormInstance>();
@@ -180,18 +178,16 @@ const currentChange = (value: number) => {
   getData({ ...pageParams, pageNum: value });
 };
 
+const addDomain = () => {
+  formValues.domains.push({
+    value: '',
+  })
+}
+
 const getData = async (params: any) => {
   try {
-    let { time, ...values } = params;
-    let beginTime;
-    let endTime;
-    if (time) {
-      beginTime = time[0];
-      endTime = time[1];
-    }
+    let { ...values } = params;
     let res = await API.qryCustomLabel({
-      beginTime,
-      endTime,
       ...values,
       pageSize: 10,
     });

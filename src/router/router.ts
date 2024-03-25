@@ -148,6 +148,10 @@ export const routes: RouterOptions["routes"] = [
     path: "/activityCenter/activityList",
     component: () => import("~/pages/activity/index.vue"),
   },
+  {
+    path: '/boothManagement',
+    component: () => import('~/pages/boothManagement/index.vue'),
+  }
   // 添加需要隐藏 TopMenu 的页面，并设置 meta.hideTopMenu 为 true
 ];
 

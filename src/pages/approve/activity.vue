@@ -5,15 +5,15 @@
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
           <el-select
-            v-model="pageParams.labelSource"
+            v-model="pageParams.playType"
             placeholder="请选择"
             clearable
           >
-            <!-- <el-option
-              v-for="item of []"
-              :label="item.label"
-              :value="item.value"
-            /> -->
+            <el-option
+              v-for="(item, key) in activities"
+              :label="item"
+              :value="key"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="活动有效期">
@@ -27,7 +27,7 @@
         </el-form-item>
         <el-form-item>
           <el-input
-            v-model="pageParams.labelName"
+            v-model="pageParams.activityName"
             placeholder="H5活动名称"
             clearable
             :suffix-icon="Search"
@@ -37,18 +37,33 @@
     </div>
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="labelName" label="H5活动ID" width="272" />
-        <el-table-column prop="labelValue" label="H5活动名称" width="291">
+        <el-table-column prop="activityId" label="H5活动ID" width="272" />
+        <el-table-column prop="activityName" label="H5活动名称" width="291">
         </el-table-column>
-        <el-table-column prop="labelValueType" label="活动有效期" width="453">
+        <el-table-column label="活动有效期" width="453">
+          <template #default="scope">
+            <div v-if="scope.row.activityBeginTime">
+              <span
+                >{{ scope.row.activityBeginTime }}至{{
+                  scope.row.activityEndTime
+                }}</span
+              >
+            </div>
+            <div v-else>-</div>
+          </template>
         </el-table-column>
+        <el-table-column label="包含玩法" width="314">
+          <template #default="scope">
+            <div>
+              <span v-if="!scope.row.playTypeList.length">-</span>
+              <span v-for="(item, key) in scope.row.playTypeList">{{
+                activities[item]
+              }}</span>
+            </div>
+          </template></el-table-column
+        >
         <el-table-column
-          prop="labelDesc"
-          label="包含玩法"
-          width="314"
-        ></el-table-column>
-        <el-table-column
-          prop="status"
+          prop="creatorName"
           label="创建人"
           width="272"
         ></el-table-column>
@@ -69,6 +84,9 @@
               >审核详情</el-button
             >
             <el-button
+              :disabled="
+                !checkStringEqual(appOptions?.user?.id, scope.row.auditorId)
+              "
               @click="handleModal(DrawerType.Approve, scope.row)"
               link
               type="primary"
@@ -103,18 +121,18 @@
       >
         <el-form-item
           label="审核意见"
-          prop="labelSource"
+          prop="approveStatus"
           :rules="[{ required: true, message: '请选择' }]"
         >
           <el-select
-            v-model="formValues.labelSource"
+            v-model="formValues.approveStatus"
             placeholder="请选择"
             clearable
           >
             <el-option
               v-for="item of [
-                { label: '通过', value: '1' },
-                { label: '拒绝', value: '2' },
+                { label: '通过', value: true },
+                { label: '拒绝', value: false },
               ]"
               :label="item.label"
               :value="item.value"
@@ -122,22 +140,38 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <el-table :data="modalData" style="width: 100%" height="400" v-if="!checkStringEqual(modalType, DrawerType.Approve)">
-        <el-table-column prop="labelName" label="节点" width="92" />
-        <el-table-column prop="labelValue" label="审核人" width="101">
+      <el-table
+        :data="modalData"
+        style="width: 100%"
+        height="400"
+        v-if="!checkStringEqual(modalType, DrawerType.Approve)"
+      >
+        <el-table-column prop="approveLevel" label="节点" width="92" />
+        <el-table-column prop="auditorName" label="审核人" width="101">
         </el-table-column>
-        <el-table-column prop="labelValueType" label="接收时间" width="231">
+        <el-table-column prop="receiptTime" label="接收时间" width="231">
+          <template #default="scope">
+            {{ scope.row.receiptTime || "-" }}
+          </template>
         </el-table-column>
-        <el-table-column
-          prop="labelDesc"
-          label="审核状态"
-          width="125"
-        ></el-table-column>
-        <el-table-column
-          prop="status"
-          label="操作时间"
-          min-width="202"
-        ></el-table-column>
+        <el-table-column prop="approveStatus" label="审核状态" width="125">
+          <template #default="scope">
+            <el-tag v-if="scope.row.approveStatus === null" type="success"
+              >待审批</el-tag
+            >
+            <el-tag v-if="scope.row.approveStatus === true" type=""
+              >已通过</el-tag
+            >
+            <el-tag v-if="scope.row.approveStatus === false" type="danger"
+              >未通过</el-tag
+            >
+          </template></el-table-column
+        >
+        <el-table-column prop="operationTime" label="操作时间" min-width="202">
+          <template #default="scope">
+            {{ scope.row.operationTime || "-" }}
+          </template></el-table-column
+        >
       </el-table>
       <template #footer>
         <span class="dialog-footer">
@@ -156,7 +190,7 @@
           <el-button
             v-if="modalType !== DrawerType.ApproveDatail"
             round
-            type='primary'
+            type="primary"
             @click.prevent="onSubmit(formRef)"
             >确认</el-button
           >
@@ -166,9 +200,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { reactive, ref, watch, onMounted } from "vue";
+import { reactive, ref, watch, onMounted, inject } from "vue";
 import {} from "~/constants";
-import API from "~/api/customer";
+import API from "~/api/approve";
+import { pageActivityList } from "~/api/activity";
 import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
 import { FormInstance } from "element-plus";
@@ -180,20 +215,31 @@ enum DrawerType {
   Approve = "approve",
 }
 
+const activities: any = {
+  "1": "问卷玩法",
+  "2": "抽奖玩法",
+  "3": "签到玩法",
+  "4": "任务玩法",
+  "5": "领奖玩法",
+  "6": "表单组件",
+};
+
 const ModalTitleMap: any = {
   [DrawerType.ApproveDatail]: "审核详情",
   [DrawerType.Detail]: "",
   [DrawerType.Approve]: "活动流程审核",
 };
 
+const appOptions: any = inject("appOptions")!;
+
 const pageParams = reactive({
-  labelName: "",
-  labelSource: "",
   time: "",
+  activityName: "",
+  playType: "",
 });
 
 const defaultFormValues = {
-  labelSource: "",
+  approveStatus: "",
 };
 let formValues = reactive({ ...defaultFormValues });
 let modalData = reactive<any>([]);
@@ -225,21 +271,23 @@ const currentChange = (value: number) => {
 const getData = async (params: any) => {
   try {
     let { time, ...values } = params;
-    let beginTime;
-    let endTime;
+    let activityBeginTime;
+    let activityEndTime;
     if (time) {
-      beginTime = time[0];
-      endTime = time[1];
+      activityBeginTime = time[0];
+      activityEndTime = time[1];
     }
-    let res = await API.qryCustomLabel({
-      beginTime,
-      endTime,
+    let res: any = await pageActivityList({
+      activityBeginTime,
+      activityEndTime,
       ...values,
       pageSize: 10,
+      activityStatus: 2,
     });
     if (checkStringEqual(res?.code, 0)) {
       total.value = res?.data?.total;
       tableData.value = res?.data?.records;
+      console.log(tableData);
     }
   } catch (error) {
     console.error(error);
@@ -248,9 +296,18 @@ const getData = async (params: any) => {
 
 const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Detail) {
+    window.open(values.diffuseUrl, "_blank");
     return;
   } else if (type === DrawerType.ApproveDatail) {
+    let res: any = await API.listApproveRecord({
+      businessId: values.activityId,
+    });
+    Object.assign(modalData, res?.data);
   } else {
+    Object.assign(formValues, {
+      recordId: values.approveRecordId,
+      approveStatus: "",
+    });
   }
   modalType.value = type;
   modalVisible.value = true;
@@ -260,12 +317,11 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   try {
     await formEl.validate();
-    console.log(formValues);
-    // let res = await API.updateCustomLabel(formValues);
-    // if (checkStringEqual(res?.code, 0)) {
-    //   getData({ ...pageParams, pageNum: pageNum.value });
-    //   modalVisible.value = false;
-    // }
+    let res: any = await API.approve({ ...formValues });
+    if (checkStringEqual(res?.code, 0)) {
+      getData({ ...pageParams, pageNum: pageNum.value });
+      modalVisible.value = false;
+    }
   } catch (error) {
     console.error(error);
   }
