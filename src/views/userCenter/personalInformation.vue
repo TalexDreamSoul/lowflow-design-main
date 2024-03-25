@@ -64,6 +64,15 @@ const fetchDataApi = async () => {
 };
 const logout = async () => {
   const res = await API.logout();
+  // 获取当前网站下的所有 cookie
+  const cookies = document.cookie.split(";");
+
+  // 遍历所有 cookie 并设置过期时间为过去的时间来清除
+  cookies.forEach(cookie => {
+    const cookieName = cookie.split('=')[0].trim();
+    document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  });
+  router.go(0);
   console.log(`output->tabledata`, res);
 };
 const login = async () => {

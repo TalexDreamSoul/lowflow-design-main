@@ -17,19 +17,29 @@
 // @ts-ignore sure exist
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import TopMenu from "~/views/TopMenu/index.vue";
-import { computed, reactive, provide, watchEffect } from "vue";
+import { computed, reactive, provide, watchEffect, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLocalStorage } from "@vueuse/core";
 import customerAPI from "~/api/account";
 import dayjs from "dayjs";
 
-const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
+// const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
+const appOptions = ref({})
+
 const route = useRoute();
 const meta = computed(() => route.meta);
+const fetchDataApi = async () => {
+  const res = await customerAPI.accountDetail();
+  appOptions.value.user = res?.data;
+  console.log(`output->tabledata`, appOptions.value);
+  fetchDataMenuList()
+};
 
-watchEffect(() => {
-  $ignored: appOptions;
-
+onMounted(async () => {
+  fetchDataApi();
+});
+const fetchDataMenuList = async () => {
+  // $ignored: appOptions;
   const { user }: any = appOptions.value;
   console.log("user", user);
 
@@ -40,10 +50,9 @@ watchEffect(() => {
       id,
       accountId: id,
     });
-
     appOptions.value.menu = res;
   });
-});
+};
 provide("appOptions", appOptions);
 </script>
 <style lang="scss">
