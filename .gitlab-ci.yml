@@ -10,6 +10,6 @@ package-job:
   script:
     - yarn
     - yarn build:dev
-    - docker rm -f market-touch
+    - docker rm -f market-touch-develop
     - docker build -t market-touch:1.0 .
     - docker run --name market-touch -d -p 18707:80 market-touch:1.0
