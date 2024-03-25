@@ -1,7 +1,8 @@
 import { AxiosResponse, InternalAxiosRequestConfig } from './types'
 import { ElMessage } from 'element-plus'
 import qs from 'qs'
-import { SUCCESS_CODE } from '~/constants'
+import { SUCCESS_CODE,SessionLost_CODE } from '~/constants'
+import { reactiveMessage } from "~/utils/mention/mention";
 
 const defaultRequestInterceptors = (config: InternalAxiosRequestConfig) => {
   if (
@@ -33,10 +34,15 @@ const defaultResponseInterceptors = (response: AxiosResponse) => {
   } else if (response.data.code == SUCCESS_CODE) {
     return response.data
   } else {
-
-    // if (response?.data?.code === 401) {
-
-    // }
+    if (response?.data?.code === SessionLost_CODE) {
+        // 判断当前不是登录页面时才进行提示和跳转
+        if (!window.location.href.includes('/login')) {
+          const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false);
+          promise.then(() => {
+            window.location.href = '/login';
+          });
+        }
+    }
 
     if (response.config.url?.indexOf('addMarketingTouch.do') !== -1) return response.data
     else ElMessage.error(response?.data?.message)

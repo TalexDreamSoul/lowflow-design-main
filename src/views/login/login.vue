@@ -93,7 +93,7 @@ const handleLogin = async() => {
   state.loading = true;
 
 
-const { token, id, accountName } = await API.login(state.value.loginForm);
+const rs = await API.login(state.value.loginForm);
 
 
 goBack()
