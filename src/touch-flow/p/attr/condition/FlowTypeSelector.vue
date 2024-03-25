@@ -4,6 +4,7 @@ import { useVModel } from "@vueuse/core";
 
 const props = defineProps<{
   modelValue: string;
+  readonly?: boolean;
 }>();
 const emits = defineEmits<{
   (event: "update:modelValue", value: string): void;
@@ -13,7 +14,7 @@ const model = useVModel(props, "modelValue", emits);
 </script>
 
 <template>
-  <div class="FlowTypeSelector">
+  <div :class="{ disabled: readonly }" class="FlowTypeSelector">
     <div :class="{ active: model === 'immediately' }" @click="model = 'immediately'">
       <el-icon> <AlarmClock /> </el-icon>定时型-单次
     </div>
@@ -28,6 +29,14 @@ const model = useVModel(props, "modelValue", emits);
 
 <style lang="scss">
 .FlowTypeSelector {
+  &.disabled {
+    opacity: .65;
+    cursor: not-allowed !important;
+    div {
+      user-select: none;
+      pointer-events: none;
+    }
+  }
   display: flex;
 
   gap: 1rem;

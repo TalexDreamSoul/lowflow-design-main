@@ -121,7 +121,7 @@ const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
 !(async () => {
-  const res = await getBlackList({});
+  const res: any = await getBlackList({});
 
   if (res.data) {
     blackListFields.value = res.data;
@@ -147,12 +147,7 @@ function transformBlackListData() {
 
 <template>
   <div>
-    <el-form
-      ref="form"
-      :model="customRuleContent"
-      label-width="auto"
-      label-position="left"
-    >
+    <el-form ref="form" :model="customRuleContent" label-width="auto" label-position="left">
       <p class="MainTitle">受众客户为满足以下条件的客户（触发型非必选）</p>
       <el-text>若下列条件不添加，则受众客户默认为全部客户</el-text>
       <br />
@@ -170,19 +165,9 @@ function transformBlackListData() {
           <el-option value="yes" label="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select
-          placeholder="请选择"
-          v-model="blackList.list"
-          multiple
-          :disabled="readonly"
-          v-if="blackList?._enable === 'yes'"
-          style="width: 300px"
-        >
-          <el-option
-            v-for="item in blackListFields.records"
-            :value="item.id"
-            :label="item.blacklistName"
-          >
+        <el-select placeholder="请选择" v-model="blackList.list" multiple :disabled="readonly"
+          v-if="blackList?._enable === 'yes'" style="width: 300px">
+          <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
             <!-- <p>{{ item.blacklistDesc }}</p> -->
           </el-option>

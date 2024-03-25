@@ -6,6 +6,7 @@ const props = defineProps<{
   modelValue: string;
   title?: string;
   display?: boolean;
+  readonly?: boolean;
 }>();
 
 const emits = defineEmits<{
@@ -21,17 +22,12 @@ function toggle() {
 </script>
 
 <template>
-  <div class="LogicalLine">
+  <div class="LogicalLine" :class="{ disabled: readonly }">
     <div :class="{ active: +display! ^ 1 }" class="LogicalLine-Filter">
       <div class="fontstyle" mr-2 v-text="title" />
       <div class="logical-operator">
         <div class="logical-operator__line"></div>
-        <div
-          class="custom-switch"
-          :class="{ dotted: model !== '或' }"
-          @click="toggle"
-          v-text="label"
-        />
+        <div class="custom-switch" :class="{ dotted: model !== '或' }" @click="toggle" v-text="label" />
       </div>
     </div>
     <div class="LogicalLine-Main">
@@ -45,6 +41,15 @@ function toggle() {
   display: flex;
   //margin: 10px 0;
 
+  &.readonly {
+    opacity: .75 !important;
+    cursor: not-allowed;
+
+    .LogicalLine-Filter {
+      pointer-events: none !important;
+    }
+  }
+
   &-Filter {
     &.active {
       margin-right: 0px;
@@ -52,12 +57,14 @@ function toggle() {
       opacity: 1;
       transform: translateX(0);
     }
+
     display: flex;
     margin-right: -40px;
 
     opacity: 0;
     transform: translateX(-10%);
     transition: 0.25s;
+
     .fontstyle {
       align-self: center;
       //margin-right: 0.5rem;
@@ -77,6 +84,7 @@ function toggle() {
       overflow: hidden;
 
       .logical-operator__line {
+
         &:before,
         &:after {
           content: "";
@@ -90,9 +98,11 @@ function toggle() {
 
           background-color: #4078e0;
         }
+
         &:after {
           top: 100%;
         }
+
         position: absolute;
 
         top: 5%;
@@ -133,13 +143,15 @@ function toggle() {
       align-items: center;
       justify-content: flex-start;
     }
-    & > ul {
+
+    &>ul {
       display: flex;
 
       gap: 0.5rem;
       // justify-content: start;
       flex-direction: column;
     }
+
     flex: 1;
 
     padding: 12px 0;
@@ -154,6 +166,7 @@ function toggle() {
   &.dotted {
     border-style: dotted;
   }
+
   border: 1.5px solid #4078e0;
   color: #fff;
   width: 24px;

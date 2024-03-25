@@ -106,22 +106,23 @@ const defaultTime2: [Date, Date] = [
         </el-option-group>
       </el-select>
 
-      <div class="CustomBehavior-Line-Group" style="zoom:.8">
-        <el-text v-if="condition.eventCode" type="primary" style="cursor: pointer" @click="handleAdd(condition)">
+      <div v-if="!readonly" class="CustomBehavior-Line-Group" style="zoom:.8">
+        <el-text :disabled="readonly" v-if="condition.eventCode" type="primary" style="cursor: pointer"
+          @click="handleAdd(condition)">
           <el-icon size="12">
             <CirclePlusFilled />
           </el-icon>
           添加筛选
         </el-text>
         <div class="CustomBehavior-Line-Group-Sticky">
-          <el-text v-if="condition.eventCode && length === index + 1" type="primary" style="cursor: pointer"
-            @click="emits('addSub')">
+          <el-text :disabled="readonly" v-if="condition.eventCode && length === index + 1" type="primary"
+            style="cursor: pointer" @click="emits('addSub')">
             <el-icon size="12">
               <CirclePlusFilled />
             </el-icon>
             添加同组
           </el-text>
-          <el-text type="primary" style="cursor: pointer" @click="emits('del')">
+          <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="emits('del')">
             <el-icon size="14">
               <Delete />
             </el-icon>
