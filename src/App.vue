@@ -23,36 +23,42 @@ import { useLocalStorage } from "@vueuse/core";
 import customerAPI from "~/api/account";
 import dayjs from "dayjs";
 
-// const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
-const appOptions = ref({})
+const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
+// const appOptions = ref({})
 
 const route = useRoute();
 const meta = computed(() => route.meta);
 const fetchDataApi = async () => {
   const res = await customerAPI.accountDetail();
+  debugger
   appOptions.value.user = res?.data;
   console.log(`output->tabledata`, appOptions.value);
-  fetchDataMenuList()
+  // fetchDataMenuList()
 };
 
-onMounted(async () => {
+// onMounted(async () => {
+//   fetchDataApi();
+// });
+
+watchEffect(() => {
+  $ignored: appOptions
+  console.log(`output->appOptionsappOptions`, appOptions.value);
+
+  const { user }: any = appOptions.value
+  console.log("user", user)
+  if (!user?.accountName?.length) {
   fetchDataApi();
-});
-const fetchDataMenuList = async () => {
-  // $ignored: appOptions;
-  const { user }: any = appOptions.value;
-  console.log("user", user);
+  } else {
+    const { id } = user
 
-  const { id } = user;
+    setTimeout(async () => {
+      const { data: res }: any = await customerAPI.accountContainMenuList({ id, accountId: id })
 
-  setTimeout(async () => {
-    const { data: res }: any = await customerAPI.accountContainMenuList({
-      id,
-      accountId: id,
-    });
-    appOptions.value.menu = res;
-  });
-};
+      appOptions.value.menu = res
+    })
+  }
+
+})
 provide("appOptions", appOptions);
 </script>
 <style lang="scss">

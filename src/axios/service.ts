@@ -30,7 +30,7 @@ axiosInstance.interceptors.response.use(
     abortControllerMap.delete(url)
 
     // console.log("?res", res)
-    if (res?.data?.code === 'ASE110000') {
+    if (res?.data?.code === 'ASE1100') {
       // 判断当前不是登录页面时才进行提示和跳转
       if (!window.location.href.includes('/login')) {
         const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false);
