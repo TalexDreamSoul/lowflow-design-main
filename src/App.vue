@@ -35,11 +35,11 @@ watchEffect(() => {
 
   const { user }: any = appOptions.value
   console.log("user", user)
-  if (!user?.accountName?.length) {
-    const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false)
+  // if (!user?.accountName?.length) {
+  //   const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false)
 
-    promise.then(() => router.push('/login'))
-  } else {
+  //   promise.then(() => router.push('/login'))
+  // } else {
     const { id } = user
 
     setTimeout(async () => {
@@ -47,7 +47,7 @@ watchEffect(() => {
 
       appOptions.value.menu = res
     })
-  }
+  // }
 
 })
 provide('appOptions', appOptions)
