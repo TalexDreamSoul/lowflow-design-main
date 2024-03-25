@@ -4,6 +4,10 @@ import { defaultRequestInterceptors, defaultResponseInterceptors } from './confi
 import { AxiosInstance, InternalAxiosRequestConfig, RequestConfig, AxiosResponse } from './types'
 import { ElMessage } from 'element-plus'
 import { REQUEST_TIMEOUT } from '~/constants'
+import { reactiveMessage } from "./utils/mention/mention";
+import { useRoute, useRouter } from "vue-router";
+
+const router = useRouter();
 
 export const PATH_URL = import.meta.env.VITE_API_BASE_PATH
 
@@ -28,7 +32,11 @@ axiosInstance.interceptors.response.use(
     abortControllerMap.delete(url)
 
     // console.log("?res", res)
+//  if (res?.code=='200') {
+//     const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false)
 
+//     promise.then(() => router.push('/login'))
+//   } 
     // 这里不能做任何处理，否则后面的 interceptors 拿不到完整的上下文了
     return res
   },
