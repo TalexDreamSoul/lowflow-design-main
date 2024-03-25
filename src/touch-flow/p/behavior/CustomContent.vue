@@ -114,13 +114,13 @@ const getCurrSelected = (condition: any) =>
 
 <template>
   <div class="CustomContent">
-    <LogicalLine :display="conditionArr?.length < 2" v-model="condition.logicalChar">
+    <LogicalLine :readonly="readonly" :display="conditionArr?.length < 2" v-model="condition.logicalChar">
       <div v-for="(item, index) in conditionArr" :key="index" class="AttrLine">
-        <MultipleTrigger :obj="item" :attrs="attrs" :disabled="readonly" placeholder="客户属性/标签"
+        <MultipleTrigger :readonly="readonly" :obj="item" :attrs="attrs" :disabled="readonly" placeholder="客户属性/标签"
           :style="`width: ${item.type === 'label' ? '500' : '220'}px`" />
-        <operator :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :obj="item" :disabled="readonly"
+        <operator :readonly="readonly" :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :obj="item" :disabled="readonly"
           ref="operatorRef" v-model="item.attr.fieldOp" style="width: 120px" />
-        <AttrRender :selected="getCurrSelected(item)" :disabled="readonly" :item="item.attr" :obj="item"
+        <AttrRender :readonly="readonly" :selected="getCurrSelected(item)" :disabled="readonly" :item="item.attr" :obj="item"
           :attrs="attrs" />
 
         <div v-if="!readonly" style="zoom:.8">

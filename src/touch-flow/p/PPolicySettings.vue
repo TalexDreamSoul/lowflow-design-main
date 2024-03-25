@@ -273,10 +273,15 @@ function del(p: MarketingTouchEditDTO) {
 
     <teleport to="body">
       <el-drawer v-if="drawerOptions.visible" v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
-        <component :new="drawerOptions?.new" :p="data" :is="drawerOptions.comp" />
+        <component :readonly="_data.$readonly" :new="drawerOptions?.new" :p="data" :is="drawerOptions.comp" />
         <template #footer>
-          <el-button round @click="drawerOptions.visible = false">取消</el-button>
-          <el-button round @click="handleSave" type="primary">保存</el-button>
+          <template v-if="_data.$readonly">
+            <el-button round @click="drawerOptions.visible = false">返回</el-button>
+          </template>
+          <template v-else>
+            <el-button round @click="drawerOptions.visible = false">取消</el-button>
+            <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
+          </template>
         </template>
       </el-drawer>
     </teleport>

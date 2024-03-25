@@ -8,6 +8,7 @@ const $props = defineProps<{
   obj?: any;
   attrs: any;
   selected?: string;
+  readonly?: boolean;
 }>();
 
 const operatorOptions = [
@@ -102,6 +103,7 @@ const operators = computed(() => {
 
 <template>
   <el-select
+    :disabled="readonly"
     v-if="obj?.type !== 'label'"
     class="operator-container"
     v-model="data"

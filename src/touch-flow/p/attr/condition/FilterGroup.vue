@@ -82,7 +82,7 @@ function sequenceAdd() {
 </script>
 
 <template>
-  <LogicalLine :display="!!configuration?.ignore" v-model="customRuleContent!.logicalChar">
+  <LogicalLine :readonly="readonly" :display="!!configuration?.ignore" v-model="customRuleContent!.logicalChar">
     <BehaviorGroup v-if="!configuration?.ignore?.attrs" :readonly="readonly" @add="attrsAdd" title="客户属性满足">
       <CustomAttr v-if="customRuleContent.customAttr?.conditions?.length" :readonly="readonly"
         :custom="customRuleContent.customAttr" />

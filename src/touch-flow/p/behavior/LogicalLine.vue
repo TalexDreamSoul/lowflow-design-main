@@ -41,13 +41,20 @@ function toggle() {
   display: flex;
   //margin: 10px 0;
 
-  &.readonly {
-    opacity: .75 !important;
+  &.disabled {
     cursor: not-allowed;
 
     .LogicalLine-Filter {
+      &.active {
+        opacity: .75 !important;
+      }
+
       pointer-events: none !important;
     }
+
+    // .LogicalLine-Main {
+    //   pointer-events: none !important;
+    // }
   }
 
   &-Filter {

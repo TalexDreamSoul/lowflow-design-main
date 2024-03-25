@@ -18,7 +18,7 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div :style="`--c: ${color}`" class="BehaviorGroupPlus" :class="{ expand }">
+  <div :style="`--c: ${color}`" class="BehaviorGroupPlus" :class="{ expand: readonly || expand }">
     <div class="BehaviorGroupPlus-Header">
       <span :class="{ disabled: readonly }">
         <slot name="title">
