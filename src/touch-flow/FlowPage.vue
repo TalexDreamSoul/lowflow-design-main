@@ -295,7 +295,7 @@ const goBack = () => {
             <div>
               <el-button @click="goBack" round>返回</el-button>
               <el-button @click="submitReview('draft')" round>保存草稿</el-button>
-              <el-button round type="primary" @click="submitReview" class="primaryStyle">提交审核</el-button>
+              <el-button round type="primary" @click="submitReview('approvalPending')" class="primaryStyle">提交审核</el-button>
             </div>
           </template>
         </FlowHeader>
