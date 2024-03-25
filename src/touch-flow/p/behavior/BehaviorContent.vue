@@ -132,7 +132,7 @@ const defaultTime2: [Date, Date] = [
       </div>
     </div>
 
-    <BehaviorSubContent title="并且满足" :index="index" :dict="dict" :condition="condition" />
+    <BehaviorSubContent :readonly="readonly" title="并且满足" :index="index" :dict="dict" :condition="condition" />
 
     <!-- </div> -->
     <!-- </LogicalLine> -->
