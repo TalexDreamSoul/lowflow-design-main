@@ -28,8 +28,6 @@ function addEventB() {
 }
 
 !(async () => {
-  console.error('demo')
-
   const res: any = await getDictFilterTree(
     {
       pageNum: "1",
