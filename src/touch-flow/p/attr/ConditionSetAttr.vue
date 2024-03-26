@@ -229,7 +229,7 @@ const defaultTime2: [Date, Date] = [
 </script>
 
 <template>
-  <el-form :disabled="true" class="MainForm" ref="form" :model="sizeForm" label-width="auto" label-position="top">
+  <el-form :disabled="readonly" class="MainForm" ref="form" :model="sizeForm" label-width="auto" label-position="top">
     <el-form-item label="流程类型">
       <FlowTypeSelector :readonly="readonly" v-model="sizeForm.executeType" />
     </el-form-item>
