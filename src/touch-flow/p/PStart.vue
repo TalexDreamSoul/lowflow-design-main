@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, provide, inject, watch } from "vue";
+import { ref, reactive, computed, provide, inject, watch, onBeforeUnmount } from "vue";
 import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
 import ConditionSetAttr from "./attr/ConditionSetAttr.vue";
 import CustomersAttr from "./attr/CustomersAttr.vue";
@@ -67,6 +67,12 @@ function openDrawer(comp: any) {
 
   drawerOptions.visible = true;
 }
+
+onBeforeUnmount(() => {
+  console.log('onUnmounted')
+
+  drawerOptions.visible = false
+})
 
 const flowType = computed(() => {
   if (!data?.executeType) return "-";
@@ -268,7 +274,7 @@ function handleClick(e: Event) {
       </div>
     </div>
 
-    <teleport to="body">
+    <teleport to=".FlowPage">
       <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
@@ -286,7 +292,7 @@ function handleClick(e: Event) {
       </el-dialog>
     </teleport>
 
-    <teleport to="body">
+    <teleport to=".FlowPage">
       <el-drawer @click="handleClick" v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :readonly="_data.$readonly" :p="data" :is="drawerOptions.comp" />
         <template #footer>

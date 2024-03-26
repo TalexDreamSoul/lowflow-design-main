@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, provide, computed, inject, watch } from "vue";
+import { ref, reactive, provide, computed, inject, watch, onBeforeUnmount } from "vue";
 import { Stamp, Plus, Delete } from "@element-plus/icons-vue";
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "./attr/DeliverySettingsAttr.vue";
@@ -117,6 +117,10 @@ function openDrawer(comp: any, doNew: boolean = false) {
 
   drawerOptions.visible = true;
 }
+
+onBeforeUnmount(() => {
+  drawerOptions.visible = false
+})
 
 let _saveFunc: (() => boolean) | null = null;
 
@@ -253,7 +257,7 @@ function del(p: MarketingTouchEditDTO) {
       </div>
     </div>
 
-    <teleport to="body">
+    <teleport to=".FlowPage">
       <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item, true)" v-for="item in comps" class="PBlock-Section"
@@ -271,7 +275,7 @@ function del(p: MarketingTouchEditDTO) {
       </el-dialog>
     </teleport>
 
-    <teleport to="body">
+    <teleport to=".FlowPage">
       <el-drawer v-if="drawerOptions.visible" v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :readonly="_data.$readonly" :new="drawerOptions?.new" :p="data" :is="drawerOptions.comp" />
         <template #footer>

@@ -1,5 +1,5 @@
 <script setup lang="ts" name="SubBranch">
-import { ref, reactive, provide, inject, computed, watch } from 'vue'
+import { ref, reactive, provide, inject, computed, watch, onBeforeUnmount } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import SubDiversionAttr from './attr/SubDiversionAttr.vue';
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
@@ -107,6 +107,10 @@ function openDrawer(comp: any) {
 
   drawerOptions.visible = true
 }
+
+onBeforeUnmount(() => {
+  drawerOptions.visible = false
+})
 
 function openCondition() {
   openDrawer({
@@ -241,7 +245,7 @@ provide('save', (regFunc: () => boolean) => {
       </template>
     </div>
 
-    <teleport to="body">
+    <teleport to=".FlowPage">
       <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section"
@@ -259,7 +263,7 @@ provide('save', (regFunc: () => boolean) => {
       </el-dialog>
     </teleport>
 
-    <teleport to="body">
+    <teleport to=".FlowPage">
       <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
         <component :readonly="_data.$readonly" :p="data" :is="drawerOptions.comp" />
         <template #footer>

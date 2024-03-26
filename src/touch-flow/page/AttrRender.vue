@@ -201,7 +201,9 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
     </template>
 
     <span v-else-if="type === 'boolean'" />
-    <span v-else>NULL</span>
+    <span v-else>
+      <!-- NULL -->
+    </span>
   </div>
 </template>
 

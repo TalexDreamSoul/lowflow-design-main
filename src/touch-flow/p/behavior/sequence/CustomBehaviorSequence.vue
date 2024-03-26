@@ -12,7 +12,7 @@ const props = defineProps<{
 const dict = ref<any>();
 
 onMounted(async () => {
-  const res = await getDictFilterTree();
+  const res: any = await getDictFilterTree();
 
   if (res.data) {
     dict.value = res.data;
