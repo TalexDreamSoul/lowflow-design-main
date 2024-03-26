@@ -287,7 +287,6 @@ const getData = async (params: any) => {
     if (checkStringEqual(res?.code, 0)) {
       total.value = res?.data?.total;
       tableData.value = res?.data?.records;
-      console.log(tableData);
     }
   } catch (error) {
     console.error(error);

@@ -346,7 +346,6 @@ const onSuccess = () => {
 };
 
 const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
-  console.log(rawFile);
   if (
     rawFile.type !==
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"

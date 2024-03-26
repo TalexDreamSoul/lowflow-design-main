@@ -1,24 +1,12 @@
 <template>
   <div class="approve-activity list-layout">
     <div class="title">审核配置列表</div>
-    <div class="search">
-      <el-form :inline="true" :model="pageParams">
-        <el-form-item>
-          <el-input
-            v-model="pageParams.labelName"
-            placeholder="审核流程名称"
-            clearable
-            :suffix-icon="Search"
-          />
-        </el-form-item>
-      </el-form>
-    </div>
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="labelName" label="审核流程ID" width="458" />
-        <el-table-column prop="labelValue" label="名称" width="491">
+        <el-table-column prop="configId" label="审核流程ID" width="458" />
+        <el-table-column prop="configName" label="名称" width="491">
         </el-table-column>
-        <el-table-column prop="labelValueType" label="审核层级" width="491">
+        <el-table-column prop="approveHierarchy" label="审核层级" width="491">
         </el-table-column>
         <el-table-column label="操作" min-width="400" fixed="right">
           <template #default="scope">
@@ -60,25 +48,26 @@
         :hide-required-asterisk="true"
         label-position="top"
         :model="formValues"
+        :disabled="checkStringEqual(modalType, DrawerType.Detail)"
       >
-        <el-form-item label="审核流名称" prop="labelSource">
-          <el-input :disabled="true" />
+        <el-form-item label="审核流名称" prop="configName">
+          <el-input v-model="formValues.configName" :disabled="true" />
         </el-form-item>
-        <el-form-item label="审核层级" prop="labelSource">
-          <el-input :disabled="true" :model-value="formValues.domains.length" />
+        <el-form-item label="审核层级">
+          <el-input :disabled="true" :model-value="formValues.auditor.length" />
         </el-form-item>
         <el-form-item
-          v-for="(domain, index) in formValues.domains"
+          v-for="(domain, index) in formValues.auditor"
           :key="index"
           :label="index + 1 + '级审核人'"
-          :prop="'domains.' + index + '.value'"
+          :prop="'domains.' + index + '.auditorName'"
           :rules="{
             required: true,
             message: '请选择审核人',
           }"
         >
           <el-select
-            v-model="formValues.labelSource"
+            v-model="domain.auditorName"
             placeholder="请选择"
             clearable
           >
@@ -93,11 +82,11 @@
           </el-select>
         </el-form-item>
         <el-button
-            v-if="modalType !== DrawerType.Detail"
-            class="add-people"
-            @click="addDomain"
-            ><el-icon><CirclePlusFilled /></el-icon>添加审核人</el-button
-          >
+          v-if="modalType !== DrawerType.Detail"
+          class="add-people"
+          @click="addDomain"
+          ><el-icon><CirclePlusFilled /></el-icon>添加审核人</el-button
+        >
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -128,7 +117,7 @@
 <script lang="ts" setup>
 import { reactive, ref, watch, onMounted } from "vue";
 import {} from "~/constants";
-import API from "~/api/customer";
+import API from "~/api/approve";
 import { checkStringEqual, debounce } from "~/utils/common";
 import { Search, CirclePlusFilled } from "@element-plus/icons-vue";
 import { FormInstance } from "element-plus";
@@ -144,13 +133,11 @@ const ModalTitleMap: any = {
   [DrawerType.Detail]: "查看审核详情",
 };
 
-const pageParams = reactive({
-  labelName: "",
-});
+const pageParams = reactive({});
 
-const defaultFormValues = {
-  labelSource: "",
-  domains: [{ value: '' }],
+const defaultFormValues: any = {
+  configName: "",
+  auditor: [],
 };
 let formValues = reactive({ ...defaultFormValues });
 const pageNum = ref(1);
@@ -179,15 +166,13 @@ const currentChange = (value: number) => {
 };
 
 const addDomain = () => {
-  formValues.domains.push({
-    value: '',
-  })
-}
+  formValues.auditor.push({});
+};
 
 const getData = async (params: any) => {
   try {
     let { ...values } = params;
-    let res = await API.qryCustomLabel({
+    let res: any = await API.pageApproveConf({
       ...values,
       pageSize: 10,
     });
@@ -202,9 +187,10 @@ const getData = async (params: any) => {
 
 const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Detail) {
-    return;
   } else {
+    console.log("zj", values);
   }
+  Object.assign(formValues, values);
   modalType.value = type;
   modalVisible.value = true;
 };
@@ -235,9 +221,9 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       margin-top: 2px;
       width: 100%;
       height: 40px;
-      background: rgba(64,120,224,0.1);
-      border: 1px dashed rgba(0,0,0,0.2);
-      color: #4078E0;
+      background: rgba(64, 120, 224, 0.1);
+      border: 1px dashed rgba(0, 0, 0, 0.2);
+      color: #4078e0;
       justify-content: flex-start;
     }
     .el-icon {

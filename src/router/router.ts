@@ -127,19 +127,19 @@ export const routes: RouterOptions["routes"] = [
     ],
   },
   {
-    path: "/approve",
-    redirect: "/approve/activity",
+    path: "/examineCenter",
+    redirect: "/examineCenter/activityExamine",
     children: [
       {
-        path: "activity",
+        path: "activityExamine", // h5
         component: () => import("~/pages/approve/activity.vue"),
       },
       {
-        path: 'strategyProcess',
+        path: 'touchExamine', // 策略
         component: () => import("~/pages/approve/strategyProcess.vue"),
       },
       {
-        path: 'configuration',
+        path: 'examineSetting', // 流程配置
         component: () => import("~/pages/approve/configuration.vue"),
       }
     ],
@@ -149,7 +149,7 @@ export const routes: RouterOptions["routes"] = [
     component: () => import("~/pages/activity/index.vue"),
   },
   {
-    path: '/boothManagement',
+    path: '/activityCenter/boothManage',
     component: () => import('~/pages/boothManagement/index.vue'),
   }
   // 添加需要隐藏 TopMenu 的页面，并设置 meta.hideTopMenu 为 true
