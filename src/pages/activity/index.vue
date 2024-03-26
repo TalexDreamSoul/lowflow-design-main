@@ -158,7 +158,9 @@ const openUrl = (id: string, type: string) => {
   window.open(`${BaseUrl.value}/#/?id=${id}&type=${type}`, "_blank");
 };
 const detailsData = async (row: any) => {
-  router.push(`/activityCenter/activityList/details/${row.id}`);
+
+  console.log(`output->row`,row)
+  router.push(`/activityCenter/details/${row.id}`);
 };
 let pageParams = reactive({
   pageNum: 1,
