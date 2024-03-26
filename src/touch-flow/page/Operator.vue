@@ -82,6 +82,7 @@ const type = computed(() =>
 );
 const operators = computed(() => {
 
+  $props.item.fieldOp = ''
   console.log('1', operatorOptions, type.value, $props.attrs, $props.item)
 
   return operatorOptions.filter((item) => item.type.includes(type.value)) }
