@@ -20,7 +20,7 @@ watchEffect(() => {
 });
 
 onMounted(async () => {
-  const res = await getDictFilterTree(
+  const res: any = await getDictFilterTree(
     {
       pageNum:"1",
       pageSize:"999"
