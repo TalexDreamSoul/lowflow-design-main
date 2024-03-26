@@ -3,8 +3,7 @@
     <div class="common-layout">
       <TopMenu v-if="!meta.hideTopMenu" />
       <div class="content">
-        <el-watermark style="height: 100%;" :content='`${appOptions.user?.accountName}+${dayjs(new Date().getTime()).format("YYYY-MM-DD")}`' :font="{ color: 'rgba(0, 0, 0, 0.15)' }"
-          v-if="!meta.hideTopMenu">
+        <el-watermark style="height: 100%;" :content='`${appOptions.user?.accountName}+${dayjs(new Date().getTime()).format("YYYY-MM-DD")}`' :font="{ color: 'rgba(0, 0, 0, 0.15)' }" v-if="!meta.hideTopMenu">
           <router-view></router-view>
         </el-watermark>
         <router-view v-if="meta.hideTopMenu"></router-view>
@@ -18,27 +17,37 @@
 // @ts-ignore sure exist
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import TopMenu from "~/views/TopMenu/index.vue";
-import { computed, reactive, provide, watchEffect } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { reactiveMessage } from "./utils/mention/mention";
+import { computed, reactive, provide, watchEffect, ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useLocalStorage } from "@vueuse/core";
-import customerAPI from '~/api/account'
+import customerAPI from "~/api/account";
 import dayjs from "dayjs";
 
-const appOptions = useLocalStorage('app-options', { user: {}, menu: {} })
-const route = useRoute()
-const router = useRouter()
-const meta = computed(() => route.meta)
+const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
+// const appOptions = ref({})
+
+const route = useRoute();
+const meta = computed(() => route.meta);
+const fetchDataApi = async () => {
+  const res = await customerAPI.accountDetail();
+  debugger
+  appOptions.value.user = res?.data;
+  console.log(`output->tabledata`, appOptions.value);
+  // fetchDataMenuList()
+};
+
+// onMounted(async () => {
+//   fetchDataApi();
+// });
 
 watchEffect(() => {
   $ignored: appOptions
+  console.log(`output->appOptionsappOptions`, appOptions.value);
 
   const { user }: any = appOptions.value
   console.log("user", user)
   if (!user?.accountName?.length) {
-    const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false)
-
-    promise.then(() => router.push('/login'))
+  fetchDataApi();
   } else {
     const { id } = user
 
@@ -50,7 +59,7 @@ watchEffect(() => {
   }
 
 })
-provide('appOptions', appOptions)
+provide("appOptions", appOptions);
 </script>
 <style lang="scss">
 html,
@@ -58,7 +67,7 @@ body,
 #app {
   height: 100%;
 
-  --el-color-danger: #FF5050 !important;
+  --el-color-danger: #ff5050 !important;
 }
 
 div {
@@ -81,6 +90,10 @@ div {
 .content {
   flex: 1;
   overflow-y: scroll;
-  background: linear-gradient(to bottom, #eeeff6, rgba(56, 128, 228, 0.1098039216));
+  background: linear-gradient(
+    to bottom,
+    #eeeff6,
+    rgba(56, 128, 228, 0.1098039216)
+  );
 }
 </style>

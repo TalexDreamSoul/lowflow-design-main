@@ -5,6 +5,7 @@ import { AxiosInstance, InternalAxiosRequestConfig, RequestConfig, AxiosResponse
 import { ElMessage } from 'element-plus'
 import { REQUEST_TIMEOUT } from '~/constants'
 
+
 export const PATH_URL = import.meta.env.VITE_API_BASE_PATH
 
 const abortControllerMap: Map<string, AbortController> = new Map()
@@ -29,6 +30,7 @@ axiosInstance.interceptors.response.use(
 
     // console.log("?res", res)
 
+    
     // 这里不能做任何处理，否则后面的 interceptors 拿不到完整的上下文了
     return res
   },

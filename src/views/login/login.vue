@@ -1,34 +1,33 @@
 <template>
   <div class="login-container">
-    <el-form ref="refLoginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+    <el-form ref="refLoginForm" :model="state.loginForm" :rules="state.loginRules" class="login-form" autocomplete="on" label-position="left">
       <div class="title-container">
         <h3 class="title">Login Form</h3>
       </div>
 
       <el-form-item prop="accountName">
-        <el-input v-model="loginForm.accountName" placeholder="帐号名称" name="accountName" type="text" tabindex="1" autocomplete="on" />
+        <el-input v-model="state.loginForm.accountName" placeholder="帐号名称" name="accountName" type="text" tabindex="1" autocomplete="on" />
       </el-form-item>
 
       <el-form-item prop="accountPassword">
-        <el-input v-model="loginForm.accountPassword" placeholder="帐号密码" name="accountPassword" tabindex="2" autocomplete="on" />
+        <el-input v-model="state.loginForm.accountPassword" placeholder="帐号密码" name="accountPassword" tabindex="2" autocomplete="on" />
       </el-form-item>
       <el-form-item prop="email">
-        <el-input v-model="loginForm.email" placeholder="邮箱" name="accountemail" tabindex="2" autocomplete="on" />
+        <el-input v-model="state.loginForm.email" placeholder="邮箱" name="accountemail" tabindex="2" autocomplete="on" />
       </el-form-item>
       <el-form-item prop="phone">
-        <el-input v-model="loginForm.phone" placeholder="电话" name="phone" tabindex="2" autocomplete="on" />
+        <el-input v-model="state.loginForm.phone" placeholder="电话" name="phone" tabindex="2" autocomplete="on" />
       </el-form-item>
       <el-form-item prop="roleId">
-        <el-input v-model="loginForm.roleId" placeholder="角色Id" name="roleId" tabindex="2" autocomplete="on" />
+        <el-input v-model="state.loginForm.roleId" placeholder="角色Id" name="roleId" tabindex="2" autocomplete="on" />
       </el-form-item>
-      <el-button :loading="loading" type="primary" size="large" style="width: 100%; margin-bottom: 30px" @click.prevent="handleLogin">Login</el-button>
+      <el-button :loading="state.loading" type="primary" size="large" style="width: 100%; margin-bottom: 30px" @click="handleLogin">Login</el-button>
     </el-form>
   </div>
 </template>
 
 <script setup>
-import { nextTick, onMounted, reactive, toRefs } from "vue";
-import { useUserStore } from "~/store/user";
+import { nextTick, onMounted, reactive, toRefs,ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import API from "~/api/account";
 
@@ -72,61 +71,61 @@ const validatePhone = (rule, value, callback) => {
   }
 };
 
-const state = reactive({
+const state = ref({
   refLoginForm: null,
   loginForm: {
-    accountName: "4pd2",
+    accountName: "4pdadmin",
     accountPassword: "4pdadmin",
     email: "",
     phone: "",
     roleId: 0,
   },
   loginRules: {
-    // accountName: [
-    //   { required: true, trigger: "blur", validator: validateaccountName },
-    // ],
-    // accountPassword: [
-    //   { required: true, trigger: "blur", validator: validateaccountPassword },
-    // ],
-    // email: [{  trigger: "blur", validator: validateEmail }],
-    // phone: [{  trigger: "blur", validator: validatePhone }],
-    // roleId: [
-    //   {  trigger: "blur", message: "Please enter the role ID" },
-    // ],
   },
   loading: false,
 });
-const {
-  refLoginForm,
-  loginForm,
-  loginRules,
-  loading
-} = toRefs(state)
-const handleLogin = () => {
-  state.refLoginForm.validate(async (valid) => {
-    if (valid) {
-      try {
-        state.loading = true;
 
-        const userStore = useUserStore();
-
-        const { token, id, accountName } = await API.login(state.loginForm);
-
-        userStore.setToken({ token });
-
-        userStore.setUserInfo({ userInfo: { id, accountName } });
-
-        state.loading = false;
-
-        router.push();
-      } catch (error) {
-        state.loading = false;
-      }
-    } else {
-      return false;
-    }
-  });
+const goBack = () => {
+  router.go(-1);
 };
+const handleLogin = async() => {
+
+  state.loading = true;
+
+
+const rs = await API.login(state.value.loginForm);
+
+
+goBack()
+state.loading = false;
+
+
+  // state.refLoginForm.validate(async (valid) => {
+  //   if (valid) {
+  //     try {
+  //       state.loading = true;
+
+  //       const userStore = useUserStore();
+
+  //       const { token, id, accountName } = await API.login(state.loginForm);
+
+  //       // userStore.setToken({ token });
+
+  //       userStore.setUserInfo({ userInfo: { id, accountName } });
+  //       router.push('/configuration');
+  //       goBack()
+  //       state.loading = false;
+
+  //     } catch (error) {
+  //       state.loading = false;
+  //     }
+  //   } else {
+  //     goBack()
+  //     return false;
+  //   }
+  // });
+};
+
 </script>
 
 <style lang="scss">
