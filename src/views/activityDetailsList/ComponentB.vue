@@ -11,7 +11,10 @@ import {
 } from "~/api/index";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
+import { Download } from "@element-plus/icons-vue";
 import dayjs from "dayjs";
+import { getmarketingTouchDetail, marketingTouchStatistics } from "~/api/index";
+import * as echarts from "echarts";
 
 const formInline = reactive({
   touchName: "",
@@ -23,6 +26,7 @@ const formInline = reactive({
 
 const time = ref(null);
 const router = useRouter();
+const route = useRoute();
 
 const statusLabels = {
   draft: { Text: "草稿", type: "info" },
@@ -57,10 +61,26 @@ const StatisticsList = ref({
   approvalSuccess: 0,
   approvalRefuse: 0,
   done: 0,
+  accumulateCompleteCount: 0,
+  accumulateEntryCount: 0,
+  accumulateTouchCount: 0,
+  completeTargetCount1: 0,
+  completeTargetCount2: 0,
+  timeIntervals: [
+    "0-5s",
+    "6-10s",
+    "11～20s",
+    "21～40s",
+    "81～160s",
+    "161～320s",
+    "321～640s",
+    "641～1280s",
+    "≥1280s",
+  ],
+  percentages: [60, 45, 15, 60, 45, 15, 60, 45, 15],
 });
 
 onMounted(async () => {
-  getmarketingTouchNode();
   fetchDataApi();
 });
 watch([currentPage, pageSize, formInline], () => {
@@ -75,66 +95,7 @@ const fetchDataApi = async () => {
   tableData.value = res.data.records;
   total.value = res.data.total;
 };
-const getmarketingTouchNode = async () => {
-  const res = await getqryTouchStatusCount();
-  StatisticsList.value = res.data;
-  console.log(StatisticsList, "res");
-};
-const delData = async (row: any) => {
-  ElMessageBox.alert("删除后将无法恢复", "确认删除", {
-    showCancelButton: true,
-    roundButton: true,
-    cancelButtonClass: "pd-button",
-    confirmButtonClass: "pd-button",
-    customClass: "delete-modal",
-  }).then(async () => {
-    let res = await deleteMarketingTouch({ id: row.id }).finally(() => {});
-    if (res?.code == 0) {
-      fetchDataApi();
-      getmarketingTouchNode();
-      ElMessage.success(res.message);
-    }
-  });
-};
-const startData = async (row: any) => {
-  await getstartMarketingTouch({ id: row.id }).finally(() => {});
-  fetchDataApi();
-  getmarketingTouchNode();
-};
 
-const pauseData = async (row: any) => {
-  await getpauseMarketingTouch({ id: row.id }).finally(() => {});
-  fetchDataApi();
-  getmarketingTouchNode();
-};
-
-const updateData = async (row: any) => {
-  router.push(`/design/${row.id}`);
-};
-const detailsData = async (row: any) => {
-  router.push(`/touchCenter/details/${row.id}`);
-};
-
-const successData = async (row: any) => {
-  let res = await updateMarketingTouchStatus({
-    id: row.id,
-    status: "approvalSuccess",
-  }).finally(() => {
-    fetchDataApi();
-    getmarketingTouchNode();
-  });
-  ElMessage.success(res.message);
-};
-
-const copyData = async (row: any) => {
-  let res = await copyMarketingTouch({
-    id: row.id,
-  }).finally(() => {
-    fetchDataApi();
-    getmarketingTouchNode();
-  });
-  ElMessage.success(res.message);
-};
 const handleSizeChange = (val: any) => {
   console.log(`${val} items per page`);
 };
@@ -156,156 +117,91 @@ const changeStatus = (val: any) => {
   console.log(val, "change");
   formInline.status = val;
 };
+
+const chart = ref(null);
+
+const chartContainerB = ref<HTMLElement | null>(null);
+
+onMounted(async () => {
+  try {
+    const response: any = await marketingTouchStatistics({
+      id: route.params.id,
+    });
+    const data = response?.data;
+
+    const chart = echarts.init(chartContainerB.value);
+
+    const options = {
+      xAxis: {
+        type: "funnel",
+        data: [
+          { value: 12345, name: "浏览量人数UV" },
+          { value: 5435, name: "表单提交人数" },
+        ],
+      },
+      yAxis: {
+        type: "value",
+        min: 0,
+        max: 60,
+      },
+
+      series: [
+        {
+          name: "Percentage",
+          type: "bar",
+          barWidth: "40px", // 设置柱体宽度
+          data: StatisticsList.value?.percentages,
+        },
+      ],
+    };
+
+    chart.setOption(options);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+});
 </script>
 
 <template>
   <div class="warp">
-    <!-- <div class="pageTitle">策略流程列表</div> -->
     <div class="topSearch">
-      <el-form :inline="true" class="demo-form-inline">
-
-        <el-form-item label="创建时间：">
-          <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
-        </el-form-item>
-        <el-form-item>
-
-          <el-select v-model="formInline.executeType" clearable style="width:200px">
-            <el-option label="定时-单次" value="immediately" />
-            <el-option label="定时-重复" value="delayed" />
-            <el-option label="触发型" value="trigger" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-input v-model="formInline.touchName" placeholder="请输入策略流程名称" clearable style="width:200px" />
-        </el-form-item>
-
-      </el-form>
-      <div>
-        <router-link to="/design">
-          <el-button type="primary" class="add" round>新建策略流程</el-button>
-        </router-link>
-      </div>
+      <el-form-item label="筛选日期：">
+        <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
+      </el-form-item>
     </div>
 
     <div class="tableCard">
+      <div class="spanDataName">
+        <span>
+          按钮点击数据
+        </span>&nbsp;
+        <el-button type="primary" :icon="Download" class="primaryStyle">下载</el-button>
+      </div>
       <div class="countCard">
 
-        <!-- approvalPending
-          approvalRefuse
-          approvalSuccess
-          done
-          draft
-          running
-          suspend
-          total
-          waitStart -->
-
-        <div class="showCount  " @click="changeStatus('')" :class="formInline.status==''?'bgblue':''">
-          <div class="topcount">{{ StatisticsList.total !== undefined ? StatisticsList.total : '--' }}
-          </div>
-          <div class="undercount">全部</div>
-        </div>
         <div class="showCount" :class="formInline.status=='running'?'bgblue':''" @click="changeStatus('running')">
           <div class="topcount">
-            {{ StatisticsList.running !== undefined ? StatisticsList.running : '--' }}
+            {{ StatisticsList?.running !== undefined ? StatisticsList?.running : '--' }}
           </div>
-          <div class="undercount">运行中</div>
+          <div class="undercount">总浏览量PV</div>
         </div>
         <div class="showCount" @click="changeStatus('suspend')" :class="formInline.status=='suspend'?'bgblue':''">
           <div class="topcount">
-            {{ StatisticsList.suspend !== undefined ? StatisticsList.suspend : '--' }}
+            {{ StatisticsList?.suspend !== undefined ? StatisticsList?.suspend : '--' }}
           </div>
-          <div class="undercount">暂停中</div>
-        </div>
-        <div class="showCount" @click="changeStatus('approvalPending')" :class="formInline.status=='approvalPending'?'bgblue':''">
-          <div class="topcount">
-            {{ StatisticsList.approvalPending !== undefined ? StatisticsList.approvalPending : '--' }}
-          </div>
-          <div class="undercount">待审批</div>
-        </div>
-        <div class="showCount" @click="changeStatus('done')" :class="formInline.status=='done'?'bgblue':''">
-          <div class="topcount">
-            {{ StatisticsList.done !== undefined ? StatisticsList.done : '--' }}</div>
-          <div class="undercount">已结束</div>
-        </div>
-        <div class="showCount" @click="changeStatus('draft')" :class="formInline.status=='draft'?'bgblue':''">
-          <div class="topcount">
-            {{ StatisticsList.draft !== undefined ? StatisticsList.draft : '--' }}
-          </div>
-          <div class="undercount">草稿</div>
-        </div>
-        <div class="showCount" @click="changeStatus('approvalRefuse')" :class="formInline.status=='approvalRefuse'?'bgblue':''">
-          <div class="topcount">
-            {{ StatisticsList.approvalRefuse !== undefined ? StatisticsList.approvalRefuse : '--' }}
-          </div>
-          <div class="undercount">审核不通过</div>
+          <div class="undercount">总浏览量人数UV</div>
         </div>
       </div>
       <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
-        <el-table-column label="策略流程ID" width="120">
+        <el-table-column label="时间段" width="320">
           <template #default="scope">
             {{ scope.row.id }}
           </template>
         </el-table-column>
-        <el-table-column label="名称" width="180" prop="touchName" />
-        <el-table-column label="状态" width="100">
+        <el-table-column label="浏览量PV" prop="touchName" />
+        <el-table-column label="浏览量人数UV">
           <template #default="scope">
-            <el-tag class="mx-1" :type="statusLabels[scope.row.status].type" effect="light">
-              {{ statusLabels[scope.row.status].Text }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="起止日期" width="330">
-          <template #default="scope">
-            {{ scope.row.startTime }}~{{ scope.row.endTime }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="类型" width="150">
-          <template #default="scope">
-            {{ typeMap[scope.row.executeType] }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="目标完成率" width="150">
-          <template #default="scope">
-            {{ scope.row.targetCount }}%
-          </template>
-        </el-table-column>
-
-        <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="280">
-          <template #default="scope">
-            <!-- targetCount 完成目标数量
-            touchCount 触达数量
-            triggerCount 触发数量 -->
-            {{ scope.row.triggerCount }}/
-            {{ scope.row.touchCount }}/
-            {{ scope.row.targetCount }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="创建人" prop="createUserName" />
-
-        <el-table-column label="操作" width="300" fixed="right">
-          <template #default="scope">
-            <el-space wrap>
-              <!-- 
-              "draft": { Text: "草稿", type: 'info', }, 草稿
-              "approvalPending": { Text: "待审批", type: 'success' }, 审批中
-              "approvalSuccess": { Text: "审批成功", type: 'info', }, 运行中
-              "approvalRefuse": { Text: "审批拒绝", type: 'warning', }, 审批不通过
-              "waitStart": { Text: "等待启动", type: 'warning', },运行中
-              "running": { Text: "发送中", type: '', },运行中
-              "suspend": { Text: "暂停", type: 'warning', },暂停
-              "done": { Text: "已结束", type: 'info', }结束 -->
-              <el-link type="primary" v-if="scope.row.status=='suspend'" @click="startData(scope.row)">开始</el-link>
-              <el-link type="primary" v-if="scope.row.status=='waitStart'||scope.row.status=='running'||scope.row.status=='approvalSuccess'" @click="pauseData(scope.row)">暂停</el-link>
-              <el-link type="primary" v-if="scope.row.status=='draft'||scope.row.status=='approvalRefuse'||scope.row.status=='suspend'||scope.row.status=='done'" @click="delData(scope.row)">删除</el-link>
-              <el-link type="primary" @click="copyData(scope.row)">复制</el-link>
-              <el-link type="primary" v-if="scope.row.status=='approvalRefuse'||scope.row.status=='draft'" @click="updateData(scope.row)">编辑</el-link>
-              <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
-              <el-link type="primary" @click="successData(scope.row)">审核通过</el-link>
-            </el-space>
+            {{ statusLabels[scope.row.status].Text }}
           </template>
         </el-table-column>
       </el-table>
@@ -314,20 +210,51 @@ const changeStatus = (val: any) => {
     </div>
 
   </div>
+  <div class="warp">
+    <div class="tableCardunder">
+      <div class="spanDataName">
+        <span>
+          浏览时长
+        </span>&nbsp;
+      </div>
+
+      <div class="countCard">
+
+        <div class="showCount" :class="formInline.status=='running'?'bgblue':''" @click="changeStatus('running')">
+          <div class="topcount">
+            {{ StatisticsList?.running !== undefined ? StatisticsList?.running : '--' }}s
+          </div>
+          <div class="undercount">平均时长</div>
+        </div>
+
+        <div>
+          <div class="description">
+            百分比
+          </div>
+          <div ref="chartContainerB" style="width: 1000px; height: 400px;"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </template>
 <style lang="scss" scoped>
-.warp {
-  padding: 24px 40px;
-}
-
 .tableCard {
   background: #ffffff;
   box-shadow: 0px 20px 50px 0px rgba(0, 0, 0, 0.02);
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   padding: 24px 24px 80px 24px;
+  margin-bottom: 16px;
 }
-
+.tableCardunder {
+  background: #ffffff;
+  box-shadow: 0px 20px 50px 0px rgba(0, 0, 0, 0.02);
+  border-radius: 8px 8px 8px 8px;
+  opacity: 1;
+  padding: 24px 24px 0px;
+  margin-bottom: 16px;
+}
 .pagination {
   margin-top: 24px;
   float: right;
@@ -341,8 +268,9 @@ const changeStatus = (val: any) => {
 }
 
 .topSearch {
-  display: flex;
-  justify-content: space-between;
+  position: absolute;
+  top: 16px;
+  right: 16px;
 }
 
 .add {
@@ -355,11 +283,19 @@ const changeStatus = (val: any) => {
   display: flex;
   justify-content: flex-start;
 }
-
+.spanDataName {
+  font-weight: 500;
+  font-size: 18px;
+  color: #000000;
+  line-height: 24px;
+  text-align: left;
+  padding-bottom: 12px;
+}
 .showCount {
   cursor: pointer;
   min-width: 150px;
   margin-right: 16px;
+  height: 106px;
   background: linear-gradient(
     180deg,
     #f2f4f8 0%,

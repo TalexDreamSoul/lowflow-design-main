@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 export const routes: RouterOptions["routes"] = [
   {
     path: "/",
-    redirect: '/configuration'
+    redirect: '/userCenter'
     // component: () => import("~/views/dashboard/index.vue"),
   },
   {
