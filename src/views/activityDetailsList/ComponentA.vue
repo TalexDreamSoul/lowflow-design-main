@@ -119,7 +119,7 @@ onMounted(async () => {
   });
     const data = response?.data;
 
-      const chart = echarts.init(chartContainer.value);
+       chart.value = echarts.init(chartContainer.value);
 
       const options = {
         xAxis: {
@@ -139,7 +139,7 @@ onMounted(async () => {
         }]
       };
 
-      chart.setOption(options);
+      chart.value.setOption(options);
   } catch (error) {
     console.error('Error fetching data:', error);
   }

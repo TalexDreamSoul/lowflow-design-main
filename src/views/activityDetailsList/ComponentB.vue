@@ -14,8 +14,18 @@ import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import { Download } from "@element-plus/icons-vue";
 import dayjs from "dayjs";
 import { getmarketingTouchDetail, marketingTouchStatistics } from "~/api/index";
-import * as echarts from "echarts";
+import * as echarts from 'echarts/core';
+import { FunnelChart } from 'echarts/charts';
+import {
+  TitleComponent,
+  TooltipComponent,
+  GridComponent
+} from 'echarts/components';
+import { CanvasRenderer } from 'echarts/renderers';
 
+import { BlackAddTypeEnum, BLACK_LIST_TYPE } from "~/constants";
+
+const funnelChart = ref(null);
 const formInline = reactive({
   touchName: "",
   executeType: "",
@@ -117,49 +127,86 @@ const changeStatus = (val: any) => {
   console.log(val, "change");
   formInline.status = val;
 };
+const defaultFormValues = {
+  blacklistName: "",
+  blacklistDesc: "",
+  blacklistType: "",
+};
+let formValues = reactive<any>({ ...defaultFormValues });
 
-const chart = ref(null);
-
-const chartContainerB = ref<HTMLElement | null>(null);
 
 onMounted(async () => {
-  try {
-    const response: any = await marketingTouchStatistics({
-      id: route.params.id,
-    });
-    const data = response?.data;
 
-    const chart = echarts.init(chartContainerB.value);
+    // const response: any = await marketingTouchStatistics({
+    //   id: route.params.id,
+    // });
+    // const data = response?.data;
 
-    const options = {
-      xAxis: {
-        type: "funnel",
-        data: [
-          { value: 12345, name: "浏览量人数UV" },
-          { value: 5435, name: "表单提交人数" },
-        ],
-      },
-      yAxis: {
-        type: "value",
-        min: 0,
-        max: 60,
-      },
+    // const chart = echarts.init(chartContainerB.value);
 
-      series: [
-        {
-          name: "Percentage",
-          type: "bar",
-          barWidth: "40px", // 设置柱体宽度
-          data: StatisticsList.value?.percentages,
+    // const options = {
+    //   xAxis: {
+    //     type: "funnel",
+    //     data: [
+    //       { value: 12345, name: "浏览量人数UV" },
+    //       { value: 5435, name: "表单提交人数" },
+    //     ],
+    //   },
+    //   yAxis: {
+    //     type: "value",
+    //     min: 0,
+    //     max: 60,
+    //   },
+
+    //   series: [
+    //     {
+    //       name: "Percentage",
+    //       type: "bar",
+    //       barWidth: "40px", // 设置柱体宽度
+    //       data: StatisticsList.value?.percentages,
+    //     },
+    //   ],
+    // };
+
+    // chart.setOption(options);
+
+
+    echarts.use([TitleComponent, TooltipComponent, GridComponent, CanvasRenderer]);
+      echarts.use(FunnelChart);
+
+      const chartData = [
+        { value: 100, name: 'Step 1' },
+        { value: 80, name: 'Step 2' },
+        { value: 60, name: 'Step 3' },
+        { value: 40, name: 'Step 4' },
+        { value: 20, name: 'Step 5' }
+      ];
+
+      const myChart = echarts.init(funnelChart.value);
+
+      const option = {
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c}%'
         },
-      ],
-    };
+        series: [
+          {
+            type: 'funnel',
+            left: '10%',
+            top: 60,
+            bottom: 60,
+            width: '80%',
+            label: {
+              show: true,
+              position: 'inside'
+            },
+            data: chartData
+          }
+        ]
+      };
 
-    chart.setOption(options);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-});
+      myChart.setOption(option);
+    });
 </script>
 
 <template>
@@ -177,21 +224,7 @@ onMounted(async () => {
         </span>&nbsp;
         <el-button type="primary" :icon="Download" class="primaryStyle">下载</el-button>
       </div>
-      <div class="countCard">
-
-        <div class="showCount" :class="formInline.status=='running'?'bgblue':''" @click="changeStatus('running')">
-          <div class="topcount">
-            {{ StatisticsList?.running !== undefined ? StatisticsList?.running : '--' }}
-          </div>
-          <div class="undercount">总浏览量PV</div>
-        </div>
-        <div class="showCount" @click="changeStatus('suspend')" :class="formInline.status=='suspend'?'bgblue':''">
-          <div class="topcount">
-            {{ StatisticsList?.suspend !== undefined ? StatisticsList?.suspend : '--' }}
-          </div>
-          <div class="undercount">总浏览量人数UV</div>
-        </div>
-      </div>
+  
       <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
         <el-table-column label="时间段" width="320">
           <template #default="scope">
@@ -214,24 +247,22 @@ onMounted(async () => {
     <div class="tableCardunder">
       <div class="spanDataName">
         <span>
-          浏览时长
+          表单转化数据
         </span>&nbsp;
       </div>
 
-      <div class="countCard">
-
-        <div class="showCount" :class="formInline.status=='running'?'bgblue':''" @click="changeStatus('running')">
-          <div class="topcount">
-            {{ StatisticsList?.running !== undefined ? StatisticsList?.running : '--' }}s
-          </div>
-          <div class="undercount">平均时长</div>
-        </div>
-
+      <div >
+        <el-form-item label="表单">
+          <el-select v-model="formValues.blacklistType" placeholder="请选择" style="width:300px" clearable>
+            <el-option
+              v-for="item of BLACK_LIST_TYPE"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
         <div>
-          <div class="description">
-            百分比
-          </div>
-          <div ref="chartContainerB" style="width: 1000px; height: 400px;"></div>
+          <div ref="funnelChart" style="width: 1000px; height: 400px;"></div>
         </div>
       </div>
     </div>
