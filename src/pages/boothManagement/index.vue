@@ -46,25 +46,25 @@
     </div>
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="configId" label="展位配置ID" width="200" />
-        <el-table-column prop="configName" label="配置名称" width="200" />
-        <el-table-column prop="configDesc" label="配置说明" width="200" />
-        <el-table-column prop="visualRange" label="可见范围" width="200">
+        <el-table-column prop="configId" label="展位配置ID" width="232" />
+        <el-table-column prop="configName" label="配置名称" width="276" />
+        <el-table-column prop="configDesc" label="配置说明" width="278" />
+        <el-table-column prop="visualRange" label="可见范围" width="283">
           <template #default="scope">
             {{ visualRangeMap[scope.row.visualRange] }}
           </template>
         </el-table-column>
-        <el-table-column label="配置有效期" width="200">
+        <el-table-column label="配置有效期" width="333">
           <template #default="scope">
             {{ scope.row.startTime }} - {{ scope.row.endTime }}
           </template>
         </el-table-column>
-        <el-table-column prop="configType" label="配置类型" width="200">
+        <el-table-column prop="configType" label="配置类型" width="266">
           <template #default="scope">
             {{ configTypeMap[scope.row.configType] }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" min-width="200" fixed="right">
+        <el-table-column label="操作" min-width="172" fixed="right">
           <template #default="scope">
             <el-button
               link
