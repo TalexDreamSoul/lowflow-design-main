@@ -16,6 +16,9 @@ const approveAPI = {
   updateApproveConf(data: any) {
     return request.post({ url: "/api/updateApproveConf.do", data });
   },
+  listAccount() {
+    return request.post({ url: "/api/listAccount.do" });
+  },
 };
 
 export default approveAPI;

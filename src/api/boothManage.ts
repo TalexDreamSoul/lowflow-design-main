@@ -13,6 +13,9 @@ const boothManageAPI = {
   SaveBoothConf(data: any) {
     return request.post({ url: "/api/SaveBoothConf.do", data });
   },
+  queryBlacklistAll() {
+    return request.post({ url: "/api/queryBlacklistAll.do" });
+  },
 };
 
 export default boothManageAPI;

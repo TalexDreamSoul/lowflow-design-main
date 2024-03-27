@@ -59,25 +59,28 @@
         <el-form-item
           v-for="(domain, index) in formValues.auditor"
           :key="index"
-          :label="index + 1 + '级审核人'"
-          :prop="'domains.' + index + '.auditorName'"
+          :prop="'auditor.' + index + '.auditorId'"
           :rules="{
             required: true,
             message: '请选择审核人',
           }"
         >
-          <el-select
-            v-model="domain.auditorName"
-            placeholder="请选择"
-            clearable
-          >
+          <template #label>
+            {{ index + 1 }}级审核人
+            <a
+              style="margin-left: 20px"
+              v-if="modalType !== DrawerType.Detail"
+              v-show="index > 0"
+              @click.prevent="removeItem(index)"
+              ><el-icon style="transform: translateY(2px)"><Delete /></el-icon
+              >删除</a
+            >
+          </template>
+          <el-select v-model="domain.auditorId" placeholder="请选择" clearable>
             <el-option
-              v-for="item of [
-                { label: '通过', value: '1' },
-                { label: '拒绝', value: '2' },
-              ]"
-              :label="item.label"
-              :value="item.value"
+              v-for="item of peopleList"
+              :label="item.accountName"
+              :value="item.id + ''"
             />
           </el-select>
         </el-form-item>
@@ -93,13 +96,13 @@
           <el-button
             v-if="modalType === DrawerType.Detail"
             round
-            @click="modalVisible = false"
+            @click="onClose"
             >返回</el-button
           >
           <el-button
             v-if="modalType !== DrawerType.Detail"
             round
-            @click="modalVisible = false"
+            @click="onClose"
             >取消</el-button
           >
           <el-button
@@ -119,7 +122,7 @@ import { reactive, ref, watch, onMounted } from "vue";
 import {} from "~/constants";
 import API from "~/api/approve";
 import { checkStringEqual, debounce } from "~/utils/common";
-import { Search, CirclePlusFilled } from "@element-plus/icons-vue";
+import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 import { FormInstance } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
 
@@ -148,6 +151,7 @@ const total = ref(0);
 const tableData = ref<any[]>([]);
 const modalVisible = ref(false);
 const modalType = ref<any>(DrawerType.Detail);
+const peopleList = ref<any[]>([]);
 
 watch(
   pageParams,
@@ -157,6 +161,7 @@ watch(
 );
 
 onMounted(() => {
+  getPeopleList();
   getData({ ...pageParams, pageNum: 1 });
 });
 
@@ -167,6 +172,15 @@ const currentChange = (value: number) => {
 
 const addDomain = () => {
   formValues.auditor.push({});
+};
+
+const removeItem = (index: number) => {
+  formValues.auditor.splice(index, 1);
+};
+
+const getPeopleList = async () => {
+  let res: any = await API.listAccount();
+  peopleList.value = res?.data || [];
 };
 
 const getData = async (params: any) => {
@@ -186,25 +200,39 @@ const getData = async (params: any) => {
 };
 
 const handleModal = async (type: string, values?: any) => {
-  if (type === DrawerType.Detail) {
-  } else {
-    console.log("zj", values);
-  }
   Object.assign(formValues, values);
   modalType.value = type;
   modalVisible.value = true;
+};
+
+const onClose = () => {
+  formValues.configName = "";
+  formValues.auditor = [];
+  modalVisible.value = false;
 };
 
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   try {
     await formEl.validate();
-    console.log(formValues);
-    // let res = await API.updateCustomLabel(formValues);
-    // if (checkStringEqual(res?.code, 0)) {
-    //   getData({ ...pageParams, pageNum: pageNum.value });
-    //   modalVisible.value = false;
-    // }
+    let { auditor, ...values } = formValues;
+    let res: any = await API.updateApproveConf({
+      ...values,
+      approveHierarchy: auditor.length,
+      auditor: auditor.map((v: any, i: any) => {
+        return {
+          auditorId: v.auditorId,
+          auditorLevel: i + 1,
+          auditorName: peopleList.value.find((item: any) =>
+            checkStringEqual(item.id, v.auditorId)
+          )?.accountName,
+        };
+      }),
+    });
+    if (checkStringEqual(res?.code, 0)) {
+      getData({ ...pageParams, pageNum: pageNum.value });
+      onClose();
+    }
   } catch (error) {
     console.error(error);
   }

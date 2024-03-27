@@ -10,20 +10,21 @@
             placeholder="配置类型"
             clearable
           >
-            <!-- <el-option
-              v-for="item of []"
-              :label="item.label"
-              :value="item.value"
-            /> -->
+            <el-option
+              v-for="(item, key) in configTypeMap"
+              :label="item"
+              :value="key"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="配置有效期">
           <el-date-picker
             v-model="pageParams.time"
-            type="daterange"
-            range-separator="-"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+            format="YYYY-MM-DD HH:mm:ss"
           />
         </el-form-item>
         <el-form-item>
@@ -48,13 +49,21 @@
         <el-table-column prop="configId" label="展位配置ID" width="200" />
         <el-table-column prop="configName" label="配置名称" width="200" />
         <el-table-column prop="configDesc" label="配置说明" width="200" />
-        <el-table-column prop="visualRange" label="可见范围" width="200" />
+        <el-table-column prop="visualRange" label="可见范围" width="200">
+          <template #default="scope">
+            {{ visualRangeMap[scope.row.visualRange] }}
+          </template>
+        </el-table-column>
         <el-table-column label="配置有效期" width="200">
           <template #default="scope">
             {{ scope.row.startTime }} - {{ scope.row.endTime }}
           </template>
         </el-table-column>
-        <el-table-column prop="configType" label="配置类型" width="200" />
+        <el-table-column prop="configType" label="配置类型" width="200">
+          <template #default="scope">
+            {{ configTypeMap[scope.row.configType] }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" min-width="200" fixed="right">
           <template #default="scope">
             <el-button
@@ -97,11 +106,12 @@
           :hide-required-asterisk="true"
           label-position="top"
           :model="formValues"
+          :disabled="modalType === DrawerType.Detail"
         >
           <el-form-item label="配置名称" :rules="inputRules" prop="configName">
             <el-input v-model="formValues.configName" />
           </el-form-item>
-          <el-form-item label="配置说明" :rules="inputRules" prop="configDesc">
+          <el-form-item label="配置说明" prop="configDesc">
             <el-input
               :rows="2"
               type="textarea"
@@ -147,12 +157,9 @@
                   placeholder="请选择"
                 >
                   <el-option
-                    v-for="item of [
-                      { label: '全员可见', value: 1 },
-                      { label: '登录可见', value: 0 },
-                    ]"
-                    :label="item.label"
-                    :value="item.value"
+                    v-for="item of blacklist"
+                    :label="item.blacklistName"
+                    :value="item.id"
                   />
                 </el-select>
               </el-form-item>
@@ -182,7 +189,7 @@
               <el-option
                 v-for="(item, key) in visualRangeMap"
                 :label="item"
-                :value="key"
+                :value="key * 1"
               />
             </el-select>
           </el-form-item>
@@ -213,7 +220,7 @@
                   <el-option
                     v-for="(item, key) in configTypeMap"
                     :label="item"
-                    :value="key"
+                    :value="key * 1"
                   />
                 </el-select>
               </el-form-item>
@@ -306,7 +313,7 @@
                   <el-option
                     v-for="(item, key) in skipTypeMap"
                     :label="item"
-                    :value="key"
+                    :value="key * 1"
                   />
                 </el-select>
               </el-form-item>
@@ -319,6 +326,7 @@
               >
                 {{ formValues.skipActivityName || formValues.skipActivityId }}
                 <el-button
+                  v-if="!checkStringEqual(modalType, DrawerType.Detail)"
                   type="primary"
                   plain
                   @click="dialogRef!.modalVisible = true"
@@ -373,7 +381,7 @@ import {} from "~/constants";
 import API from "~/api/boothManage";
 import { checkStringEqual, debounce } from "~/utils/common";
 import { Search, CirclePlusFilled } from "@element-plus/icons-vue";
-import { ElMessage, FormInstance } from "element-plus";
+import { ElMessage, FormInstance, dayjs } from "element-plus";
 import Dialog from "./dialog.vue";
 import "element-plus/theme-chalk/el-message-box.css";
 
@@ -434,7 +442,7 @@ const defaultFormValues = {
   whitelist: "",
   visualRange: "",
   time: "",
-  configType: "1",
+  configType: 1,
   boothName: "",
   boothPicture: "",
   boothWeight: 0,
@@ -453,6 +461,7 @@ const tableData = ref<any[]>([]);
 const modalVisible = ref(false);
 const modalType = ref<any>(DrawerType.Detail);
 const dialogRef = ref<any>();
+const blacklist = ref<any>([]);
 
 watch(
   pageParams,
@@ -462,6 +471,7 @@ watch(
 );
 
 onMounted(() => {
+  getBlackAll();
   getData({ ...pageParams, pageNum: 1 });
 });
 
@@ -509,14 +519,19 @@ function addPic(response: any) {
   formValues.boothPicture = response.data;
 }
 
+const getBlackAll = async () => {
+  let res: any = await API.queryBlacklistAll();
+  blacklist.value = res?.data;
+};
+
 const getData = async (params: any) => {
   try {
     let { time, ...values } = params;
     let beginTime;
     let endTime;
     if (time) {
-      beginTime = time[0];
-      endTime = time[1];
+      beginTime = dayjs(time[0]).format("YYYY-MM-DD HH:mm:ss");
+      endTime = dayjs(time[1]).format("YYYY-MM-DD HH:mm:ss");
     }
     let res: any = await API.pageBoothConf({
       beginTime,
@@ -534,7 +549,6 @@ const getData = async (params: any) => {
 };
 
 const onSelectActivity = (values: any) => {
-  console.log(values);
   Object.assign(formValues, values);
 };
 
@@ -549,6 +563,8 @@ const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Create) {
     Object.assign(formValues, defaultFormValues);
   } else {
+    let { startTime, endTime, blacklist, ...params } = values;
+    Object.assign(formValues, { time: [new Date(startTime), new Date(endTime)], blacklist: blacklist.map((v: any) => v.blacklistId), ...params });
   }
   modalType.value = type;
   modalVisible.value = true;
@@ -558,12 +574,26 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   try {
     await formEl.validate();
-    console.log(formValues);
-    let { ...values } = formValues;
+    let { time, ...values } = formValues;
+    let startTime;
+    let endTime;
+    if (time) {
+      startTime = dayjs(time[0]).format("YYYY-MM-DD HH:mm:ss");
+      endTime = dayjs(time[1]).format("YYYY-MM-DD HH:mm:ss");
+    }
     if (!values.blacklistFlag) {
       values.blacklist = [];
+    } else {
+      values.blacklist = values.blacklist.map((item: any) => {
+        return {
+          blacklistId: item,
+          blacklistName: blacklist.value.find((v: any) =>
+            checkStringEqual(v.id, item)
+          ).blacklistName,
+        };
+      });
     }
-    if (values.whitelistFlag) {
+    if (!values.whitelistFlag) {
       values.whitelist = null;
     }
     if (checkStringEqual(values.configType, 3)) {
@@ -575,11 +605,15 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       values.skipActivityName = null;
       values.skipActivityId = null;
     }
-    // let res = await API.updateCustomLabel(formValues);
-    // if (checkStringEqual(res?.code, 0)) {
-    //   getData({ ...pageParams, pageNum: pageNum.value });
-    //   modalVisible.value = false;
-    // }
+    let res: any = await API[
+      modalType.value === DrawerType.Create
+        ? "SaveBoothConf"
+        : "updateBoothConf"
+    ]({ ...values, startTime, endTime });
+    if (checkStringEqual(res?.code, 0)) {
+      getData({ ...pageParams, pageNum: pageNum.value });
+      onClose();
+    }
   } catch (error) {
     console.error(error);
   }
