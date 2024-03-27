@@ -224,7 +224,6 @@ const getSelectData = async (params: any) => {
     addType: props.drawerType!=="detail"? BlackAddTypeEnum.Manual:"",
   });
   if (checkStringEqual(res?.code, 0)) {
-    console.log(res);
     total.value = res?.data?.total;
     tableData.value = res?.data?.records;
   }

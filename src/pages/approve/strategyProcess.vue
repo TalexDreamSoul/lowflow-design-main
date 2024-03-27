@@ -5,15 +5,15 @@
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
           <el-select
-            v-model="pageParams.labelSource"
+            v-model="pageParams.executeType"
             placeholder="请选择"
             clearable
           >
-            <!-- <el-option
-              v-for="item of []"
-              :label="item.label"
-              :value="item.value"
-            /> -->
+            <el-option
+              v-for="(item, key) in typeMap"
+              :label="item"
+              :value="key"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="活动有效期">
@@ -27,7 +27,7 @@
         </el-form-item>
         <el-form-item>
           <el-input
-            v-model="pageParams.labelName"
+            v-model="pageParams.touchName"
             placeholder="策略流程名称"
             clearable
             :suffix-icon="Search"
@@ -37,18 +37,21 @@
     </div>
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="labelName" label="策略流程ID" width="272" />
-        <el-table-column prop="labelValue" label="名称" width="291">
+        <el-table-column prop="id" label="策略流程ID" width="272" />
+        <el-table-column prop="touchName" label="名称" width="291">
         </el-table-column>
-        <el-table-column prop="labelValueType" label="活动起止时间" width="453">
+        <el-table-column label="活动起止时间" width="453">
+          <template #default="scope">
+            {{ scope.row.startTime }}~{{ scope.row.endTime }}
+          </template>
         </el-table-column>
+        <el-table-column label="类型" width="314">
+          <template #default="scope">
+            {{ typeMap[scope.row.executeType] }}
+          </template></el-table-column
+        >
         <el-table-column
-          prop="labelDesc"
-          label="类型"
-          width="314"
-        ></el-table-column>
-        <el-table-column
-          prop="status"
+          prop="createUserName"
           label="创建人"
           width="272"
         ></el-table-column>
@@ -69,6 +72,9 @@
               >审核详情</el-button
             >
             <el-button
+              :disabled="
+                !checkStringEqual(appOptions?.user?.id, scope.row.auditorId)
+              "
               @click="handleModal(DrawerType.Approve, scope.row)"
               link
               type="primary"
@@ -122,22 +128,38 @@
           </el-select>
         </el-form-item>
       </el-form>
-      <el-table :data="modalData" style="width: 100%" height="400" v-if="!checkStringEqual(modalType, DrawerType.Approve)">
-        <el-table-column prop="labelName" label="节点" width="92" />
-        <el-table-column prop="labelValue" label="审核人" width="101">
+      <el-table
+        :data="modalData"
+        style="width: 100%"
+        height="400"
+        v-if="!checkStringEqual(modalType, DrawerType.Approve)"
+      >
+        <el-table-column prop="approveLevel" label="节点" width="92" />
+        <el-table-column prop="auditorName" label="审核人" width="101">
         </el-table-column>
-        <el-table-column prop="labelValueType" label="接收时间" width="231">
+        <el-table-column prop="receiptTime" label="接收时间" width="231">
+          <template #default="scope">
+            {{ scope.row.receiptTime || "-" }}
+          </template>
         </el-table-column>
-        <el-table-column
-          prop="labelDesc"
-          label="审核状态"
-          width="125"
-        ></el-table-column>
-        <el-table-column
-          prop="status"
-          label="操作时间"
-          min-width="202"
-        ></el-table-column>
+        <el-table-column prop="approveStatus" label="审核状态" width="125">
+          <template #default="scope">
+            <el-tag v-if="scope.row.approveStatus === null" type="success"
+              >待审批</el-tag
+            >
+            <el-tag v-if="scope.row.approveStatus === true" type=""
+              >已通过</el-tag
+            >
+            <el-tag v-if="scope.row.approveStatus === false" type="danger"
+              >未通过</el-tag
+            >
+          </template></el-table-column
+        >
+        <el-table-column prop="operationTime" label="操作时间" min-width="202">
+          <template #default="scope">
+            {{ scope.row.operationTime || "-" }}
+          </template></el-table-column
+        >
       </el-table>
       <template #footer>
         <span class="dialog-footer">
@@ -156,7 +178,7 @@
           <el-button
             v-if="modalType !== DrawerType.ApproveDatail"
             round
-            type='primary'
+            type="primary"
             @click.prevent="onSubmit(formRef)"
             >确认</el-button
           >
@@ -168,11 +190,16 @@
 <script lang="ts" setup>
 import { reactive, ref, watch, onMounted } from "vue";
 import {} from "~/constants";
-import API from "~/api/customer";
+import API from "~/api/approve";
 import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
 import { FormInstance } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
+import { getqryMarketingTouch } from "~/api";
+import { useRouter } from "vue-router";
+import { inject } from "vue";
+
+const router = useRouter();
 
 enum DrawerType {
   ApproveDatail = "approve-datail",
@@ -186,9 +213,17 @@ const ModalTitleMap: any = {
   [DrawerType.Approve]: "活动流程审核",
 };
 
+const appOptions: any = inject("appOptions")!;
+
+const typeMap: any = {
+  immediately: "定时-单次",
+  delayed: "定时-重复",
+  trigger: "触发型",
+};
+
 const pageParams = reactive({
-  labelName: "",
-  labelSource: "",
+  executeType: "",
+  touchName: "",
   time: "",
 });
 
@@ -231,11 +266,12 @@ const getData = async (params: any) => {
       beginTime = time[0];
       endTime = time[1];
     }
-    let res = await API.qryCustomLabel({
+    let res: any = await getqryMarketingTouch({
       beginTime,
       endTime,
       ...values,
       pageSize: 10,
+      status: "approvalPending",
     });
     if (checkStringEqual(res?.code, 0)) {
       total.value = res?.data?.total;
@@ -248,9 +284,18 @@ const getData = async (params: any) => {
 
 const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Detail) {
+    router.push(`/touchCenter/details/${values.id}`);
     return;
   } else if (type === DrawerType.ApproveDatail) {
+    let res: any = await API.listApproveRecord({
+      businessId: values.id,
+    });
+    Object.assign(modalData, res?.data);
   } else {
+    Object.assign(formValues, {
+      recordId: values.approveRecordId,
+      approveStatus: "",
+    });
   }
   modalType.value = type;
   modalVisible.value = true;
@@ -260,12 +305,11 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   try {
     await formEl.validate();
-    console.log(formValues);
-    // let res = await API.updateCustomLabel(formValues);
-    // if (checkStringEqual(res?.code, 0)) {
-    //   getData({ ...pageParams, pageNum: pageNum.value });
-    //   modalVisible.value = false;
-    // }
+    let res: any = await API.approve({ ...formValues });
+    if (checkStringEqual(res?.code, 0)) {
+      getData({ ...pageParams, pageNum: pageNum.value });
+      modalVisible.value = false;
+    }
   } catch (error) {
     console.error(error);
   }

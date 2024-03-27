@@ -1,24 +1,12 @@
 <template>
   <div class="approve-activity list-layout">
     <div class="title">审核配置列表</div>
-    <div class="search">
-      <el-form :inline="true" :model="pageParams">
-        <el-form-item>
-          <el-input
-            v-model="pageParams.labelName"
-            placeholder="审核流程名称"
-            clearable
-            :suffix-icon="Search"
-          />
-        </el-form-item>
-      </el-form>
-    </div>
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="labelName" label="审核流程ID" width="458" />
-        <el-table-column prop="labelValue" label="名称" width="491">
+        <el-table-column prop="configId" label="审核流程ID" width="458" />
+        <el-table-column prop="configName" label="名称" width="491">
         </el-table-column>
-        <el-table-column prop="labelValueType" label="审核层级" width="491">
+        <el-table-column prop="approveHierarchy" label="审核层级" width="491">
         </el-table-column>
         <el-table-column label="操作" min-width="400" fixed="right">
           <template #default="scope">
@@ -60,56 +48,61 @@
         :hide-required-asterisk="true"
         label-position="top"
         :model="formValues"
+        :disabled="checkStringEqual(modalType, DrawerType.Detail)"
       >
-        <el-form-item label="审核流名称" prop="labelSource">
-          <el-input :disabled="true" />
+        <el-form-item label="审核流名称" prop="configName">
+          <el-input v-model="formValues.configName" :disabled="true" />
         </el-form-item>
-        <el-form-item label="审核层级" prop="labelSource">
-          <el-input :disabled="true" />
+        <el-form-item label="审核层级">
+          <el-input :disabled="true" :model-value="formValues.auditor.length" />
         </el-form-item>
         <el-form-item
-          v-for="(domain, index) in formValues.domains"
+          v-for="(domain, index) in formValues.auditor"
           :key="index"
-          :label="index + 1 + '级审核人'"
-          :prop="'domains.' + index + '.value'"
+          :prop="'auditor.' + index + '.auditorId'"
           :rules="{
             required: true,
             message: '请选择审核人',
           }"
         >
-          <el-select
-            v-model="formValues.labelSource"
-            placeholder="请选择"
-            clearable
-          >
+          <template #label>
+            {{ index + 1 }}级审核人
+            <a
+              style="margin-left: 20px"
+              v-if="modalType !== DrawerType.Detail"
+              v-show="index > 0"
+              @click.prevent="removeItem(index)"
+              ><el-icon style="transform: translateY(2px)"><Delete /></el-icon
+              >删除</a
+            >
+          </template>
+          <el-select v-model="domain.auditorId" placeholder="请选择" clearable>
             <el-option
-              v-for="item of [
-                { label: '通过', value: '1' },
-                { label: '拒绝', value: '2' },
-              ]"
-              :label="item.label"
-              :value="item.value"
+              v-for="item of peopleList"
+              :label="item.accountName"
+              :value="item.id + ''"
             />
           </el-select>
         </el-form-item>
         <el-button
-            v-if="modalType !== DrawerType.Detail"
-            class="add-people"
-            ><el-icon><CirclePlusFilled /></el-icon>添加审核人</el-button
-          >
+          v-if="modalType !== DrawerType.Detail"
+          class="add-people"
+          @click="addDomain"
+          ><el-icon><CirclePlusFilled /></el-icon>添加审核人</el-button
+        >
       </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button
             v-if="modalType === DrawerType.Detail"
             round
-            @click="modalVisible = false"
+            @click="onClose"
             >返回</el-button
           >
           <el-button
             v-if="modalType !== DrawerType.Detail"
             round
-            @click="modalVisible = false"
+            @click="onClose"
             >取消</el-button
           >
           <el-button
@@ -127,9 +120,9 @@
 <script lang="ts" setup>
 import { reactive, ref, watch, onMounted } from "vue";
 import {} from "~/constants";
-import API from "~/api/customer";
+import API from "~/api/approve";
 import { checkStringEqual, debounce } from "~/utils/common";
-import { Search, CirclePlusFilled } from "@element-plus/icons-vue";
+import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 import { FormInstance } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
 
@@ -143,18 +136,13 @@ const ModalTitleMap: any = {
   [DrawerType.Detail]: "查看审核详情",
 };
 
-const pageParams = reactive({
-  labelName: "",
-  labelSource: "",
-  time: "",
-});
+const pageParams = reactive({});
 
-const defaultFormValues = {
-  labelSource: "",
-  domains: [{ value: '' }],
+const defaultFormValues: any = {
+  configName: "",
+  auditor: [],
 };
 let formValues = reactive({ ...defaultFormValues });
-let modalData = reactive<any>([]);
 const pageNum = ref(1);
 
 const formRef = ref<FormInstance>();
@@ -163,6 +151,7 @@ const total = ref(0);
 const tableData = ref<any[]>([]);
 const modalVisible = ref(false);
 const modalType = ref<any>(DrawerType.Detail);
+const peopleList = ref<any[]>([]);
 
 watch(
   pageParams,
@@ -172,6 +161,7 @@ watch(
 );
 
 onMounted(() => {
+  getPeopleList();
   getData({ ...pageParams, pageNum: 1 });
 });
 
@@ -180,18 +170,23 @@ const currentChange = (value: number) => {
   getData({ ...pageParams, pageNum: value });
 };
 
+const addDomain = () => {
+  formValues.auditor.push({});
+};
+
+const removeItem = (index: number) => {
+  formValues.auditor.splice(index, 1);
+};
+
+const getPeopleList = async () => {
+  let res: any = await API.listAccount();
+  peopleList.value = res?.data || [];
+};
+
 const getData = async (params: any) => {
   try {
-    let { time, ...values } = params;
-    let beginTime;
-    let endTime;
-    if (time) {
-      beginTime = time[0];
-      endTime = time[1];
-    }
-    let res = await API.qryCustomLabel({
-      beginTime,
-      endTime,
+    let { ...values } = params;
+    let res: any = await API.pageApproveConf({
       ...values,
       pageSize: 10,
     });
@@ -205,24 +200,39 @@ const getData = async (params: any) => {
 };
 
 const handleModal = async (type: string, values?: any) => {
-  if (type === DrawerType.Detail) {
-    return;
-  } else {
-  }
+  Object.assign(formValues, values);
   modalType.value = type;
   modalVisible.value = true;
+};
+
+const onClose = () => {
+  formValues.configName = "";
+  formValues.auditor = [];
+  modalVisible.value = false;
 };
 
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   try {
     await formEl.validate();
-    console.log(formValues);
-    // let res = await API.updateCustomLabel(formValues);
-    // if (checkStringEqual(res?.code, 0)) {
-    //   getData({ ...pageParams, pageNum: pageNum.value });
-    //   modalVisible.value = false;
-    // }
+    let { auditor, ...values } = formValues;
+    let res: any = await API.updateApproveConf({
+      ...values,
+      approveHierarchy: auditor.length,
+      auditor: auditor.map((v: any, i: any) => {
+        return {
+          auditorId: v.auditorId,
+          auditorLevel: i + 1,
+          auditorName: peopleList.value.find((item: any) =>
+            checkStringEqual(item.id, v.auditorId)
+          )?.accountName,
+        };
+      }),
+    });
+    if (checkStringEqual(res?.code, 0)) {
+      getData({ ...pageParams, pageNum: pageNum.value });
+      onClose();
+    }
   } catch (error) {
     console.error(error);
   }
@@ -239,9 +249,9 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       margin-top: 2px;
       width: 100%;
       height: 40px;
-      background: rgba(64,120,224,0.1);
-      border: 1px dashed rgba(0,0,0,0.2);
-      color: #4078E0;
+      background: rgba(64, 120, 224, 0.1);
+      border: 1px dashed rgba(0, 0, 0, 0.2);
+      color: #4078e0;
       justify-content: flex-start;
     }
     .el-icon {
