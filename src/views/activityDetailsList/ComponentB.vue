@@ -211,11 +211,7 @@ onMounted(async () => {
 
 <template>
   <div class="warp">
-    <div class="topSearch">
-      <el-form-item label="筛选日期：">
-        <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
-      </el-form-item>
-    </div>
+  
 
     <div class="tableCard">
       <div class="spanDataName">
