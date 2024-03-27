@@ -82,16 +82,17 @@ function sequenceAdd() {
 </script>
 
 <template>
-  <LogicalLine :display="!!configuration?.ignore" v-model="customRuleContent!.logicalChar">
-    <BehaviorGroup v-if="!configuration?.ignore?.attrs" @add="attrsAdd" title="客户属性满足">
+  <LogicalLine :readonly="readonly" :display="!!configuration?.ignore" v-model="customRuleContent!.logicalChar">
+    <BehaviorGroup v-if="!configuration?.ignore?.attrs" :readonly="readonly" @add="attrsAdd" title="客户属性满足">
       <CustomAttr v-if="customRuleContent.customAttr?.conditions?.length" :readonly="readonly"
         :custom="customRuleContent.customAttr" />
     </BehaviorGroup>
-    <BehaviorGroup @add="behaviorAdd" title="客户行为满足">
-      <CustomBehavior :configuration="configuration?.subIgnore?.event" v-if="customRuleContent.customEvent?.conditions?.length" :readonly="readonly"
+    <BehaviorGroup @add="behaviorAdd" title="客户行为满足" :readonly="readonly">
+      <CustomBehavior :configuration="configuration?.subIgnore?.event"
+        v-if="customRuleContent.customEvent?.conditions?.length" :readonly="readonly"
         :custom="customRuleContent.customEvent" />
     </BehaviorGroup>
-    <BehaviorGroup v-if="!configuration?.ignore?.sequence" @add="sequenceAdd" title="行为序列满足">
+    <BehaviorGroup v-if="!configuration?.ignore?.sequence" @add="sequenceAdd" :readonly="readonly" title="行为序列满足">
       <CustomBehaviorSequence v-if="customRuleContent.eventSequence?.conditions?.length" :readonly="readonly"
         :custom="customRuleContent.eventSequence" />
     </BehaviorGroup>

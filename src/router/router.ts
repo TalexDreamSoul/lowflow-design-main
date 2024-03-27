@@ -145,8 +145,18 @@ export const routes: RouterOptions["routes"] = [
     ],
   },
   {
-    path: "/activityCenter/activityList",
-    component: () => import("~/pages/activity/index.vue"),
+    path: "/activityCenter",
+    redirect: "/activityCenter/activityList",
+    children: [
+      {
+        path: "activityList",
+        component: () => import("~/pages/activity/index.vue"),
+      },
+      {
+        path: "details/:id",
+        component: () => import("~/views/activityDetailsList/details.vue"),
+      },
+    ],
   },
   {
     path: '/activityCenter/boothManage',

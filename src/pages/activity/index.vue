@@ -4,58 +4,26 @@
     <div class="search">
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
-          <el-select
-            v-model="pageParams.playType"
-            placeholder="玩法"
-            @clear="clear"
-            clearable
-          >
-            <el-option
-              v-for="(item, key) in activities"
-              :label="item"
-              :value="key"
-            />
+          <el-select v-model="pageParams.playType" placeholder="玩法" @clear="clear" clearable>
+            <el-option v-for="(item, key) in activities" :label="item" :value="key" />
           </el-select>
         </el-form-item>
         <el-form-item label="创建日期">
-          <el-date-picker
-            v-model="pageParams.time"
-            type="daterange"
-            range-separator="-"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          />
+          <el-date-picker v-model="pageParams.time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />
         </el-form-item>
         <el-form-item>
-          <el-input
-            v-model="pageParams.activityName"
-            placeholder="H5活动名称"
-            clearable
-            :suffix-icon="Search"
-          />
+          <el-input v-model="pageParams.activityName" placeholder="H5活动名称" clearable :suffix-icon="Search" />
         </el-form-item>
       </el-form>
       <el-button class="add" round type="primary" @click="async()=>{
           await getTemList();
           dialog = true
-      }"
-        >新建H5活动</el-button
-      >
+      }">新建H5活动</el-button>
     </div>
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column
-          prop="activityId"
-          label="H5活动ID"
-          width="220"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          prop="activityName"
-          label="H5活动名称"
-          width="220"
-          show-overflow-tooltip
-        />
+        <el-table-column prop="activityId" label="H5活动ID" width="220" show-overflow-tooltip />
+        <el-table-column prop="activityName" label="H5活动名称" width="220" show-overflow-tooltip />
         <el-table-column label="状态" width="120">
           <template #default="scope">
             <span>{{ activityStatus[scope.row.activityStatus] }}</span>
@@ -64,11 +32,9 @@
         <el-table-column label="活动有效期" width="220">
           <template #default="scope">
             <div v-if="scope.row.activityBeginTime">
-              <span
-                >{{ scope.row.activityBeginTime }}至{{
+              <span>{{ scope.row.activityBeginTime }}至{{
                   scope.row.activityEndTime
-                }}</span
-              >
+                }}</span>
             </div>
             <div v-else>-</div>
           </template>
@@ -90,41 +56,24 @@
         </el-table-column>
         <el-table-column label="二维码" width="120">
           <template #default="scope">
-            <el-image
-              preview-teleported
-              style="width: 50px; height: 50px"
-              :src="scope.row.diffuseCode"
-              :zoom-rate="1.2"
-              :max-scale="7"
-              :min-scale="0.2"
-              :preview-src-list="[scope.row.diffuseCode]"
-              :z-index="9999"
-              fit="cover"
-            />
+            <el-image preview-teleported style="width: 50px; height: 50px" :src="scope.row.diffuseCode" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="[scope.row.diffuseCode]" :z-index="9999" fit="cover" />
             <div></div>
           </template>
         </el-table-column>
 
-        <el-table-column prop="creatorName" label="创建人" width="120"/>
-        <el-table-column prop="creatorName" label="操作" fixed="right" width="220">
+        <el-table-column prop="creatorName" label="创建人" width="120" />
+        <el-table-column prop="creatorName" label="操作" fixed="right" width="300">
           <template #default="scope">
-            <el-button link type="primary" @click="openUrl(scope.row.activityId,'true')">编辑</el-button>
-            <el-button link type="primary" @click="del(scope.row.activityId)"
-              >删除</el-button
-            >
-            <el-button link type="primary" @click="addTem(scope.row.activityId)"
-              >存为模板</el-button
-            >
-          </template>
+            <el-space wrap>
+              <el-button link type="primary" @click="openUrl(scope.row.activityId,'true')">编辑</el-button>
+            <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+            <el-button link type="primary" @click="del(scope.row.activityId)">删除</el-button>
+            <el-button link type="primary" @click="addTem(scope.row.activityId)">存为模板</el-button>
+         </el-space>
+         </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        background
-        layout="prev, pager, next, jumper"
-        :total="total"
-        v-model:current-page="pageParams.pageNum"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination background layout="prev, pager, next, jumper" :total="total" v-model:current-page="pageParams.pageNum" @current-change="handleCurrentChange" />
     </div>
     <el-drawer v-model="dialog" title="新建H5活动" direction="rtl" size="50%">
       <div v-for="(item, key) in temList" :key="key">
@@ -134,11 +83,15 @@
             <img v-if="i.templateCover" :src="i.templateCover" alt="" srcset="">
 
             <template v-else>
-              <el-icon><Plus /></el-icon>
+              <el-icon>
+                <Plus />
+              </el-icon>
               <div class="creatTem">新建空白模板</div>
             </template>
             <div class="delTem" @click.stop="delTem(i.activityId,'')" v-if="i.activityId">
-              <el-icon><Delete /></el-icon>
+              <el-icon>
+                <Delete />
+              </el-icon>
             </div>
           </div>
         </div>
@@ -163,15 +116,18 @@ import {
   saveActivityTemplate,
   deleteActivityInfo,
   listActivityTemplate,
-  queryDict
+  queryDict,
 } from "~/api/activity";
 import dayjs from "dayjs";
 import { Search } from "@element-plus/icons-vue";
+import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
+const router = useRouter();
+
 let BaseUrl = ref("");
 queryDict().then((res) => {
   BaseUrl.value = res.data[0].domain;
-})
+});
 interface ActivityTypes {
   [key: string]: string;
 }
@@ -198,9 +154,14 @@ const handleCurrentChange = (e: any) => {
   getActivityList();
   console.log(e);
 };
-const openUrl = (id:string,type:string) => {
-  window.open(`${BaseUrl.value}/#/?id=${id}&type=${type}`, '_blank');
-}
+const openUrl = (id: string, type: string) => {
+  window.open(`${BaseUrl.value}/#/?id=${id}&type=${type}`, "_blank");
+};
+const detailsData = async (row: any) => {
+
+  console.log(`output->row`,row)
+  router.push(`/activityCenter/details/${row.id}`);
+};
 let pageParams = reactive({
   pageNum: 1,
   pageSize: 10,
@@ -229,19 +190,19 @@ interface TempChild {
   diffuseUrl: string;
   templateCover: string;
 }
-let temList= ref([] as TempTypes[]);
+let temList = ref([] as TempTypes[]);
 const getTemList = async () => {
-  const {data}:{data:TempTypes[]} = await listActivityTemplate();
+  const { data }: { data: TempTypes[] } = await listActivityTemplate();
   // temList = res.data;
   temList.value = data.map((item) => {
     if (!item.playTypeName) {
       item.templateList.unshift({
         diffuseUrl: `${BaseUrl.value}/#/`,
         templateCover: "",
-      })
+      });
     }
-   return item
-  })
+    return item;
+  });
   console.log(data, "ppp");
 };
 onMounted(() => {
@@ -390,14 +351,13 @@ const clear = () => {
     margin-top: 8px;
     font-size: 14px;
   }
-  img{
+  img {
     width: 100%;
     height: 100%;
     border-radius: 8px;
-
   }
 }
-.delTem{
+.delTem {
   position: absolute;
   right: 10px;
   top: 10px;

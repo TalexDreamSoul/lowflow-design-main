@@ -8,6 +8,7 @@ const $props = defineProps<{
   obj?: any;
   attrs: any;
   selected?: string;
+  readonly?: boolean;
 }>();
 
 const operatorOptions = [
@@ -76,12 +77,13 @@ const type = computed(() =>
     ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected)
     : $props.attrs.filter(
         (attr: any) =>
-          attr.field === $props.item.field //|| attr.labelName === $props.item?.labelName
+        attr.field === $props.item?.attr?.field || $props.item.field //|| attr.labelName === $props.item?.labelName
       )?.[0]?.fieldType ?? "none"
 );
 const operators = computed(() => {
 
-  console.log('1', operatorOptions, type.value)
+  $props.item.fieldOp = ''
+  console.log('1', operatorOptions, type.value, $props.attrs, $props.item)
 
   return operatorOptions.filter((item) => item.type.includes(type.value)) }
 );
@@ -102,6 +104,7 @@ const operators = computed(() => {
 
 <template>
   <el-select
+    :disabled="readonly"
     v-if="obj?.type !== 'label'"
     class="operator-container"
     v-model="data"

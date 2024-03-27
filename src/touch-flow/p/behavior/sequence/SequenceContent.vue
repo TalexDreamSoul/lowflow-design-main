@@ -112,19 +112,9 @@ const defaultTime2: [Date, Date] = [
 <template>
   <div class="SequenceContent">
     <div class="SequenceContent-Line">
-      <el-date-picker
-        @change="handleDateChange"
-        :disabled="readonly"
-        format="YYYY-MM-DD HH:mm:ss"
-        value-format="YYYY-MM-DD HH:mm:ss"
-         v-model="timeRange"
-         type="datetimerange"
-        range-separator="-"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期"
-        style="width: 120px"
-        :default-time="defaultTime2"
-      />
+      <el-date-picker @change="handleDateChange" :disabled="readonly" format="YYYY-MM-DD HH:mm:ss"
+        value-format="YYYY-MM-DD HH:mm:ss" v-model="timeRange" type="datetimerange" range-separator="-"
+        start-placeholder="开始日期" end-placeholder="结束日期" style="width: 120px" :default-time="defaultTime2" />
       <span style="color: #484545"> &nbsp;&nbsp; 依次做过 </span>
 
       <span style="zoom:.8">
@@ -140,24 +130,14 @@ const defaultTime2: [Date, Date] = [
           添加同组
         </el-text>
         &nbsp;&nbsp;&nbsp; -->
-        <el-text
-          :disabled="readonly"
-          type="primary"
-          style="cursor: pointer"
-          @click="handleAdd"
-        >
+        <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="handleAdd">
           <el-icon size="14">
             <CirclePlusFilled />
           </el-icon>
           添加事件
         </el-text>
         &nbsp;&nbsp;&nbsp;
-        <el-text
-          :disabled="readonly"
-          type="primary"
-          style="cursor: pointer"
-          @click="handleDel"
-        >
+        <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="handleDel">
           <el-icon size="14">
             <Delete />
           </el-icon>
@@ -166,63 +146,31 @@ const defaultTime2: [Date, Date] = [
       </span>
     </div>
 
-    <div
-      class="SequenceContent-Events"
-      v-for="(event, _index) in condition.conditions"
-      :key="_index"
-    >
-      <el-select
-        @change="handleEventChanged($event, event)"
-        style="width: 200px"
-        :disabled="readonly"
-        placeholder="选择事件"
-        v-model="event.eventCode"
-      >
-        <el-option-group
-          v-for="group in dict?.events"
-          :key="group.eventType"
-          :label="group.eventTypeName"
-        >
-          <el-option
-            v-for="item in group.events"
-            :key="item.id"
-            :label="item.eventName"
-            :value="item.eventCode"
-          />
+    <div class="SequenceContent-Events" v-for="(event, _index) in condition.conditions" :key="_index">
+      <el-select @change="handleEventChanged($event, event)" style="width: 200px" :disabled="readonly"
+        placeholder="选择事件" v-model="event.eventCode">
+        <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
+          <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
         </el-option-group>
       </el-select>
       &nbsp;&nbsp;&nbsp;
-      <el-text
-        type="primary"
-        v-if="event.eventCode"
-        style="cursor: pointer;zoom:.8"
-        @click="handleSubAdd(event)"
-      >
+      <el-text type="primary" v-if="!readonly && event.eventCode" style="cursor: pointer;zoom:.8"
+        @click="handleSubAdd(event)">
         <el-icon size="14">
           <CirclePlusFilled />
         </el-icon>
         添加筛选
       </el-text>
       &nbsp;&nbsp;&nbsp;
-      <el-text
-        v-if="condition.conditions.length > 1"
-        :disabled="readonly"
-        type="primary"
-        style="cursor: pointer;zoom:.8"
-        @click="handleSubDel(_index)"
-      >
+      <el-text v-if="!readonly && condition.conditions.length > 1" type="primary" style="cursor: pointer;zoom:.8"
+        @click="handleSubDel(_index)">
         <el-icon size="14">
           <Delete />
         </el-icon>
         删除
       </el-text>
 
-      <SequenceSubContent
-        :index="_index"
-        :dict="dict"
-        :eventCode="event.eventCode"
-        :condition="event.conditions"
-      />
+      <SequenceSubContent :index="_index" :dict="dict" :eventCode="event.eventCode" :condition="event.conditions" />
     </div>
   </div>
 </template>
@@ -236,9 +184,11 @@ const defaultTime2: [Date, Date] = [
     gap: 0.5rem;
     align-items: center;
   }
+
   &-Events {
     margin-left: 1rem;
   }
+
   margin: 10px 0;
 
   border-radius: 8px;

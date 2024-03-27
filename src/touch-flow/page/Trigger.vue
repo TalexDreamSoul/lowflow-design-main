@@ -7,6 +7,7 @@ const props = defineProps<{
   attrs: any;
   item: any;
   placeholder?: string;
+  readonly?: boolean;
 }>();
 const emits = defineEmits<{
   (e: "update:modelValue", modelValue: any): void;
@@ -43,7 +44,7 @@ watch(
 
 <template>
   <div class="Trigger-Wrapper">
-    <el-select class="trigger-container" v-model="model" :placeholder="ph">
+    <el-select :disabled="readonly" class="trigger-container" v-model="model" :placeholder="ph">
       <el-option v-for="item in attrs" :key="item.field" :label="item.fieldName" :value="item.field" />
     </el-select>
   </div>

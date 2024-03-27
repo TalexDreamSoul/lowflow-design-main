@@ -4,7 +4,6 @@ import { defaultRequestInterceptors, defaultResponseInterceptors } from './confi
 import { AxiosInstance, InternalAxiosRequestConfig, RequestConfig, AxiosResponse } from './types'
 import { ElMessage } from 'element-plus'
 import { REQUEST_TIMEOUT } from '~/constants'
-import { reactiveMessage } from "~/utils/mention/mention";
 
 
 export const PATH_URL = import.meta.env.VITE_API_BASE_PATH
@@ -30,18 +29,7 @@ axiosInstance.interceptors.response.use(
     abortControllerMap.delete(url)
 
     // console.log("?res", res)
-    if (res?.data?.code === 'ASE110000') {
-      // 判断当前不是登录页面时才进行提示和跳转
-      if (!window.location.href.includes('/login')) {
-        const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false);
-    
-        promise.then(() => {
-          window.location.href = '/login';
-        });
-        
-        return res;
-      }
-    }
+
     
     // 这里不能做任何处理，否则后面的 interceptors 拿不到完整的上下文了
     return res

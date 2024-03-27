@@ -9,6 +9,7 @@ import BehaviorSubContent from "../behavior/BehaviorSubContent.vue";
 const props = defineProps<{
   condition: CustomEventConditionDTO;
   dict: any;
+  readonly?: boolean;
 }>();
 
 console.log("props", props.condition)
@@ -82,24 +83,24 @@ function handleSelectChanged(val: string, event: any) {
 
 <template>
   <div class="TouchBlockGenre">
-    <LogicalLine v-model="condition.logicalChar">
+    <LogicalLine :disabled="readonly" v-model="condition.logicalChar">
       <div class="EventA-Wrapper" v-for="(event, index) in conditionList">
         <div class="EventA-Wrapper-Head">
-          <el-select @change="handleSelectChanged($event, event)" placeholder="选择事件" v-model="event.eventCode"
-            style="width: 200px">
+          <el-select :disabled="readonly" @change="handleSelectChanged($event, event)" placeholder="选择事件"
+            v-model="event.eventCode" style="width: 200px">
             <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
               <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
             </el-option-group>
           </el-select>
 
           <span>
-            <el-text type="primary" style="cursor: pointer" @click="addCondition(event)">
+            <el-text v-if="!readonly" type="primary" style="cursor: pointer" @click="addCondition(event)">
               <el-icon size="14">
                 <CirclePlusFilled />
               </el-icon>
               筛选条件
             </el-text>
-            <el-text type="primary" style="cursor: pointer" @click="delEvent(index)">
+            <el-text v-if="!readonly" type="primary" style="cursor: pointer" @click="delEvent(index)">
               <el-icon size="14">
                 <Delete />
               </el-icon>

@@ -117,6 +117,7 @@ const daysOfWeek = computed(() => ["一", "二", "三", "四", "五", "六", "�
 const props = defineProps<{
   p: any;
   dict: any;
+  readonly?: boolean;
 }>();
 
 Object.assign(sizeForm, props.p);
@@ -228,24 +229,26 @@ const defaultTime2: [Date, Date] = [
 </script>
 
 <template>
-  <el-form class="MainForm" ref="form" :model="sizeForm" label-width="auto" label-position="top">
+  <el-form :disabled="readonly" class="MainForm" ref="form" :model="sizeForm" label-width="auto" label-position="top">
     <el-form-item label="流程类型">
-      <FlowTypeSelector v-model="sizeForm.executeType" />
+      <FlowTypeSelector :readonly="readonly" v-model="sizeForm.executeType" />
     </el-form-item>
     <br />
 
     <el-form-item v-if="sizeForm.executeType === 'immediately'" label="流程开始时间（任务开始时间）">
       <el-text> 客户在&nbsp;&nbsp; </el-text>
-      <el-date-picker v-model="sizeForm.date1" type="date" label="选择日期" placeholder="选择日期" value-format="YYYY-MM-DD"
-        style="width: 150px" />&nbsp;
-      <el-time-picker v-model="sizeForm.date2" label="选择时间" placeholder="选择时间" style="width: 120px" />
+      <el-date-picker :disabled="readonly" v-model="sizeForm.date1" type="date" label="选择日期" placeholder="选择日期"
+        value-format="YYYY-MM-DD" style="width: 150px" />&nbsp;
+      <el-time-picker :disabled="readonly" v-model="sizeForm.date2" label="选择时间" placeholder="选择时间"
+        style="width: 120px" />
       <el-text> &nbsp;&nbsp;进入流程 </el-text>
     </el-form-item>
 
     <div v-else-if="sizeForm.executeType === 'repeat'">
       <el-form-item label="流程有效期：">
-        <el-date-picker v-model="sizeForm.date3" type="datetimerange" value-format="YYYY-MM-DD HH:mm:ss" style="max-width: 382px"
-          range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :default-time="defaultTime2"/>
+        <el-date-picker :disabled="readonly" v-model="sizeForm.date3" type="datetimerange"
+          value-format="YYYY-MM-DD HH:mm:ss" style="max-width: 382px" range-separator="至" start-placeholder="开始日期"
+          end-placeholder="结束日期" :default-time="defaultTime2" />
       </el-form-item>
 
       <br />
@@ -266,7 +269,7 @@ const defaultTime2: [Date, Date] = [
         &nbsp;&nbsp;&nbsp;
         <el-select v-if="sizeForm.repeatTime.repeatType === 'week'" v-model="sizeForm.repeatTime.repeatDay"
           placeholder="选择星期几" style="width: 150px" multiple collapse-tags>
-          <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="index+1"></el-option>
+          <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="index + 1"></el-option>
         </el-select>
 
         <el-time-picker v-model="sizeForm.repeatTime.repeatTime" value-format="HH:mm" placeholder="选择时间"
@@ -285,7 +288,7 @@ const defaultTime2: [Date, Date] = [
       </el-form-item>
 
       <br />
-      <EventGroup :p="sizeForm" />
+      <EventGroup :readonly="readonly" :p="sizeForm" />
     </div>
 
     <template v-if="sizeForm.executeType !== 'immediately'">

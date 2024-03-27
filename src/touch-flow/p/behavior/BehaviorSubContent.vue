@@ -80,40 +80,16 @@ const getCurrSelected = (condition: any) => {
 
 <template>
   <div class="BehaviorSubContent">
-    <LogicalLine
-      :title="title"
-      :model-value="condition.conditions.logicalChar"
-      :display="condition.conditions?.conditions?.length < 2"
-    >
-      <div
-        class="BehaviorSubContent-Line"
-        v-if="attrs"
-        v-for="(item, index) in getConditions()"
-        :key="index"
-      >
-        <trigger
-          v-model="item.attr.field"
-          :item="item"
-          :attrs="attrs"
-          :disabled="readonly"
-          placeholder="客户属性/标签"
-          style="width: 220px"
-        />
-        <operator
-          :selected="getCurrSelected(item)"
-          :attrs="attrs"
-          :item="item.attr"
-          :disabled="readonly"
-          v-model="item.attr.fieldOp"
-        />
-        <AttrRender
-          :selected="getCurrSelected(item)"
-          :disabled="readonly"
-          :item="item.attr"
-          :attrs="attrs"
-        />
+    <LogicalLine :title="title" :readonly="readonly" :model-value="condition.conditions.logicalChar"
+      :display="condition.conditions?.conditions?.length < 2">
+      <div class="BehaviorSubContent-Line" v-if="attrs" v-for="(item, index) in getConditions()" :key="index">
+        <trigger v-model="item.attr.field" :item="item" :attrs="attrs" :readonly="readonly" placeholder="客户属性/标签"
+          style="width: 220px" />
+        <operator :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :disabled="readonly"
+          v-model="item.attr.fieldOp" />
+        <AttrRender :selected="getCurrSelected(item)" :readonly="readonly" :item="item.attr" :attrs="attrs" />
 
-        <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
+        <el-text v-if="!readonly" type="primary" style="cursor: pointer" @click="handleDel(index)">
           <el-icon size="14">
             <Delete />
           </el-icon>
@@ -133,6 +109,7 @@ const getCurrSelected = (condition: any) => {
     gap: 0.5rem;
     align-items: center;
   }
+
   margin: 10px 0;
 
   border-radius: 8px;

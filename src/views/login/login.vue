@@ -28,7 +28,6 @@
 
 <script setup>
 import { nextTick, onMounted, reactive, toRefs,ref } from "vue";
-import { useUserStore } from "~/store/user";
 import { useRouter, useRoute } from "vue-router";
 import API from "~/api/account";
 
@@ -82,26 +81,10 @@ const state = ref({
     roleId: 0,
   },
   loginRules: {
-    // accountName: [
-    //   { required: true, trigger: "blur", validator: validateaccountName },
-    // ],
-    // accountPassword: [
-    //   { required: true, trigger: "blur", validator: validateaccountPassword },
-    // ],
-    // email: [{  trigger: "blur", validator: validateEmail }],
-    // phone: [{  trigger: "blur", validator: validatePhone }],
-    // roleId: [
-    //   {  trigger: "blur", message: "Please enter the role ID" },
-    // ],
   },
   loading: false,
 });
-// const {
-//   refLoginForm,
-//   loginForm,
-//   loginRules,
-//   loading
-// } = toRefs(state)
+
 const goBack = () => {
   router.go(-1);
 };
@@ -109,14 +92,10 @@ const handleLogin = async() => {
 
   state.loading = true;
 
-// const userStore = useUserStore();
 
-const { token, id, accountName } = await API.login(state.value.loginForm);
+const rs = await API.login(state.value.loginForm);
 
-// userStore.setToken({ token });
 
-// userStore.setUserInfo({ userInfo: { id, accountName } });
-// router.push('/');
 goBack()
 state.loading = false;
 

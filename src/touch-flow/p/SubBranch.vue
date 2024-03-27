@@ -1,5 +1,5 @@
 <script setup lang="ts" name="SubBranch">
-import { ref, reactive, provide, inject, computed, watch } from 'vue'
+import { ref, reactive, provide, inject, computed, watch, onBeforeUnmount } from 'vue'
 import { Stamp, Plus } from '@element-plus/icons-vue'
 import SubDiversionAttr from './attr/SubDiversionAttr.vue';
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
@@ -107,6 +107,10 @@ function openDrawer(comp: any) {
 
   drawerOptions.visible = true
 }
+
+onBeforeUnmount(() => {
+  drawerOptions.visible = false
+})
 
 function openCondition() {
   openDrawer({
@@ -241,7 +245,7 @@ provide('save', (regFunc: () => boolean) => {
       </template>
     </div>
 
-    <teleport to="body">
+    <teleport to=".FlowPage">
       <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section"
@@ -259,12 +263,17 @@ provide('save', (regFunc: () => boolean) => {
       </el-dialog>
     </teleport>
 
-    <teleport to="body">
+    <teleport to=".FlowPage">
       <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
-        <component :p="data" :is="drawerOptions.comp" />
+        <component :readonly="_data.$readonly" :p="data" :is="drawerOptions.comp" />
         <template #footer>
-          <el-button round @click="drawerOptions.visible = false">取消</el-button>
-          <el-button round @click="handleSave" type="primary">保存</el-button>
+          <template v-if="_data.$readonly">
+            <el-button round @click="drawerOptions.visible = false">返回</el-button>
+          </template>
+          <template v-else>
+            <el-button round @click="drawerOptions.visible = false">取消</el-button>
+            <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
+          </template>
         </template>
       </el-drawer>
     </teleport>

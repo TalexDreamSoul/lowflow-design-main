@@ -201,7 +201,9 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
     </template>
 
     <span v-else-if="type === 'boolean'" />
-    <span v-else>NULL</span>
+    <span v-else>
+      <!-- NULL -->
+    </span>
   </div>
 </template>
 
@@ -210,5 +212,11 @@ function onTimeCastChange(val: typeof timeCastSection.value) {
   height: max-content;
 
   line-height: 30px;
+
+  // color: var(--el-input-text-color, var(--el-text-color-regular)) !important;
+}
+
+.el-select__placeholder {
+  color: unset;
 }
 </style>

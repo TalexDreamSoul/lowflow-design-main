@@ -249,7 +249,7 @@ regSaveFunc(saveData);
           :configuration="{ ignore: { attrs: true, sequence: true }, subIgnore: { event: { time: true, action: true } } }" />
       </BehaviorGroupPlus>
 
-      <CommonAttr ref="touchSettingsRef" :sizeForm="sizeForm" />
+      <CommonAttr :readonly="readonly" ref="touchSettingsRef" :sizeForm="sizeForm" />
 
       <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
 

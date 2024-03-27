@@ -89,6 +89,7 @@ const attrs = computed(() => {
 
   // console.log("aaaaaaaa", attrs, labels, _attrs, _labels)
 
+  // 转换数据结构
   return [
     {
       label: "用户属性",
@@ -103,27 +104,51 @@ const attrs = computed(() => {
   ];
 });
 
-const getCurrSelected = (condition: any) =>
-  [...attrs.value]
+const getCurrSelected = (condition: any) => {
+  const arr = [...attrs.value]
     .map((_: any) =>
       [..._.children].map((__: any) => (__.children?.length ? __.children : [__]))
     )
     .flat(2)
-    .find((_: any) => _.field === condition.field || _.label === condition.field);
+  const { type } = condition
+
+  if (type === 'attr') {
+    const { id } = condition.attr
+
+    return arr.find((_: any) => _.id === id)
+  } else {
+    const { id } = condition.label
+
+    return arr.find((_: any) => _.id === id)
+  }
+
+  // console.log("233", [...attrs.value]
+  //   .map((_: any) =>
+  //     [..._.children].map((__: any) => (__.children?.length ? __.children : [__]))
+  //   )
+  //   .flat(2), condition)
+
+  // return [...attrs.value]
+  //   .map((_: any) =>
+  //     [..._.children].map((__: any) => (__.children?.length ? __.children : [__]))
+  //   )
+  //   .flat(2)
+  //   .find((_: any) => _.field === condition.field || _.label === condition.field)
+};
 </script>
 
 <template>
   <div class="CustomContent">
-    <LogicalLine :display="conditionArr?.length < 2" v-model="condition.logicalChar">
+    <LogicalLine :readonly="readonly" :display="conditionArr?.length < 2" v-model="condition.logicalChar">
       <div v-for="(item, index) in conditionArr" :key="index" class="AttrLine">
-        <MultipleTrigger :obj="item" :attrs="attrs" :disabled="readonly" placeholder="客户属性/标签"
+        <MultipleTrigger :readonly="readonly" :obj="item" :attrs="attrs" :disabled="readonly" placeholder="客户属性/标签"
           :style="`width: ${item.type === 'label' ? '500' : '220'}px`" />
-        <operator :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :obj="item" :disabled="readonly"
-          ref="operatorRef" v-model="item.attr.fieldOp" style="width: 120px" />
-        <AttrRender :selected="getCurrSelected(item)" :disabled="readonly" :item="item.attr" :obj="item"
-          :attrs="attrs" />
+        <operator :readonly="readonly" :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :obj="item"
+          :disabled="readonly" ref="operatorRef" v-model="item.attr.fieldOp" style="width: 120px" />
+        <AttrRender :readonly="readonly" :selected="getCurrSelected(item)" :disabled="readonly" :item="item.attr"
+          :obj="item" :attrs="attrs" />
 
-        <div style="zoom:.8">
+        <div v-if="!readonly" style="zoom:.8">
           <template v-if="index + 1 === conditionArr.length">
             <el-text type="primary" style="cursor: pointer" @click="handleAdd">
               <el-icon size="14">

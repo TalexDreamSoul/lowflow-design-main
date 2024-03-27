@@ -7,6 +7,7 @@ const props = defineProps<{
   color: string;
   hideToggleButton?: boolean;
   defaultExpand?: boolean;
+  readonly?: boolean;
 }>();
 
 const expand = ref(false);
@@ -17,9 +18,9 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div :style="`--c: ${color}`" class="BehaviorGroupPlus" :class="{ expand }">
+  <div :style="`--c: ${color}`" class="BehaviorGroupPlus" :class="{ expand: readonly || expand }">
     <div class="BehaviorGroupPlus-Header">
-      <span>
+      <span :class="{ disabled: readonly }">
         <slot name="title">
           {{ title }}
         </slot>
@@ -36,7 +37,7 @@ watchEffect(() => {
         </span>
       </slot>
     </div>
-    <div class="BehaviorGroupPlus-Main">
+    <div :class="{ disabled: readonly }" class="BehaviorGroupPlus-Main">
       <slot />
     </div>
   </div>
@@ -45,6 +46,25 @@ watchEffect(() => {
 <style lang="scss">
 .BehaviorGroupPlus {
   &-Header {
+    span.disabled {
+      opacity: .75;
+      cursor: not-allowed;
+
+      &::before {
+        z-index: 1;
+        content: "";
+        position: absolute;
+
+        left: 0;
+        top: 0;
+
+        width: 100%;
+        height: 100%;
+
+        // background-color: red;
+      }
+    }
+
     &::before {
       content: "";
       position: absolute;
@@ -80,6 +100,21 @@ watchEffect(() => {
   &.expand {
     & .BehaviorGroupPlus-Main {
       padding: 0.5rem;
+
+      &.disabled::before {
+        z-index: 1;
+        content: "";
+        position: absolute;
+
+        left: 0;
+        top: 0;
+
+        width: 100%;
+        height: 100%;
+
+        cursor: not-allowed;
+        // background-color: red;
+      }
     }
 
     max-height: 10000px;
@@ -88,6 +123,7 @@ watchEffect(() => {
   }
 
   &-Main {
+    position: relative;
     padding: 0;
 
     height: 100%;

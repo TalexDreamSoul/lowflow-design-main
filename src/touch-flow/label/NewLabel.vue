@@ -5,7 +5,8 @@ import { getLabelList, addCustomLabel } from '../../api/index'
 import { ElMessage } from 'element-plus';
 
 const props = defineProps<{
-  p: any
+  p: any;
+  readonly?: boolean;
 }>()
 const origin = {
   labelName: '',
@@ -77,19 +78,20 @@ watch(() => props.p.labelContent?.labelName, () => {
     <div class="NewLabel-Main">
       <el-text>
         符合该策略器条件的用户打上
-        <el-select @change="p.labelContent.labelValue = ''" v-model="p.labelContent.labelName" placeholder="标签名称" style="width: 150px">
+        <el-select :disabled="readonly" @change="p.labelContent.labelValue = ''" v-model="p.labelContent.labelName"
+          placeholder="标签名称" style="width: 150px">
           <el-option v-for="item in labelList" :key="item.labelName" :label="item.labelName" :value="item.labelName" />
         </el-select>
         &nbsp;
-        <el-select v-if="selectItem?.labelValue?.data?.[0]?.length" v-model="p.labelContent.labelValue" placeholder="标签值"
-          style="width: 150px">
+        <el-select :disabled="readonly" v-if="selectItem?.labelValue?.data?.[0]?.length"
+          v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px" multiple>
           <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
         </el-select>
         标签
       </el-text>
     </div>
 
-    <el-button @click="visible = true">
+    <el-button :disabled="readonly" @click="visible = true">
       添加标签
     </el-button>
   </div>

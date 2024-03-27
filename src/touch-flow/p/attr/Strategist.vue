@@ -91,7 +91,7 @@ regSaveFunc(saveData);
 <template>
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
-      <CommonAttr ref="touchSettingsRef" :size-form="sizeForm" />
+      <CommonAttr :readonly="readonly" ref="touchSettingsRef" :size-form="sizeForm" />
 
       <!-- <TouchEstimation :readonly="readonly" :custom-rule-content="customRuleContent" /> -->
 

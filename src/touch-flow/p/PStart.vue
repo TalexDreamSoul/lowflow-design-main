@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, provide, inject, watch } from "vue";
+import { ref, reactive, computed, provide, inject, watch, onBeforeUnmount } from "vue";
 import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
 import ConditionSetAttr from "./attr/ConditionSetAttr.vue";
 import CustomersAttr from "./attr/CustomersAttr.vue";
@@ -7,6 +7,10 @@ import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../p/attr/DeliverySettingsAttr.vue";
 import Strategist from "./attr/Strategist.vue";
 
+/**
+ * 1. $d( __data ) 就是tree中的响应式数据 => 修改它 传过去的数据（post的data/FlowPage的flowOptions）就更新
+ * 2. data 响应式的 当前组件内部缓存的数据 => 保存才会更新
+ */
 const getNode: Function = inject("getNode")!;
 const { data: _data } = getNode();
 const __data = _data.$d(_data.id);
@@ -64,6 +68,12 @@ function openDrawer(comp: any) {
   drawerOptions.visible = true;
 }
 
+onBeforeUnmount(() => {
+  console.log('onUnmounted')
+
+  drawerOptions.visible = false
+})
+
 const flowType = computed(() => {
   if (!data?.executeType) return "-";
   const map: { [key: string]: string } = {
@@ -99,6 +109,10 @@ const flowTime = computed(() => {
 
 const conditioned = computed(() => flowType.value !== "-" && flowTime.value !== "-");
 
+/**
+ * 判断当前Node的下一层Node中是否有选择策略器
+ * 如果有 返回真
+ */
 const doDiverse = computed(() => {
   const { children } = data;
 
@@ -107,6 +121,9 @@ const doDiverse = computed(() => {
   return [...children].find((child) => "strategy" === child?.nodeType) ?? true;
 });
 
+/**
+ * 是否有分流器
+ */
 const haveDiverse = computed(() => {
   if (!doDiverse.value) return false;
 
@@ -117,6 +134,9 @@ const haveDiverse = computed(() => {
   return [...children].find((child) => "diversion" === child?.nodeType);
 });
 
+/**
+ * 是否有兜底策略器
+ */
 const haveReveal = computed(() => {
   const { children } = data;
 
@@ -128,6 +148,9 @@ const haveReveal = computed(() => {
   );
 });
 
+/**
+ * 是否显示 受众客户 （展示隐藏）
+ */
 const customerConditioned = computed(() => {
   const { customAttr, customEvent } = data?.customRuleContent ?? {};
 
@@ -251,7 +274,7 @@ function handleClick(e: Event) {
       </div>
     </div>
 
-    <teleport to="body">
+    <teleport to=".FlowPage">
       <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
@@ -269,20 +292,25 @@ function handleClick(e: Event) {
       </el-dialog>
     </teleport>
 
-    <teleport to="body">
+    <teleport to=".FlowPage">
       <el-drawer @click="handleClick" v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
-        <component :p="data" :is="drawerOptions.comp" />
+        <component :readonly="_data.$readonly" :p="data" :is="drawerOptions.comp" />
         <template #footer>
-          <el-button round @click="drawerOptions.visible = false">取消</el-button>
-          <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
+          <template v-if="_data.$readonly">
+            <el-button round @click="drawerOptions.visible = false">返回</el-button>
+          </template>
+          <template v-else>
+            <el-button round @click="drawerOptions.visible = false">取消</el-button>
+            <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
+          </template>
         </template>
       </el-drawer>
     </teleport>
   </el-card>
   <!-- && !customerConditioned.display -->
   <el-button :class="{
-        display: _data.$readonly || conditioned && customerConditioned.display,
-        disabled: haveDiverse,
+        display: conditioned && customerConditioned.display,
+        disabled: _data.$readonly || haveDiverse,
       }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 

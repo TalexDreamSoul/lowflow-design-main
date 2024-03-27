@@ -7,6 +7,7 @@ import { CustomAttrConditionDTO } from "../../touch-total";
 
 const props = defineProps<{
   custom: CustomAttrConditionDTO;
+  readonly?: boolean;
 }>();
 
 const dict = ref<any>();
@@ -19,7 +20,7 @@ watchEffect(() => {
 });
 
 onMounted(async () => {
-  const res = await getDictFilterTree(
+  const res: any = await getDictFilterTree(
     {
       pageNum:"1",
       pageSize:"999"
@@ -45,9 +46,9 @@ provide("refreshTree", refreshTree);
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
       <div v-if="dict && custom?.conditions?.length" class="Target-Block">
-        <LogicalLine :display="!custom?.conditions?.length" v-model="custom.logicalChar">
+        <LogicalLine :readonly="readonly" :display="!custom?.conditions?.length" v-model="custom.logicalChar">
           <div v-for="(condition, index) in custom.conditions" :key="index">
-            <CustomContent :condition="condition" :dict="dict" />
+            <CustomContent :readonly="readonly" :condition="condition" :dict="dict" />
           </div>
         </LogicalLine>
       </div>

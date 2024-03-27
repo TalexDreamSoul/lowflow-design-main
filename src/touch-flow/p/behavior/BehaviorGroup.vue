@@ -4,6 +4,7 @@ import { CirclePlusFilled } from "@element-plus/icons-vue";
 
 defineProps<{
   title: string;
+  readonly?: boolean;
 }>();
 
 const emits = defineEmits<{
@@ -22,12 +23,18 @@ const expand = ref(false);
       </span>
 
       <span class="addon-icon">
-        <el-button @click.stop="emits('add')" size="small" text plain type="primary">
+        <el-button v-if="!readonly" @click.stop="emits('add')" size="small" text plain type="primary">
           <el-icon>
             <CirclePlusFilled />
           </el-icon>
           &nbsp;添加
         </el-button>
+        <!-- <el-button v-else size="small" text plain type="primary">
+          <el-icon>
+            <CirclePlusFilled />
+          </el-icon>
+          &nbsp;{{ !expand ? "展开" : "收起" }}
+        </el-button> -->
       </span>
     </div>
     <div class="BehaviorGroup-Main">

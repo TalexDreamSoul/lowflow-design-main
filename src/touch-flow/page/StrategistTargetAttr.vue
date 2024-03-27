@@ -70,7 +70,7 @@ if (!props.sizeForm?.targetRuleContent?.targetDelayed) {
     <div class="MainBlock-Title">
       <div class="title">策略器目标设置 &nbsp;</div>
       <!-- <el-switch v-model="sizeForm.targetRuleContent.targetDelayed.isDelayed" /> -->
-      <el-switch v-model="sizeForm.containTarget" />
+      <el-switch :disabled="readonly" v-model="sizeForm.containTarget" />
     </div>
 
     <div class="MainBlock-Content" v-if="sizeForm.containTarget">
