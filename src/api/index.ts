@@ -104,7 +104,12 @@ export const addMaterial = (data: any) => {
   });
 };
 
-export const updateMarketingTouch = (data: any) => {
+export const updateMarketingTouch = (_data: any) => {
+  const data = _data
+
+  if ( data.status !== 'draft' )
+    data.status = 'approvalPending'
+
   return request.post({
     url: "/api/updateMarketingTouch.do",
     data,

@@ -71,6 +71,14 @@ watch(() => props.p.labelContent?.labelName, () => {
     props.p.labelContent.labelId = res.id
   }
 })
+
+function handleChange(val: any) {
+  if (val === 'boolean') {
+    model.labelValue.data = [1, 0]
+  } else if (val === 'text') {
+    model.labelValue.data = [""]
+  }
+}
 </script>
 
 <template>
@@ -83,10 +91,17 @@ watch(() => props.p.labelContent?.labelName, () => {
           <el-option v-for="item in labelList" :key="item.labelName" :label="item.labelName" :value="item.labelName" />
         </el-select>
         &nbsp;
-        <el-select :disabled="readonly" v-if="selectItem?.labelValue?.data?.[0]?.length"
-          v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px" multiple>
-          <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
-        </el-select>
+        <template v-if="selectItem?.labelValueType">
+          <el-select :disabled="readonly" v-if="selectItem.labelValueType === 'text'"
+            v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px" multiple>
+            <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
+          </el-select>
+          <el-select :disabled="readonly" v-else="" v-model="p.labelContent.labelValue" placeholder="标签值"
+            style="width: 150px">
+            <!-- <el-option /> -->
+            <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
+          </el-select>
+        </template>
         标签
       </el-text>
     </div>
@@ -101,7 +116,7 @@ watch(() => props.p.labelContent?.labelName, () => {
       <div class="LabelForm">
         <el-form label-position="top" label-width="100px" :model="model" style="width: 100%">
           <el-form-item label="标签类型">
-            <el-select style="width: 100%" v-model="model.labelValueType">
+            <el-select @change="handleChange" style="width: 100%" v-model="model.labelValueType">
               <el-option label="字符型" value="text" />
               <el-option label="布尔型" value="boolean" />
             </el-select>
