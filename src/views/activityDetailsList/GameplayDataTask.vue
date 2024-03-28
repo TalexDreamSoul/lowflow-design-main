@@ -1,4 +1,8 @@
 <script setup lang="ts">
+
+// 玩法数据-任务-参与数据
+
+
 import { ref, unref, reactive, onMounted, watch } from "vue";
 import {
   getqryMarketingTouch,
@@ -23,7 +27,7 @@ import {
 } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
 
-import { BlackAddTypeEnum, GAMEPLAY_DATA_TYPT } from "~/constants";
+import { BlackAddTypeEnum, BLACK_LIST_TYPE } from "~/constants";
 
 const funnelChart = ref(null);
 const formInline = reactive({
@@ -221,7 +225,7 @@ onMounted(async () => {
 
       <el-form-item label="玩法">
         <el-select v-model="formValues.blacklistType" placeholder="请选择" style="width:300px" clearable>
-          <el-option v-for="item of GAMEPLAY_DATA_TYPT" :label="item.label" :value="item.labelvalue" />
+          <el-option v-for="item of BLACK_LIST_TYPE" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
     </div>

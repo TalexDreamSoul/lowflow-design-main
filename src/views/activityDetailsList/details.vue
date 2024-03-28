@@ -53,7 +53,7 @@ const chartContainer = ref(null);
 const chart = ref(null);
 
 const tabs = ["浏览数据", "转化数据", "表单数据", "玩法数据"];
-const activeTab = ref(tabs[1]);
+const activeTab = ref(tabs[3]);
 
 interface Components {
   [key: string]: DefineComponent<{}, {}, any>;
