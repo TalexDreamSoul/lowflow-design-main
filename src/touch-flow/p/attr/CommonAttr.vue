@@ -58,7 +58,7 @@ defineExpose({
   </BehaviorGroupPlus>
 
   <BehaviorGroupPlus :readonly="readonly"
-    v-if="String(sizeForm.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1" title="标签设置"
+    v-if="String(sizeForm.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1" title="标签设置" :default-expand="true"
     color="#277AE7">
     <NewLabel :readonly="readonly" :p="sizeForm" />
   </BehaviorGroupPlus>
