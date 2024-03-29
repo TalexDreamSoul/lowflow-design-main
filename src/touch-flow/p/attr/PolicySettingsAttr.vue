@@ -146,7 +146,7 @@ function saveData() {
     )
   ) {
     ElMessage.warning({
-      message: "延迟设置折算时间不可超过30天！",
+      message: "延时设置折算时间不可超过30天！",
     });
 
     return false;

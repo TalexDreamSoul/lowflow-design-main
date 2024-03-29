@@ -212,7 +212,7 @@ provide('save', (regFunc: () => boolean) => {
         <div style="display: flex; flex-direction: column; gap: 1rem">
           <!-- v-if="data.nodeDelayed?.isDelayed" -->
           <div style="--theme-color: #7dc757" class="PBlock-Section">
-            <p>延迟设置</p>
+            <p>延时设置</p>
             <span v-if="data.nodeDelayed?.isDelayed">
               符合该策略器 {{ data.nodeDelayed.delayedTime }}
               <span>
