@@ -184,7 +184,7 @@ function del(p: MarketingTouchEditDTO) {
     </teleport>
 
     <teleport to=".FlowPage">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
+      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="65%">
         <component :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <el-button round @click="drawerOptions.visible = false">取消</el-button>

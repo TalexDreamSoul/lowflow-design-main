@@ -117,7 +117,7 @@ const defaultTime2: [Date, Date] = [
         start-placeholder="开始日期" end-placeholder="结束日期" style="width: 120px" :default-time="defaultTime2" />
       <span style="color: #484545"> &nbsp;&nbsp; 依次做过 </span>
 
-      <span style="zoom:.8">
+      <span style="zoom:.8;min-width: 255px;">    
         <!-- <el-text
           :disabled="readonly"
           type="primary"

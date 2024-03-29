@@ -264,7 +264,7 @@ provide('save', (regFunc: () => boolean) => {
     </teleport>
 
     <teleport to=".FlowPage">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
+      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="65%">
         <component :readonly="_data.$readonly" :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <template v-if="_data.$readonly">

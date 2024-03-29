@@ -276,7 +276,7 @@ function del(p: MarketingTouchEditDTO) {
     </teleport>
 
     <teleport to=".FlowPage">
-      <el-drawer v-if="drawerOptions.visible" v-model="drawerOptions.visible" :title="drawerOptions.title" size="55%">
+      <el-drawer v-if="drawerOptions.visible" v-model="drawerOptions.visible" :title="drawerOptions.title" size="65%">
         <component :readonly="_data.$readonly" :new="drawerOptions?.new" :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <template v-if="_data.$readonly">
