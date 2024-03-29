@@ -164,7 +164,7 @@ const changeStatus = (val: any) => {
     <div class="topSearch">
       <el-form :inline="true" class="demo-form-inline">
 
-        <el-form-item label="创建时间：">
+        <el-form-item label="起止日期：">
           <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
         </el-form-item>
         <el-form-item>
