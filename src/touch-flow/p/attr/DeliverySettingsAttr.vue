@@ -118,8 +118,6 @@ function saveData() {
 
     // props.p.children = [..._.children]
 
-    window.$refreshLayout()
-
   }
 
   else /* if (!_.id?.length)  */ {
@@ -129,6 +127,8 @@ function saveData() {
 
     //window.$refreshLayout()
   }
+
+  setTimeout(() => window.$refreshLayout(), 50)
 
   return true;
 }
