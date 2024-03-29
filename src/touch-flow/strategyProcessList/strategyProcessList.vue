@@ -12,7 +12,7 @@ import {
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import dayjs from "dayjs";
-
+import { Calendar, Search } from '@element-plus/icons-vue'
 const formInline = reactive({
   touchName: "",
   executeType: "",
@@ -176,7 +176,7 @@ const changeStatus = (val: any) => {
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="formInline.touchName" placeholder="请输入策略流程名称" clearable style="width:200px" />
+          <el-input v-model="formInline.touchName" placeholder="请输入策略流程名称" clearable style="width:200px"  :prefix-icon="Search"/>
         </el-form-item>
 
       </el-form>
