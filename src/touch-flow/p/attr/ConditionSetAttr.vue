@@ -257,21 +257,22 @@ const defaultTime2: [Date, Date] = [
         &nbsp;
         <el-select @change="Object.assign(sizeForm.repeatTime, { repeatDay: [], repeatTime: '' })"
           v-model="sizeForm.repeatTime.repeatType" style="width: 100px">
-          <el-option value="month" label="月份">月</el-option>
-          <el-option value="week" label="周">周</el-option>
-          <el-option value="day" label="天">天</el-option>
+          <el-option value="month" label="每月">每月</el-option>
+          <el-option value="week" label="每周">每周</el-option>
+          <el-option value="day" label="每天">每天</el-option>
         </el-select>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;
+        &nbsp;
         <el-select v-if="sizeForm.repeatTime.repeatType === 'month'" v-model="sizeForm.repeatTime.repeatDay"
           placeholder="选择月份的天数" style="width: 150px" multiple collapse-tags>
           <el-option v-for="day in 30" :key="day" :label="`${day}号`" :value="day"></el-option>
         </el-select>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;
         <el-select v-if="sizeForm.repeatTime.repeatType === 'week'" v-model="sizeForm.repeatTime.repeatDay"
           placeholder="选择星期几" style="width: 150px" multiple collapse-tags>
           <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="index + 1"></el-option>
         </el-select>
-
+        &nbsp;
         <el-time-picker v-model="sizeForm.repeatTime.repeatTime" value-format="HH:mm" placeholder="选择时间"
           style="width: 120px"></el-time-picker>
         &nbsp;&nbsp;
