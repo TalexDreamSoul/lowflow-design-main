@@ -257,7 +257,7 @@ async function submitReview(status: string = "approvalPending") {
   title.value = "提交完毕";
   content.value = res.message || "失败";
 
-  if (!!+res?.code) {
+  if (res?.code === '0') {
     router.push("/touchCenter/touchList");
   }
 
