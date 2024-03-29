@@ -140,7 +140,7 @@ function handleSelectChanged(val: string) {
       <LogicalLine v-if="attrs && conditions.eventCode" :display="conditions.conditions.conditions.length < 2" title="并且满足" v-model="conditions.conditions.logicalChar">
         <ul :label-width="0" :inline="true">
           <li v-for="(item, index) in conditions.conditions.conditions" :key="index">
-            <trigger :item="item.attr" :readonly="readonly" v-model="item.attr.field" :attrs="attrs" />
+            <trigger :item="item" :readonly="readonly" v-model="item.attr.field" :attrs="attrs" />
             <operator :item="item.attr" :attrs="attrs" :readonly="readonly" ref="operatorRef" v-model="item.attr.fieldOp" />
             <AttrRender :readonly="readonly" :item="item.attr" :attrs="attrs" />
             <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
