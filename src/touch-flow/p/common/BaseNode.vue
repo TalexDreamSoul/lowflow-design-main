@@ -1,10 +1,29 @@
-<script setup lang="ts">
+<script setup lang="ts" name="BaseNode">
 import { ref, reactive, computed, provide, inject, watch, onBeforeUnmount } from "vue";
 import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
+import ConditionSetAttr from "../attr/ConditionSetAttr.vue";
+import CustomersAttr from "../attr/CustomersAttr.vue";
+import PolicySettingsAttr from "../attr/PolicySettingsAttr.vue";
+import DeliverySettingsAttr from "../../p/attr/DeliverySettingsAttr.vue";
+import Strategist from "../attr/Strategist.vue";
 
-import { genNodeParams } from './common/node-util'
+/**
+ * 1. $d( __data ) 就是tree中的响应式数据 => 修改它 传过去的数据（post的data/FlowPage的flowOptions）就更新
+ * 2. data 响应式的 当前组件内部缓存的数据 => 保存才会更新
+ */
+const getNode: Function = inject("getNode")!;
+const { data: _data } = getNode();
+const __data = _data.$d(_data.id);
+const data = reactive(_data.data);
 
-const { readonly, data, openCustomer, openCondition, dialogVisible, drawerOptions, openDrawer, comps, handleClick, handleSave, haveDiverse } = genNodeParams()
+const dialogVisible = ref(false);
+const drawerOptions = reactive<any>({
+  visible: false,
+});
+
+Object.assign(data, __data)
+
+console.log("PStart setup!", getNode(), __data, data)
 
 watch(data, () => {
   const { children } = data;
@@ -24,6 +43,36 @@ watch(data, () => {
     console.log("each", item)
   })
 }, { immediate: true })
+
+function openCondition() {
+  openDrawer({
+    title: "流程类型设置",
+    comp: ConditionSetAttr,
+  });
+}
+
+function openCustomer() {
+  openDrawer({
+    title: "受众客户设置",
+    comp: CustomersAttr,
+  });
+}
+
+function openDrawer(comp: any) {
+  dialogVisible.value = false;
+
+  Object.assign(drawerOptions, comp);
+
+  if (!data.executeType) data.executeType = "immediately";
+
+  drawerOptions.visible = true;
+}
+
+onBeforeUnmount(() => {
+  console.log('onUnmounted')
+
+  drawerOptions.visible = false
+})
 
 const flowType = computed(() => {
   if (!data?.executeType) return "-";
@@ -61,8 +110,47 @@ const flowTime = computed(() => {
 const conditioned = computed(() => flowType.value !== "-" && flowTime.value !== "-");
 
 /**
-   * 是否显示 受众客户 （展示隐藏）
-   */
+ * 判断当前Node的下一层Node中是否有选择策略器
+ * 如果有 返回真
+ */
+const doDiverse = computed(() => {
+  const { children } = data;
+
+  if (!children?.length) return false;
+
+  return [...children].find((child) => "strategy" === child?.nodeType) ?? true;
+});
+
+/**
+ * 是否有分流器
+ */
+const haveDiverse = computed(() => {
+  if (!doDiverse.value) return false;
+
+  const { children } = data;
+
+  if (!children?.length) return false;
+
+  return [...children].find((child) => "diversion" === child?.nodeType);
+});
+
+/**
+ * 是否有兜底策略器
+ */
+const haveReveal = computed(() => {
+  const { children } = data;
+
+  if (!children?.length) return false;
+
+  return (
+    [...children].find((child) => "strategy" === child?.nodeType && child?.reveal) ??
+    false
+  );
+});
+
+/**
+ * 是否显示 受众客户 （展示隐藏）
+ */
 const customerConditioned = computed(() => {
   const { customAttr, customEvent } = data?.customRuleContent ?? {};
 
@@ -79,6 +167,68 @@ const customerConditioned = computed(() => {
     ..._obj,
   };
 });
+
+const _comps = [
+  {
+    icon: {
+      type: "comp",
+      value: Stamp,
+    },
+    title: "选择策略器",
+    desc: "按客户属性行为或触发事件对客户筛选分流，并执行动作。",
+    comp: PolicySettingsAttr,
+  },
+  {
+    icon: {
+      type: "comp",
+      value: Stamp,
+    },
+    title: "分流器",
+    desc: "按设置的比例自动客户对随机分流，并执行动作。",
+    show: () => !haveReveal.value && !doDiverse.value,
+    comp: DeliverySettingsAttr,
+  },
+  {
+    icon: {
+      type: "comp",
+      value: Stamp,
+    },
+    title: "兜底选择器",
+    disabled: haveReveal,
+    desc: "筛选未进入本节点下选择策略器的客户，并执行动作。",
+    show: () => doDiverse.value,
+    comp: Strategist,
+  },
+];
+
+let _saveFunc: (() => boolean) | null = null;
+
+function handleSave() {
+  if (!_saveFunc || !_saveFunc()) return;
+
+  Object.assign(__data, data);
+
+  __data.children = data.children
+
+  console.log("__data", __data)
+
+  dialogVisible.value = false;
+  drawerOptions.visible = false;
+}
+
+const comps = computed(() => _comps.filter((comp) => comp?.show?.() ?? true));
+
+provide("save", (regFunc: () => boolean) => {
+  _saveFunc = regFunc;
+});
+
+function handleClick(e: Event) {
+  // @ts-ignore exist
+  if (window.__clickListen) {
+    // @ts-ignore exist
+    window.__clickListen(e);
+  }
+}
 </script>
 
 <template>
@@ -144,9 +294,9 @@ const customerConditioned = computed(() => {
 
     <teleport to=".FlowPage">
       <el-drawer @click="handleClick" v-model="drawerOptions.visible" :title="drawerOptions.title" size="65%">
-        <component :readonly="readonly" :p="data" :is="drawerOptions.comp" />
+        <component :readonly="_data.$readonly" :p="data" :is="drawerOptions.comp" />
         <template #footer>
-          <template v-if="readonly">
+          <template v-if="_data.$readonly">
             <el-button round @click="drawerOptions.visible = false">返回</el-button>
           </template>
           <template v-else>
@@ -160,7 +310,7 @@ const customerConditioned = computed(() => {
   <!-- && !customerConditioned.display -->
   <el-button :class="{
         display: conditioned && customerConditioned.display,
-        disabled: readonly || haveDiverse,
+        disabled: _data.$readonly || haveDiverse,
       }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 

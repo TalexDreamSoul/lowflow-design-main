@@ -76,19 +76,18 @@ const type = computed(() =>
   $props.selected
     ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected)
     : $props.attrs.filter(
-        (attr: any) =>
+      (attr: any) =>
         attr.field === ($props.item?.attr?.field || $props.item.field) //|| attr.labelName === $props.item?.labelName
-      )?.[0]?.fieldType ?? "none"
+    )?.[0]?.fieldType ?? "none"
 );
-const operators = computed(() => {
+const operators = computed(() => operatorOptions.filter((item) => item.type.includes(type.value)));
 
+watch(() => $props.item.field, () => {
   $props.item.fieldOp = ''
   console.log('1', operatorOptions, type.value, $props.attrs, $props.item, $props.attrs.filter(
     (attr: any) =>
       attr.field === ($props.item?.attr?.field || $props.item.field)))
-
-  return operatorOptions.filter((item) => item.type.includes(type.value)) }
-);
+})
 
 // watchEffect(() => {
 //   $_ignored: $props
@@ -105,19 +104,9 @@ const operators = computed(() => {
 </script>
 
 <template>
-  <el-select
-    :disabled="readonly"
-    v-if="obj?.type !== 'label'"
-    class="operator-container"
-    v-model="data"
-    placeholder="筛选符"
-  >
-    <el-option
-      v-for="item in operators"
-      :key="item.value"
-      :label="item.value"
-      :value="item.value"
-    />
+  <el-select :disabled="readonly" v-if="obj?.type !== 'label'" class="operator-container" v-model="data"
+    placeholder="筛选符">
+    <el-option v-for="item in operators" :key="item.value" :label="item.value" :value="item.value" />
   </el-select>
 </template>
 

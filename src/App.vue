@@ -30,22 +30,14 @@ const route = useRoute();
 const meta = computed(() => route.meta);
 const fetchDataApi = async () => {
   const res = await customerAPI.accountDetail();
-  debugger
   appOptions.value.user = res?.data;
-  console.log(`output->tabledata`, appOptions.value);
-  // fetchDataMenuList()
 };
-
-// onMounted(async () => {
-//   fetchDataApi();
-// });
 
 watchEffect(() => {
   $ignored: appOptions
-  console.log(`output->appOptionsappOptions`, appOptions.value);
 
   const { user }: any = appOptions.value
-  console.log("user", user)
+  // console.log("user", user)
   if (!user?.accountName?.length) {
   fetchDataApi();
   } else {

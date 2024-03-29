@@ -235,11 +235,7 @@ const layoutFn = () => {
   console.groupEnd();
 
   _Graph.fromJSON(model);
-  // _Graph.fitToContent();
-  // _Graph.center();
-  // _Graph.centerContent();
 
-  console.log(_Graph.centerContent)
   _Graph.positionContent("top");
 };
 

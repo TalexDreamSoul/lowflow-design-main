@@ -154,6 +154,18 @@ function saveData() {
 
   touchSettingsRef.value.updateData();
 
+  const { touchTemplateContent }: any = sizeForm
+
+  console.log("touchTemplateContent", touchTemplateContent)
+
+  if (!touchTemplateContent.type.length) {
+    ElMessage.warning({
+      message: "请选择模板！",
+    })
+
+    return false;
+  }
+
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm);
 
