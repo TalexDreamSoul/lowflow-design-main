@@ -83,7 +83,7 @@ if (!props.sizeForm?.targetRuleContent?.targetDelayed) {
           <el-option value="minute" label="分钟">分钟</el-option>
           <el-option value="hour" label="小时">小时</el-option>
           <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
-        <el-text>后立即判断客户是否完成以下转化事件，则认为完成该策略器模板。</el-text>
+        <el-text>后立即判断客户是否完成以下转化事件，则认为完成该策略器目标。</el-text>
 
         <TargetContent :readonly="readonly" :target="sizeForm.targetRuleContent" :dict="dict" />
       </div>
