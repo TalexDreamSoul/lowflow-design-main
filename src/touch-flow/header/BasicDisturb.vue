@@ -35,7 +35,7 @@ watch(
 
     if (!time.length || !time[0] || !time[1]) return;
 
-    timeRange.value = [analyzeTime(time[0]), analyzeTime(time[1])];
+    // timeRange.value = [analyzeTime(time[0]), analyzeTime(time[1])];
   },
   { immediate: true }
 );
