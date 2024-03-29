@@ -252,15 +252,14 @@ async function submitReview(status: string = "approvalPending") {
 
   console.log("done", res);
 
-  if (!!+res?.code) {
-    promise.then(goBack);
-  }
-
   loading.value = false;
 
   title.value = "提交完毕";
   content.value = res.message || "失败";
-  router.push("/touchCenter/touchList");
+
+  if (!!+res?.code) {
+    router.push("/touchCenter/touchList");
+  }
 
   console.log(data);
 
@@ -288,14 +287,16 @@ const goBack = () => {
 
 <template>
   <div class="FlowPage">
-    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
+    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }"
+      class="FlowPage-Container">
       <el-header>
         <FlowHeader v-if="!modelValue || !readonly" :basic="flowOptions.basic">
           <template #controller>
             <div>
               <el-button @click="goBack" round>返回</el-button>
               <el-button @click="submitReview('draft')" round>保存草稿</el-button>
-              <el-button round type="primary" @click="submitReview('approvalPending')" class="primaryStyle">提交审核</el-button>
+              <el-button round type="primary" @click="submitReview('approvalPending')"
+                class="primaryStyle">提交审核</el-button>
             </div>
           </template>
         </FlowHeader>
@@ -318,7 +319,8 @@ const goBack = () => {
 
   <teleport to="body">
     <el-dialog title="流程基础设置" v-model="dialogVisible">
-      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview" :basic="flowOptions.basic" />
+      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview"
+        :basic="flowOptions.basic" />
     </el-dialog>
   </teleport>
 </template>
@@ -391,7 +393,7 @@ div.el-dialog {
     align-items: center;
 
     background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
     background-size: 30px 30px;
 
     transform: translateY(80px);
