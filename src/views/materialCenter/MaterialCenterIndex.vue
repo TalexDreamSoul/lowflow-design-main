@@ -193,7 +193,7 @@ const changeTime = (val: any) => {
 </script>
 
 <template>
-  <CustomEventComponent :title="formInline.type == 'all' ? `${materialTypeName}` : `${materialTypeName}模版列表`
+  <CustomEventComponent :title="String(route.params.type).replace('Template', '') == 'all' ? `${materialTypeName}` : `${materialTypeName}模版列表`
     " :tableData="tableData" :total="total">
     <template #search>
       <div class="search">
@@ -202,7 +202,7 @@ const changeTime = (val: any) => {
             <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期"
               end-placeholder="结束日期" :size="size" @change="changeTime" />
           </el-form-item>
-          <el-form-item v-if="formInline.type == 'all'" label="模板类型：">
+          <el-form-item v-if="String(route.params.type).replace('Template', '') == 'all'" label="模板类型：">
             <el-select v-model="formInline.type" style="width: 200px" placeholder="模板类型">
               <el-option v-for="item in materialType" :label="item.name" :value="item.value" />
             </el-select>
@@ -218,7 +218,7 @@ const changeTime = (val: any) => {
               style="width: 200px" :suffix-icon="Search" />
           </el-form-item>
         </el-form>
-        <div v-if="formInline.type != 'all'">
+        <div v-if="String(route.params.type).replace('Template', '') != 'all'">
           <el-button type="primary" class="add" @click="addData()" round>新建{{ materialTypeName }}模版</el-button>
         </div>
       </div>
@@ -249,7 +249,7 @@ const changeTime = (val: any) => {
         </el-table-column>
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
-            <el-space wrap v-if="formInline.type != 'all'">
+            <el-space wrap v-if="String(route.params.type).replace('Template', '') != 'all'">
               <el-link type="primary" v-if="scope.row.status == 'offline'"
                 @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
               <el-link type="primary" v-if="scope.row.status !== 'offline'"
