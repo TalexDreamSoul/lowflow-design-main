@@ -109,11 +109,11 @@
       >
         <el-form-item
           label="审核意见"
-          prop="labelSource"
+          prop="approveStatus"
           :rules="[{ required: true, message: '请选择' }]"
         >
           <el-select
-            v-model="formValues.labelSource"
+            v-model="formValues.approveStatus"
             placeholder="请选择"
             clearable
           >
@@ -228,7 +228,7 @@ const pageParams = reactive({
 });
 
 const defaultFormValues = {
-  labelSource: "",
+  approveStatus: "",
 };
 let formValues = reactive({ ...defaultFormValues });
 let modalData = reactive<any>([]);
