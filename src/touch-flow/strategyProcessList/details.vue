@@ -139,7 +139,7 @@ const chart = ref(null);
             创建人：
           </div>
           <div class="description">
-            {{ typeMap[marketingDetail?.createUserName] }}
+            {{ marketingDetail?.createUserName }}
           </div>
         </div>
       </div>
