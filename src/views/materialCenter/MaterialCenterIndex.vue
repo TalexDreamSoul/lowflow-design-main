@@ -202,12 +202,12 @@ const changeTime = (val: any) => {
             <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期"
               end-placeholder="结束日期" :size="size" @change="changeTime" />
           </el-form-item>
-          <el-form-item v-if="formInline.type == 'all'">
+          <el-form-item v-if="formInline.type == 'all'" label="模板类型：">
             <el-select v-model="formInline.type" style="width: 200px" placeholder="模板类型">
               <el-option v-for="item in materialType" :label="item.name" :value="item.value" />
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="模板状态：">
             <el-select v-model="formInline.status" clearable style="width: 200px" placeholder="模板状态">
               <el-option label="可用" value="available" />
               <el-option label="下线" value="offline" />
