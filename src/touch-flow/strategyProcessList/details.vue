@@ -106,7 +106,25 @@ const chart = ref(null);
 //     chart.value.setOption(options);
 //   }
 // });
+const flowTime = ((data: any) => {
+  const _time = data.executeTime;
+  // if (!_time) return "-";
 
+  if (_time) {
+    const s: Date = _time;
+
+    return s.toLocaleString().replaceAll("/", "-");
+  }
+
+  // const [date1, date2] = _time;
+  const { startTime, endTime } = data;
+  if (!startTime || !endTime) return "-";
+
+  const date1Text = startTime; //.toLocaleDateString().replaceAll("/", "-");
+  const date2Text = endTime; //.toLocaleDateString().replaceAll("/", "-");
+
+  return `${date1Text} 至 ${date2Text}`;
+});
 </script>
 
 <template>
@@ -130,8 +148,10 @@ const chart = ref(null);
             有效期：
           </div>
           <div class="description">
-            {{ dayjs(marketingDetail?.startTime).format("YYYY-MM-DD HH:mm") }} 至 {{
-              dayjs(marketingDetail?.endTime).format("YYYY-MM-DD HH:mm") }}
+            {{ marketingDetail&&flowTime(marketingDetail) }}
+
+            <!-- {{ dayjs(marketingDetail?.startTime).format("YYYY-MM-DD HH:mm") }} 至 {{
+              dayjs(marketingDetail?.endTime).format("YYYY-MM-DD HH:mm") }} -->
           </div>
         </div>
         <div style="width:200px">

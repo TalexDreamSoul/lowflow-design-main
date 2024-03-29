@@ -156,6 +156,27 @@ const changeStatus = (val: any) => {
   console.log(val, "change");
   formInline.status = val;
 };
+const flowTime = ((data: any) => {
+  const _time = data.executeTime;
+  // if (!_time) return "-";
+
+  if (_time) {
+    const s: Date = _time;
+
+    return s.toLocaleString().replaceAll("/", "-");
+  }
+
+  // const [date1, date2] = _time;
+  const { startTime, endTime } = data;
+  if (!startTime || !endTime) return "-";
+
+  const date1Text = startTime; //.toLocaleDateString().replaceAll("/", "-");
+  const date2Text = endTime; //.toLocaleDateString().replaceAll("/", "-");
+
+  return `${date1Text} 至 ${date2Text}`;
+});
+
+
 </script>
 
 <template>
@@ -256,7 +277,9 @@ const changeStatus = (val: any) => {
         </el-table-column>
         <el-table-column label="起止日期" width="330">
           <template #default="scope">
-            {{ scope.row.startTime }}~{{ scope.row.endTime }}
+           
+            {{ flowTime(scope.row) }}
+            
           </template>
         </el-table-column>
 
