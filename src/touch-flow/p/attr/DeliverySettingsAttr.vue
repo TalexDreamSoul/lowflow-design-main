@@ -22,16 +22,16 @@ const props = defineProps<{
   p: any;
 }>();
 
-const { children } = props.p
+const { diversionRuleContent } = props.p
 
 const sizeForm = reactive<typeof origin>(origin);
 
 !(
-  children.length &&
+  diversionRuleContent?.data?.length &&
   (() => {
     origin.diversionRuleContent.data = [];
 
-    children.forEach((child: any) => {
+    diversionRuleContent.data.forEach((child: any) => {
       origin.diversionRuleContent.data.push({
         nodeName: child.branchName,
         branchName: child.branchName,
@@ -43,13 +43,15 @@ const sizeForm = reactive<typeof origin>(origin);
 );
 
 watchEffect(() => {
-  const { nodeType, nodeId } = props.p
+  const { nodeType, nodeId, nodeName } = props.p
 
   if (nodeType !== 'diversion') return
 
   if (nodeId) {
     sizeForm.nodeId = nodeId;
   }
+
+  sizeForm.nodeName = nodeName
 })
 
 const totalBranchRatio = computed(() => sizeForm.diversionRuleContent.data.reduce((acc: number, curVal) => acc + +curVal.branchRatio, 0))
@@ -113,6 +115,10 @@ function saveData() {
   if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {
 
     Object.assign(props.p, _)
+
+    // props.p.children = [..._.children]
+
+    window.$refreshLayout()
 
   }
 
