@@ -86,7 +86,7 @@ const state = ref({
 });
 
 const goBack = () => {
-  router.go(-1);
+  router.push('/');
 };
 const handleLogin = async() => {
 

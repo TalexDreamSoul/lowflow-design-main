@@ -66,10 +66,10 @@ import HeaderIcon from "~/assets/header-icon.png";
 import { CaretBottom } from "@element-plus/icons-vue";
 import TouchMenu from "./TouchMenu.vue";
 import TouchMenuItem from "./TouchMenuItem.vue";
+import { useLocalStorage } from "@vueuse/core";
 
 const appOptions: any = inject('appOptions')!
 const menuMap = ref()
-
 watchEffect(() => {
   // $ignored: appOptions.value
   if (!appOptions.value?.menu) return
@@ -106,12 +106,15 @@ watchEffect(() => {
   });
 
   [...clearCodes].forEach((code: string) => delete map[code])
+ useLocalStorage("menuMap-default", { map });
 
   menuMap.value = map
 
   // console.log("1", map)
 
 })
+
+
 
 const handleloca = () => {
   window.open('http://172.30.3.6:18700/', '_blank');
