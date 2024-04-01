@@ -19,6 +19,7 @@ const origin = {
   moduleId: "",
   znxContent: "",
   znxTitle: "",
+  sceneCode: "",
 };
 
 const data = reactive<
@@ -49,7 +50,7 @@ function saveData() {
     znxContent,
     znxTitle,
     znxTitleVariables,
-    znxContentVariables,
+    znxContentVariables,sceneCode
   } = data;
 
   const znxTemplate: any = {
@@ -59,6 +60,7 @@ function saveData() {
     znxContent,
     znxTitle,
     type: "znx",
+    sceneCode
   };
 
   if (titleVariables?.length) {
@@ -97,7 +99,11 @@ defineExpose({ saveData });
     <el-form-item label="模板名称">
       <el-input :disabled="readonly" v-model="data.name"></el-input>
     </el-form-item>
-    <el-form-item label="模块ID">
+   
+    <el-form-item label="场景码">
+      <el-input :disabled="readonly" v-model="data.sceneCode" ></el-input>
+    </el-form-item>
+     <el-form-item label="模块ID">
       <el-input :disabled="readonly" v-model="data.moduleId"></el-input>
     </el-form-item>
     <el-form-item label="轮播图ID">
