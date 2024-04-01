@@ -106,7 +106,6 @@ watchEffect(() => {
   });
 
   [...clearCodes].forEach((code: string) => delete map[code])
- useLocalStorage("menuMap-default", { map });
 
   menuMap.value = map
 
@@ -114,6 +113,7 @@ watchEffect(() => {
 
 })
 
+useLocalStorage("menuMap-default", { menuMap });
 
 
 const handleloca = () => {

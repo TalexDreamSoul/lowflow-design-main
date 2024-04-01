@@ -13,6 +13,8 @@ import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import dayjs from "dayjs";
 import { Calendar, Search } from '@element-plus/icons-vue'
+import API from "~/api/approve";
+
 const formInline = reactive({
   touchName: "",
   executeType: "",
@@ -114,7 +116,16 @@ const updateData = async (row: any) => {
 const detailsData = async (row: any) => {
   router.push(`/touchCenter/details/${row.id}`);
 };
+const modalVisible = ref(false);
+let modalData = reactive<any>([]);
 
+const handleModal = async (values?: any) => {
+  let res: any = await API.listApproveRecord({
+      businessId: values.id,
+    });
+    Object.assign(modalData, res?.data);
+  modalVisible.value = true;
+};
 const successData = async (row: any) => {
   let res = await updateMarketingTouchStatus({
     id: row.id,
@@ -325,7 +336,10 @@ const flowTime = ((data: any) => {
               <el-link type="primary" v-if="scope.row.status=='draft'||scope.row.status=='approvalRefuse'||scope.row.status=='suspend'||scope.row.status=='done'" @click="delData(scope.row)">删除</el-link>
               <el-link type="primary" @click="copyData(scope.row)">复制</el-link>
               <el-link type="primary" v-if="scope.row.status=='approvalRefuse'||scope.row.status=='draft'" @click="updateData(scope.row)">编辑</el-link>
-              <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+              <el-link type="primary"      
+              @click="handleModal(scope.row)"
+     >审核详情</el-link>
+       <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
               <el-link type="primary" @click="successData(scope.row)">审核通过</el-link>
             </el-space>
           </template>
@@ -336,6 +350,57 @@ const flowTime = ((data: any) => {
     </div>
 
   </div>
+  <el-dialog
+  class="pd-modal"
+  destroy-on-close
+  :close-on-click-modal="false"
+  v-model="modalVisible"
+  title="审核详情"
+  :width="800"
+>
+  
+  <el-table
+    :data="modalData"
+    style="width: 100%"
+    height="400"
+  >
+    <el-table-column prop="approveLevel" label="节点" width="92" />
+    <el-table-column prop="auditorName" label="审核人" width="101">
+    </el-table-column>
+    <el-table-column prop="receiptTime" label="接收时间" width="231">
+      <template #default="scope">
+        {{ scope.row.receiptTime || "-" }}
+      </template>
+    </el-table-column>
+    <el-table-column prop="approveStatus" label="审核状态" width="125">
+      <template #default="scope">
+        <el-tag v-if="scope.row.approveStatus === null" type="success"
+          >待审批</el-tag
+        >
+        <el-tag v-if="scope.row.approveStatus === true" type=""
+          >已通过</el-tag
+        >
+        <el-tag v-if="scope.row.approveStatus === false" type="danger"
+          >未通过</el-tag
+        >
+      </template></el-table-column
+    >
+    <el-table-column prop="operationTime" label="操作时间" min-width="202">
+      <template #default="scope">
+        {{ scope.row.operationTime || "-" }}
+      </template></el-table-column
+    >
+  </el-table>
+  <template #footer>
+    <span class="dialog-footer">
+      <el-button
+        round
+        @click="modalVisible = false"
+        >返回</el-button
+      >
+    </span>
+  </template>
+</el-dialog>
 </template>
 <style lang="scss" scoped>
 .warp {
