@@ -12,7 +12,7 @@ import {
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import dayjs from "dayjs";
-import { Calendar, Search } from '@element-plus/icons-vue'
+import { Calendar, Search } from "@element-plus/icons-vue";
 import API from "~/api/approve";
 
 const formInline = reactive({
@@ -121,9 +121,9 @@ let modalData = reactive<any>([]);
 
 const handleModal = async (values?: any) => {
   let res: any = await API.listApproveRecord({
-      businessId: values.id,
-    });
-    Object.assign(modalData, res?.data);
+    businessId: values.id,
+  });
+  Object.assign(modalData, res?.data);
   modalVisible.value = true;
 };
 const successData = async (row: any) => {
@@ -167,7 +167,7 @@ const changeStatus = (val: any) => {
   console.log(val, "change");
   formInline.status = val;
 };
-const flowTime = ((data: any) => {
+const flowTime = (data: any) => {
   const _time = data.executeTime;
   // if (!_time) return "-";
 
@@ -185,9 +185,7 @@ const flowTime = ((data: any) => {
   const date2Text = endTime; //.toLocaleDateString().replaceAll("/", "-");
 
   return `${date1Text} 至 ${date2Text}`;
-});
-
-
+};
 </script>
 
 <template>
@@ -208,7 +206,7 @@ const flowTime = ((data: any) => {
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="formInline.touchName" placeholder="请输入策略流程名称" clearable style="width:200px"  :prefix-icon="Search"/>
+          <el-input v-model="formInline.touchName" placeholder="请输入策略流程名称" clearable style="width:200px" :prefix-icon="Search" />
         </el-form-item>
 
       </el-form>
@@ -286,11 +284,11 @@ const flowTime = ((data: any) => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="起止日期" width="330">
+        <el-table-column label="起止日期" width="300">
           <template #default="scope">
-           
+
             {{ flowTime(scope.row) }}
-            
+
           </template>
         </el-table-column>
 
@@ -302,22 +300,41 @@ const flowTime = ((data: any) => {
 
         <el-table-column label="目标完成率" width="150">
           <template #default="scope">
-            {{ scope.row.targetCount }}%
+            <span v-if="scope.row.status=='draft'||scope.row.status=='approvalPending'">
+              无数据
+            </span>
+            <span v-else-if="scope.row.containTarget==false">
+              未设置目标
+            </span>
+            <span v-else>
+              {{ scope.row.targetCount }}%
+            </span>
           </template>
         </el-table-column>
 
         <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="280">
           <template #default="scope">
+            <span v-if="scope.row.status=='draft'||scope.row.status=='approvalPending'">
+              暂无数据，流程尚未发布
+            </span>
+            <span v-else-if="scope.row.containTarget==false">
+            {{ scope.row.triggerCount }}/
+            {{ scope.row.touchCount }}/
+            -
+            </span>
+            <span v-else>
             <!-- targetCount 完成目标数量
             touchCount 触达数量
             triggerCount 触发数量 -->
             {{ scope.row.triggerCount }}/
             {{ scope.row.touchCount }}/
             {{ scope.row.targetCount }}
+            </span>
+         
           </template>
         </el-table-column>
 
-        <el-table-column label="创建人" prop="createUserName" />
+        <el-table-column label="创建人" prop="createUserName"  width="150"/>
 
         <el-table-column label="操作" width="300" fixed="right">
           <template #default="scope">
@@ -336,10 +353,8 @@ const flowTime = ((data: any) => {
               <el-link type="primary" v-if="scope.row.status=='draft'||scope.row.status=='approvalRefuse'||scope.row.status=='suspend'||scope.row.status=='done'" @click="delData(scope.row)">删除</el-link>
               <el-link type="primary" @click="copyData(scope.row)">复制</el-link>
               <el-link type="primary" v-if="scope.row.status=='approvalRefuse'||scope.row.status=='draft'" @click="updateData(scope.row)">编辑</el-link>
-              <el-link type="primary"      
-              @click="handleModal(scope.row)"
-     >审核详情</el-link>
-       <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+              <el-link type="primary" @click="handleModal(scope.row)">审核详情</el-link>
+              <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
               <el-link type="primary" @click="successData(scope.row)">审核通过</el-link>
             </el-space>
           </template>
@@ -350,57 +365,34 @@ const flowTime = ((data: any) => {
     </div>
 
   </div>
-  <el-dialog
-  class="pd-modal"
-  destroy-on-close
-  :close-on-click-modal="false"
-  v-model="modalVisible"
-  title="审核详情"
-  :width="800"
->
-  
-  <el-table
-    :data="modalData"
-    style="width: 100%"
-    height="400"
-  >
-    <el-table-column prop="approveLevel" label="节点" width="92" />
-    <el-table-column prop="auditorName" label="审核人" width="101">
-    </el-table-column>
-    <el-table-column prop="receiptTime" label="接收时间" width="231">
-      <template #default="scope">
-        {{ scope.row.receiptTime || "-" }}
-      </template>
-    </el-table-column>
-    <el-table-column prop="approveStatus" label="审核状态" width="125">
-      <template #default="scope">
-        <el-tag v-if="scope.row.approveStatus === null" type="success"
-          >待审批</el-tag
-        >
-        <el-tag v-if="scope.row.approveStatus === true" type=""
-          >已通过</el-tag
-        >
-        <el-tag v-if="scope.row.approveStatus === false" type="danger"
-          >未通过</el-tag
-        >
-      </template></el-table-column
-    >
-    <el-table-column prop="operationTime" label="操作时间" min-width="202">
-      <template #default="scope">
-        {{ scope.row.operationTime || "-" }}
-      </template></el-table-column
-    >
-  </el-table>
-  <template #footer>
-    <span class="dialog-footer">
-      <el-button
-        round
-        @click="modalVisible = false"
-        >返回</el-button
-      >
-    </span>
-  </template>
-</el-dialog>
+  <el-dialog class="pd-modal" destroy-on-close :close-on-click-modal="false" v-model="modalVisible" title="审核详情" :width="800">
+
+    <el-table :data="modalData" style="width: 100%" height="400">
+      <el-table-column prop="approveLevel" label="节点" width="92" />
+      <el-table-column prop="auditorName" label="审核人" width="101">
+      </el-table-column>
+      <el-table-column prop="receiptTime" label="接收时间" width="231">
+        <template #default="scope">
+          {{ scope.row.receiptTime || "-" }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="approveStatus" label="审核状态" width="125">
+        <template #default="scope">
+          <el-tag v-if="scope.row.approveStatus === null" type="success">待审批</el-tag>
+          <el-tag v-if="scope.row.approveStatus === true" type="">已通过</el-tag>
+          <el-tag v-if="scope.row.approveStatus === false" type="danger">未通过</el-tag>
+        </template></el-table-column>
+      <el-table-column prop="operationTime" label="操作时间" min-width="202">
+        <template #default="scope">
+          {{ scope.row.operationTime || "-" }}
+        </template></el-table-column>
+    </el-table>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button round @click="modalVisible = false">返回</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 <style lang="scss" scoped>
 .warp {
