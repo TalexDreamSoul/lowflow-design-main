@@ -11,7 +11,7 @@ console.log(`output->appOptions.value?.menu[0]`,JSON.parse(menuMap.value),Object
 export const routes: RouterOptions["routes"] = [
   {
     path: "/",
-    redirect: `/${Object.keys(menuMapList.map)[0]}`
+    redirect: `/activityCenter`
     // component: () => import("~/views/dashboard/index.vue"),
   },
   {
