@@ -227,6 +227,12 @@ const changeTime = (val: any) => {
       <el-table :data="tableData">
         <el-table-column label="模版ID" prop="id" />
         <el-table-column label="模版名称" prop="name" />
+        <el-table-column label="模版类型" prop="type" >
+          <template #default="scope">
+            {{             getNameByValue(materialType, String(scope.row.type))
+          }}
+          </template>  
+        </el-table-column>
         <el-table-column label="状态">
           <template #default="scope">
             <el-tag class="mx-1" :type="statusLabels[scope.row.status].type
