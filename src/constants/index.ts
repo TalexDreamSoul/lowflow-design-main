@@ -49,6 +49,10 @@ export const EVENT_TYPE = [
     label: "app事件",
     value: "app",
   },
+  {
+    label: "触达结果",
+    value: "touchResult",
+  }, 
 ];
 
 /**
