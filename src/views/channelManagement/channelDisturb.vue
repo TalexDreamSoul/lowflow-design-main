@@ -197,6 +197,12 @@ const onSubmit = async () => {
             {{ row.blacklistLimit ? '限制' : '不限制' }}
           </template>
         </el-table-column>
+        <el-table-column label="勿扰时段是否限制">
+          <template #default="{ row }">
+            {{ row.disturbLimit ? '限制' : '不限制' }}
+          </template>
+        </el-table-column>
+        
         <el-table-column label="过滤黑名单" prop="usedCount">
           <template #default="{ row }">
             <span>{{ row.blacklistList?.length || '-' }}</span>
