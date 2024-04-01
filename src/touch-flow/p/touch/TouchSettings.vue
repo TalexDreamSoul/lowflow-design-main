@@ -261,7 +261,7 @@ defineExpose({ updateData });
         <el-select :disabled="readonly" placeholder="请选择通道" @change="refreshMaterialTemplate"
           v-model="touchOptions.type" style="width: 120px">
           <el-option value="sms" label="短信">手机短信</el-option>
-          <el-option value="appPush" label="app消息">app消息</el-option>
+          <el-option value="appPush" label="app消息">appPush</el-option>
           <el-option value="digital" label="企微">企微</el-option>
           <el-option value="outbound" label="智能外呼">智能外呼</el-option>
           <el-option value="znx" label="站内信">站内信</el-option>
