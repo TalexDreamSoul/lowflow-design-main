@@ -52,7 +52,7 @@ defineExpose({
   </BehaviorGroupPlus>
 
   <BehaviorGroupPlus :readonly="readonly"
-    v-if="String(sizeForm.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1" title="触达设置"
+    v-if="String(sizeForm.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1" title="触达设置" :default-expand="true"
     color="#FFD561">
     <TouchSettings :readonly="readonly" ref="touchSettingsRef" :touch="sizeForm.touchTemplateContent" />
   </BehaviorGroupPlus>

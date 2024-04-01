@@ -231,13 +231,13 @@ regSaveFunc(saveData);
         </span>
       </span>
 
-      <BehaviorGroupPlus title="用户属性行为分流" color="#333333"
+      <BehaviorGroupPlus title="用户属性行为分流" color="#333333" :default-expand="true"
         :class="{ animation: true, display: sizeForm.diversionType === 'attr' }">
         <div class="titleCondition">进入该策略期的用户需要满足以下条件：</div>
         <FilterGroup :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus title="触发事件分流" color="#333333"
+      <BehaviorGroupPlus title="触发事件分流" color="#333333"  :default-expand="true"
         :class="{ animation: true, display: sizeForm.diversionType === 'event' }">
         <div class="flex-column titleCondition">
           <el-text>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</el-text>
