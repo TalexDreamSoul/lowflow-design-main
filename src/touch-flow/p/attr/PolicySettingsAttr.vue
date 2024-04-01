@@ -156,15 +156,15 @@ function saveData() {
 
   const { touchTemplateContent }: any = sizeForm
 
-  console.log("touchTemplateContent", touchTemplateContent)
+  console.log("touchTemplateContent", sizeForm,touchTemplateContent,touchTemplateContent.type)
 
-  if (!touchTemplateContent.type.length) {
-    ElMessage.warning({
-      message: "请选择模板！",
-    })
+  // if (!touchTemplateContent.type?.length) {
+  //   ElMessage.warning({
+  //     message: "请选择模板！",
+  //   })
 
-    return false;
-  }
+  //   return false;
+  // }
 
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm);
