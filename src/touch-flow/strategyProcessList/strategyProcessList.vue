@@ -38,7 +38,7 @@ const statusLabels = {
 };
 const typeMap = {
   immediately: "定时-单次",
-  delayed: "定时-重复",
+  repeat: "定时-重复",
   trigger: "触发型",
 };
 const tableData = ref([]);
