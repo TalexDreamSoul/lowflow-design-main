@@ -23,22 +23,20 @@ const labelList = ref<any[]>([]);
 const refreshLabelList = async () => {
   const data = await getLabelList();
 
-  labelList.value = data.data.records;
+  labelList.value = data?.data?.records;
 };
 refreshLabelList();
 const listContainer = ref(null);
 function addLabel() {
   model.labelValue.data.push("");
-  listContainer.value.scrollTop = listContainer.value.scrollHeight;
-}
-onMounted(() => {
   if (listContainer.value) {
-    // Accessing scrollTop property only if listContainer is not null
-    console.log(listContainer.value.scrollTop)
+    listContainer.value.scrollTop = listContainer.value.scrollHeight;
+    console.log(listContainer.value);
   } else {
-    console.error('listContainer is null')
+    console.error("listContainer is null");
   }
-})
+}
+
 async function save() {
   if (
     model.labelName === "" ||
@@ -126,8 +124,8 @@ function handleChange(val: any) {
 
   <teleport to="body">
     <el-dialog width="400px" title="新增标签" v-model="visible">
-      <div class="LabelForm" ref="listContainer" style="height: 300px; overflow: auto;">
-        <el-form label-position="top" label-width="100px" :model="model" style="width: 100%">
+      <div class="LabelForm" ref="listContainer" style="width: 100%;height: 350px; overflow: auto;">
+        <el-form label-position="top" label-width="100px" :model="model">
           <el-form-item label="标签类型">
             <el-select @change="handleChange" style="width: 100%" v-model="model.labelValueType">
               <el-option label="字符型" value="text" />
@@ -210,8 +208,7 @@ function handleChange(val: any) {
     box-sizing: border-box;
   }
 
-  padding-bottom: 1rem;
-
+  padding-bottom: 100px;
   height: 20rem;
 
   overflow-y: auto;
