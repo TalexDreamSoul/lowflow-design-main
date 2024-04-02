@@ -95,7 +95,7 @@ function handleSelectChanged(val: string, event: any) {
           </el-select>
 
           <span>
-            <el-text v-if="!readonly" type="primary" style="cursor: pointer" @click="addCondition(event)">
+            <el-text v-if="!readonly&&event.eventCode" type="primary" style="cursor: pointer" @click="addCondition(event)">
               <el-icon size="14">
                 <CirclePlusFilled />
               </el-icon>
