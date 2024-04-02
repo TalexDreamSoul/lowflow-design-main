@@ -117,7 +117,8 @@ function handleSelectChanged(val: string) {
     <div class="filter-wrap">
       <div v-if="index !== undefined" class="garyblock">
         <el-text>客户进入流程后，在</el-text>&nbsp;
-        <el-input-number :min="1" :disabled="readonly" v-model="target.targetDelayed.delayedTime" style="width: 100px" />&nbsp;
+        <el-input-number :min="1" :disabled="readonly" v-model="target.targetDelayed.delayedTime"
+          style="width: 100px" />&nbsp;
         <el-select :disabled="readonly" v-model="target.targetDelayed.delayedUnit" style="width: 150px">
           <el-option value="minute" label="分钟">分钟</el-option>
           <el-option value="hour" label="小时">小时</el-option>
@@ -126,23 +127,29 @@ function handleSelectChanged(val: string) {
         <el-text>内完成以下转化事件，则认为完成目标</el-text>
       </div>
       <div>
-        <el-select @change="handleSelectChanged" :disabled="readonly" v-model="conditions.eventCode" style="width: 240px" placeholder="请选择">
+        <el-select @change="handleSelectChanged" :disabled="readonly" v-model="conditions.eventCode"
+          style="width: 240px" placeholder="请选择">
           <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
             <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode!" />
           </el-option-group> </el-select>&nbsp;
-        <el-text v-if="conditions.eventCode" :disabled="readonly" type="primary" style="cursor: pointer" @click="addCondition">
+        <el-text v-if="conditions.eventCode" :disabled="readonly" type="primary" style="cursor: pointer"
+          @click="addCondition">
           <el-icon size="14">
             <CirclePlusFilled />
           </el-icon>
           筛选条件
         </el-text>
       </div>
-      <LogicalLine v-if="attrs && conditions.eventCode" :display="conditions.conditions.conditions.length < 2" title="并且满足" v-model="conditions.conditions.logicalChar">
+      <LogicalLine v-if="attrs && conditions.eventCode" :display="conditions.conditions.conditions.length < 2"
+        title="并且满足" v-model="conditions.conditions.logicalChar">
         <ul :label-width="0" :inline="true">
           <li v-for="(item, index) in conditions.conditions.conditions" :key="index">
-            <trigger :item="item" :readonly="readonly" v-model="item.attr.field" :attrs="attrs" />
-            <operator :item="item.attr" :attrs="attrs" :readonly="readonly" ref="operatorRef" v-model="item.attr.fieldOp" />
-            <AttrRender :readonly="readonly" :item="item.attr" :attrs="attrs" />
+            <trigger :conditions="conditions.conditions.conditions" :item="item" :readonly="readonly"
+              v-model="item.attr.field" :attrs="attrs" />
+            <operator :item="item.attr" :attrs="attrs" :readonly="readonly" ref="operatorRef"
+              v-model="item.attr.fieldOp" />
+            <AttrRender :conditions="conditions.conditions.conditions" :readonly="readonly" :item="item.attr"
+              :attrs="attrs" />
             <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
               <el-icon size="14">
                 <Delete :disabled="readonly" />

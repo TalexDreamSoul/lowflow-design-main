@@ -29,6 +29,7 @@ const flowOptions = reactive<
   basic: {
     _expand: false,
     touchName: "",
+    touchCode: randomStr(),
     disturb: {
       enable: false,
       time: [],

@@ -10,7 +10,8 @@ export interface IFlowHeader {
    * 内部数据：控制 FlowHeader 是否展开
    */
   _expand: false,
-  touchName: "",
+  touchName: string,
+  touchCode: string,
   disturb: IHeaderDisturb,
   target: IHeaderTarget
 }

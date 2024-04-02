@@ -30,7 +30,7 @@ const operatorOptions = [
   },
   {
     value: "等于",
-    type: ["num", "text"],
+    type: ["num", "text", "nodeId", "touchResult", "touchId"],
   },
   {
     value: "不等于",
@@ -72,15 +72,30 @@ const $emits = defineEmits<{
   (e: "update:modelValue", modelValue: any): void;
 }>();
 const data = useVModel($props, "modelValue", $emits);
-const type = computed(() =>
+const selectItem = computed(() =>
   $props.selected
     ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected)
     : $props.attrs.filter(
       (attr: any) =>
         attr.field === ($props.item?.attr?.field || $props.item.field) //|| attr.labelName === $props.item?.labelName
-    )?.[0]?.fieldType ?? "none"
+    )?.[0]
 );
-const operators = computed(() => operatorOptions.filter((item) => item.type.includes(type.value)));
+const type = computed(() =>
+  selectItem.value?.fieldType ?? "none"
+);
+const operators = computed(() => {
+  let _type = type.value
+
+  if (selectItem.value?.field === "nodeId") {
+    _type = "nodeId"
+  } else if (selectItem.value?.field === "touchResult") {
+    _type = "touchResult"
+  } else if (selectItem.value?.field === "touchId") {
+    _type = "touchId"
+  }
+
+  return operatorOptions.filter((item) => item.type.includes(_type))
+});
 
 watch(() => $props.item.field, () => {
   $props.item.fieldOp = ''

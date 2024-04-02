@@ -1,4 +1,6 @@
 <script setup lang="ts" name="AttrRender">
+import NodeRender from "./NodeRender.vue";
+import AttrScroller from "./AttrScroller.vue";
 import { ref, computed, watchEffect } from "vue";
 
 type AttrType = any; //number | string | boolean | Array<Number> | Array<string>
@@ -7,6 +9,7 @@ const props = defineProps<{
   item: AttrType;
   obj?: any;
   attrs: any;
+  conditions: any[];
   selected?: string;
   readonly?: boolean;
   placeholder?: string;
@@ -14,6 +17,10 @@ const props = defineProps<{
 const emits = defineEmits<{
   (e: "update:modelValue", value: AttrType): void;
 }>();
+
+if (!props.conditions) {
+  console.error("[LOW-FLOW] Make sure that this component will not be used as appPUSH touch result. Here are the stacks!")
+} else console.log("AttrRender Conditions", props.conditions)
 
 console.log('AttrRender', props)
 
@@ -29,6 +36,12 @@ const type = computed(() =>
         attr.field === props.item.field //|| attr.labelName === props.item.labelName
     )?.[0]?.fieldType ?? "none"
 );
+
+const doTouchFlow = computed(() => {
+  const { item } = props
+
+  return item.field === 'touchId'
+})
 
 watchEffect(() => {
   if (!timeInterval.value) {
@@ -138,10 +151,17 @@ function onTimePointChange(val: typeof timePointSection.value) {
 function onTimeCastChange(val: typeof timeCastSection.value) {
   props.item.timeCondition.isWithin = val === "within";
 }
+
+function getNodes() {
+  console.log("props", props)
+}
 </script>
 
 <template>
-  <div v-if="obj?.type !== 'label' && !(item.fieldOp?.indexOf('空') !== -1)" class="AttrRender"
+  <AttrScroller v-if="doTouchFlow" :readonly="readonly" v-model="item.fieldReplaceValue" />
+  <NodeRender :conditions="conditions" :obj="obj" :readonly="readonly" v-model="item.fieldReplaceValue"  v-else-if="item.field === 'nodeId'" />
+
+  <div v-else-if=" obj?.type !=='label' && !(item.fieldOp?.indexOf('空') !==-1)" class="AttrRender"
     style="display: flex; gap: 1rem">
     <template v-if="type === 'num'">
       <template v-if="item.fieldOp === '区间'">
