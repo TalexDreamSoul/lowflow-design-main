@@ -64,7 +64,8 @@ function addCondition(event: any) {
 }
 
 function delEvent(index: number) {
-  props.condition.conditions.splice(index, 1);
+  props.condition?.conditions[0]?.conditions.splice(index, 1);
+  // props.condition.conditions.splice(index, 1);
 }
 
 function handleSelectChanged(val: string, event: any) {
@@ -84,7 +85,7 @@ function handleSelectChanged(val: string, event: any) {
 
 <template>
   <div class="TouchBlockGenre">
-    <LogicalLine :disabled="readonly" v-model="condition.logicalChar"  :display="condition.conditions[0].conditions.length<2" >
+    <LogicalLine :disabled="readonly" v-model="condition.logicalChar"  :display="condition?.conditions[0]?.conditions.length<2" >
       <div class="EventA-Wrapper" v-for="(event, index) in conditionList">
         <div class="EventA-Wrapper-Head">
           <el-select :disabled="readonly" @change="handleSelectChanged($event, event)" placeholder="选择事件"
