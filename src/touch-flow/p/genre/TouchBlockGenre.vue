@@ -83,7 +83,7 @@ function handleSelectChanged(val: string, event: any) {
 
 <template>
   <div class="TouchBlockGenre">
-    <LogicalLine :disabled="readonly" v-model="condition.logicalChar">
+    <LogicalLine :disabled="readonly" v-model="condition.logicalChar" v-if="condition.conditions[0].conditions.length>0">
       <div class="EventA-Wrapper" v-for="(event, index) in conditionList">
         <div class="EventA-Wrapper-Head">
           <el-select :disabled="readonly" @change="handleSelectChanged($event, event)" placeholder="选择事件"
