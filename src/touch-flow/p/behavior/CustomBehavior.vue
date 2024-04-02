@@ -71,7 +71,7 @@ provide("refreshTree", refreshTree);
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
       <div v-if="dict && custom.conditions?.length" class="Target-Block">
-        <LogicalLine :display="custom.conditions?.length<2" v-model="custom.logicalChar">
+        <LogicalLine  :display="custom.conditions?.length<2" v-model="custom.logicalChar">
           <LogicalLine v-model="condition.logicalChar" v-for="(condition, index) in custom.conditions"
             :display="condition?.conditions?.length < 2" :key="index">
             <BehaviorContent v-for="(item, ind) in condition.conditions" :key="ind" @addSub="handleAdd(condition)"
@@ -89,5 +89,9 @@ provide("refreshTree", refreshTree);
   background-color: #f7f8fa;
 
   user-select: none;
+
+  .Target-Block {
+    padding: 0 1rem;
+  }
 }
 </style>

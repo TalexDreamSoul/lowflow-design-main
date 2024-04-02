@@ -54,5 +54,8 @@ provide("refreshTree", refreshTree);
   background-color: #f7f8fa;
 
   user-select: none;
+  .Target-Block {
+    padding: 0 1rem;
+  }
 }
 </style>
