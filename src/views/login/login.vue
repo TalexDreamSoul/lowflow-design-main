@@ -30,6 +30,8 @@
 import { nextTick, onMounted, reactive, toRefs,ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import API from "~/api/account";
+import { useLocalStorage } from "@vueuse/core";
+import customerAPI from "~/api/account";
 
 const router = useRouter();
 const route = useRoute();
@@ -88,15 +90,23 @@ const state = ref({
 const goBack = () => {
   router.push('/');
 };
+const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
+
+const fetchDataApi = async () => {
+  const res = await customerAPI.accountDetail();
+  appOptions.value.user = res?.data;
+goBack()
+
+};
+
 const handleLogin = async() => {
 
   state.loading = true;
 
-
 const rs = await API.login(state.value.loginForm);
+fetchDataApi()
 
 
-goBack()
 state.loading = false;
 
 
