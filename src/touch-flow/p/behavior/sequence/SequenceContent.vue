@@ -180,7 +180,7 @@ const defaultTime2: [Date, Date] = [
   &-Line {
     padding-right: 20%;
     display: flex;
-
+    flex-wrap: wrap;
     gap: 0.5rem;
     align-items: center;
   }
