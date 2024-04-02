@@ -7,7 +7,7 @@ import TouchSelectWrapper from "./TouchSelectable.vue";
 import Operator from "../../page/Operator.vue";
 import AttrRender from "~/touch-flow/page/AttrRender.vue";
 import { randomStr } from "~/utils/common";
-import { CirclePlusFilled, Plus } from "@element-plus/icons-vue";
+import {Delete, CirclePlusFilled, Plus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { VariableTemplateDTO } from "../../touch-total";
 
