@@ -1,5 +1,5 @@
 <script setup lang="ts" name="NewLabel">
-import { CirclePlusFilled } from '@element-plus/icons-vue';
+import {Delete, CirclePlusFilled } from '@element-plus/icons-vue';
 import { reactive, ref, watch, computed } from 'vue';
 import { getLabelList, addCustomLabel } from '../../api/index'
 import { ElMessage } from 'element-plus';
