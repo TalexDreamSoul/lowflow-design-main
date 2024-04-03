@@ -67,6 +67,10 @@ export const routes: RouterOptions["routes"] = [
         path: "attrDict",
         component: () => import("~/pages/configuration/attr.vue"),
       },
+      {
+        path: "globalDisturb",
+        component: () => import("~/views/channelManagement/channelDisturb.vue"),
+      }
     ],
   },
   {
@@ -113,10 +117,6 @@ export const routes: RouterOptions["routes"] = [
       {
         path: "equityManage",
         component: () => import("~/views/channelManagement/equityManagement.vue"),
-      },
-      {
-        path: "globalDisturb",
-        component: () => import("~/views/channelManagement/channelDisturb.vue"),
       }
     ],
   },

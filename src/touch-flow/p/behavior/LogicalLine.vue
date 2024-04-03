@@ -146,14 +146,14 @@ function toggle() {
       //   flex: 1;
       // }
       display: flex;
-
+      flex-wrap: wrap;
       align-items: center;
       justify-content: flex-start;
     }
 
     &>ul {
       display: flex;
-
+      flex-wrap: wrap;
       gap: 0.5rem;
       // justify-content: start;
       flex-direction: column;

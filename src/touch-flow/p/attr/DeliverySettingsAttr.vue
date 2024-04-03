@@ -12,8 +12,8 @@ const origin = {
   nodeId: "",
   diversionRuleContent: {
     data: [
-      { nodeName: "流量策略器1", branchName: "", branchRatio: 50, children: [] },
-      { nodeName: "流量策略器2", branchName: "", branchRatio: 50, children: [] },
+      { nodeName: "流量策略器1", branchName: "分支1", branchRatio: 50, children: [] },
+      { nodeName: "流量策略器2", branchName: "分支2", branchRatio: 50, children: [] },
     ],
   },
 };
@@ -33,7 +33,7 @@ const sizeForm = reactive<typeof origin>(origin);
 
     diversionRuleContent.data.forEach((child: any) => {
       origin.diversionRuleContent.data.push({
-        nodeName: child.branchName,
+        nodeName: child.nodeName,
         branchName: child.branchName,
         branchRatio: child.branchRatio,
         children: child.children,
@@ -75,8 +75,9 @@ function saveData() {
   }
 
   const _map: any = {}
-  if (sizeForm.diversionRuleContent.data.filter(branch => (branch.branchRatio === 0 || branch.nodeName.length < 1) || ((m: any) => m[branch.nodeName] === 1 ? true : ((m[branch.nodeName] = 1) && false))(_map)).length) {
-    ElMessage.warning({
+  if (sizeForm.diversionRuleContent.data.filter(branch => (branch.branchRatio === 0 || branch.branchName.length < 1) || ((m: any) => m[branch.branchName] === 1 ? true : ((m[branch.branchName] = 1) && false))(_map)).length) {
+   console.log(`output->sizeForm.diversionRuleContent.data`,sizeForm.diversionRuleContent.data)
+ ElMessage.warning({
       message: "不能存在重复、未命名或配比为0%的流量",
     });
 
@@ -96,13 +97,14 @@ function saveData() {
     const child = {
       nodeType: "subDiversion",
       nodeName: branch.nodeName,
+      branchName: branch.branchName,
       branchRatio: branch.branchRatio,
       nodeId: randomStr(12),
       children: branch.children || [],
       // father: _
     }
 
-    branch.branchName = branch.nodeName
+    // branch.branchName = branch.nodeName
 
     Object.defineProperty(child, 'father', {
       value: markRaw(_),
@@ -138,9 +140,10 @@ const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
 const addBranch = () => {
-  const name = "流量策略器" + (sizeForm.diversionRuleContent.data.length + 1)
+  const name = "分支" + (sizeForm.diversionRuleContent.data.length + 1)
+  const nodeName = "流量策略器" + (sizeForm.diversionRuleContent.data.length + 1)
 
-  sizeForm.diversionRuleContent.data.push({ branchName: name, nodeName: name, branchRatio: 0, children: [] });
+  sizeForm.diversionRuleContent.data.push({ branchName: name, nodeName: nodeName, branchRatio: 0, children: [] });
 };
 
 const deleteBranch = (index: number) => {
@@ -171,7 +174,7 @@ const deleteBranch = (index: number) => {
           <el-row :gutter="20" style="    align-items: center;
           margin-top: 16px;" v-for="(branch, index) in sizeForm.diversionRuleContent.data" :key="index">
             <el-col :span="12">
-              <el-input v-model="branch.nodeName" />
+              <el-input v-model="branch.branchName" />
             </el-col>
             <el-col :span="7">
               <el-input-number :min="0" :max="100 - +totalBranchRatio + branch.branchRatio" placeholder="百分比"

@@ -13,6 +13,7 @@ const props = defineProps<{
 }>();
 
 console.log("props", props.condition)
+console.log(`output->condition.conditions[0].conditions`,props.condition.conditions[0].conditions)
 
 const conditionList = computed<EventSearchCondition[]>(() => {
   if (!props.condition.conditions.length) {
@@ -63,7 +64,8 @@ function addCondition(event: any) {
 }
 
 function delEvent(index: number) {
-  props.condition.conditions.splice(index, 1);
+  props.condition?.conditions[0]?.conditions.splice(index, 1);
+  // props.condition.conditions.splice(index, 1);
 }
 
 function handleSelectChanged(val: string, event: any) {
@@ -83,7 +85,7 @@ function handleSelectChanged(val: string, event: any) {
 
 <template>
   <div class="TouchBlockGenre">
-    <LogicalLine :disabled="readonly" v-model="condition.logicalChar">
+    <LogicalLine :disabled="readonly" v-model="condition.logicalChar"  :display="condition?.conditions[0]?.conditions.length<2" >
       <div class="EventA-Wrapper" v-for="(event, index) in conditionList">
         <div class="EventA-Wrapper-Head">
           <el-select :disabled="readonly" @change="handleSelectChanged($event, event)" placeholder="选择事件"
@@ -94,7 +96,7 @@ function handleSelectChanged(val: string, event: any) {
           </el-select>
 
           <span>
-            <el-text v-if="!readonly" type="primary" style="cursor: pointer" @click="addCondition(event)">
+            <el-text v-if="!readonly&&event.eventCode" type="primary" style="cursor: pointer" @click="addCondition(event)">
               <el-icon size="14">
                 <CirclePlusFilled />
               </el-icon>

@@ -7,7 +7,7 @@ import TouchSelectWrapper from "./TouchSelectable.vue";
 import Operator from "../../page/Operator.vue";
 import AttrRender from "~/touch-flow/page/AttrRender.vue";
 import { randomStr } from "~/utils/common";
-import { CirclePlusFilled, Plus } from "@element-plus/icons-vue";
+import {Delete, CirclePlusFilled, Plus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { VariableTemplateDTO } from "../../touch-total";
 
@@ -434,7 +434,7 @@ function handleAdd() {
         class="TouchFloatingContent">
         <Operator style="width: 100px" :item="item" :attrs="attrs.attrs" v-model="item.fieldOp" />
         <!-- && item.fieldOp?.indexOf('等于') === -1 -->
-        <AttrRender v-if="item.fieldOp?.indexOf('空') === -1" style="width: 300px" :item="item" :attrs="attrs.attrs" />
+        <AttrRender v-if="item.fieldOp?.indexOf('空') === -1"  :item="item" :attrs="attrs.attrs" />
         <div class="ContentSingleLine">
           <span>赋值为</span>
           <el-input v-model="item.compareValue" />
@@ -486,6 +486,7 @@ function handleAdd() {
 }
 
 .TouchFloatingContent {
+  flex-wrap: wrap;
   .el-icon {
     &:hover {
       color: #277ae7;

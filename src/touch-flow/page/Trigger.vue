@@ -22,8 +22,8 @@ if (!props.conditions) {
 const model = useVModel(props, "modelValue", emits);
 const ph = computed(() => props?.placeholder ?? "选择字段");
 
-const allowNode = computed(() => props.conditions.filter(item => item.attr?.field === 'touchId')?.length)
-const haveNode = computed(() => props.conditions.filter(item => item.attr?.field === 'nodeId')?.length)
+const allowNode = computed(() => props.conditions?.filter(item => item.attr?.field === 'touchId')?.length)
+const haveNode = computed(() => props.conditions?.filter(item => item.attr?.field === 'nodeId')?.length)
 
 watch(
   () => model.value,

@@ -201,9 +201,10 @@ provide('save', (regFunc: () => boolean) => {
 <template>
   <el-card ref="dom" style="width: 355px" class="PBlock">
     <p class="title">
-      流量策略器
+      {{ data.nodeName }}
       <span style="float: right">
-        {{ data.nodeName }}
+        {{ data.branchName }}
+
         <span style="color: green;font-weight: 600">{{ data.branchRatio }}%</span>
       </span>
     </p>

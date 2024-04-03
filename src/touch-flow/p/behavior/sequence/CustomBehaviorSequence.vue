@@ -33,7 +33,7 @@ provide("refreshTree", refreshTree);
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
       <div v-if="dict && custom.conditions?.length" class="Target-Block">
-        <LogicalLine :display="!custom.conditions?.length" v-model="custom.logicalChar">
+        <LogicalLine :display="custom.conditions?.length<2" v-model="custom.logicalChar">
           <div v-for="(condition, index) in custom.conditions" :key="index">
             <SequenceContent
               @del="() => custom.conditions.splice(index, 1)"
@@ -54,5 +54,8 @@ provide("refreshTree", refreshTree);
   background-color: #f7f8fa;
 
   user-select: none;
+  .Target-Block {
+    padding: 0 1rem;
+  }
 }
 </style>
