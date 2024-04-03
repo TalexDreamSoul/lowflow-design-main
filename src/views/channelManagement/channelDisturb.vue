@@ -69,7 +69,7 @@ function transformBlackListData() {
 
   if (dialogOptions.value.data?.blacklistList?.length) {
     [...dialogOptions.value.data.blacklistList].forEach((item) => {
-      if ( !item ) return
+      if (!item) return
       blackList.value.push(item.id);
     });
   }
@@ -139,7 +139,7 @@ function transformBlackListData() {
 })()
 
 function genDate(num: any) {
-  
+
 }
 
 function updateData(data: any) {
@@ -202,7 +202,7 @@ const onSubmit = async () => {
             {{ row.disturbLimit ? '限制' : '不限制' }}
           </template>
         </el-table-column>
-        
+
         <el-table-column label="过滤黑名单" prop="usedCount">
           <template #default="{ row }">
             <span>{{ row.blacklistList?.length || '-' }}</span>
@@ -250,7 +250,7 @@ const onSubmit = async () => {
           </el-radio-group>
         </span>
       </div>
-      <div class="line">
+      <div v-if="dialogOptions.data.$touchLimit === '1'" class="line">
         <el-time-picker is-range format="HH:mm" style="width: 200px" v-model="dialogOptions.data.$date"
           :disabled="dialogOptions?.disabled" type="daterange" unlink-panels range-separator="-"
           start-placeholder="开始时间" end-placeholder="结束时间" />&nbsp;
