@@ -73,15 +73,13 @@ const $emits = defineEmits<{
 }>();
 const data = useVModel($props, "modelValue", $emits);
 const selectItem = computed(() =>
-  $props.selected
-    ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected)
-    : $props.attrs.filter(
-      (attr: any) =>
-        attr.field === ($props.item?.attr?.field || $props.item.field) //|| attr.labelName === $props.item?.labelName
-    )?.[0]
+  $props.selected || $props.attrs.filter(
+    (attr: any) =>
+      attr.field === ($props.item?.attr?.field || $props.item.field) //|| attr.labelName === $props.item?.labelName
+  )?.[0]
 );
 const type = computed(() =>
-  selectItem.value?.fieldType ?? "none"
+  $props.selected ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected) : selectItem.value?.fieldType ?? "none"
 );
 const operators = computed(() => {
   let _type = type.value
@@ -99,7 +97,7 @@ const operators = computed(() => {
 
 watch(() => $props.item.field, () => {
   $props.item.fieldOp = ''
-  console.log('1', operatorOptions, type.value, $props.attrs, $props.item, $props.attrs.filter(
+  console.log('1', selectItem.value, operatorOptions, type.value, $props.attrs, $props.item, $props.attrs.filter(
     (attr: any) =>
       attr.field === ($props.item?.attr?.field || $props.item.field)))
 })

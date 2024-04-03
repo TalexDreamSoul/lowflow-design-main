@@ -158,7 +158,7 @@ function saveData() {
 
   console.log("touchTemplateContent", sizeForm,touchTemplateContent,touchTemplateContent.type)
 
-  if (!touchTemplateContent?.type?.length) {
+  if (String(sizeForm.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1 && !touchTemplateContent?.type?.length) {
     ElMessage.warning({
       message: "请选择模板！",
     })

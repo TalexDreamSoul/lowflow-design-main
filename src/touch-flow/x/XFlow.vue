@@ -236,7 +236,7 @@ const layoutFn = () => {
 
   _Graph.fromJSON(model);
 
-  _Graph.positionContent("top");
+  setTimeout(() => _Graph.positionContent("top"), 200)
 };
 
 onMounted(() => {
