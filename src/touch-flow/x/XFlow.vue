@@ -132,6 +132,10 @@ const layoutFn = () => {
         }
       }
 
+      if (data.nodeDelayed?.delayedAction) {
+        calcHeight = calcHeight - 180;
+      }
+
       if (props.readonly) {
         calcHeight -= 100
       }
