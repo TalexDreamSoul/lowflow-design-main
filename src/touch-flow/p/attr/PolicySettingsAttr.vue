@@ -263,7 +263,7 @@ regSaveFunc(saveData);
 
       <CommonAttr :readonly="readonly" ref="touchSettingsRef" :sizeForm="sizeForm" />
 
-      <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
+      <!-- <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" /> -->
 
       <StrategistTargetAttr :readonly="readonly" :size-form="sizeForm" />
     </el-form>
