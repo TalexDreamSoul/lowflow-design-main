@@ -206,13 +206,7 @@ function getNodes() {
             <span class="pseudo-text">天</span>
           </template>
         </el-input>
-        <template v-if="item.fieldOp === '相对当前时间点'">
-          <el-select :placeholder="_ph" :disabled="readonly" @change="onTimeCastChange" v-model="timeCastSection">
-            <el-option value="within" label="之内" />
-            <el-option value="without" label="之外" />
-          </el-select>
-        </template>
-        <template v-else>
+        <template v-if="item.timeCondition.timeType === 'in'">
           <el-input :placeholder="_ph" style="width: 150px" :disabled="readonly" v-model="item.timeCondition.endDay">
             <template #prefix>
               <span class="pseudo-text">至未来</span>
