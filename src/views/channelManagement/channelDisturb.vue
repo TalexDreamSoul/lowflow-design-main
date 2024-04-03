@@ -105,19 +105,43 @@ function transformBlackListData() {
       }
     })
 
-    Object.defineProperty(obj, '$date', {
+    const { startDate, endDate } = obj
+
+    obj.$date = ref([startDate, endDate])
+
+    watch(() => obj.$date.value, () => {
+      if (obj.$date.value?.length === 2) {
+        obj.startTime = obj.$date.value[0]
+        obj.endTime = obj.$date.value[1]
+
+        console.log("test demo", obj)
+      }
+    })
+    /* Object.defineProperty(obj, '$date', {
       enumerable: true,
       get() {
         const { startDate, endDate } = obj
 
+        console.log(startDate, endDate, "test demo", obj)
+
         return [startDate, endDate]
       },
       set(val) {
-        console.log(`output->val`, val)
-        obj.startDate = DayJs(val[0]).format("HH:MM")
-        obj.endDate = DayJs(val[1]).format("HH:MM")
+        const [start, end] = val
+
+        const [startDate, endDate] = [DayJs(start), DayJs(end)]
+        if (!startDate || !endDate) {
+          console.error('startDate or endDate is null')
+
+          return
+        }
+
+
+
+        obj.startDate = startDate.format("HH:mm")
+        obj.endDate = endDate.format("HH:mm")
       }
-    })
+    }) */
 
     obj._enable = !!obj.blacklistList?.length
 
@@ -251,9 +275,9 @@ const onSubmit = async () => {
         </span>
       </div>
       <div v-if="dialogOptions.data.$touchLimit === '1'" class="line">
-        <el-time-picker is-range format="HH:mm" style="width: 200px" v-model="dialogOptions.data.$date"
-          :disabled="dialogOptions?.disabled" type="daterange" unlink-panels range-separator="-"
-          start-placeholder="开始时间" end-placeholder="结束时间" />&nbsp;
+        <el-time-picker is-range value-format="HH:mm" format="HH:mm" style="width: 200px"
+          v-model="dialogOptions.data.$date" :disabled="dialogOptions?.disabled" type="daterange" unlink-panels
+          range-separator="-" start-placeholder="开始时间" end-placeholder="结束时间" />&nbsp;
         <span>为该渠道的默认勿扰时段
         </span>
       </div>
