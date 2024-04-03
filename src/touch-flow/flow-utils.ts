@@ -108,7 +108,7 @@ export function validateSingleCondition(condition: SearchCondition) {
 }
 
 export function validateConditions(conditions: Array<any>): boolean {
-  return (
+  return Array.isArray(conditions) && (
     [...conditions].filter((condition: any) => {
       if (condition.conditions) {
         return !validateObjConditions(condition);
