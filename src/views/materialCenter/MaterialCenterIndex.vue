@@ -17,14 +17,14 @@ import { de, el } from "element-plus/es/locale";
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
 
-console.log("1", String(route.params.type).replace('Template', ''))
+console.log("1", String(route.params.type).replace("Template", ""));
 
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
 const formInline = reactive({
   name: "",
   // type	素材类型：sms 短信，appPush app消息，digital 数字员工，outbound 智能外呼，znx 站内信
-  type: String(route.params.type).replace('Template', ''),
+  type: String(route.params.type).replace("Template", ""),
   beginTime: "",
   endTime: "",
   status: "",
@@ -55,7 +55,12 @@ function getNameByValue(data: any[], val: string) {
   return item ? item.name : "";
 }
 
-const materialTypeName = ref(getNameByValue(materialType,  String(route.params.type).replace('Template', '')));
+const materialTypeName = ref(
+  getNameByValue(
+    materialType,
+    String(route.params.type).replace("Template", "")
+  )
+);
 
 console.log(materialTypeName); // 输出：短信
 onMounted(async () => {
@@ -66,8 +71,11 @@ watch(
   () => route.fullPath,
   (val) => {
     console.log(`output->val`, val);
-    materialTypeName.value = getNameByValue(materialType, String(route.params.type).replace('Template', ''));
-    formInline.type = String(route.params.type).replace('Template', '')
+    materialTypeName.value = getNameByValue(
+      materialType,
+      String(route.params.type).replace("Template", "")
+    );
+    formInline.type = String(route.params.type).replace("Template", "");
     fetchDataApi();
   }
 );
@@ -122,7 +130,7 @@ const updateMaterialStatusData = async (row: any, status: String) => {
 };
 
 const detailsData = async (row: any) => {
-  updateData(row, true, 'details');
+  updateData(row, true, "details");
 };
 
 const addData = async () => {
@@ -199,8 +207,7 @@ const changeTime = (val: any) => {
       <div class="search">
         <el-form :inline="true">
           <el-form-item label="创建时间：">
-            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期"
-              end-placeholder="结束日期" :size="size" @change="changeTime" />
+            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
           </el-form-item>
           <el-form-item v-if="String(route.params.type).replace('Template', '') == 'all'" label="模板类型：">
             <el-select v-model="formInline.type" style="width: 200px" placeholder="模板类型">
@@ -214,8 +221,7 @@ const changeTime = (val: any) => {
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable
-              style="width: 200px" :suffix-icon="Search" />
+            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width: 200px" :suffix-icon="Search" />
           </el-form-item>
         </el-form>
         <div v-if="String(route.params.type).replace('Template', '') != 'all'">
@@ -227,11 +233,11 @@ const changeTime = (val: any) => {
       <el-table :data="tableData">
         <el-table-column label="模版ID" prop="id" />
         <el-table-column label="模版名称" prop="name" />
-        <el-table-column label="模版类型" prop="type" >
+        <el-table-column label="模版类型" prop="type">
           <template #default="scope">
             {{             getNameByValue(materialType, String(scope.row.type))
           }}
-          </template>  
+          </template>
         </el-table-column>
         <el-table-column label="状态">
           <template #default="scope">
@@ -248,18 +254,23 @@ const changeTime = (val: any) => {
         <el-table-column label="创建人" prop="createUserName" />
         <el-table-column label="正在使用" prop="usedCount">
           <template #default="scope">
-            <span :style="scope.row.usedCount > 0 ? 'color: #00C068' : 'color: #333'">{{
-    scope.row.usedCount
-  }}</span>
+
+            <el-tooltip placement="bottom" v-if="scope.row.usedCount > 0">
+              <template #content> {{ `流程${scope.row.usedTouchNames}正在使用` }}</template>
+              <span style="color: #00C068">{{
+                scope.row.usedCount
+              }}</span>
+            </el-tooltip>
+            <span v-else style="color: #333">{{
+              scope.row.usedCount
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-space wrap v-if="String(route.params.type).replace('Template', '') != 'all'">
-              <el-link type="primary" v-if="scope.row.status == 'offline'"
-                @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
-              <el-link type="primary" v-if="scope.row.status !== 'offline'"
-                @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
+              <el-link type="primary" v-if="scope.row.status == 'offline'" @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
+              <el-link type="primary" v-if="scope.row.status !== 'offline'" @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
               <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
               <el-link type="primary" @click="delData(scope.row)">删除</el-link>
 
@@ -271,9 +282,7 @@ const changeTime = (val: any) => {
       </el-table>
     </template>
     <template #pagination>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background
-        layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total"
-        @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </template>
   </CustomEventComponent>
 </template>
