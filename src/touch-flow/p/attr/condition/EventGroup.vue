@@ -109,7 +109,7 @@ function addEventB() {
         </div>
 
       </el-form-item>
-      <TouchBlockGenre v-if="dict" :condition="p.triggerRuleContent.eventB.customEvent" :dict="dict" />
+      <TouchBlockGenre v-if="dict" :condition="p.triggerRuleContent.eventB.customEvent" :dict="dict"  :readonly="readonly"/>
 
     </BehaviorGroupPlus>
   </div>

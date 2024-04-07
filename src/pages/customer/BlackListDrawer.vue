@@ -202,19 +202,19 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
           <HandAdd ref="handAddRef" :drawerType="type" :formValues="formValues" />
         </el-tab-pane>
         <el-tab-pane label="规则添加（每天11点更新数据）" :name="BlackAddTypeEnum.StaticRule">
-          <FilterGroup :custom-rule-content="ruleContent" />
+          <FilterGroup :custom-rule-content="ruleContent" :readonly="type === 'detail'"/>
         
         </el-tab-pane>
         <el-tab-pane label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
-          <EventGroup :p="eventContent" />
+          <EventGroup :p="eventContent" :readonly="type === 'detail'"/>
         </el-tab-pane>
       </el-tabs>
       <div class="detail" v-if="type === 'detail'">
         <div class="item">
-          <FilterGroup :custom-rule-content="ruleContent" />
+          <FilterGroup :custom-rule-content="ruleContent" :readonly="type === 'detail'"/>
         </div>
         <div class="item">
-          <EventGroup :p="eventContent" />
+          <EventGroup :p="eventContent" :readonly="type === 'detail'"/>
         </div>
         <div class="item">
           <HandAdd ref="handAddRef" :drawerType="type" :formValues="formValues" />

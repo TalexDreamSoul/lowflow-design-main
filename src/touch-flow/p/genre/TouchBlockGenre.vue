@@ -111,7 +111,7 @@ function handleSelectChanged(val: string, event: any) {
           </span>
         </div>
 
-        <BehaviorSubContent title="并且满足" :index="index" :dict="dict" :condition="event" />
+        <BehaviorSubContent title="并且满足" :index="index" :dict="dict" :condition="event"  :readonly="readonly"/>
         <!-- <TouchGenre :condition="event" :dict="dict" /> -->
       </div>
     </LogicalLine>
