@@ -16,7 +16,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="活动有效期">
+        <el-form-item label="起止日期">
           <el-date-picker
             v-model="pageParams.time"
             type="daterange"

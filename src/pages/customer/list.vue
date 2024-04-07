@@ -145,14 +145,22 @@
           <el-input v-model="formValues.name" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请输入手机号' }]"
+          :rules="
+            formValues.itFinCode
+              ? []
+              : [{ required: true, message: '请输入手机号' }]
+          "
           label="手机号"
           prop="phone"
         >
           <el-input v-model="formValues.phone" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请输入互金客户号' }]"
+          :rules="
+            formValues.phone
+              ? []
+              : [{ required: true, message: '请输入互金客户号' }]
+          "
           label="互金客户号"
           prop="itFinCode"
         >
@@ -221,7 +229,6 @@
             </div>
             <div class="user-content">
               <div class="name">{{ modalData?.custom?.name }}</div>
-              <div class="desc">xxx</div>
             </div>
           </div>
           <el-table :data="[modalData?.custom]" style="width: 100%">
@@ -387,9 +394,9 @@ const currentChange = (value: number) => {
 const getData = async (params: any, filtering?: any) => {
   try {
     let res = await API.qryCustomList({
+      pageNum: 1,
       ...filtering,
       ...params,
-      pageNum: 1,
       pageSize: 10,
     });
     if (checkStringEqual(res?.code, 0)) {
