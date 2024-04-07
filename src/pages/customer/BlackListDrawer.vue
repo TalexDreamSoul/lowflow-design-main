@@ -15,6 +15,7 @@ import { ElMessage, FormInstance } from "element-plus";
 import HandAdd from "./handAdd.vue";
 import FilterGroup from "~/touch-flow/p/attr/condition/FilterGroup.vue";
 import { CustomSearchDTO } from "~/touch-flow/touch-total";
+import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
 
 const props = defineProps<{
   // data: any;
@@ -24,7 +25,6 @@ const props = defineProps<{
 const emits = defineEmits(["getData"]);
 
 console.log("加载组件");
-
 const drawerTitle = (() => {
   const map = {
     create: "新建黑名单",
@@ -203,6 +203,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         </el-tab-pane>
         <el-tab-pane label="规则添加（每天11点更新数据）" :name="BlackAddTypeEnum.StaticRule">
           <FilterGroup :custom-rule-content="ruleContent" :readonly="type === 'detail'"/>
+           <TouchEstimation  :readonly="type === 'detail'" :custom-rule-content="ruleContent" />
         
         </el-tab-pane>
         <el-tab-pane label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
@@ -230,4 +231,6 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   </el-drawer>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+@import "~/touch-flow/flow-style.scss";
+</style>
