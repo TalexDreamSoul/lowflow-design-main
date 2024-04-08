@@ -16,7 +16,6 @@ menuMapList = JSON.parse(menuMap.value)
     console.log('menuMap is empty');
   }
 } else {
-  console.log(`output->appOptions.value?.menu[0]`, JSON.parse(menuMap.value), Object.keys(menuMapList), `/${Object.keys(menuMapList)[0]}`)
   console.log('menuMapList or menuMap is undefined or null');
 }
 
