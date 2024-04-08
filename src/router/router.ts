@@ -5,17 +5,28 @@ import { createRouter, createWebHistory } from "vue-router";
 const menuMap = useStorage("menuMap-default");
 console.log(`output->menuMap`, menuMap.value)
 let menuMapList: any
-if (menuMap.value != undefined) {
+menuMapList = JSON.parse(menuMap.value)
+if (menuMapList && menuMapList.menuMap) {
   menuMapList = JSON.parse(menuMap.value)
   console.log(`output->appOptions.value?.menu[0]`, JSON.parse(menuMap.value), Object.keys(menuMapList), `/${Object.keys(menuMapList)[0]}`)
 
+ const keys = Object.keys(menuMapList.menuMap);
+  if (keys.length > 0) {
+    const firstKey = keys[0];
+    console.log(firstKey);
+  } else {
+    console.log('menuMap is empty');
+  }
+} else {
+  console.log(`output->appOptions.value?.menu[0]`, JSON.parse(menuMap.value), Object.keys(menuMapList), `/${Object.keys(menuMapList)[0]}`)
+  console.log('menuMapList or menuMap is undefined or null');
 }
 
 export const routes: RouterOptions["routes"] = [
   {
     path: "/",
     // redirect: `/activityCenter`
-    redirect: menuMapList ? `/${Object.keys(menuMapList.menuMap)[0]}` : "/login"
+    redirect: menuMapList.menuMap ? `/${Object.keys(menuMapList.menuMap)[0]}` : "/login"
     // redirect: menuMapList?`/${Object.keys(menuMapList.menuMap)[0]}`:"/login"
     // component: () => import("~/views/dashboard/index.vue"),
   },
