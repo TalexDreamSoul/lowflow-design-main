@@ -44,9 +44,9 @@ watchEffect(() => {
     const { id } = user
 
     setTimeout(async () => {
-      const { data: res }: any = await customerAPI.accountContainMenuList({ id, accountId: id })
+      const res = await customerAPI.accountContainMenuList({ id, accountId: id })
 
-      appOptions.value.menu = res
+      appOptions.value.menu = res?.data;
     })
   }
 
