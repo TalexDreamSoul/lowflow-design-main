@@ -116,7 +116,7 @@ function transformBlackListData() {
 
         console.log("test demo", obj)
       }
-    })
+    }) 
     /* Object.defineProperty(obj, '$date', {
       enumerable: true,
       get() {
