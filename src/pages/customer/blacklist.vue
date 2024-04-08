@@ -264,8 +264,8 @@ const handleDelete = (values: any) => {
       }
 
       .el-tabs__content {
-        padding-top: 24px;
-        background-color: #f2f4f8;
+        
+       
       }
 
       .el-tabs__item {

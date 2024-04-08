@@ -198,15 +198,15 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         </el-form-item>
       </el-form>
       <el-tabs v-model="addType" type="card" v-if="type !== 'detail'" class="add-type-tabs">
-        <el-tab-pane label="手动添加" :name="BlackAddTypeEnum.Manual">
+        <el-tab-pane style="padding-top: 24px; background-color: #f2f4f8;" label="手动添加" :name="BlackAddTypeEnum.Manual">
           <HandAdd ref="handAddRef" :drawerType="type" :formValues="formValues" />
         </el-tab-pane>
-        <el-tab-pane label="规则添加（每天11点更新数据）" :name="BlackAddTypeEnum.StaticRule">
+        <el-tab-pane style="padding-top: 24px;background-color: #fff;" label="规则添加（每天11点更新数据）" :name="BlackAddTypeEnum.StaticRule">
           <FilterGroup :custom-rule-content="ruleContent" :readonly="type === 'detail'"/>
            <TouchEstimation  :readonly="type === 'detail'" :custom-rule-content="ruleContent" />
         
         </el-tab-pane>
-        <el-tab-pane label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
+        <el-tab-pane style="padding-top: 24px;background-color: #fff;"  label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
           <EventGroup :p="eventContent" :readonly="type === 'detail'"/>
         </el-tab-pane>
       </el-tabs>
