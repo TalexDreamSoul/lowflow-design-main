@@ -138,6 +138,9 @@ const goBack = async () => {
     menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode,
     Object.keys(menuMap.value)
   );
+  useLocalStorage("router-default", `/${Object.keys(menuMap.value)[0]}/${
+      menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+    }`);
   router.push(
     `/${Object.keys(menuMap.value)[0]}/${
       menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode

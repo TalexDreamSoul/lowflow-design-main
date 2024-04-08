@@ -3,15 +3,13 @@ import type { RouterOptions } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 
 
-
+const routerDefault = useStorage("router-default");
+console.log(`output->routerDefault`,routerDefault.value)
 export const routes: RouterOptions["routes"] = [
-  // {
-  //   path: "/",
-  //   // redirect: `/activityCenter`
-  //   redirect: "/login"
-  //   // redirect: menuMapList?`/${Object.keys(menuMapList.menuMap)[0]}`:"/login"
-  //   // component: () => import("~/views/dashboard/index.vue"),
-  // },
+  {
+    path: "/",
+    redirect: `${routerDefault.value}`
+  },
   {
     path: '/login',
     component: () => import("~/views/login/login.vue"),
