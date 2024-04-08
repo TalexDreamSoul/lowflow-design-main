@@ -10,7 +10,6 @@ if (menuMap.value != undefined) {
   console.log(`output->appOptions.value?.menu[0]`, JSON.parse(menuMap.value), Object.keys(menuMapList), `/${Object.keys(menuMapList)[0]}`)
 
 }
-redirect: menuMapList ? `/${Object.keys(menuMapList.menuMap)[0]}` : "/login"
 
 export const routes: RouterOptions["routes"] = [
   {
