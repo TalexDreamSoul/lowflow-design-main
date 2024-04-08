@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { nextTick, onMounted, reactive, toRefs,ref } from "vue";
+import { nextTick, onMounted, reactive, toRefs, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import API from "~/api/account";
 import { useLocalStorage } from "@vueuse/core";
@@ -72,6 +72,7 @@ const validatePhone = (rule, value, callback) => {
     callback();
   }
 };
+const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
 
 const state = ref({
   refLoginForm: null,
@@ -82,60 +83,85 @@ const state = ref({
     phone: "",
     roleId: 0,
   },
-  loginRules: {
-  },
+  loginRules: {},
   loading: false,
 });
+const menuMap = ref();
 
-const goBack = () => {
-  router.push('/');
+const goBack = async () => {
+  const { user } = appOptions.value;
+  const { id } = user;
+  const res = await customerAPI.accountContainMenuList({ id, accountId: id });
+  appOptions.value.menu = res?.data;
+
+  const { menus, menuIds } = appOptions.value.menu;
+  const filteredMenu =
+    menus && [...menus].filter((item) => menuIds.includes(item.id));
+
+  const map = {};
+
+  filteredMenu &&
+    filteredMenu.forEach(
+      (item) =>
+        (map[item.menuCode] = reactive({
+          children: [],
+          ...item,
+        }))
+    );
+
+  const clearCodes = [];
+
+  // 将flat array转成tree map
+  Object.values(map).forEach((item) => {
+    const { id, menuCode, parentMenuCode } = item;
+
+    if (menuCode !== parentMenuCode && parentMenuCode?.length) {
+      const p = map[parentMenuCode];
+
+      if (p) {
+        const c = p.children;
+
+        c.push(item);
+      }
+
+      clearCodes.push(menuCode);
+      // delete map[menuCode]
+    }
+  });
+
+  [...clearCodes].forEach((code) => delete map[code]);
+
+  menuMap.value = map;
+
+  console.log(
+    `output->`,
+    menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode,
+    Object.keys(menuMap.value)
+  );
+  useLocalStorage("router-default", `/${Object.keys(menuMap.value)[0]}/${
+      menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+    }`);
+  router.push(
+    `/${Object.keys(menuMap.value)[0]}/${
+      menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+    }`
+  );
 };
-const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
 
 const fetchDataApi = async () => {
   const res = await customerAPI.accountDetail();
   appOptions.value.user = res?.data;
-goBack()
-
+  goBack();
 };
 
-const handleLogin = async() => {
-
+const handleLogin = async () => {
   state.loading = true;
 
-const rs = await API.login(state.value.loginForm);
-fetchDataApi()
+  const rs = await API.login(state.value.loginForm);
+  fetchDataApi();
 
-
-state.loading = false;
-
-
-  // state.refLoginForm.validate(async (valid) => {
-  //   if (valid) {
-  //     try {
-  //       state.loading = true;
-
-  //       const userStore = useUserStore();
-
-  //       const { token, id, accountName } = await API.login(state.loginForm);
-
-  //       // userStore.setToken({ token });
-
-  //       userStore.setUserInfo({ userInfo: { id, accountName } });
-  //       router.push('/configuration');
-  //       goBack()
-  //       state.loading = false;
-
-  //     } catch (error) {
-  //       state.loading = false;
-  //     }
-  //   } else {
-  //     goBack()
-  //     return false;
-  //   }
-  // });
+  state.loading = false;
 };
-
 </script>
 
 <style lang="scss">

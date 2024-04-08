@@ -130,14 +130,14 @@ const defaultTime2: [Date, Date] = [
           添加同组
         </el-text>
         &nbsp;&nbsp;&nbsp; -->
-        <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="handleAdd">
+        <el-text :disabled="readonly" v-if="!readonly" type="primary" style="cursor: pointer" @click="handleAdd">
           <el-icon size="14">
             <CirclePlusFilled />
           </el-icon>
           添加事件
         </el-text>
         &nbsp;&nbsp;&nbsp;
-        <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="handleDel">
+        <el-text :disabled="readonly" v-if="!readonly" type="primary" style="cursor: pointer" @click="handleDel">
           <el-icon size="14">
             <Delete />
           </el-icon>
@@ -170,7 +170,7 @@ const defaultTime2: [Date, Date] = [
         删除
       </el-text>
 
-      <SequenceSubContent :index="_index" :dict="dict" :eventCode="event.eventCode" :condition="event.conditions" />
+      <SequenceSubContent :index="_index" :dict="dict" :eventCode="event.eventCode" :condition="event.conditions" :readonly="readonly" />
     </div>
   </div>
 </template>

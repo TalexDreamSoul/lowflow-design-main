@@ -75,11 +75,11 @@ watchEffect(() => {
   if (!appOptions.value?.menu) return
 
   const { menus, menuIds } = appOptions.value.menu
-  const filteredMenu = [...menus].filter((item: any) => menuIds.includes(item.id))
+  const filteredMenu = menus&&[...menus].filter((item: any) => menuIds.includes(item.id))
 
   const map: any = {}
 
-  filteredMenu.forEach((item: any) => map[item.menuCode] = reactive({
+  filteredMenu&&filteredMenu.forEach((item: any) => map[item.menuCode] = reactive({
     children: [],
     ...item,
   }))

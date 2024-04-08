@@ -11,6 +11,7 @@ const props = defineProps<{
   condition: AttrConditionDTO;
   eventCode: string;
   index: number;
+  readonly?: boolean;
   dict: any;
 }>();
 
@@ -79,17 +80,18 @@ const attrs = computed(() => {
         v-for="(item, index) in getConditions()"
         :key="index"
       >
-        <trigger :item="item" v-model="item.attr.field" :attrs="attrs" />
+        <trigger :item="item" v-model="item.attr.field" :attrs="attrs"  :readonly="readonly" />
         <operator
           :attrs="attrs"
           :item="item"
           ref="operatorRef"
           v-model="item.attr.fieldOp"
+          :readonly="readonly" 
         />
 
-        <AttrRender :item="item.attr" :attrs="attrs" />
+        <AttrRender :item="item.attr" :attrs="attrs"  :readonly="readonly" />
 
-        <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
+        <el-text type="primary" style="cursor: pointer" @click="handleDel(index)" v-if="!readonly"  :disabled="readonly">
           <el-icon size="14">
             <Delete />
           </el-icon>

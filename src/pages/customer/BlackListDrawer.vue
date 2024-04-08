@@ -15,6 +15,7 @@ import { ElMessage, FormInstance } from "element-plus";
 import HandAdd from "./handAdd.vue";
 import FilterGroup from "~/touch-flow/p/attr/condition/FilterGroup.vue";
 import { CustomSearchDTO } from "~/touch-flow/touch-total";
+import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
 
 const props = defineProps<{
   // data: any;
@@ -24,7 +25,6 @@ const props = defineProps<{
 const emits = defineEmits(["getData"]);
 
 console.log("加载组件");
-
 const drawerTitle = (() => {
   const map = {
     create: "新建黑名单",
@@ -198,23 +198,24 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         </el-form-item>
       </el-form>
       <el-tabs v-model="addType" type="card" v-if="type !== 'detail'" class="add-type-tabs">
-        <el-tab-pane label="手动添加" :name="BlackAddTypeEnum.Manual">
+        <el-tab-pane style="padding-top: 24px; background-color: #f2f4f8;" label="手动添加" :name="BlackAddTypeEnum.Manual">
           <HandAdd ref="handAddRef" :drawerType="type" :formValues="formValues" />
         </el-tab-pane>
-        <el-tab-pane label="规则添加（每天11点更新数据）" :name="BlackAddTypeEnum.StaticRule">
-          <FilterGroup :custom-rule-content="ruleContent" />
+        <el-tab-pane style="padding-top: 24px;background-color: #fff;" label="规则添加（每天11点更新数据）" :name="BlackAddTypeEnum.StaticRule">
+          <FilterGroup :custom-rule-content="ruleContent" :readonly="type === 'detail'"/>
+           <TouchEstimation  :readonly="type === 'detail'" :custom-rule-content="ruleContent" />
         
         </el-tab-pane>
-        <el-tab-pane label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
-          <EventGroup :p="eventContent" />
+        <el-tab-pane style="padding-top: 24px;background-color: #fff;"  label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
+          <EventGroup :p="eventContent" :readonly="type === 'detail'"/>
         </el-tab-pane>
       </el-tabs>
       <div class="detail" v-if="type === 'detail'">
-        <div class="item">
-          <FilterGroup :custom-rule-content="ruleContent" />
+        <div >
+          <FilterGroup :custom-rule-content="ruleContent" :readonly="type === 'detail'"/>
         </div>
-        <div class="item">
-          <EventGroup :p="eventContent" />
+        <div >
+          <EventGroup :p="eventContent" :readonly="type === 'detail'"/>
         </div>
         <div class="item">
           <HandAdd ref="handAddRef" :drawerType="type" :formValues="formValues" />
@@ -230,4 +231,6 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   </el-drawer>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss">
+@import "~/touch-flow/flow-style.scss";
+</style>
