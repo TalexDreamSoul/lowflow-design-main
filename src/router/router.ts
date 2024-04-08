@@ -2,31 +2,16 @@ import { useStorage } from "@vueuse/core";
 import type { RouterOptions } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 
-const menuMap = useStorage("menuMap-default");
-let menuMapList: any
-if (menuMapList && menuMapList.menuMap) {
-menuMapList = JSON.parse(menuMap.value)
-  console.log(`output->appOptions.value?.menu[0]`, JSON.parse(menuMap.value), Object.keys(menuMapList), `/${Object.keys(menuMapList)[0]}`)
 
- const keys = Object.keys(menuMapList.menuMap);
-  if (keys.length > 0) {
-    const firstKey = keys[0];
-    console.log(firstKey);
-  } else {
-    console.log('menuMap is empty');
-  }
-} else {
-  console.log('menuMapList or menuMap is undefined or null');
-}
 
 export const routes: RouterOptions["routes"] = [
-  {
-    path: "/",
-    // redirect: `/activityCenter`
-    redirect: menuMapList&&menuMapList.menuMap ? `/${Object.keys(menuMapList.menuMap)[0]}` : "/login"
-    // redirect: menuMapList?`/${Object.keys(menuMapList.menuMap)[0]}`:"/login"
-    // component: () => import("~/views/dashboard/index.vue"),
-  },
+  // {
+  //   path: "/",
+  //   // redirect: `/activityCenter`
+  //   redirect: "/login"
+  //   // redirect: menuMapList?`/${Object.keys(menuMapList.menuMap)[0]}`:"/login"
+  //   // component: () => import("~/views/dashboard/index.vue"),
+  // },
   {
     path: '/login',
     component: () => import("~/views/login/login.vue"),
