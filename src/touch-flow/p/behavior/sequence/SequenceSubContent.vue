@@ -70,28 +70,15 @@ const attrs = computed(() => {
 
 <template>
   <div class="SequenceSubContent">
-    <LogicalLine
-      v-model="condition.logicalChar"
-      :display="condition.conditions?.length < 2"
-    >
-      <div
-        class="SequenceSubContent-Line"
-        v-if="attrs"
-        v-for="(item, index) in getConditions()"
-        :key="index"
-      >
-        <trigger :item="item" v-model="item.attr.field" :attrs="attrs"  :readonly="readonly" />
-        <operator
-          :attrs="attrs"
-          :item="item"
-          ref="operatorRef"
-          v-model="item.attr.fieldOp"
-          :readonly="readonly" 
-        />
+    <LogicalLine v-model="condition.logicalChar" :display="condition.conditions?.length < 2">
+      <div class="SequenceSubContent-Line" v-if="attrs" v-for="(item, index) in getConditions()" :key="index">
+        <trigger :conditions="getConditions()" :item="item" v-model="item.attr.field" :attrs="attrs"
+          :readonly="readonly" />
+        <operator :attrs="attrs" :item="item" ref="operatorRef" v-model="item.attr.fieldOp" :readonly="readonly" />
 
-        <AttrRender :item="item.attr" :attrs="attrs"  :readonly="readonly" />
+        <AttrRender :obj="item" :conditions="getConditions()" :item="item.attr" :attrs="attrs" :readonly="readonly" />
 
-        <el-text type="primary" style="cursor: pointer" @click="handleDel(index)" v-if="!readonly"  :disabled="readonly">
+        <el-text type="primary" style="cursor: pointer" @click="handleDel(index)" v-if="!readonly" :disabled="readonly">
           <el-icon size="14">
             <Delete />
           </el-icon>
@@ -110,6 +97,7 @@ const attrs = computed(() => {
     gap: 0.5rem;
     align-items: center;
   }
+
   // margin: 10px 0;
 
   border-radius: 8px;

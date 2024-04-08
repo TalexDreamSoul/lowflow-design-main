@@ -1,5 +1,6 @@
 <script setup lang="ts" name="NodeRender">
 import { useVModel } from '@vueuse/core';
+import { ref } from 'vue';
 
 const props = defineProps<{
   modelValue: string;
@@ -16,10 +17,35 @@ const emits = defineEmits<{
   (e: 'update:modelValue', value: string): void;
 }>()
 
+const nodes = ref<any[]>([])
 const model = useVModel(props, 'modelValue', emits)
 
 function getNodes() {
-  console.log("nodes", props)
+  // 去找那一条的field是touchId
+  const { conditions, obj } = props
+  const res = conditions.find(item => item.attr?.field === 'touchId')
+
+  const { fieldReplaceValue } = res.attr
+  if (Number.isInteger(fieldReplaceValue)) {
+    // TODO 加载指定 fieldReplaceValue 为id的流程图数据
+    // nodes.value 
+  } else {
+    console.log("get nodes", fieldReplaceValue)
+
+    const each = [...(window.$flow?.p?.children || [])]
+
+    // 把每一项的children都加入 然后继续遍历
+    while (each.length) {
+      const item = each.shift()
+      if (item.children) {
+        each.push(...item.children)
+
+        nodes.value.push(item)
+      }
+    }
+  }
+
+  console.log("nodes", res, obj, nodes)
 }
 
 getNodes()
@@ -27,8 +53,8 @@ getNodes()
 
 <template>
   <div>
-    <el-select v-model="model">
-      <!-- {{ window.$flow.basic.touchCode }} -->
+    <el-select style="width: 181px" v-model="model">
+      <el-option :value="item.nodeId" :label="item.nodeName" v-for="item in nodes">{{ item.nodeName }}</el-option>
     </el-select>
   </div>
 </template>

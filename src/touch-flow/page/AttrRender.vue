@@ -137,7 +137,7 @@ const operatorOptions: Record<
 const { item } = toRefs(props);
 
 watch(() => item.value.fieldOp, (newVal, oldVal) => {
-  console.log(`output->props.item.fieldOp`, newVal, oldVal,item.value.timeCondition.timeType);
+  console.log(`output->props.item.fieldOp`, newVal, oldVal, item.value.timeCondition.timeType);
   item.value.timeCondition.timeType = '';
 });
 function onOpChange(val: any) {
@@ -164,9 +164,10 @@ function getNodes() {
 
 <template>
   <AttrScroller v-if="doTouchFlow" :readonly="readonly" v-model="item.fieldReplaceValue" />
-  <NodeRender :conditions="conditions" :obj="obj" :readonly="readonly" v-model="item.fieldReplaceValue"  v-else-if="item.field === 'nodeId'" />
+  <NodeRender :conditions="conditions" :obj="obj" :readonly="readonly" v-model="item.fieldReplaceValue"
+    v-else-if="item.field === 'nodeId'" />
 
-  <div v-else-if=" obj?.type !=='label' && !(item.fieldOp?.indexOf('空') !==-1)" class="AttrRender"
+  <div v-else-if="obj?.type !== 'label' && !(item.fieldOp?.indexOf('空') !== -1)" class="AttrRender"
     style="display: flex; gap: 1rem">
     <template v-if="type === 'num'">
       <template v-if="item.fieldOp === '区间'">
@@ -181,14 +182,13 @@ function getNodes() {
 
     <template v-else-if="type === 'date'">
       <el-select :placeholder="_ph" style="width: 193px" @change="onOpChange" :disabled="readonly"
-      v-model="item.timeCondition.timeType "   v-if="item.fieldOp.indexOf('时间') !== -1">
-        <el-option v-for="(each,index) in operatorOptions[item.fieldOp]" :key="index" 
-          :value="each.type" :label="each.label" />
+        v-model="item.timeCondition.timeType" v-if="item.fieldOp.indexOf('时间') !== -1">
+        <el-option v-for="(each, index) in operatorOptions[item.fieldOp]" :key="index" :value="each.type"
+          :label="each.label" />
       </el-select>
       <template v-if="item.fieldOp === '绝对时间'">
-        <el-date-picker :disabled="readonly" value-format="YYYY-MM-DD"
-          v-if="item.timeCondition.timeType !== 'in'" v-model="timeInterval" type="date"
-          placeholder="选择时间" />
+        <el-date-picker :disabled="readonly" value-format="YYYY-MM-DD" v-if="item.timeCondition.timeType !== 'in'"
+          v-model="timeInterval" type="date" placeholder="选择时间" />
         <el-date-picker :disabled="readonly" v-else v-model="timeInterval" value-format="YYYY-MM-DD" type="daterange"
           range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" />
       </template>

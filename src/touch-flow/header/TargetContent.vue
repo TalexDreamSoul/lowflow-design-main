@@ -148,7 +148,7 @@ function handleSelectChanged(val: string) {
               v-model="item.attr.field" :attrs="attrs" />
             <operator :item="item.attr" :attrs="attrs" :readonly="readonly" ref="operatorRef"
               v-model="item.attr.fieldOp" />
-            <AttrRender :conditions="conditions.conditions.conditions" :readonly="readonly" :item="item.attr"
+            <AttrRender :obj="item" :conditions="conditions.conditions.conditions" :readonly="readonly" :item="item.attr"
               :attrs="attrs" />
             <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
               <el-icon size="14">

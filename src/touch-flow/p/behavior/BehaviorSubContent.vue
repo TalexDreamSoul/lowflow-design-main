@@ -83,11 +83,12 @@ const getCurrSelected = (condition: any) => {
     <LogicalLine :title="title" :readonly="readonly" :model-value="condition.conditions.logicalChar"
       :display="condition.conditions?.conditions?.length < 2">
       <div class="BehaviorSubContent-Line" v-if="attrs" v-for="(item, index) in getConditions()" :key="index">
-        <trigger v-model="item.attr.field" :item="item" :attrs="attrs" :readonly="readonly" placeholder="客户属性/标签"
-          style="width: 220px" />
+        <trigger :conditions="getConditions()" v-model="item.attr.field" :item="item" :attrs="attrs"
+          :readonly="readonly" placeholder="客户属性/标签" style="width: 220px" />
         <operator :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :disabled="readonly"
           v-model="item.attr.fieldOp" />
-        <AttrRender :selected="getCurrSelected(item)" :readonly="readonly" :item="item.attr" :attrs="attrs" />
+        <AttrRender :obj="item"  :conditions="getConditions()" :selected="getCurrSelected(item)" :readonly="readonly"
+          :item="item.attr" :attrs="attrs" />
 
         <el-text v-if="!readonly" type="primary" style="cursor: pointer" @click="handleDel(index)">
           <el-icon size="14">

@@ -54,7 +54,7 @@ watch(
   <div class="Trigger-Wrapper">
     <el-select :disabled="readonly || !!(model === 'touchId' && haveNode)" class="trigger-container" v-model="model"
       :placeholder="ph">
-      <el-option :disabled="!!(item.field === 'touchId' && allowNode) || (item.field === 'nodeId' && !allowNode)"
+      <el-option :disabled="!!(item.field === 'touchId' && allowNode) || (item.field === 'nodeId' && (model === 'touchId' || !allowNode))"
         v-for="item in attrs" :key="item.field" :label="item.fieldName" :value="item.field" />
     </el-select>
   </div>
