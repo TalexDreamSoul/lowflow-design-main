@@ -65,14 +65,14 @@ const getmarketingTouchNode = async () => {
   const options = {
     xAxis: {
       type: "category",
-      data: ["累计进入", "累计触达", "完成目标一", "完成目标二"],
+      data: ["累计进入", "累计触达", StatisticsList.value.completeTargetCount1&&"完成目标一", StatisticsList.value.completeTargetCount2&&"完成目标二"],
     },
     yAxis: {
       type: "value",
     },
     series: [
       {
-        data: [StatisticsList.value.accumulateEntryCount, StatisticsList.value.accumulateTouchCount, StatisticsList.value.completeTargetCount1, StatisticsList.value.completeTargetCount2],
+        data: [StatisticsList.value.accumulateEntryCount, StatisticsList.value.accumulateTouchCount, StatisticsList.value.completeTargetCount1&&StatisticsList.value.completeTargetCount1, StatisticsList.value.completeTargetCount2&&StatisticsList.value.completeTargetCount2],
         type: "bar",
         barWidth: 30, // 设置柱体宽度
       },
