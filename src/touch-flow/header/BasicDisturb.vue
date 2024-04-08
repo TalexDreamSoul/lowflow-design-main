@@ -65,7 +65,7 @@ function handleChange(value: any) {
     <div class="Basic-Block-Content" v-show="disturb.enable">
       <el-form-item>
         <!-- {{ disturb.time }} -->
-        <el-time-picker is-range @change="handleChange"   :readonly="readonly"
+        <el-time-picker is-range @change="handleChange"   :disabled="readonly"
           v-model="disturb.time" type="daterange" range-separator="-" start-placeholder="开始时间"
           end-placeholder="结束时间"  value-format="HH:mm" format="HH:mm" unlink-panels/>
       </el-form-item>
