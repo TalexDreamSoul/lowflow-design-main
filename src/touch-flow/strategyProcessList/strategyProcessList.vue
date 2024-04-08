@@ -300,7 +300,7 @@ const flowTime = (data: any) => {
 
         <el-table-column label="目标完成率" width="150">
           <template #default="scope">
-            <span v-if="scope.row.status=='draft'||scope.row.status=='approvalPending'">
+            <span v-if="scope.row.status=='draft'||scope.row.status=='approvalPending'||scope.row.status=='approvalRefuse'">
               无数据
             </span>
             <span v-else-if="scope.row.containTarget==false">

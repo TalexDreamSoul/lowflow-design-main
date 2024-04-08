@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, unref, reactive, onMounted, watch } from "vue";
-import { getmarketingTouchDetail,marketingTouchStatistics } from "~/api/index";
+import { getmarketingTouchDetail, marketingTouchStatistics } from "~/api/index";
 import dayjs from "dayjs";
 import { useRoute, Router, useRouter } from "vue-router";
 import * as echarts from "echarts";
@@ -65,21 +65,33 @@ const getmarketingTouchNode = async () => {
   const options = {
     xAxis: {
       type: "category",
-      data: ["累计进入", "累计触达", StatisticsList.value.completeTargetCount1&&"完成目标一", StatisticsList.value.completeTargetCount2&&"完成目标二"],
+      data: [
+        "累计进入",
+        "累计触达",
+        StatisticsList.value.completeTargetCount1 ? "完成目标一" : null,
+        StatisticsList.value.completeTargetCount2 ? "完成目标二" : null,
+      ].filter(Boolean),
     },
     yAxis: {
       type: "value",
     },
     series: [
       {
-        data: [StatisticsList.value.accumulateEntryCount, StatisticsList.value.accumulateTouchCount, StatisticsList.value.completeTargetCount1&&StatisticsList.value.completeTargetCount1, StatisticsList.value.completeTargetCount2&&StatisticsList.value.completeTargetCount2],
+        data: [
+          StatisticsList.value.accumulateEntryCount,
+          StatisticsList.value.accumulateTouchCount,
+          StatisticsList.value.completeTargetCount1 &&
+            StatisticsList.value.completeTargetCount1,
+          StatisticsList.value.completeTargetCount2 &&
+            StatisticsList.value.completeTargetCount2,
+        ],
         type: "bar",
         barWidth: 30, // 设置柱体宽度
       },
     ],
   };
   chart.value.setOption(options);
-  console.log(`output->options`,options)
+  console.log(`output->options`, options);
 };
 
 const chartContainer = ref(null);
@@ -106,7 +118,7 @@ const chart = ref(null);
 //     chart.value.setOption(options);
 //   }
 // });
-const flowTime = ((data: any) => {
+const flowTime = (data: any) => {
   const _time = data.executeTime;
   // if (!_time) return "-";
 
@@ -124,7 +136,7 @@ const flowTime = ((data: any) => {
   const date2Text = endTime; //.toLocaleDateString().replaceAll("/", "-");
 
   return `${date1Text} 至 ${date2Text}`;
-});
+};
 </script>
 
 <template>
@@ -178,9 +190,18 @@ const flowTime = ((data: any) => {
           </div>
           <div class="countCardblock" style="    margin-top: 24px;">
             <div class="showCount">
-              <div class="topcount">
-                {{ StatisticsList.accumulateCompleteCount !== null  ? `${StatisticsList.accumulateCompleteCount}%` : '-' }}
-              </div>
+              <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500" v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
+                 无数据
+                <br/>
+               </span>
+               <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500" v-else-if="marketingDetail?.containTarget==false">
+                 未设置目标
+               </span>
+               <span v-else>
+                <div class="topcount">
+                  {{ StatisticsList.accumulateCompleteCount !== null  ? `${StatisticsList.accumulateCompleteCount}%` : '-' }}
+                </div>
+               </span>
               <div class="undercount">总目标完成率</div>
             </div>
             <div class="showCount">
@@ -199,21 +220,34 @@ const flowTime = ((data: any) => {
           <div class="countCardblock">
             <div class="showCount">
               <div class="topcount">
-                {{ StatisticsList.completeTargetCount1 !== null ? StatisticsList.completeTargetCount1 : '-' }}</div>
-              <div class="undercount">完成目标{{ num2character(1) }}</div>
+                {{ StatisticsList.completeTargetCount1 !== null ? StatisticsList.completeTargetCount1 : '-' }}
+
+              </div>
+
+              <span v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
+                无数据
+              </span>
+              <span v-else>
+                <div class="undercount">完成目标{{ num2character(1) }}</div>
+              </span>
             </div>
             <div class="showCount">
               <div class="topcount">
                 {{ StatisticsList.completeTargetCount2 !== null ? StatisticsList.completeTargetCount2 : '-' }}
               </div>
-              <div class="undercount">完成目标{{ num2character(2) }}</div>
+              <span v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
+                无数据
+              </span>
+              <span v-else>
+                <div class="undercount">完成目标{{ num2character(2) }}</div>
+              </span>
             </div>
           </div>
         </div>
 
       </div>
       <div class="contentflow">
-        <FlowPage  v-model="marketingDetail" :readonly="true"/>
+        <FlowPage v-model="marketingDetail" :readonly="true" />
       </div>
 
     </div>
@@ -287,9 +321,11 @@ const flowTime = ((data: any) => {
 .showCount {
   min-width: 150px;
   margin-right: 16px;
-  background: linear-gradient(180deg,
-      #f2f4f8 0%,
-      rgba(242, 244, 248, 0.4) 100%);
+  background: linear-gradient(
+    180deg,
+    #f2f4f8 0%,
+    rgba(242, 244, 248, 0.4) 100%
+  );
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
@@ -325,7 +361,7 @@ const flowTime = ((data: any) => {
 
   height: 800px;
   width: 100%;
-  background: #F7F8FB;
+  background: #f7f8fb;
   overflow-y: scroll;
 }
 </style>
