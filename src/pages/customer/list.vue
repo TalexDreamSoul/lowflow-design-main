@@ -261,7 +261,7 @@
             <el-table-column
               prop="birthday"
               label="生日"
-              width="120"
+              min-width="120"
             ></el-table-column>
           </el-table>
         </div>
