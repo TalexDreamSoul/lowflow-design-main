@@ -219,28 +219,27 @@ const flowTime = (data: any) => {
           </div>
           <div class="countCardblock">
             <div class="showCount">
-              <div class="topcount">
-                {{ StatisticsList.completeTargetCount1 !== null ? StatisticsList.completeTargetCount1 : '-' }}
-
-              </div>
-
-              <span v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
+              <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500" v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
                 无数据
               </span>
               <span v-else>
-                <div class="undercount">完成目标{{ num2character(1) }}</div>
+                <div class="topcount">
+                  {{ StatisticsList.completeTargetCount1 !== null ? StatisticsList.completeTargetCount1 : '-' }}
+  
+                </div>
               </span>
+              <div class="undercount">完成目标{{ num2character(1) }}</div>
             </div>
             <div class="showCount">
-              <div class="topcount">
-                {{ StatisticsList.completeTargetCount2 !== null ? StatisticsList.completeTargetCount2 : '-' }}
-              </div>
-              <span v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
+              <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500" v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
                 无数据
               </span>
               <span v-else>
-                <div class="undercount">完成目标{{ num2character(2) }}</div>
+                <div class="topcount">
+                  {{ StatisticsList.completeTargetCount2 !== null ? StatisticsList.completeTargetCount2 : '-' }}
+                </div>
               </span>
+              <div class="undercount">完成目标{{ num2character(2) }}</div>
             </div>
           </div>
         </div>
