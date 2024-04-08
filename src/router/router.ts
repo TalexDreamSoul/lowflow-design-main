@@ -23,7 +23,7 @@ export const routes: RouterOptions["routes"] = [
   {
     path: "/",
     // redirect: `/activityCenter`
-    redirect: menuMapList.menuMap ? `/${Object.keys(menuMapList.menuMap)[0]}` : "/login"
+    redirect: menuMapList&&menuMapList.menuMap ? `/${Object.keys(menuMapList.menuMap)[0]}` : "/login"
     // redirect: menuMapList?`/${Object.keys(menuMapList.menuMap)[0]}`:"/login"
     // component: () => import("~/views/dashboard/index.vue"),
   },
