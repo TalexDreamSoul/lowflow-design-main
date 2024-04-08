@@ -1,95 +1,11 @@
 <script setup lang="ts">
-import { ref, reactive, provide, inject, computed, onBeforeUnmount } from 'vue'
-import { Stamp, Plus, Delete } from '@element-plus/icons-vue'
-import PolicySettingsAttr from './attr/PolicySettingsAttr.vue'
+import { ref } from 'vue'
+import { Plus, Delete } from '@element-plus/icons-vue'
 import DeliverySettingsAttr from './attr/DeliverySettingsAttr.vue'
-import Strategist from "./attr/Strategist.vue";
 import { MarketingTouchEditDTO } from './behavior/marketing';
+import { genNodeParams } from './common/node-util';
 
-const getNode: Function = inject('getNode')!
-const { data: _data } = getNode()
-const __data = _data.$d(_data.id)
-const data = reactive(_data.data)
-
-const dialogVisible = ref(false)
-const drawerOptions = reactive<any>({
-  visible: false
-})
-
-const doDiverse = computed(() => {
-  const { children } = data;
-
-  if (!children?.length) return false;
-
-  return [...children].find((child) => "strategy" === child?.nodeType) ?? true
-});
-
-const haveDiverse = computed(() => {
-  if (!doDiverse.value) return false;
-
-  const { children } = data;
-
-  if (!children?.length) return false;
-
-  return [...children].find((child) => "diversion" === child?.nodeType);
-})
-
-const haveReveal = computed(() => {
-  const { children } = data;
-
-  if (!children?.length) return false;
-
-  return [...children].find((child) => "strategy" === child?.nodeType && child?.reveal) ?? false
-})
-
-const customerConditioned = computed(() => {
-  const { customAttr, customEvent } = (data?.customRuleContent ?? {})
-
-  const _obj = {
-    customAttr: customAttr?.conditions?.length ?? 0,
-    customEvent: customEvent?.conditions?.length ?? 0,
-  }
-
-  return {
-    display: _obj.customAttr && _obj.customEvent,
-    ..._obj
-  }
-})
-
-const _comps = [
-  {
-    icon: {
-      type: "comp",
-      value: Stamp,
-    },
-    title: "选择策略器",
-    desc: "按客户属性行为或触发事件对客户筛选分流，并执行动作。",
-    comp: PolicySettingsAttr,
-  },
-  {
-    icon: {
-      type: "comp",
-      value: Stamp,
-    },
-    title: "分流器",
-    desc: "按设置的比例自动客户对随机分流，并执行动作。",
-    show: () => !haveReveal.value && !doDiverse.value,
-    comp: DeliverySettingsAttr,
-  },
-  {
-    icon: {
-      type: "comp",
-      value: Stamp,
-    },
-    title: "兜底选择器",
-    disabled: haveReveal,
-    desc: "筛选未进入本节点下选择策略器的客户，并执行动作。",
-    show: () => doDiverse.value,
-    comp: Strategist,
-  },
-];
-
-const comps = computed(() => _comps.filter((comp) => comp?.show?.() ?? true));
+const { readonly, $data, data, dialogVisible, drawerOptions, openDrawer, comps, handleClick, handleSave } = genNodeParams()
 
 function openCondition() {
   openDrawer({
@@ -97,40 +13,9 @@ function openCondition() {
     comp: DeliverySettingsAttr
   })
 }
-
-function openDrawer(comp: any) {
-  dialogVisible.value = false
-
-  Object.assign(drawerOptions, comp)
-
-  if (!data.executeType)
-    data.executeType = "immediately";
-
-  drawerOptions.visible = true
-}
-
-onBeforeUnmount(() => {
-  drawerOptions.visible = false
-})
-
-let _saveFunc: (() => boolean) | null = null
-
-function handleSave() {
-  if (!_saveFunc || !_saveFunc()) return
-
-  Object.assign(__data, data)
-
-  dialogVisible.value = false
-  drawerOptions.visible = false
-}
-
-provide('save', (regFunc: () => boolean) => {
-  _saveFunc = regFunc
-})
-
 const visible = ref(false)
 function del(p: MarketingTouchEditDTO) {
-  _data.$del(p);
+  $data.$del(p);
 
   visible.value = false;
 }
@@ -145,10 +30,10 @@ function del(p: MarketingTouchEditDTO) {
         <p>是否确认删除？</p>
         <div style="text-align: right; margin: 0">
           <el-button size="small" text @click="visible = false">取消</el-button>
-          <el-button size="small" type="primary" @click="del(__data)">确认</el-button>
+          <el-button size="small" type="primary" @click="del(data)">确认</el-button>
         </div>
         <template #reference>
-          <el-button v-if="!_data.$readonly" @click="visible = true" text type="primary">
+          <el-button v-if="!readonly" @click="visible = true" text type="primary">
             <el-icon>
               <Delete />
             </el-icon>
@@ -168,8 +53,8 @@ function del(p: MarketingTouchEditDTO) {
     <teleport to=".FlowPage">
       <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" class="PBlock-Section"
-            :class="{ disabled: item.disabled?.value }">
+          <div @click="openDrawer(item)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
+            class="PBlock-Section">
             <p>
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
@@ -184,17 +69,24 @@ function del(p: MarketingTouchEditDTO) {
     </teleport>
 
     <teleport to=".FlowPage">
-      <el-drawer v-model="drawerOptions.visible" :title="drawerOptions.title" size="65%">
-        <component :p="data" :is="drawerOptions.comp" />
+      <el-drawer @click="handleClick" v-model="drawerOptions.visible" :title="drawerOptions.title" size="65%">
+        <component :readonly="readonly" :p="data" :is="drawerOptions.comp" />
         <template #footer>
-          <el-button round @click="drawerOptions.visible = false">取消</el-button>
-          <el-button round @click="handleSave" type="primary">保存</el-button>
+          <template v-if="readonly">
+            <el-button round @click="drawerOptions.visible = false">返回</el-button>
+          </template>
+          <template v-else>
+            <el-button round @click="drawerOptions.visible = false">取消</el-button>
+            <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
+          </template>
         </template>
       </el-drawer>
     </teleport>
   </el-card>
 
-  <el-button @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
+  <el-button :class="{
+    disabled: readonly,
+  }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">

@@ -20,6 +20,7 @@ const origin = {
 
 const props = defineProps<{
   p: any;
+  readonly?: boolean;
 }>();
 
 const { diversionRuleContent } = props.p
@@ -76,8 +77,8 @@ function saveData() {
 
   const _map: any = {}
   if (sizeForm.diversionRuleContent.data.filter(branch => (branch.branchRatio === 0 || branch.branchName.length < 1) || ((m: any) => m[branch.branchName] === 1 ? true : ((m[branch.branchName] = 1) && false))(_map)).length) {
-   console.log(`output->sizeForm.diversionRuleContent.data`,sizeForm.diversionRuleContent.data)
- ElMessage.warning({
+    console.log(`output->sizeForm.diversionRuleContent.data`, sizeForm.diversionRuleContent.data)
+    ElMessage.warning({
       message: "不能存在重复、未命名或配比为0%的流量",
     });
 
@@ -153,7 +154,7 @@ const deleteBranch = (index: number) => {
 
 <template>
   <div>
-    <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
+    <el-form :disabled="readonly" ref="form" :model="sizeForm" label-width="auto" label-position="left">
       <div class="deliveryDesc">
         客户将流量分配比例随机进入任一分支，流量总和为100%。如果同一个客户多次进入该流程，每次都默认分配到同一个组内。
       </div>

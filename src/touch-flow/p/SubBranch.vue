@@ -22,7 +22,7 @@ Object.assign(data, __data)
 watch(data, () => {
   const { children } = data;
 
-  [...children].forEach((item, index) => {
+  [...(children || [])].forEach((item, index) => {
     if (!index) return
 
     item.$index = index

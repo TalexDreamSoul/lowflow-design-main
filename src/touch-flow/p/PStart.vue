@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, reactive, computed, provide, inject, watch, onBeforeUnmount } from "vue";
 import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
-
+import ConditionSetAttr from "./attr/ConditionSetAttr.vue";
 import { genNodeParams } from './common/node-util'
 
-const { readonly, data, openCustomer, openCondition, dialogVisible, drawerOptions, openDrawer, comps, handleClick, handleSave, haveDiverse } = genNodeParams()
+const { readonly, data, openCustomer, dialogVisible, drawerOptions, openDrawer, comps, handleClick, handleSave, haveDiverse } = genNodeParams()
 
 watch(data, () => {
   const { children } = data;
@@ -79,6 +79,13 @@ const customerConditioned = computed(() => {
     ..._obj,
   };
 });
+
+function openCondition() {
+  openDrawer({
+    title: "流程类型设置",
+    comp: ConditionSetAttr,
+  })
+}
 </script>
 
 <template>

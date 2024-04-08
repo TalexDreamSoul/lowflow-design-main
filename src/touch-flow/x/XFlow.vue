@@ -137,7 +137,7 @@ const layoutFn = () => {
       }
 
       if (props.readonly) {
-        calcHeight -= 100
+        calcHeight -= 80
       }
 
       console.log("><", data);

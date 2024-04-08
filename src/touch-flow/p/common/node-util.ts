@@ -1,6 +1,5 @@
 import { computed, inject, onBeforeUnmount, provide, reactive, ref } from "vue";
 import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
-import ConditionSetAttr from "../attr/ConditionSetAttr.vue";
 import CustomersAttr from "../attr/CustomersAttr.vue";
 import PolicySettingsAttr from "../attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../../p/attr/DeliverySettingsAttr.vue";
@@ -20,7 +19,7 @@ function useTreeData() {
 
   // Object.assign(innerData, refNodeData)
 
-  return [innerData, refNodeData]
+  return [innerData, refNodeData, x6NodeData]
 }
 
 /**
@@ -69,13 +68,6 @@ export function genPopoverManager(innerData: any) {
 
   const comps = computed(() => _comps.filter((comp) => comp?.show?.() ?? true));
 
-  function openCondition() {
-    openDrawer({
-      title: "流程类型设置",
-      comp: ConditionSetAttr,
-    });
-  }
-
   function openCustomer() {
     openDrawer({
       title: "受众客户设置",
@@ -102,7 +94,6 @@ export function genPopoverManager(innerData: any) {
   return {
     openDrawer,
     openCustomer,
-    openCondition,
     drawerOptions,
     dialogVisible,
     doDiverse,
@@ -197,14 +188,14 @@ export function genNodeParams() {
 
   console.group("NODE")
 
-  const [innerData, __data] = useTreeData()
+  const [innerData, __data, $data] = useTreeData()
   console.log("节点建立")
   console.log("TreeNode ref-data", __data)
   console.log("节点数据 INNER", innerData)
 
-  const { dialogVisible, drawerOptions, openCustomer, openCondition, openDrawer, comps, haveDiverse } = genPopoverManager(innerData)
+  const { dialogVisible, drawerOptions, openCustomer, openDrawer, comps, haveDiverse } = genPopoverManager(innerData)
 
-  console.log("节点数据 OUTER", { dialogVisible, drawerOptions, openCustomer, openCondition, openDrawer, comps, haveDiverse })
+  console.log("节点数据 OUTER", { $data, __data, dialogVisible, drawerOptions, openCustomer, openDrawer, comps, haveDiverse })
 
   const [handleClick, handleSave] = useSaveFunc(innerData, __data, () => {
     dialogVisible.value = false;
@@ -216,14 +207,14 @@ export function genNodeParams() {
   return {
     comps,
     data: innerData,
+    $data,
     openDrawer,
     openCustomer,
-    openCondition,
     dialogVisible,
     drawerOptions,
     handleSave,
     handleClick,
     haveDiverse,
-    readonly: __data.$readonly,
+    readonly: $data.$readonly,
   }
 }
