@@ -211,10 +211,10 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         </el-tab-pane>
       </el-tabs>
       <div class="detail" v-if="type === 'detail'">
-        <div class="item">
+        <div >
           <FilterGroup :custom-rule-content="ruleContent" :readonly="type === 'detail'"/>
         </div>
-        <div class="item">
+        <div >
           <EventGroup :p="eventContent" :readonly="type === 'detail'"/>
         </div>
         <div class="item">
