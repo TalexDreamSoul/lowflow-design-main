@@ -1,10 +1,11 @@
 <script setup lang="ts" name="BehaviorGroup">
-import { ref } from "vue";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
+import { ref, watchEffect } from "vue";
 
-defineProps<{
+const props =defineProps<{
   title: string;
-  readonly?: boolean;
+  defaultExpand?: boolean;
+readonly?: boolean;
 }>();
 
 const emits = defineEmits<{
@@ -12,6 +13,11 @@ const emits = defineEmits<{
 }>();
 
 const expand = ref(false);
+
+
+watchEffect(() => {
+  expand.value = props.defaultExpand !== undefined ? props.defaultExpand : false;
+});
 </script>
 
 <template>
