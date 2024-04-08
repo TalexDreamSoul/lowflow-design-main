@@ -3,11 +3,9 @@ import type { RouterOptions } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 
 const menuMap = useStorage("menuMap-default");
-console.log(`output->menuMap`, menuMap.value)
 let menuMapList: any
-menuMapList = JSON.parse(menuMap.value)
 if (menuMapList && menuMapList.menuMap) {
-  menuMapList = JSON.parse(menuMap.value)
+menuMapList = JSON.parse(menuMap.value)
   console.log(`output->appOptions.value?.menu[0]`, JSON.parse(menuMap.value), Object.keys(menuMapList), `/${Object.keys(menuMapList)[0]}`)
 
  const keys = Object.keys(menuMapList.menuMap);
