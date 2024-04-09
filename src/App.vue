@@ -18,10 +18,21 @@
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import TopMenu from "~/views/TopMenu/index.vue";
 import { computed, reactive, provide, watchEffect, ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import {  onBeforeRouteUpdate,useRoute, useRouter } from "vue-router";
 import { useLocalStorage } from "@vueuse/core";
 import customerAPI from "~/api/account";
 import dayjs from "dayjs";
+
+
+onBeforeRouteUpdate((to, from, next) => {
+  if (to.path === '/') {
+    debugger
+    next('/dashboard'); // 这里可以根据实际需求重定向到其他路径
+  } else {
+    debugger
+    next(); // 继续路由导航
+  }
+});
 
 const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
 // const appOptions = ref({})
@@ -68,7 +79,7 @@ div {
 
 .el-form-item {
   margin-right: 0;
-  margin-bottom: 12px !important;
+  //margin-bottom: 12px !important;
 }
 
 .common-layout {
