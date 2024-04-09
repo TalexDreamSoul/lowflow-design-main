@@ -9,7 +9,7 @@ import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
 const origin = {
   nodeId: "",
   nodeType: "strategy",
-  nodeName: "兜底策略器",
+  nodeName: "",
   diversionType: "safeguard",
   touchTemplateContent: {},
   nodeDelayed: {
@@ -91,6 +91,9 @@ regSaveFunc(saveData);
 <template>
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
+      <el-form-item label="选择策略器名称：">
+        <el-input :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" />
+      </el-form-item>
       <CommonAttr :readonly="readonly" ref="touchSettingsRef" :size-form="sizeForm" />
 
       <!-- <TouchEstimation :readonly="readonly" :custom-rule-content="customRuleContent" /> -->

@@ -106,7 +106,7 @@ const layoutFn = () => {
     strategy: (height: number, data: any) => {
       console.log("@@@---", data.data);
       if (data.data?.father?.nodeType === "subDiversion") return height - 40;
-      if (data.data.nodeName === "兜底策略器") return height - 155;
+      if (data.data.diversionType === "safeguard") return height - 155;
 
       if (props.readonly) {
         if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)

@@ -30,8 +30,8 @@ watch(data, () => {
 
     item.$index = index
 
-    const { nodeName } = item
-    if (nodeName === '兜底策略器') return
+    const { diversionType } = item
+    if (diversionType === 'safeguard') return
 
     item.diversionType = children[0].diversionType
 

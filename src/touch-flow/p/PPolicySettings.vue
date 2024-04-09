@@ -102,11 +102,11 @@ const _comps = [
 const comps = computed(() => _comps.filter((comp) => comp?.show?.() ?? true));
 
 function openCondition() {
-  const { nodeName } = data;
+  const { diversionType } = data;
 
   openDrawer({
-    title: nodeName !== "兜底策略器" ? "选择策略器" : "兜底策略器",
-    comp: nodeName === "兜底策略器" ? Strategist : PolicySettingsAttr,
+    title: diversionType !== "safeguard" ? "选择策略器" : "兜底策略器",
+    comp: diversionType === "safeguard" ? Strategist : PolicySettingsAttr,
   });
 }
 
@@ -216,7 +216,7 @@ function del(p: MarketingTouchEditDTO) {
       </el-popover>
     </p>
     <div class="PBlock-Content theme" @click="openCondition">
-      <div v-if="data.nodeName !== '兜底策略器'" style="--theme-color: #90a0b8" class="PBlock-Section">
+      <div v-if="data.diversionType !== 'safeguard'" style="--theme-color: #90a0b8" class="PBlock-Section">
         <template v-if="data.diversionType === 'noDiversion'">
           <p>不分流</p>
           <span>不分流</span>
@@ -294,10 +294,10 @@ function del(p: MarketingTouchEditDTO) {
   </el-card>
 
   <el-button @click="dialogVisible = true" :class="{
-        disabled: _data.$readonly,
-        display:
-          data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate,
-      }" class="start-add" type="primary" :icon="Plus" circle />
+    disabled: _data.$readonly,
+    display:
+      data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate,
+  }" class="start-add" type="primary" :icon="Plus" circle />
 </template>
 
 <style lang="scss">
