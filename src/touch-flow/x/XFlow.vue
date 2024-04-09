@@ -110,7 +110,7 @@ const layoutFn = () => {
     strategy: (height: number, data: any) => {
       console.log("@@@---", data.data);
       if (data.data?.father?.nodeType === "subDiversion") return height - 40;
-      if (data.data.diversionType === "safeguard") return height - 155;
+      if (data.data.diversionType === "safeguard") return height - 455;
 
       if (props.readonly) {
         if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
@@ -158,7 +158,7 @@ const layoutFn = () => {
       const shape = `${data.data.nodeType}`;
       const calc = _[shape];
 
-      console.log("calc-height", data.height, calc(data.height, data));
+      console.log("calc-height", shape, data.height, calc(data.height, data));
 
       model.nodes?.push({
         id: `${data.id}`,
