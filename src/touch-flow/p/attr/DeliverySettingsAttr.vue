@@ -168,7 +168,7 @@ const deleteBranch = (index: number) => {
         </div>
         <div class="underbg">
           <el-row :gutter="20">
-            <el-col :span="14">分支名称</el-col>
+            <el-col :span="12">分支名称</el-col>
             <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ 100 - +totalBranchRatio
                 }}%</span>）</el-col>
           </el-row>
