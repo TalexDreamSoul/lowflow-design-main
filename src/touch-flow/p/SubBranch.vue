@@ -5,7 +5,7 @@ import SubDiversionAttr from './attr/SubDiversionAttr.vue';
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "./attr/DeliverySettingsAttr.vue";
 import Strategist from "./attr/Strategist.vue";
-
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 const getNode: Function = inject('getNode')!
 const { data: _data } = getNode()
 const __data = _data.$d(_data.id)
@@ -202,10 +202,11 @@ provide('save', (regFunc: () => boolean) => {
   <el-card ref="dom" style="width: 355px" class="PBlock">
     <p class="title">
       {{ data.nodeName }}
-      <span style="float: right">
+      <span style="float: right;font-size: 14px;color:#797979;
+      font-weight: 500;">
         {{ data.branchName }}
 
-        <span style="color: green;font-weight: 600">{{ data.branchRatio }}%</span>
+        <span style="color: #00C068;font-weight: 600">{{ data.branchRatio }}%</span>
       </span>
     </p>
     <div @click="openCondition" class="PBlock-Content theme">
@@ -238,7 +239,8 @@ provide('save', (regFunc: () => boolean) => {
         </div>
       </template>
       <template v-else>
-        <el-empty>
+        
+        <el-empty  :image="Maskgroup" :image-size="76">
           <template #description>
             暂未配置.
           </template>
