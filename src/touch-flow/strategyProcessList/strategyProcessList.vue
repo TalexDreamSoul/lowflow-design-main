@@ -270,7 +270,7 @@ const flowTime = (data: any) => {
           <div class="undercount">审核不通过</div>
         </div>
       </div>
-      <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
+      <el-table :data="tableData" style="width: 100% ;----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
         <el-table-column label="策略流程ID" width="120">
           <template #default="scope">
             {{ scope.row.id }}
@@ -284,7 +284,7 @@ const flowTime = (data: any) => {
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="起止日期" width="300">
+        <el-table-column label="起止日期" width="380">
           <template #default="scope">
 
             {{ flowTime(scope.row) }}
@@ -312,7 +312,7 @@ const flowTime = (data: any) => {
           </template>
         </el-table-column>
 
-        <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="280">
+        <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="300">
           <template #default="scope">
             <span v-if="scope.row.status=='draft'||scope.row.status=='approvalPending'">
               暂无数据，流程尚未发布
@@ -493,5 +493,8 @@ const flowTime = (data: any) => {
   border-radius: 4px;
   box-sizing: border-box;
   white-space: nowrap;
+}
+.el-table__header, .el-table__body, .el-table__footer{
+  width: 100%;
 }
 </style>
