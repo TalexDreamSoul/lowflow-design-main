@@ -272,7 +272,9 @@
     padding: 24px 24px 10px;
   }
 
-  .el-message-box__headerbtn {
+  .el-dialog__headerbtn {
+    width: 24px;
+    height: 24px;
     top: 24px;
     right: 24px;
   }
