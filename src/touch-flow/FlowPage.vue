@@ -333,7 +333,7 @@ div.el-dialog {
 
 .FlowPage-Container.expand {
   .el-header {
-    height: 60%;
+    height: 80%;
   }
 }
 
