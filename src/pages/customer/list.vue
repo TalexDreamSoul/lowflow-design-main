@@ -79,7 +79,7 @@
             }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="280" fixed="right">
+        <el-table-column label="操作" min-width="158" fixed="right">
           <template #default="scope">
             <el-button
               v-if="scope.row.source === peopleSourceEnum.Manual"
