@@ -415,7 +415,8 @@ div.PBlock {
     }
 
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 20px;
+    font-weight: 500;
   }
 
   display: flex;
