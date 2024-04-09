@@ -12,8 +12,8 @@ const origin = {
   nodeId: "",
   diversionRuleContent: {
     data: [
-      { nodeName: "流量策略器1", branchName: "分支1", branchRatio: 50, children: [] },
-      { nodeName: "流量策略器2", branchName: "分支2", branchRatio: 50, children: [] },
+      { branchName: "流量策略器1", branchRatio: 50, children: [] },
+      { branchName: "流量策略器2", branchRatio: 50, children: [] },
     ],
   },
 };
@@ -22,6 +22,7 @@ const props = defineProps<{
   p: any;
   readonly?: boolean;
 }>();
+const $getNodeName: any = window['$getNodeName']
 
 const { diversionRuleContent } = props.p
 
@@ -34,7 +35,6 @@ const sizeForm = reactive<typeof origin>(origin);
 
     diversionRuleContent.data.forEach((child: any) => {
       origin.diversionRuleContent.data.push({
-        nodeName: child.nodeName,
         branchName: child.branchName,
         branchRatio: child.branchRatio,
         children: child.children,
@@ -66,6 +66,14 @@ function saveData() {
     return false;
   }
 
+  if ($getNodeName(sizeForm.nodeName)) {
+    ElMessage.warning({
+      message: "节点名称重复",
+    });
+
+    return false;
+  }
+
   // validate branch branchRatio summary
   if (totalBranchRatio.value !== 100) {
     ElMessage.warning({
@@ -85,6 +93,14 @@ function saveData() {
     return false;
   }
 
+  if (sizeForm.diversionRuleContent.data.filter(branch => $getNodeName(branch.branchName))?.length) {
+    ElMessage.warning({
+      message: "有重复的分支名称",
+    });
+
+    return false;
+  }
+
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)
 
@@ -97,7 +113,7 @@ function saveData() {
   sizeForm.diversionRuleContent.data.forEach((branch) => {
     const child = {
       nodeType: "subDiversion",
-      nodeName: branch.nodeName,
+      nodeName: branch.branchName,
       branchName: branch.branchName,
       branchRatio: branch.branchRatio,
       nodeId: randomStr(12),
@@ -141,10 +157,9 @@ const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
 const addBranch = () => {
-  const name = "分支" + (sizeForm.diversionRuleContent.data.length + 1)
   const nodeName = "流量策略器" + (sizeForm.diversionRuleContent.data.length + 1)
 
-  sizeForm.diversionRuleContent.data.push({ branchName: name, nodeName: nodeName, branchRatio: 0, children: [] });
+  sizeForm.diversionRuleContent.data.push({ branchName: nodeName, branchRatio: 0, children: [] });
 };
 
 const deleteBranch = (index: number) => {

@@ -12,7 +12,7 @@
 import { onMounted, ref, toRefs, provide, watchEffect, computed } from "vue";
 import Hierarchy from "@antv/hierarchy";
 import initGraph from "./graph";
-import { _delChild, genIdNodeReactive } from "./../flow-utils";
+import { _delChild, genIdNodeReactive, genNameFunc } from "./../flow-utils";
 import { MarketingTouchEditDTO } from "../p/behavior/marketing";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
@@ -39,6 +39,10 @@ const route = useRoute()
 const { width, height } = useWindowSize()
 const _edit = computed(() => route.params?.id)
 const getNodeReactive = genIdNodeReactive(props.p);
+const getNodeName = genNameFunc(props.p);
+
+window['$getNodeName'] = getNodeName
+// provide('$getNodeName', getNodeName)
 
 const del = (p: MarketingTouchEditDTO) => {
   const fatherNode = getNodeReactive(p.father.id);
@@ -164,6 +168,7 @@ const layoutFn = () => {
         data: {
           ...data,
           $del: del,
+          $getName: getNodeName,
           $edit: _edit,
           $d: getNodeReactive,
           $readonly: props.readonly,
@@ -412,9 +417,9 @@ div.PBlock {
       justify-content: space-between;
 
       width: 100%;
-      
-    font-size: 18px;
-    font-weight: 500;
+
+      font-size: 18px;
+      font-weight: 500;
     }
 
     margin: 0;

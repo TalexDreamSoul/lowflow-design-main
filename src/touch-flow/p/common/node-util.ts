@@ -192,7 +192,7 @@ export function genNodeParams() {
 
   const [innerData, __data, $data] = useTreeData()
   console.log("节点建立")
-  console.log("TreeNode ref-data", __data)
+  console.log("TreeNode ref-data", __data, $data)
   console.log("节点数据 INNER", innerData)
 
   const { dialogVisible, drawerOptions, openCustomer, openDrawer, comps, haveDiverse } = genPopoverManager(innerData)
@@ -209,6 +209,7 @@ export function genNodeParams() {
   return {
     comps,
     data: innerData,
+    __data,
     $data,
     openDrawer,
     openCustomer,

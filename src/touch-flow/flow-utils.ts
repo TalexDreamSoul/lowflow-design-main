@@ -214,6 +214,28 @@ export function genIdNodeReactive(p: any) {
   };
 }
 
+export function genNameFunc(p: any) {
+  return function (name: string) {
+    const stack: any[] = [p]
+
+    while (stack.length) {
+      const node = stack.pop()
+
+      // console.log("search target", id, node)
+
+      if (node.nodeName === name) {
+        return node
+      }
+
+      if (node.children) {
+        stack.push(...node.children)
+      }
+    }
+
+    return null
+  };
+}
+
 export function flatConvert2Tree(nodes: any[]) {
   const map = new Map<String, any>();
 

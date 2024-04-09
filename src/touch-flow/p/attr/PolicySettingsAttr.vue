@@ -74,6 +74,7 @@ const props = defineProps<{
   new?: boolean;
   readonly?: boolean;
 }>();
+const $getNodeName: any = window['$getNodeName']
 
 const touchSettingsRef = ref();
 const _edit = computed(() => {
@@ -134,6 +135,14 @@ function saveData() {
   if (!sizeForm.nodeName) {
     ElMessage.warning({
       message: "请输入策略名称",
+    });
+
+    return false;
+  }
+
+  if ($getNodeName(sizeForm.nodeName)) {
+    ElMessage.warning({
+      message: "节点名称重复",
     });
 
     return false;

@@ -33,6 +33,7 @@ const props = defineProps<{
 
 const touchSettingsRef = ref();
 const sizeForm = reactive<typeof origin>(origin);
+const $getNodeName: any = window['$getNodeName']
 
 function reset() {
   Object.assign(sizeForm, origin);
@@ -61,6 +62,15 @@ function saveData() {
 
     return false;
   }
+
+  if ($getNodeName(sizeForm.nodeName)) {
+    ElMessage.warning({
+      message: "节点名称重复",
+    });
+
+    return false;
+  }
+
   touchSettingsRef.value.updateData();
 
   const _: any = { nodeId: "", children: [], reveal: true };
