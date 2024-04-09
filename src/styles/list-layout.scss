@@ -166,6 +166,7 @@
   }
 
   .pd-drawer {
+    padding: 0;
     .el-drawer__body {
       padding: 0;
       display: flex;
@@ -215,7 +216,10 @@
     }
 
     .el-dialog__headerbtn {
-      margin-right: 4px;
+      width: 24px;
+      height: 24px;
+      top: 24px;
+      right: 24px;
     }
 
     .el-dialog__title {
