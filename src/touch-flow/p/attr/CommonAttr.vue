@@ -34,7 +34,7 @@ defineExpose({
       <el-option :value="false" label="立即">立即</el-option> </el-select>&nbsp;
     <template v-if="sizeForm.nodeDelayed.isDelayed">
       <el-input-number :disabled="readonly" :min="1" v-model="sizeForm.nodeDelayed.delayedTime" type="number"
-        style="width: 100px" />&nbsp;
+      controls-position="right"     style="width: 100px" />&nbsp;
       <el-select :disabled="readonly" placeholder="请选择" v-model="sizeForm.nodeDelayed.delayedUnit" style="width: 100px">
         <el-option value="minute" label="分钟">分钟</el-option>
         <el-option value="hour" label="小时">小时</el-option>

@@ -85,7 +85,7 @@ function addEventB() {
       <el-form-item v-if="p.triggerRuleContent.delayed.isDelayed">
         <div class="EventGroup-SubEvent">
           <el-text>且在</el-text>&nbsp;
-          <el-input-number :disabled="readonly" :min="1" placeholder="输入值"
+          <el-input-number :disabled="readonly" :min="1" placeholder="输入值"  controls-position="right" 
             v-model="p.triggerRuleContent.delayed.delayedTime" style="width: 100px" />
           <el-select :disabled="readonly" placeholder="选择单位" v-model="p.triggerRuleContent.delayed.delayedUnit"
             style="width: 100px">

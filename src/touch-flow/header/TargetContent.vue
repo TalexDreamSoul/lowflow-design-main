@@ -118,7 +118,7 @@ function handleSelectChanged(val: string) {
       <div v-if="index !== undefined" class="garyblock">
         <el-text>客户进入流程后，在</el-text>&nbsp;
         <el-input-number :min="1" :disabled="readonly" v-model="target.targetDelayed.delayedTime"
-          style="width: 100px" />&nbsp;
+        controls-position="right"  style="width: 100px" />&nbsp;
         <el-select :disabled="readonly" v-model="target.targetDelayed.delayedUnit" style="width: 150px">
           <el-option value="minute" label="分钟">分钟</el-option>
           <el-option value="hour" label="小时">小时</el-option>

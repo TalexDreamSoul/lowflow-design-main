@@ -178,7 +178,7 @@ const deleteBranch = (index: number) => {
               <el-input v-model="branch.branchName" />
             </el-col>
             <el-col :span="7">
-              <el-input-number :min="0" :max="100 - +totalBranchRatio + branch.branchRatio" placeholder="百分比"
+              <el-input-number :min="0" :max="100 - +totalBranchRatio + branch.branchRatio" placeholder="百分比"  controls-position="right" 
                 v-model="branch.branchRatio" />
             </el-col>
             <el-col :span="5">

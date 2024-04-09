@@ -303,9 +303,9 @@ const defaultTime2: [Date, Date] = [
       </el-form-item>
       <div class="flex-column" v-if="sizeForm.enterType === 'multi'">
         <el-text>当前流程，同一客户</el-text>&nbsp;
-        <el-input-number :max="30" :min="1" style="width: 100px" v-model="sizeForm.enterDay" placeholder="天数" />
+        <el-input-number :max="30" :min="1" style="width: 100px" v-model="sizeForm.enterDay" placeholder="天数"  controls-position="right" />
         <el-text>&nbsp;天内，最多进入</el-text>&nbsp;
-        <el-input-number :min="1" style="width: 100px" v-model="sizeForm.enterCount" placeholder="次数" />
+        <el-input-number :min="1" style="width: 100px" v-model="sizeForm.enterCount" placeholder="次数"   controls-position="right" />
         <el-text> &nbsp;次 </el-text>
       </div>
     </template>

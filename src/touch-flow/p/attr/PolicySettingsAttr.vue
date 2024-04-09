@@ -241,7 +241,7 @@ regSaveFunc(saveData);
         :class="{ animation: true, display: sizeForm.diversionType === 'event' }">
         <div class="flex-column titleCondition">
           <el-text>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</el-text>
-          <el-input-number :disabled="readonly || sizeForm.$index" :min="1" v-model="sizeForm.eventDelayed!.delayedTime"
+          <el-input-number :disabled="readonly || sizeForm.$index" :min="1" v-model="sizeForm.eventDelayed!.delayedTime"  controls-position="right" 
             type="number" style="width: 100px" />&nbsp;
           <el-select :disabled="readonly || sizeForm.$index" v-model="sizeForm.eventDelayed!.delayedUnit"
             style="width: 100px">
