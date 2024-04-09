@@ -3,6 +3,10 @@ import { ref, reactive, computed, provide, inject, watch, onBeforeUnmount } from
 import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
 import ConditionSetAttr from "./attr/ConditionSetAttr.vue";
 import { genNodeParams } from './common/node-util'
+import peoples from "~/assets/icon/peoples.png";
+import peoplesactive from "~/assets/icon/peoplesactive.png";
+import sendactive from "~/assets/icon/sendactive.png";
+import send from "~/assets/icon/send.png";
 
 const { readonly, data, openCustomer, dialogVisible, drawerOptions, openDrawer, comps, handleClick, handleSave, haveDiverse } = genNodeParams()
 
@@ -95,9 +99,11 @@ function openCondition() {
     <div class="PBlock-Content">
       <div @click="openCustomer" :class="{ checked: customerConditioned.display }" class="PBlock-Section">
         <p>
-          <el-icon>
+          <!-- <el-icon>
             <User />
-          </el-icon>
+          </el-icon> -->
+          
+          <el-image style="width: 18px; height: 18px" :src="customerConditioned.display?peoplesactive:peoples"  />
           受众客户
           <span v-if="customerConditioned.display">
             <el-icon>
@@ -113,9 +119,9 @@ function openCondition() {
       </div>
       <div @click="openCondition" :class="{ checked: conditioned }" class="PBlock-Section">
         <p>
-          <el-icon>
-            <Position />
-          </el-icon>
+         
+          <el-image style="width: 18px; height: 18px" :src="conditioned?sendactive:send"  />
+
           进入条件
           <span v-if="conditioned">
             <el-icon>
@@ -136,11 +142,12 @@ function openCondition() {
         <div class="Dialog-Sections">
           <div @click="openDrawer(item)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
             class="PBlock-Section">
-            <p>
+            <p style="    display: flex;
+            align-items: center;">
               <el-icon v-if="item.icon.type === 'comp'">
                 <component :is="item.icon.value" />
               </el-icon>
-              <img v-else :src="item.icon.value as any" />
+              <img v-else :src="item.icon.value as any"  style="    margin-right: 2px;" />
               {{ item.title }}
             </p>
             <span v-text="item.desc" />

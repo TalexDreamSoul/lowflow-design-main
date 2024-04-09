@@ -6,6 +6,9 @@ import CustomersAttr from "../attr/CustomersAttr.vue";
 import PolicySettingsAttr from "../attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../../p/attr/DeliverySettingsAttr.vue";
 import Strategist from "../attr/Strategist.vue";
+import Frame from "~/assets/icon/Frame.png";
+import Frametime from "~/assets/icon/Frametime.png";
+import branch from "~/assets/icon/branch.png";
 
 /**
  * 1. $d( __data ) 就是tree中的响应式数据 => 修改它 传过去的数据（post的data/FlowPage的flowOptions）就更新
@@ -171,8 +174,8 @@ const customerConditioned = computed(() => {
 const _comps = [
   {
     icon: {
-      type: "comp",
-      value: Stamp,
+      type: "img",
+      value: Frame,
     },
     title: "选择策略器",
     desc: "按客户属性行为或触发事件对客户筛选分流，并执行动作。",
@@ -180,8 +183,8 @@ const _comps = [
   },
   {
     icon: {
-      type: "comp",
-      value: Stamp,
+      type: "img",
+      value: branch,
     },
     title: "分流器",
     desc: "按设置的比例自动客户对随机分流，并执行动作。",
@@ -190,8 +193,8 @@ const _comps = [
   },
   {
     icon: {
-      type: "comp",
-      value: Stamp,
+      type: "img",
+      value: Frametime,
     },
     title: "兜底选择器",
     disabled: haveReveal,

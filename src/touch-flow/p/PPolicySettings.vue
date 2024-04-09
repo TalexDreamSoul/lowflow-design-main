@@ -7,7 +7,9 @@ import { _delChild } from "../flow-utils";
 import Strategist from "./attr/Strategist.vue";
 import { MarketingTouchEditDTO } from "./behavior/marketing";
 import StatisticsDisplay from './attr/StatisticsDisplay.vue'
-
+import Frame from "~/assets/icon/Frame.png";
+import Frametime from "~/assets/icon/Frametime.png";
+import branch from "~/assets/icon/branch.png";
 const getNode: Function = inject("getNode")!;
 const { data: _data } = getNode();
 const __data = _data.$d(_data.id);
@@ -67,8 +69,8 @@ const haveReveal = computed(() => {
 const _comps = [
   {
     icon: {
-      type: "comp",
-      value: Stamp,
+      type: "img",
+      value: Frame,
     },
     title: "选择策略器",
     desc: "按客户属性行为或触发事件对客户筛选分流，并执行动作。",
@@ -76,8 +78,8 @@ const _comps = [
   },
   {
     icon: {
-      type: "comp",
-      value: Stamp,
+      type: "img",
+      value: branch,
     },
     title: "分流器",
     desc: "按设置的比例自动客户对随机分流，并执行动作。",
@@ -86,8 +88,8 @@ const _comps = [
   },
   {
     icon: {
-      type: "comp",
-      value: Stamp,
+      type: "img",
+      value: Frametime,
     },
     title: "兜底选择器",
     disabled: haveReveal,
