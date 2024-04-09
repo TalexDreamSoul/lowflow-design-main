@@ -223,11 +223,11 @@ function del(p: MarketingTouchEditDTO) {
         </template>
         <template v-if="data.diversionType === 'attr'">
           <p>客户属性行为分流</p>
-          <span>客户属性满足：{{ data.customRuleContent.customAttr?.conditions?.length || 0 }}条</span>
+          <span>客户属性满足：{{ data.customRuleContent?.customAttr?.conditions?.length || 0 }}条</span>
           <br />
-          <span>客户事件满足：{{ data.customRuleContent.customEvent?.conditions?.length || 0 }}条</span>
+          <span>客户事件满足：{{ data.customRuleContent?.customEvent?.conditions?.length || 0 }}条</span>
           <br />
-          <span>行为序列满足：{{ data.customRuleContent.eventSequence?.conditions?.length || 0 }}条</span>
+          <span>行为序列满足：{{ data.customRuleContent?.eventSequence?.conditions?.length || 0 }}条</span>
         </template>
         <template v-if="data.diversionType === 'event'">
           <p>触发事件分流</p>
