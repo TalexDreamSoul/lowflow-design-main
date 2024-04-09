@@ -191,7 +191,7 @@ const deleteBranch = (index: number) => {
             </el-col>
           </el-row>
 
-          <el-row :gutter="20" style="    align-items: center;
+          <el-row v-if="!readonly" :gutter="20" style="    align-items: center;
           margin-top: 16px;padding: 0 12px;">
             <el-text type="primary" style="cursor: pointer;" @click="addBranch">
               <el-icon size="14">
