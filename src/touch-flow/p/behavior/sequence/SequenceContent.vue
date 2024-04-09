@@ -183,10 +183,12 @@ const defaultTime2: [Date, Date] = [
     flex-wrap: wrap;
     gap: 0.5rem;
     align-items: center;
+    margin-top: 1rem;
   }
 
   &-Events {
     margin-left: 1rem;
+    margin-top: 1rem;
   }
 
   margin: 10px 0;

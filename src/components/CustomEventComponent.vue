@@ -42,7 +42,7 @@ const props = defineProps({
   .search {
     display: flex;
     justify-content: space-between;
-
+    margin-bottom: 12px;
     .el {
       &-select {
         width: 278px;

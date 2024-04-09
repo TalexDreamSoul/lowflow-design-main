@@ -161,7 +161,7 @@ function toggle() {
 
     flex: 1;
 
-    padding: 12px 0;
+    //padding: 12px 0;
 
     overflow: hidden;
   }

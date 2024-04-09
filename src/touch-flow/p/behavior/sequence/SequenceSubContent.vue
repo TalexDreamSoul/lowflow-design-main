@@ -96,6 +96,7 @@ const attrs = computed(() => {
 
     gap: 0.5rem;
     align-items: center;
+    margin-top: 1rem;
   }
 
   // margin: 10px 0;
