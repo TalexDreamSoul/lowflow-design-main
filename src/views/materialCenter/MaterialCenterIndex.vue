@@ -13,6 +13,7 @@ import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { createTemplatePopover } from "~/utils/touch-templates";
 import { materialType } from "~/utils/common";
 import { de, el } from "element-plus/es/locale";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
@@ -279,6 +280,13 @@ const changeTime = (val: any) => {
             <el-link v-else type="primary" @click="detailsData(scope.row)">查看详情</el-link>
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty  :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
     </template>
     <template #pagination>
