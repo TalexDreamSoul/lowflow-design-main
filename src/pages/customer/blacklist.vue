@@ -295,7 +295,7 @@ const handleDelete = (values: any) => {
 
     .item {
       padding: 24px 16px 0;
-      background-color: #f2f4f8;
+     // background-color: #f2f4f8;
       margin-bottom: 16px;
     }
 
