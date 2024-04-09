@@ -83,7 +83,7 @@ function handleChange(value: any) {
 .Basic-Block {
   &-Content {
     display: flex;
-    padding: 0.5rem 1rem 1rem;
+    padding:1rem;
 
     align-items: center;
     flex-wrap: wrap;
