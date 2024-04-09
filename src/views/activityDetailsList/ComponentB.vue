@@ -14,14 +14,14 @@ import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import { Download } from "@element-plus/icons-vue";
 import dayjs from "dayjs";
 import { getmarketingTouchDetail, marketingTouchStatistics } from "~/api/index";
-import * as echarts from 'echarts/core';
-import { FunnelChart } from 'echarts/charts';
+import * as echarts from "echarts/core";
+import { FunnelChart } from "echarts/charts";
 import {
   TitleComponent,
   TooltipComponent,
-  GridComponent
-} from 'echarts/components';
-import { CanvasRenderer } from 'echarts/renderers';
+  GridComponent,
+} from "echarts/components";
+import { CanvasRenderer } from "echarts/renderers";
 
 import { BlackAddTypeEnum, BLACK_LIST_TYPE } from "~/constants";
 
@@ -134,84 +134,85 @@ const defaultFormValues = {
 };
 let formValues = reactive<any>({ ...defaultFormValues });
 
-
 onMounted(async () => {
+  // const response: any = await marketingTouchStatistics({
+  //   id: route.params.id,
+  // });
+  // const data = response?.data;
 
-    // const response: any = await marketingTouchStatistics({
-    //   id: route.params.id,
-    // });
-    // const data = response?.data;
+  // const chart = echarts.init(chartContainerB.value);
 
-    // const chart = echarts.init(chartContainerB.value);
+  // const options = {
+  //   xAxis: {
+  //     type: "funnel",
+  //     data: [
+  //       { value: 12345, name: "浏览量人数UV" },
+  //       { value: 5435, name: "表单提交人数" },
+  //     ],
+  //   },
+  //   yAxis: {
+  //     type: "value",
+  //     min: 0,
+  //     max: 60,
+  //   },
 
-    // const options = {
-    //   xAxis: {
-    //     type: "funnel",
-    //     data: [
-    //       { value: 12345, name: "浏览量人数UV" },
-    //       { value: 5435, name: "表单提交人数" },
-    //     ],
-    //   },
-    //   yAxis: {
-    //     type: "value",
-    //     min: 0,
-    //     max: 60,
-    //   },
+  //   series: [
+  //     {
+  //       name: "Percentage",
+  //       type: "bar",
+  //       barWidth: "40px", // 设置柱体宽度
+  //       data: StatisticsList.value?.percentages,
+  //     },
+  //   ],
+  // };
 
-    //   series: [
-    //     {
-    //       name: "Percentage",
-    //       type: "bar",
-    //       barWidth: "40px", // 设置柱体宽度
-    //       data: StatisticsList.value?.percentages,
-    //     },
-    //   ],
-    // };
+  // chart.setOption(options);
 
-    // chart.setOption(options);
+  echarts.use([
+    TitleComponent,
+    TooltipComponent,
+    GridComponent,
+    CanvasRenderer,
+  ]);
+  echarts.use(FunnelChart);
 
+  const chartData = [
+    { value: 100, name: "Step 1" },
+    { value: 80, name: "Step 2" },
+    { value: 60, name: "Step 3" },
+    { value: 40, name: "Step 4" },
+    { value: 20, name: "Step 5" },
+  ];
 
-    echarts.use([TitleComponent, TooltipComponent, GridComponent, CanvasRenderer]);
-      echarts.use(FunnelChart);
+  const myChart = echarts.init(funnelChart.value);
 
-      const chartData = [
-        { value: 100, name: 'Step 1' },
-        { value: 80, name: 'Step 2' },
-        { value: 60, name: 'Step 3' },
-        { value: 40, name: 'Step 4' },
-        { value: 20, name: 'Step 5' }
-      ];
-
-      const myChart = echarts.init(funnelChart.value);
-
-      const option = {
-        tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b} : {c}%'
+  const option = {
+    tooltip: {
+      trigger: "item",
+      formatter: "{a} <br/>{b} : {c}%",
+    },
+    series: [
+      {
+        type: "funnel",
+        left: "10%",
+        top: 60,
+        bottom: 60,
+        width: "80%",
+        label: {
+          show: true,
+          position: "inside",
         },
-        series: [
-          {
-            type: 'funnel',
-            left: '10%',
-            top: 60,
-            bottom: 60,
-            width: '80%',
-            label: {
-              show: true,
-              position: 'inside'
-            },
-            data: chartData
-          }
-        ]
-      };
+        data: chartData,
+      },
+    ],
+  };
 
-      myChart.setOption(option);
-    });
+  myChart.setOption(option);
+});
 </script>
 
 <template>
   <div class="warp">
-  
 
     <div class="tableCard">
       <div class="spanDataName">
@@ -220,7 +221,7 @@ onMounted(async () => {
         </span>&nbsp;
         <el-button type="primary" :icon="Download" class="primaryStyle">下载</el-button>
       </div>
-  
+
       <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
         <el-table-column label="时间段" width="320">
           <template #default="scope">
@@ -247,14 +248,10 @@ onMounted(async () => {
         </span>&nbsp;
       </div>
 
-      <div >
+      <div>
         <el-form-item label="表单">
           <el-select v-model="formValues.blacklistType" placeholder="请选择" style="width:300px" clearable>
-            <el-option
-              v-for="item of BLACK_LIST_TYPE"
-              :label="item.label"
-              :value="item.value"
-            />
+            <el-option v-for="item of BLACK_LIST_TYPE" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <div>
@@ -323,16 +320,21 @@ onMounted(async () => {
   min-width: 160px;
   max-height: 96px;
   margin-right: 16px;
-  background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%);
+  background: linear-gradient(
+    180deg,
+    #f2f4f8 0%,
+    rgba(242, 244, 248, 0.4) 100%
+  );
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
-  padding: 16px;
+  padding: 18px 16px 20px 16px;
   color: rgba(0, 0, 0, 0.9);
   .topcount {
-    font-size: 32px;
+    font-family: font1;
+    font-size: 28px;
     font-weight: 800;
-    margin-bottom: 10px
+    margin-bottom: 5px;
   }
 
   .undercount {
@@ -341,7 +343,6 @@ onMounted(async () => {
     color: #7f8080;
   }
 }
-
 .bgblue {
   background: linear-gradient(180deg, #2258bb 0%, #4078e0 100%);
   color: #ffffff;

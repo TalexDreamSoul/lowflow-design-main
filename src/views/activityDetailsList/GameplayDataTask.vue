@@ -374,12 +374,13 @@ onMounted(async () => {
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
-  padding: 16px;
+  padding: 18px 16px 20px 16px;
   color: rgba(0, 0, 0, 0.9);
   .topcount {
-    font-size: 32px;
+    font-family: font1;
+    font-size: 28px;
     font-weight: 800;
-    margin-bottom: 10px
+    margin-bottom: 5px;
   }
 
   .undercount {

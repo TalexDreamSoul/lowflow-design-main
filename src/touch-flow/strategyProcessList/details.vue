@@ -190,11 +190,12 @@ const flowTime = (data: any) => {
           </div>
           <div class="countCardblock" style="    margin-top: 24px;">
             <div class="showCount">
-              <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500" v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
+   
+    <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500; font-family: font1;" v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
                  无数据
                 <br/>
                </span>
-               <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500" v-else-if="marketingDetail?.containTarget==false">
+               <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500; font-family: font1;" v-else-if="marketingDetail?.containTarget==false">
                  未设置目标
                </span>
                <span v-else>
@@ -219,7 +220,7 @@ const flowTime = (data: any) => {
           </div>
           <div class="countCardblock">
             <div class="showCount">
-              <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500" v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
+              <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500; font-family: font1;" v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
                 无数据
               </span>
               <span v-else>
@@ -231,7 +232,7 @@ const flowTime = (data: any) => {
               <div class="undercount">完成目标{{ num2character(1) }}</div>
             </div>
             <div class="showCount">
-              <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500" v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
+              <span style="display: block;width:100px;height:40px;font-size:20px;font-weight:500; font-family: font1;" v-if="marketingDetail?.status=='draft'||marketingDetail?.status=='approvalPending'||marketingDetail?.status=='approvalRefuse'">
                 无数据
               </span>
               <span v-else>
@@ -326,12 +327,13 @@ const flowTime = (data: any) => {
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
-  padding: 16px;
+  padding: 18px 16px 20px 16px;
   color: rgba(0, 0, 0, 0.9);
   .topcount {
-    font-size: 32px;
+    font-family: font1;
+    font-size: 28px;
     font-weight: 800;
-    margin-bottom: 10px
+    margin-bottom: 5px;
   }
 
   .undercount {
