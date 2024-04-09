@@ -412,6 +412,9 @@ div.PBlock {
       justify-content: space-between;
 
       width: 100%;
+      
+    font-size: 18px;
+    font-weight: 500;
     }
 
     margin: 0;
