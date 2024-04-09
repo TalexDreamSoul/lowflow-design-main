@@ -77,8 +77,12 @@ code {
 }
 
 
-.el-form--inline .el-form-item{
+.el-form--inline .el-form-item {
   display: inline-flex;
-    vertical-align: middle;
-    margin-right: 8px;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.el-form-item__label {
+  padding: 0;
 }
