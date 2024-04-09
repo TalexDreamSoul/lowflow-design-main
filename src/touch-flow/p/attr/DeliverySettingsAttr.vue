@@ -3,7 +3,7 @@ import { inject, ref, reactive, watchEffect, computed } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { markRaw } from "vue";
-import { Delete } from '@element-plus/icons-vue'
+import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 
 const origin = {
   nodeName: "",
