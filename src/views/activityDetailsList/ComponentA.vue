@@ -278,23 +278,19 @@ onMounted(async () => {
 }
 .showCount {
   cursor: pointer;
-  min-width: 150px;
+  min-width: 160px;
+  max-height: 96px;
   margin-right: 16px;
-  height: 106px;
-  background: linear-gradient(
-    180deg,
-    #f2f4f8 0%,
-    rgba(242, 244, 248, 0.4) 100%
-  );
+  background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%);
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
-  padding: 24px;
+  padding: 16px;
   color: rgba(0, 0, 0, 0.9);
-
   .topcount {
     font-size: 32px;
     font-weight: 800;
+    margin-bottom: 10px
   }
 
   .undercount {
@@ -303,6 +299,7 @@ onMounted(async () => {
     color: #7f8080;
   }
 }
+
 .bgblue {
   background: linear-gradient(180deg, #2258bb 0%, #4078e0 100%);
   color: #ffffff;

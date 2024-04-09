@@ -194,7 +194,7 @@ const flowTime = (data: any) => {
     <div class="topSearch">
       <el-form :inline="true" class="demo-form-inline">
 
-        <el-form-item label="起止日期：">
+        <el-form-item label="起止日期">
           <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
         </el-form-item>
         <el-form-item>
@@ -437,22 +437,19 @@ const flowTime = (data: any) => {
 
 .showCount {
   cursor: pointer;
-  min-width: 150px;
+  min-width: 160px;
+  max-height: 96px;
   margin-right: 16px;
-  background: linear-gradient(
-    180deg,
-    #f2f4f8 0%,
-    rgba(242, 244, 248, 0.4) 100%
-  );
+  background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%);
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
-  padding: 24px;
+  padding: 16px;
   color: rgba(0, 0, 0, 0.9);
-
   .topcount {
     font-size: 32px;
     font-weight: 800;
+    margin-bottom: 10px
   }
 
   .undercount {
@@ -461,6 +458,7 @@ const flowTime = (data: any) => {
     color: #7f8080;
   }
 }
+
 .bgblue {
   background: linear-gradient(180deg, #2258bb 0%, #4078e0 100%);
   color: #ffffff;

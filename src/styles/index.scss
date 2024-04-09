@@ -75,3 +75,10 @@ code {
   background-color: var(--el-color-primary-light-9);
   color: var(--el-color-primary);
 }
+
+
+.el-form--inline .el-form-item{
+  display: inline-flex;
+    vertical-align: middle;
+    margin-right: 8px;
+}
