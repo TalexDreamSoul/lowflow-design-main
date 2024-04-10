@@ -12,8 +12,8 @@ const origin = {
   nodeId: "",
   diversionRuleContent: {
     data: [
-      { branchName: "流量策略器1", branchRatio: 50, children: [] },
-      { branchName: "流量策略器2", branchRatio: 50, children: [] },
+      { branchName: "分支", branchRatio: 50, children: [] },
+      { branchName: "分支", branchRatio: 50, children: [] },
     ],
   },
 };
@@ -34,11 +34,17 @@ const sizeForm = reactive<typeof origin>(origin);
     origin.diversionRuleContent.data = [];
 
     diversionRuleContent.data.forEach((child: any) => {
-      origin.diversionRuleContent.data.push({
+      const _gotNode = $getNodeName(child.branchName)
+
+      const obj = {
         branchName: child.branchName,
         branchRatio: child.branchRatio,
         children: child.children,
-      });
+        $id: _gotNode?.nodeId
+      }
+      console.log("obj", obj)
+
+      origin.diversionRuleContent.data.push(obj);
     });
   })()
 );
@@ -119,7 +125,18 @@ function saveData() {
   })
 
   // transform branch prop 2 children prop
-  sizeForm.diversionRuleContent.data.forEach((branch) => {
+  sizeForm.diversionRuleContent.data.forEach((branch: any) => {
+    if (branch['$id']) {
+      const _gotNode = window.$getNodeById(branch.$id)
+      console.log("_", branch, _gotNode)
+
+      _gotNode.nodeName = branch.branchName
+
+      _.children.push(_gotNode)
+
+      return;
+    }
+
     const child = {
       nodeType: "subDiversion",
       nodeName: branch.branchName,

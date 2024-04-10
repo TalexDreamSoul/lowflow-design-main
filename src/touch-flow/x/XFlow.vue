@@ -42,6 +42,7 @@ const getNodeReactive = genIdNodeReactive(props.p);
 const getNodeName = genNameFunc(props.p);
 
 window['$getNodeName'] = getNodeName
+window['$getNodeById'] = getNodeReactive
 // provide('$getNodeName', getNodeName)
 
 const del = (p: MarketingTouchEditDTO) => {

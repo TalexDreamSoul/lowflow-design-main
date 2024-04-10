@@ -88,7 +88,7 @@ export function genPopoverManager(innerData: any) {
   }
 
   onBeforeUnmount(() => {
-    console.log('onUnmounted')
+    // console.log('onUnmounted')
 
     drawerOptions.visible = false
   })
@@ -166,7 +166,7 @@ function useSaveFunc(innerData: any, refNodeData: any, callback: Function) {
 
     refNodeData.children = innerData.children
 
-    console.log("__data", refNodeData)
+    // console.log("__data", refNodeData)
 
     callback()
   }
@@ -188,16 +188,16 @@ function useSaveFunc(innerData: any, refNodeData: any, callback: Function) {
 
 export function genNodeParams() {
 
-  console.group("NODE")
+  // console.group("NODE")
 
   const [innerData, __data, $data] = useTreeData()
-  console.log("节点建立")
-  console.log("TreeNode ref-data", __data, $data)
-  console.log("节点数据 INNER", innerData)
+  // console.log("节点建立")
+  // console.log("TreeNode ref-data", __data, $data)
+  // console.log("节点数据 INNER", innerData)
 
   const { dialogVisible, drawerOptions, openCustomer, openDrawer, comps, haveDiverse } = genPopoverManager(innerData)
 
-  console.log("节点数据 OUTER", { $data, __data, dialogVisible, drawerOptions, openCustomer, openDrawer, comps, haveDiverse })
+  // console.log("节点数据 OUTER", { $data, __data, dialogVisible, drawerOptions, openCustomer, openDrawer, comps, haveDiverse })
 
   const [handleClick, handleSave] = useSaveFunc(innerData, __data, () => {
     dialogVisible.value = false;
