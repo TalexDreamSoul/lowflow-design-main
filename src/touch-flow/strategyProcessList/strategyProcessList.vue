@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, unref, reactive, onMounted, watch } from "vue";
+import { ref, unref, reactive, onMounted, watch, computed } from "vue";
 import {
   getqryMarketingTouch,
   deleteMarketingTouch,
@@ -23,25 +23,42 @@ const formInline = reactive({
   status: "",
 });
 
-const time = ref(null);
+const time = ref<Date | null>(null);
+
 const router = useRouter();
 
-const statusLabels = {
-  draft: { Text: "草稿", type: "info" },
-  approvalPending: { Text: "待审批", type: "success" },
-  approvalSuccess: { Text: "审批成功", type: "info" },
-  approvalRefuse: { Text: "审批拒绝", type: "warning" },
-  waitStart: { Text: "等待启动", type: "warning" },
-  running: { Text: "发送中", type: "" },
-  suspend: { Text: "暂停", type: "warning" },
-  done: { Text: "已结束", type: "info" },
+const statusLabels: Record<string, StatusLabel> = {
+  draft: { text: "草稿", type: "info" },
+  approvalPending: { text: "待审批", type: "success" },
+  approvalSuccess: { text: "审批成功", type: "info" },
+  approvalRefuse: { text: "审批拒绝", type: "warning" },
+  waitStart: { text: "等待启动", type: "warning" },
+  running: { text: "发送中", type: "" },
+  suspend: { text: "暂停", type: "warning" },
+  done: { text: "已结束", type: "info" },
 };
+
+interface StatusLabel {
+  text: string;
+  type: string;
+}
+
+const getStatusType = (status: string) =>
+  (statusLabels[status]?.type as
+    | ""
+    | "success"
+    | "warning"
+    | "info"
+    | "danger") || "";
+const getStatusText = (status: string) =>
+  statusLabels[status]?.text || "其他状态";
 const typeMap = {
   immediately: "定时-单次",
   repeat: "定时-重复",
   trigger: "触发型",
 };
-const tableData = ref([]);
+const getTypeText = (executeType: keyof typeof typeMap) => typeMap[executeType];
+const tableData = ref<any[]>([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
@@ -49,7 +66,19 @@ const background = ref(false);
 const disabled = ref(false);
 const total = ref(110);
 
-const StatisticsList = ref({
+interface Statistics {
+  suspend: number;
+  running: number;
+  total: number;
+  waitStart: number;
+  draft: number;
+  approvalPending: number;
+  approvalSuccess: number;
+  approvalRefuse: number;
+  done: number;
+}
+
+const StatisticsList = ref<Statistics>({
   suspend: 0,
   running: 0,
   total: 0,
@@ -60,7 +89,6 @@ const StatisticsList = ref({
   approvalRefuse: 0,
   done: 0,
 });
-
 onMounted(async () => {
   getmarketingTouchNode();
   fetchDataApi();
@@ -69,16 +97,16 @@ watch([currentPage, pageSize, formInline], () => {
   fetchDataApi();
 });
 const fetchDataApi = async () => {
-  const res = await getqryMarketingTouch({
+  const res = (await getqryMarketingTouch({
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
     ...formInline,
-  });
+  })) as { data: { records: any[]; total: number } };
   tableData.value = res.data.records;
   total.value = res.data.total;
 };
 const getmarketingTouchNode = async () => {
-  const res = await getqryTouchStatusCount();
+  const res = (await getqryTouchStatusCount()) as { data: Statistics };
   StatisticsList.value = res.data;
   console.log(StatisticsList, "res");
 };
@@ -90,12 +118,12 @@ const delData = async (row: any) => {
     confirmButtonClass: "pd-button",
     customClass: "delete-modal",
   }).then(async () => {
-    let res = await deleteMarketingTouch({ id: row.id }).finally(() => {});
-    if (res?.code == 0) {
-      fetchDataApi();
-      getmarketingTouchNode();
-      ElMessage.success(res.message);
-    }
+    let res = (await deleteMarketingTouch({ id: row.id }).finally(
+      () => {}
+    )) as { data: true; message: ""; code: "" };
+    fetchDataApi();
+    getmarketingTouchNode();
+    ElMessage.success(res.message);
   });
 };
 const startData = async (row: any) => {
@@ -127,23 +155,23 @@ const handleModal = async (values?: any) => {
   modalVisible.value = true;
 };
 const successData = async (row: any) => {
-  let res = await updateMarketingTouchStatus({
+  let res = (await updateMarketingTouchStatus({
     id: row.id,
     status: "approvalSuccess",
   }).finally(() => {
     fetchDataApi();
     getmarketingTouchNode();
-  });
+  })) as { data: true; message: ""; code: "" };
   ElMessage.success(res.message);
 };
 
 const copyData = async (row: any) => {
-  let res = await copyMarketingTouch({
+  let res = (await copyMarketingTouch({
     id: row.id,
   }).finally(() => {
     fetchDataApi();
     getmarketingTouchNode();
-  });
+  })) as { data: true; message: ""; code: "" };
   ElMessage.success(res.message);
 };
 const handleSizeChange = (val: any) => {
@@ -193,12 +221,10 @@ const flowTime = (data: any) => {
     <div class="pageTitle">策略流程列表</div>
     <div class="topSearch">
       <el-form :inline="true" class="demo-form-inline">
-
         <el-form-item label="起止日期">
           <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" @change="changeTime" />
         </el-form-item>
         <el-form-item>
-
           <el-select v-model="formInline.executeType" clearable style="width:200px">
             <el-option label="定时-单次" value="immediately" />
             <el-option label="定时-重复" value="delayed" />
@@ -279,25 +305,21 @@ const flowTime = (data: any) => {
         <el-table-column label="名称" width="180" prop="touchName" />
         <el-table-column label="状态" width="100">
           <template #default="scope">
-            <el-tag class="mx-1" :type="statusLabels[scope.row.status].type" effect="light">
-              {{ statusLabels[scope.row.status].Text }}
+            <el-tag class="mx-1" :type="getStatusType(scope.row.status)" effect="light">
+              {{ getStatusText(scope.row.status) }}
             </el-tag>
           </template>
         </el-table-column>
         <el-table-column label="起止日期" width="380">
           <template #default="scope">
-
             {{ flowTime(scope.row) }}
-
           </template>
         </el-table-column>
-
         <el-table-column label="类型" width="150">
           <template #default="scope">
-            {{ typeMap[scope.row.executeType] }}
+            {{ getTypeText(scope.row.executeType) }}
           </template>
         </el-table-column>
-
         <el-table-column label="目标完成率" width="150">
           <template #default="scope">
             <span v-if="scope.row.status=='draft'||scope.row.status=='approvalPending'||scope.row.status=='approvalRefuse'">
@@ -318,23 +340,23 @@ const flowTime = (data: any) => {
               暂无数据，流程尚未发布
             </span>
             <span v-else-if="scope.row.containTarget==false">
-            {{ scope.row.triggerCount }}/
-            {{ scope.row.touchCount }}/
-            -
+              {{ scope.row.triggerCount }}/
+              {{ scope.row.touchCount }}/
+              -
             </span>
             <span v-else>
-            <!-- targetCount 完成目标数量
+              <!-- targetCount 完成目标数量
             touchCount 触达数量
             triggerCount 触发数量 -->
-            {{ scope.row.triggerCount }}/
-            {{ scope.row.touchCount }}/
-            {{ scope.row.targetCount }}
+              {{ scope.row.triggerCount }}/
+              {{ scope.row.touchCount }}/
+              {{ scope.row.targetCount }}
             </span>
-         
+
           </template>
         </el-table-column>
 
-        <el-table-column label="创建人" prop="createUserName"  width="150"/>
+        <el-table-column label="创建人" prop="createUserName" width="150" />
 
         <el-table-column label="操作" width="300" fixed="right">
           <template #default="scope">
@@ -440,7 +462,11 @@ const flowTime = (data: any) => {
   min-width: 160px;
   max-height: 96px;
   margin-right: 16px;
-  background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%);
+  background: linear-gradient(
+    180deg,
+    #f2f4f8 0%,
+    rgba(242, 244, 248, 0.4) 100%
+  );
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
@@ -494,7 +520,9 @@ const flowTime = (data: any) => {
   box-sizing: border-box;
   white-space: nowrap;
 }
-.el-table__header, .el-table__body, .el-table__footer{
+.el-table__header,
+.el-table__body,
+.el-table__footer {
   width: 100%;
 }
 </style>
