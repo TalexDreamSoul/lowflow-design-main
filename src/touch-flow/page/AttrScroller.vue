@@ -5,7 +5,8 @@ import { getqryMarketingTouch } from '~/api/index'
 
 const props = defineProps<{
   modelValue: string,
-  readonly?: boolean
+  readonly?: boolean,
+  outside?: boolean,
 }>()
 
 const emits = defineEmits(['update:modelValue'])
@@ -94,7 +95,7 @@ handleLoad()
       </span>
       <template #dropdown>
         <div class="AttrScroller-dropdown">
-          <el-dropdown-item @click="handleCurrentClick()" :disabled="readonly">当前流程</el-dropdown-item>
+          <el-dropdown-item @click="handleCurrentClick()" :disabled="readonly"  v-if="!outside">当前流程</el-dropdown-item>
           <el-dropdown-menu>
             <el-dropdown-item @click="handleClick(item)" :disabled="readonly" v-for="(item) in data" :key="item.id">{{
           item.touchName

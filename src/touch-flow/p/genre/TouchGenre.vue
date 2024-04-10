@@ -11,6 +11,8 @@ const props = defineProps<{
   condition: EventSearchCondition;
   // index: number;
   dict: any;
+  outside?: boolean;
+
 }>();
 
 function getConditions() {
@@ -67,7 +69,7 @@ const attrs = computed(() => {
           ref="operatorRef"
           v-model="item.attr.fieldOp"
         />
-        <AttrRender :item="item.attr" :attrs="attrs" />&nbsp;
+        <AttrRender :outside="outside"  :item="item.attr" :attrs="attrs" />&nbsp;
 
         <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
           <el-icon size="14">

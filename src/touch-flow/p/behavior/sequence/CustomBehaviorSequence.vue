@@ -6,6 +6,7 @@ import { dictFilterTree as getDictFilterTree } from "~/api/index";
 import { EventSequenceConditionDTO } from "~/touch-flow/touch-total";
 const props = defineProps<{
   custom: EventSequenceConditionDTO;
+  outside?: boolean;
   readonly?: boolean;
 }>();
 
@@ -37,7 +38,7 @@ provide("refreshTree", refreshTree);
           <div v-for="(condition, index) in custom.conditions" :key="index">
             <SequenceContent
               @del="() => custom.conditions.splice(index, 1)"
-              :readonly="readonly"
+              :outside="outside" :readonly="readonly"
               v-if="condition?.conditions?.length"
               :condition="condition"
               :dict="dict"

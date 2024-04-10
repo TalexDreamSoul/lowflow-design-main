@@ -18,6 +18,8 @@ const props = defineProps<{
   variables: string;
   disabled?: boolean;
   ignoreId?: boolean;
+  outside?: boolean;
+
 }>();
 
 const contentRef = ref<HTMLElement>();
@@ -434,7 +436,7 @@ function handleAdd() {
         class="TouchFloatingContent">
         <Operator style="width: 100px" :item="item" :attrs="attrs.attrs" v-model="item.fieldOp" />
         <!-- && item.fieldOp?.indexOf('等于') === -1 -->
-        <AttrRender v-if="item.fieldOp?.indexOf('空') === -1"  :item="item" :attrs="attrs.attrs" />
+        <AttrRender :outside="outside" v-if="item.fieldOp?.indexOf('空') === -1"  :item="item" :attrs="attrs.attrs" />
         <div class="ContentSingleLine">
           <span>赋值为</span>
           <el-input v-model="item.compareValue" />

@@ -13,6 +13,8 @@ const props = defineProps<{
   condition: AttrConditionDTO;
   readonly?: boolean;
   dict: any;
+  outside?: boolean;
+
 }>();
 
 const dataObj = Object.freeze({
@@ -145,7 +147,7 @@ const getCurrSelected = (condition: any) => {
           :style="`width: ${item.type === 'label' ? '500' : '220'}px`" />
         <operator :readonly="readonly" :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :obj="item"
           :disabled="readonly" ref="operatorRef" v-model="item.attr.fieldOp" style="width: 120px" />
-        <AttrRender :conditions="conditionArr" :readonly="readonly" :selected="getCurrSelected(item)" :disabled="readonly" :item="item.attr"
+        <AttrRender :conditions="conditionArr" :readonly="readonly" :outside="outside"  :selected="getCurrSelected(item)" :disabled="readonly" :item="item.attr"
           :obj="item" :attrs="attrs" />
 
         <div v-if="!readonly" style="zoom:.8">
