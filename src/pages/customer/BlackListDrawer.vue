@@ -212,10 +212,10 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       </el-tabs>
       <div class="detail" v-if="type === 'detail'">
         <div >
-          <FilterGroup :custom-rule-content="ruleContent" :readonly="type === 'detail'"/>
+          <FilterGroup :outside="true" :custom-rule-content="ruleContent" :readonly="type === 'detail'"/>
         </div>
         <div >
-          <EventGroup :p="eventContent" :readonly="type === 'detail'"/>
+          <EventGroup :outside="true" :p="eventContent" :readonly="type === 'detail'"/>
         </div>
         <div class="item">
           <HandAdd ref="handAddRef" :drawerType="type" :formValues="formValues" />

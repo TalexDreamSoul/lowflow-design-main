@@ -85,7 +85,7 @@ handleLoad()
   <div class="AttrScroller">
     <el-dropdown trigger="click">
       <span class="el-dropdown-link">
-        <el-input v-model="input" placeholder="请选择">
+        <el-input v-model="input" placeholder="请选择"  :disabled="readonly" >
           <template #suffix>
             <el-icon class="el-icon--right">
               <arrow-down />

@@ -53,7 +53,7 @@ getNodes()
 
 <template>
   <div>
-    <el-select style="width: 181px" v-model="model">
+    <el-select style="width: 181px" v-model="model" :disabled="readonly">
       <el-option :value="item.nodeId" :label="item.nodeName" v-for="item in nodes">{{ item.nodeName }}</el-option>
     </el-select>
   </div>
