@@ -66,7 +66,8 @@ function saveData() {
     return false;
   }
 
-  if ($getNodeName(sizeForm.nodeName)) {
+  const _gotNode = $getNodeName(sizeForm.nodeName)
+  if (_gotNode && _gotNode?.nodeId !== sizeForm.nodeId) {
     ElMessage.warning({
       message: "节点名称重复",
     });
@@ -93,7 +94,15 @@ function saveData() {
     return false;
   }
 
-  if (sizeForm.diversionRuleContent.data.filter(branch => $getNodeName(branch.branchName))?.length) {
+  if (sizeForm.diversionRuleContent.data.filter(branch => {
+    if (sizeForm.nodeName === branch.branchName) return true
+
+    const _gotNode = $getNodeName(branch.branchName)
+    if (!_gotNode || _gotNode?.nodeName === branch.branchName) {
+      return false
+    }
+    return true;
+  })?.length) {
     ElMessage.warning({
       message: "有重复的分支名称",
     });
@@ -193,8 +202,8 @@ const deleteBranch = (index: number) => {
               <el-input v-model="branch.branchName" />
             </el-col>
             <el-col :span="7">
-              <el-input-number :min="0" :max="100 - +totalBranchRatio + branch.branchRatio" placeholder="百分比"  controls-position="right" 
-                v-model="branch.branchRatio" />
+              <el-input-number :min="0" :max="100 - +totalBranchRatio + branch.branchRatio" placeholder="百分比"
+                controls-position="right" v-model="branch.branchRatio" />
             </el-col>
             <el-col :span="5">
               <el-text v-if="index > 1" type="primary" style="cursor: pointer;" @click="deleteBranch(index)">

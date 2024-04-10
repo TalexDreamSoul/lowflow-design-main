@@ -82,7 +82,8 @@ function saveData() {
     return false;
   }
 
-  if ($getNodeName(sizeForm.nodeName)) {
+  const _gotNode = $getNodeName(sizeForm.nodeName)
+  if (_gotNode && _gotNode?.nodeId !== sizeForm.nodeId) {
     ElMessage.warning({
       message: "节点名称重复",
     });
