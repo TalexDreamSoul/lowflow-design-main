@@ -12,8 +12,8 @@ const origin = {
   nodeId: "",
   diversionRuleContent: {
     data: [
-      { branchName: "分支", branchRatio: 50, children: [] },
-      { branchName: "分支", branchRatio: 50, children: [] },
+      { branchName: "分支1", branchRatio: 50, children: [] },
+      { branchName: "分支2", branchRatio: 50, children: [] },
     ],
   },
 };
@@ -24,7 +24,7 @@ const props = defineProps<{
 }>();
 const $getNodeName: any = window['$getNodeName']
 
-const { diversionRuleContent } = props.p
+const { diversionRuleContent, children } = props.p
 
 const sizeForm = reactive<typeof origin>(origin);
 
@@ -33,8 +33,13 @@ const sizeForm = reactive<typeof origin>(origin);
   (() => {
     origin.diversionRuleContent.data = [];
 
-    diversionRuleContent.data.forEach((child: any) => {
-      const _gotNode = $getNodeName(child.branchName)
+    diversionRuleContent.data.forEach((child: any, index: number) => {
+      let _gotNode
+      if (index >= 0 && index < children.length) {
+        _gotNode = children[index]
+      }
+      console.log('index', index, _gotNode)
+      // const _gotNode = $getNodeName(child.branchName)
 
       const obj = {
         branchName: child.branchName,
@@ -125,12 +130,20 @@ function saveData() {
   })
 
   // transform branch prop 2 children prop
-  sizeForm.diversionRuleContent.data.forEach((branch: any) => {
+  sizeForm.diversionRuleContent.data.forEach((branch: any, index) => {
     if (branch['$id']) {
       const _gotNode = window.$getNodeById(branch.$id)
       console.log("_", branch, _gotNode)
 
-      _gotNode.nodeName = branch.branchName
+      if (_gotNode.nodeContent?.data) {
+        _gotNode.nodeContent.data.branchName = branch.branchName
+      } else {
+        _gotNode.nodeContent = {
+          data: {
+            branchName: branch.branchName
+          }
+        }
+      }
 
       _.children.push(_gotNode)
 
@@ -140,7 +153,11 @@ function saveData() {
     const child = {
       nodeType: "subDiversion",
       nodeName: branch.branchName,
-      branchName: branch.branchName,
+      nodeContent: {
+        data: {
+          branchName: branch.branchName
+        }
+      },
       branchRatio: branch.branchRatio,
       nodeId: randomStr(12),
       children: branch.children || [],
@@ -183,7 +200,7 @@ const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
 const addBranch = () => {
-  const nodeName = "流量策略器" + (sizeForm.diversionRuleContent.data.length + 1)
+  const nodeName = "分支" + (sizeForm.diversionRuleContent.data.length + 1)
 
   sizeForm.diversionRuleContent.data.push({ branchName: nodeName, branchRatio: 0, children: [] });
 };

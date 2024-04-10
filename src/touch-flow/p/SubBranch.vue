@@ -128,9 +128,13 @@ let _saveFunc: (() => boolean) | null = null
 function handleSave() {
   if (!_saveFunc || !_saveFunc()) return
 
-  data.nodeContent = {
-    data: {
-      $template: pushTemplate.value
+  if (data.nodeContent?.data) {
+    data.nodeContent.data.$template = pushTemplate.value
+  } else {
+    data.nodeContent = {
+      data: {
+        $template: pushTemplate.value
+      }
     }
   }
 
@@ -207,7 +211,7 @@ provide('save', (regFunc: () => boolean) => {
       {{ data.nodeName }}
       <span style="float: right;font-size: 14px;color:#797979;
       font-weight: 500;">
-        {{ data.branchName }}
+        {{ data.nodeContent?.data?.branchName }}
 
         <span style="color: #00C068;font-weight: 600">{{ data.branchRatio }}%</span>
       </span>

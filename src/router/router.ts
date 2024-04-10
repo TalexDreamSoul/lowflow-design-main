@@ -4,7 +4,6 @@ import { createRouter, createWebHistory } from "vue-router";
 
 
 const routerDefault = useStorage("router-default");
-console.log(`output->routerDefault`,routerDefault.value)
 export const routes: RouterOptions["routes"] = [
   {
     path: "/",

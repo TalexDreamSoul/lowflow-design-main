@@ -108,7 +108,7 @@ function saveData() {
 
   console.log("> update", sizeForm, props);
 
-  const _: any = { nodeId: "", children: [] };
+  const _: any = { nodeId: "", nodeContent: {}, children: [] };
   Object.assign(_, sizeForm);
 
   Object.assign(props.p, _);
