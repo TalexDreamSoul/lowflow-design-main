@@ -496,6 +496,8 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         display: flex;
         gap: 4px;
         margin-top: 8px;
+        overflow: hidden;
+        flex-wrap: wrap;
         .el-tag {
           padding: 8px;
           font-size: 14px;
