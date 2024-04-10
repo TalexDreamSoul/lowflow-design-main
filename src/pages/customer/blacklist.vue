@@ -15,7 +15,7 @@
         <el-form-item>
           <el-input
             v-model="pageParams.blacklistName"
-            placeholder="标签名称"
+            placeholder="黑名单名称"
             clearable
             :suffix-icon="Search"
           />
