@@ -149,42 +149,32 @@ function handleSave() {
 }
 
 const pushTemplate = computed(() => {
-  if (!data.material || !data.touch) {
+  const { type } = data?.touchTemplateContent || {};
+  if (!type || String(data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') === -1)
     return {
       has: false,
-      val: ''
-    }
-  }
-
-  const { type, templates } = data.material
-  const { type: targetId } = data.touch
-
-  const res = templates.filter((item: any) => item.id === targetId)?.[0]?.name || 'ERROR'
+      val: "",
+    };
 
   let val;
 
-  if (type === 'sms') {
-    val = '短信模板：'
-  } else if (type === 'znx') {
-    val = '站内信模板：'
-  } else if (type === 'appPush') {
-    val = 'APP消息模板：'
-  } else if (type === 'digital') {
-    val = '企微模板：'
-  } else if (type === 'outbound') {
-    val = '智能外呼模板：'
+  if (type === "sms") {
+    val = "短信模板：";
+  } else if (type === "znx") {
+    val = "站内信模板：";
+  } else if (type === "appPush") {
+    val = "APP消息模板：";
+  } else if (type === "digital") {
+    val = "企微模板：";
+  } else if (type === "outbound") {
+    val = "智能外呼模板：";
   }
 
-  const obj = {
+  return {
     has: type?.length,
-    val: `${val}${res}`
-  }
-
-  // Object.defineProperty(, '$template', { value: obj, enumerable: false, configurable: false, writable: false })
-
-  return obj
-})
-
+    val,
+  };
+});
 const delayedActionStr = computed(() => {
   const action = data?.nodeDelayed?.delayedAction;
   if (!action) return "";
@@ -246,8 +236,8 @@ provide('save', (regFunc: () => boolean) => {
         </div>
       </template>
       <template v-else>
-        
-        <el-empty  :image="Maskgroup" :image-size="76">
+
+        <el-empty :image="Maskgroup" :image-size="76">
           <template #description>
             暂未配置.
           </template>
