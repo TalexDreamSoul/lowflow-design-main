@@ -166,6 +166,11 @@ function getNodes() {
   <AttrScroller v-if="doTouchFlow" :readonly="readonly" v-model="item.fieldReplaceValue" />
   <NodeRender :conditions="conditions" :obj="obj" :readonly="readonly" v-model="item.fieldReplaceValue"
     v-else-if="item.field === 'nodeId'" />
+  <el-select style="width: 120px" v-else-if="item.field === 'touchResult'" v-model="item.fieldReplaceValue">
+    <el-option value="pushRead" label="推送已读">推送已读</el-option>
+    <el-option value="message" label="消息送达">消息送达</el-option>
+    <el-option value="messageClick" label="消息点击">消息点击</el-option>
+  </el-select>
 
   <div v-else-if="obj?.type !== 'label' && !(item.fieldOp?.indexOf('空') !== -1)" class="AttrRender"
     style="display: flex; gap: 1rem">

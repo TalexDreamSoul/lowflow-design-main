@@ -193,7 +193,7 @@ export default function initGraph() {
         // 限制连线配置
         return true;
       },
-      createEdge() {},
+      createEdge() { },
     },
     // selecting: {
     //   enabled: true,
