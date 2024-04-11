@@ -28,7 +28,7 @@ console.log('AttrRender', props)
 const timeInterval = ref<any>();
 const _ph = computed(() => props.placeholder ?? "请输入值");
 const timePointSection = ref<"past" | "future">("past");
-const timeCastSection = ref<"within" | "without">("within");
+const timeCastSection = ref<boolean>(true);
 const type = computed(() =>
   props.selected
     ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)(props.selected)
@@ -69,11 +69,11 @@ watchEffect(() => {
 
   if (!props.item.timeCondition) {
     props.item.timeCondition = {
-      endDay: 0,
+      endDay: 1,
       endTime: "",
       isFuture: false,
       isWithin: false,
-      startDay: 0,
+      startDay: 1,
       startTime: "",
       timeType: "", //operator === '绝对时间' ? 'absolute' : 'relative'
     };
@@ -155,7 +155,8 @@ function onTimePointChange(val: typeof timePointSection.value) {
 }
 
 function onTimeCastChange(val: typeof timeCastSection.value) {
-  props.item.timeCondition.isWithin = val === "within";
+  console.log(`output->timeCondition`,props.item.timeCondition.isWithin,val)
+  // props.item.timeCondition.isWithin = val === "within";
 }
 
 function getNodes() {
@@ -218,10 +219,15 @@ function getNodes() {
               <span class="pseudo-text">至未来</span>
             </template>
             <template #suffix>
-              <span class="pseudo-text">天之内</span>
+              <span class="pseudo-text">天</span>
             </template>
           </el-input>
         </template>
+        <el-select :placeholder="_ph" :disabled="readonly" style="width: 120px" @change="onTimeCastChange"
+        v-model="timeCastSection">
+        <el-option :value="true" label="之内" />
+        <el-option :value="false" :label="timePointSection!='past'?'之后':'之前'" />
+      </el-select>
       </template>
     </template>
 
