@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import { useDebounceFn, useVModel } from "@vueuse/core";
-import { ref, h, reactive, watchEffect, nextTick, computed, onBeforeMount } from "vue";
+import {
+  ref,
+  h,
+  reactive,
+  watchEffect,
+  nextTick,
+  computed,
+  onBeforeMount,
+} from "vue";
 import { createFloatingPanel } from "./floating-panel";
 import { getDictAnalyzedTree, validatePropValue } from "../../flow-utils";
 import TouchSelectWrapper from "./TouchSelectable.vue";
 import Operator from "../../page/Operator.vue";
 import AttrRender from "~/touch-flow/page/AttrRender.vue";
 import { randomStr } from "~/utils/common";
-import {Delete, CirclePlusFilled, Plus } from "@element-plus/icons-vue";
+import { Delete, CirclePlusFilled, Plus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { VariableTemplateDTO } from "../../touch-total";
 
@@ -19,7 +27,6 @@ const props = defineProps<{
   disabled?: boolean;
   ignoreId?: boolean;
   outside?: boolean;
-
 }>();
 
 const contentRef = ref<HTMLElement>();
@@ -111,7 +118,8 @@ function _displayRender() {
 
         const _ = `<button unselectable="on" id="${index}" data-id="${index}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">${text}</span>&nbsp;${settingSvg}</button>`;
 
-        __content = __content.slice(0, ind) + _ + __content.slice(ind + id.length);
+        __content =
+          __content.slice(0, ind) + _ + __content.slice(ind + id.length);
       }
     }
   }
@@ -180,10 +188,14 @@ function insertNode(htmlX: string) {
 const getCurrSelected = (condition: any) =>
   [...dictTree.value]
     .map((_: any) =>
-      [..._.children].map((__: any) => (__.children?.length ? __.children : [__]))
+      [..._.children].map((__: any) =>
+        __.children?.length ? __.children : [__]
+      )
     )
     .flat(2)
-    .find((_: any) => _.field === condition.field || _.label === condition.field);
+    .find(
+      (_: any) => _.field === condition.field || _.label === condition.field
+    );
 
 let _floating: any;
 
@@ -304,11 +316,11 @@ function _handleBlur() {
   contentDom?.childNodes.forEach((node: ChildNode) => {
     if (node.nodeName === "BUTTON") {
       const id = (node as HTMLElement).dataset.id;
-      const obj = variableMap.get(id!)!
+      const obj = variableMap.get(id!)!;
       if (obj.labelName || obj.fieldName) {
-        console.log("aaa", obj)
+        console.log("aaa", obj);
         content += `$$${id}$$`;
-      } else variableMap.delete(id!)
+      } else variableMap.delete(id!);
     } else content += node.nodeValue;
   });
 
@@ -411,8 +423,7 @@ function handleAdd() {
 
 <template>
   <div :class="{ disabled }" tabindex="1" class="TouchSettingsContentWrapper">
-    <div @click="handleClick" @input="handleBlur" ref="contentRef" class="TouchSettingsContent"
-      contenteditable="true" />
+    <div @click="handleClick" @input="handleBlur" ref="contentRef" class="TouchSettingsContent" contenteditable="true" />
 
     <el-button @click="addLabel">
       <el-icon color="#326DD7">
@@ -432,17 +443,15 @@ function handleAdd() {
     </template>
 
     <div class="DialogWrapper">
-      <div :id="`variable-item-${index}`" v-for="(item, index) in dialogVariable?.variables"
-        class="TouchFloatingContent">
+      <div :id="`variable-item-${index}`" v-for="(item, index) in dialogVariable?.variables" class="TouchFloatingContent">
         <Operator style="width: 100px" :item="item" :attrs="attrs.attrs" v-model="item.fieldOp" />
         <!-- && item.fieldOp?.indexOf('等于') === -1 -->
-        <AttrRender :outside="outside" v-if="item.fieldOp?.indexOf('空') === -1"  :item="item" :attrs="attrs.attrs" />
+        <AttrRender :outside="outside" v-if="item.fieldOp?.indexOf('空') === -1" :item="item" :attrs="attrs.attrs" />
         <div class="ContentSingleLine">
           <span>赋值为</span>
           <el-input v-model="item.compareValue" />
         </div>
-        <el-icon @click="dialogVariable?.variables?.splice(index, 1)"
-          :style="!index ? `opacity: 0;pointer-events: none` : ''">
+        <el-icon @click="dialogVariable?.variables?.splice(index, 1)" :style="!index ? `opacity: 0;pointer-events: none` : ''">
           <Delete />
         </el-icon>
       </div>
@@ -526,9 +535,9 @@ function handleAdd() {
 
 .TouchSettingsContentWrapper {
   &.disabled {
-    opacity: 0.75;
+    // opacity: 0.75;
     pointer-events: none;
-
+    color: var(--el-disabled-text-color);
     background-color: var(--el-disabled-bg-color); //#F5F7FA;
   }
 
@@ -633,10 +642,8 @@ function handleAdd() {
   background-image: none;
   border-radius: var(--el-input-border-radius, var(--el-border-radius-base));
   cursor: text;
-  transition: var(--el-transition-box-shadow);
-  transform: translate3d(0, 0, 0);
-  box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color)) inset;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color))
+    inset;
 
-  overflow: hidden;
 }
 </style>
