@@ -10,6 +10,7 @@ const props = defineProps<{
 }>();
 const origin = {
   labelName: "",
+  onlyuseDaily:false,
   labelType: "",
   labelValue: {
     data: [""],
@@ -134,6 +135,13 @@ function handleChange(val: any) {
           </el-form-item>
           <el-form-item label="标签名称">
             <el-input v-model="model.labelName" />
+          </el-form-item>
+
+          <el-form-item label="仅使用当日数据">
+            <span>
+              （若此开关打开，使用该标签时仅当日效据有效）
+            </span> <el-switch v-model="model.onlyuseDaily" />
+           
           </el-form-item>
           <el-form-item v-if="model.labelValueType === 'text'" v-for="(item, index) in model.labelValue.data" :label="`标签值${index + 1}`">
             <div style="display: flex;width: 100%;">
