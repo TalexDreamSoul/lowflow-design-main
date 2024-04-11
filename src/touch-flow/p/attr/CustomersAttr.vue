@@ -165,7 +165,7 @@ function transformBlackListData() {
           <el-option value="yes" label="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select placeholder="请选择" v-model="blackList.list" multiple :disabled="readonly"
+        <el-select  collapse-tags   placeholder="请选择" v-model="blackList.list" multiple :disabled="readonly"
           v-if="blackList?._enable === 'yes'" style="width: 300px">
           <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
