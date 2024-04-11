@@ -12,7 +12,7 @@
       <el-form-item prop="accountPassword">
         <el-input v-model="state.loginForm.accountPassword" placeholder="帐号密码" name="accountPassword" tabindex="2" autocomplete="on" />
       </el-form-item>
-      <el-form-item prop="email">
+      <!-- <el-form-item prop="email">
         <el-input v-model="state.loginForm.email" placeholder="邮箱" name="accountemail" tabindex="2" autocomplete="on" />
       </el-form-item>
       <el-form-item prop="phone">
@@ -20,7 +20,7 @@
       </el-form-item>
       <el-form-item prop="roleId">
         <el-input v-model="state.loginForm.roleId" placeholder="角色Id" name="roleId" tabindex="2" autocomplete="on" />
-      </el-form-item>
+      </el-form-item> -->
       <el-button :loading="state.loading" type="primary" size="large" style="width: 100%; margin-bottom: 30px" @click="handleLogin">Login</el-button>
     </el-form>
   </div>
