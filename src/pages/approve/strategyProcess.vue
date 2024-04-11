@@ -42,7 +42,7 @@
         </el-table-column>
         <el-table-column label="活动起止时间" width="453">
           <template #default="scope">
-            {{ scope.row.startTime }}~{{ scope.row.endTime }}
+            {{ flowTime(scope.row) }}
           </template>
         </el-table-column>
         <el-table-column label="类型" width="314">
@@ -251,6 +251,26 @@ watch(
 onMounted(() => {
   getData({ ...pageParams, pageNum: 1 });
 });
+
+const flowTime = (data: any) => {
+  const _time = data.executeTime;
+  // if (!_time) return "-";
+
+  if (_time) {
+    const s: Date = _time;
+
+    return s.toLocaleString().replaceAll("/", "-");
+  }
+
+  // const [date1, date2] = _time;
+  const { startTime, endTime } = data;
+  if (!startTime || !endTime) return "-";
+
+  const date1Text = startTime; //.toLocaleDateString().replaceAll("/", "-");
+  const date2Text = endTime; //.toLocaleDateString().replaceAll("/", "-");
+
+  return `${date1Text} 至 ${date2Text}`;
+};
 
 const currentChange = (value: number) => {
   pageNum.value = value;
