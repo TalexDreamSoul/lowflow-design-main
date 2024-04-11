@@ -299,6 +299,13 @@ const handleDelete = (values: any) => {
       margin-bottom: 16px;
     }
 
+    .detail .item {
+      background-color: #f2f4f8;
+      .el-table__empty-block {
+        background-color: #f2f4f8;
+      }
+    }
+
     .el-table {
       border-radius: 0;
 
