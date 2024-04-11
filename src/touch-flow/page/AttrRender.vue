@@ -12,6 +12,7 @@ const props = defineProps<{
   conditions: any[];
   selected?: string;
   readonly?: boolean;
+  outside?: boolean;
   placeholder?: string;
 }>();
 const emits = defineEmits<{
@@ -163,10 +164,10 @@ function getNodes() {
 </script>
 
 <template>
-  <AttrScroller v-if="doTouchFlow" :readonly="readonly" v-model="item.fieldReplaceValue" />
+  <AttrScroller v-if="doTouchFlow" :readonly="readonly" :outside="outside"  v-model="item.fieldReplaceValue" />
   <NodeRender :conditions="conditions" :obj="obj" :readonly="readonly" v-model="item.fieldReplaceValue"
     v-else-if="item.field === 'nodeId'" />
-  <el-select style="width: 120px" v-else-if="item.field === 'touchResult'" v-model="item.fieldReplaceValue">
+  <el-select style="width: 120px" v-else-if="item.field === 'touchResult'" :disabled="readonly" v-model="item.fieldReplaceValue">
     <el-option value="pushRead" label="推送已读">推送已读</el-option>
     <el-option value="message" label="消息送达">消息送达</el-option>
     <el-option value="messageClick" label="消息点击">消息点击</el-option>

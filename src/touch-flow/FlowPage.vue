@@ -228,6 +228,7 @@ async function submitReview(status: string = "approvalPending") {
     ...flowOptions.p,
     nodes: flatMaps(transformNodes([...flowOptions.p.children])),
     touchName: flowOptions.basic.touchName,
+    touchCode: flowOptions.basic.touchCode,
     ...transformDisturb(flowOptions.basic.disturb),
     ...transformTarget(flowOptions.basic.target),
   };

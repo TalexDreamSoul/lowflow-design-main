@@ -9,6 +9,7 @@ import BehaviorSubContent from "../behavior/BehaviorSubContent.vue";
 const props = defineProps<{
   condition: CustomEventConditionDTO;
   dict: any;
+  outside?: boolean;
   readonly?: boolean;
 }>();
 
@@ -111,7 +112,7 @@ function handleSelectChanged(val: string, event: any) {
           </span>
         </div>
 
-        <BehaviorSubContent title="并且满足" :index="index" :dict="dict" :condition="event"  :readonly="readonly"/>
+        <BehaviorSubContent :outside="outside" title="并且满足" :index="index" :dict="dict" :condition="event"  :readonly="readonly"/>
         <!-- <TouchGenre :condition="event" :dict="dict" /> -->
       </div>
     </LogicalLine>

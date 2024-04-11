@@ -13,6 +13,8 @@ const props = defineProps<{
   index: number;
   readonly?: boolean;
   dict: any;
+  outside?: boolean;
+
 }>();
 
 const dataObj = Object.freeze({
@@ -76,7 +78,7 @@ const attrs = computed(() => {
           :readonly="readonly" />
         <operator :attrs="attrs" :item="item" ref="operatorRef" v-model="item.attr.fieldOp" :readonly="readonly" />
 
-        <AttrRender :obj="item" :conditions="getConditions()" :item="item.attr" :attrs="attrs" :readonly="readonly" />
+        <AttrRender :obj="item"  :outside="outside"  :conditions="getConditions()" :item="item.attr" :attrs="attrs" :readonly="readonly" />
 
         <el-text type="primary" style="cursor: pointer" @click="handleDel(index)" v-if="!readonly" :disabled="readonly">
           <el-icon size="14">

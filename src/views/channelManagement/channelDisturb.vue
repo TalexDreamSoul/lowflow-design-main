@@ -288,7 +288,7 @@ const onSubmit = async () => {
           <el-option label="过滤" value="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select :disabled="dialogOptions?.disabled" placeholder="请选择" v-model="blackList" multiple
+        <el-select collapse-tags  :disabled="dialogOptions?.disabled" placeholder="请选择" v-model="blackList" multiple
           v-if="dialogOptions.data._enable" style="width: 300px">
           <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>

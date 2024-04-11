@@ -3,7 +3,7 @@
     :with-header="false" class="pd-drawer">
     <div class="pd-drawer-header">高级筛选</div>
     <div class=" pd-drawer-content"  >
-      <FilterGroup :custom-rule-content="customRuleContent" />
+      <FilterGroup :outside="true" :custom-rule-content="customRuleContent" />
     </div>
     <div class="pd-drawer-footer">
       <el-button  @click="modalVisible = false"

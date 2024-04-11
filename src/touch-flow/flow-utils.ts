@@ -19,7 +19,8 @@ export async function getDictAnalyzedTree() {
   const _labels = labels.map((label: any) => {
     const children: any = [];
     if (label.labelValue) {
-      [...label.labelValue.data].forEach((item) => {
+      let arr=label?.labelValue?.data||[]
+      arr.forEach((item:any) => {
         children.push({
           label: item,
           value: item,

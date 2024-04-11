@@ -15,7 +15,7 @@
         <el-form-item>
           <el-input
             v-model="pageParams.blacklistName"
-            placeholder="标签名称"
+            placeholder="黑名单名称"
             clearable
             :suffix-icon="Search"
           />
@@ -297,6 +297,13 @@ const handleDelete = (values: any) => {
       padding: 24px 16px 0;
      // background-color: #f2f4f8;
       margin-bottom: 16px;
+    }
+
+    .detail .item {
+      background-color: #f2f4f8;
+      .el-table__empty-block {
+        background-color: #f2f4f8;
+      }
     }
 
     .el-table {

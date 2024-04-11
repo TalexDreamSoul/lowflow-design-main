@@ -11,6 +11,7 @@ import {
 const props = defineProps<{
   condition: SequenceConditionDTO;
   dict: any;
+  outside?: boolean;
   readonly?: boolean;
 }>();
 const emits = defineEmits(["del"]);
@@ -170,7 +171,7 @@ const defaultTime2: [Date, Date] = [
         删除
       </el-text>
 
-      <SequenceSubContent :index="_index" :dict="dict" :eventCode="event.eventCode" :condition="event.conditions" :readonly="readonly" />
+      <SequenceSubContent :index="_index" :dict="dict" :eventCode="event.eventCode" :condition="event.conditions" :readonly="readonly" :outside="outside"/>
     </div>
   </div>
 </template>

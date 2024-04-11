@@ -7,6 +7,7 @@ import { CustomAttrConditionDTO } from "../../touch-total";
 
 const props = defineProps<{
   custom: CustomAttrConditionDTO;
+  outside?: boolean;
   readonly?: boolean;
 }>();
 
@@ -48,7 +49,7 @@ provide("refreshTree", refreshTree);
       <div v-if="dict && custom?.conditions?.length" class="Target-Block">
         <LogicalLine :readonly="readonly" :display="custom?.conditions?.length < 2" v-model="custom.logicalChar">
           <div class="item" v-for="(condition, index) in custom.conditions" :key="index">
-            <CustomContent :readonly="readonly" :condition="condition" :dict="dict" />
+            <CustomContent  :readonly="readonly"   :outside="outside" :condition="condition" :dict="dict" />
           </div>
         </LogicalLine>
       </div>

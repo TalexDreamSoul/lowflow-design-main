@@ -10,6 +10,7 @@ const props = defineProps<{
   length: number;
   index: number;
   dict: any;
+  outside?: boolean;
   readonly?: boolean;
   configuration: {
     time: boolean,
@@ -132,7 +133,7 @@ const defaultTime2: [Date, Date] = [
       </div>
     </div>
 
-    <BehaviorSubContent :readonly="readonly" title="并且满足" :index="index" :dict="dict" :condition="condition" />
+    <BehaviorSubContent :outside="outside" :readonly="readonly" title="并且满足" :index="index" :dict="dict" :condition="condition" />
 
     <!-- </div> -->
     <!-- </LogicalLine> -->

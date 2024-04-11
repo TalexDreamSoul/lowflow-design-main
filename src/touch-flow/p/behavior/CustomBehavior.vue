@@ -12,6 +12,7 @@ import {
 const props = defineProps<{
   custom: CustomEventConditionDTO;
   readonly?: boolean;
+  outside?: boolean;
   configuration: {
     time: boolean,
     action: boolean
@@ -75,7 +76,7 @@ provide("refreshTree", refreshTree);
           <LogicalLine v-model="condition.logicalChar" v-for="(condition, index) in custom.conditions"
             :display="condition?.conditions?.length < 2" :key="index">
             <BehaviorContent v-for="(item, ind) in condition.conditions" :key="ind" @addSub="handleAdd(condition)"
-              @del="handleDel(ind, condition)" :readonly="readonly" :condition="item" :configuration="configuration"
+              @del="handleDel(ind, condition)" :readonly="readonly"  :outside="outside" :condition="item" :configuration="configuration"
               :index="ind" :length="condition.conditions.length" :dict="dict" />
           </LogicalLine>
         </LogicalLine>

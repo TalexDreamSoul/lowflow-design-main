@@ -10,7 +10,8 @@ const props = defineProps<{
   condition: any;
   index: number;
   dict: any;
-  title?: string
+  title?: string;
+  outside?: boolean;
 }>();
 
 function getConditions() {
@@ -64,7 +65,7 @@ const attrs = computed(() => {
             </el-col>
             <el-col :xs="24" :sm="6" v-if="item.field">
               <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                <AttrRender :item="item" :attrs="attrs" />
+                <AttrRender  :outside="outside"  :item="item" :attrs="attrs" />
               </el-form-item>
             </el-col>
             <el-col class="add-filter__inner" :xs="24" :sm="3" style="zoom:.8">

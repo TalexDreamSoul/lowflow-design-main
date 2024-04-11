@@ -13,6 +13,8 @@ const props = defineProps<{
   dict: any;
   title?: string;
   readonly?: boolean;
+  outside?: boolean;
+
 }>();
 
 const dataObj = Object.freeze({
@@ -87,7 +89,7 @@ const getCurrSelected = (condition: any) => {
           :readonly="readonly" placeholder="客户属性/标签" style="width: 220px" />
         <operator :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :disabled="readonly"
           v-model="item.attr.fieldOp" />
-        <AttrRender :obj="item"  :conditions="getConditions()" :selected="getCurrSelected(item)" :readonly="readonly"
+        <AttrRender :obj="item"  :conditions="getConditions()"   :outside="outside"  :selected="getCurrSelected(item)" :readonly="readonly"
           :item="item.attr" :attrs="attrs" />
 
         <el-text v-if="!readonly" type="primary" style="cursor: pointer" @click="handleDel(index)">

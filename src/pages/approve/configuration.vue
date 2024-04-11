@@ -50,7 +50,7 @@
         :model="formValues"
         :disabled="checkStringEqual(modalType, DrawerType.Detail)"
       >
-        <el-form-item label="审核流名称" prop="configName">
+        <el-form-item label="审核流程名称" prop="configName">
           <el-input v-model="formValues.configName" :disabled="true" />
         </el-form-item>
         <el-form-item label="审核层级">
