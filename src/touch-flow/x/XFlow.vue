@@ -110,7 +110,7 @@ const layoutFn = () => {
     Start: (height: number) => height - 95,
     strategy: (height: number, data: any) => {
       console.log("@@@---", data.data);
-      if (data.data?.father?.nodeType === "subDiversion") return height - 40;
+      if (data.data?.father?.nodeType === "subDiversion") return height - 360;
       if (data.data.diversionType === "safeguard") return height - 455;
 
       if (props.readonly) {
