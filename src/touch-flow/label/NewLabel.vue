@@ -106,10 +106,10 @@ function handleChange(val: any) {
         </el-select>
         &nbsp;
         <template v-if="selectItem?.labelValueType">
-          <el-select :disabled="readonly" v-if="selectItem.labelValueType === 'text'" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px" multiple>
+          <el-select collapse-tags :disabled="readonly" v-if="selectItem.labelValueType === 'text'" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px" multiple>
             <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
           </el-select>
-          <el-select :disabled="readonly" v-else="" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px">
+          <el-select   :disabled="readonly" v-else="" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px">
             <!-- <el-option /> -->
             <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
           </el-select>
