@@ -12,8 +12,8 @@ const origin = {
   nodeId: "",
   diversionRuleContent: {
     data: [
-      { branchName: "分支1", branchRatio: 50, children: [] },
-      { branchName: "分支2", branchRatio: 50, children: [] },
+      { branchName: "", branchRatio: 50, children: [] },
+      { branchName: "", branchRatio: 50, children: [] },
     ],
   },
 };
@@ -233,7 +233,7 @@ const deleteBranch = (index: number) => {
           <el-row :gutter="20" style="    align-items: center;
           margin-top: 16px;" v-for="(branch, index) in sizeForm.diversionRuleContent.data" :key="index">
             <el-col :span="12">
-              <el-input v-model="branch.branchName" />
+              <el-input placeholder="请输入分支名称" v-model="branch.branchName" />
             </el-col>
             <el-col :span="7">
               <el-input-number :min="0" :max="100 - +totalBranchRatio + branch.branchRatio" placeholder="百分比"
