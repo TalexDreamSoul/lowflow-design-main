@@ -1,10 +1,12 @@
 <script setup lang="ts" name="TouchSettings">
 import TouchSettingContents from "../touch/TouchSettingContents.vue";
-import { reactive, ref, computed, watchEffect, nextTick } from "vue";
+import { reactive, ref, computed, watchEffect, nextTick, onMounted } from "vue";
 import { getQryMaterial } from "~/api";
 import { MaterialTemplateEditDTO } from "./touch-types";
 import { createTemplatePopover } from "~/utils/touch-templates";
-
+import {
+  dictFilterTree,
+} from "~/api/index";
 import ZnxTemplateVue from "~/utils/templates/ZnxTemplate.vue";
 import SmsTemplateVue from "~/utils/templates/SmsTemplateVue.vue";
 import AppTemplateVue from "~/utils/templates/AppTemplateVue.vue";
@@ -92,6 +94,36 @@ watchEffect(() => {
       refreshMaterialTemplate(false).then(() => assignData(touchOptions.id))
     });
   })
+});
+
+type MaterialType = {
+    name: string;
+    value: string;
+};
+
+const materialType = ref<MaterialType[]>([]);
+
+// 展示几个触达内容
+const getDictmaterialType = async () => {
+  const res: any = await dictFilterTree();
+  let { materialTypes } = res?.data;
+  let getDictmaterialList = [];
+  getDictmaterialList = materialTypes.map(
+    (item: { code: any; message: any }) => {
+      return {
+        value: item.code,
+        name: item.message,
+      };
+    }
+  );
+  // getDictmaterialList.unshift({ value: "all", name: "模版总览" });
+  materialType.value = getDictmaterialList;
+
+  console.log(materialType, "materialType");
+
+};
+onMounted(async () => {
+  getDictmaterialType();
 });
 
 async function refreshMaterialTemplate(clearStatus: boolean = true) {
@@ -260,11 +292,17 @@ defineExpose({ updateData });
       <el-form-item label="触达通道">
         <el-select :disabled="readonly" placeholder="请选择通道" @change="refreshMaterialTemplate"
           v-model="touchOptions.type" style="width: 120px">
+<!-- 
           <el-option value="sms" label="短信">手机短信</el-option>
           <el-option value="appPush" label="app消息">appPush</el-option>
           <el-option value="digital" label="企微">企微</el-option>
           <el-option value="outbound" label="智能外呼">智能外呼</el-option>
-          <el-option value="znx" label="站内信">站内信</el-option>
+          <el-option value="znx" label="站内信">站内信</el-option> -->
+          <el-option
+          v-for="(item, key) in materialType" :key="key"
+          :label="item?.name"
+          :value="item?.value"
+        />
         </el-select>
       </el-form-item>
       <el-form-item v-if="touchOptions.type" label="选择模版">

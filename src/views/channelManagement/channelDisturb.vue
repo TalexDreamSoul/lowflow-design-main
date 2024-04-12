@@ -1,34 +1,43 @@
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { getGlobalDisturbDetail, getBlackList } from "~/api/index";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import API from "~/api/channelManagement";
 import { ElMessage } from "element-plus";
+import {
+  dictFilterTree,
+} from "~/api/index";
 // 定义名称固定顺序
 const nameOrder: string[] = ["APP PUSH", "手机短信", "企微", "外呼", "站内信"];
 
-const types = [
-  {
-    type: "appPush",
-    name: "APP PUSH",
-  },
-  {
-    type: "digital",
-    name: "企微",
-  },
-  {
-    type: "outbound",
-    name: "外呼",
-  },
-  {
-    type: "sms",
-    name: "手机短信",
-  },
-  {
-    type: "znx",
-    name: "站内信",
-  },
-];
+// const types = [
+//   {
+//     type: "appPush",
+//     name: "APP PUSH",
+//   },
+//   {
+//     type: "digital",
+//     name: "企微",
+//   },
+//   {
+//     type: "outbound",
+//     name: "外呼",
+//   },
+//   {
+//     type: "sms",
+//     name: "手机短信",
+//   },
+//   {
+//     type: "znx",
+//     name: "站内信",
+//   },
+// ];
+
+
+
+// onMounted(async () => {
+//   getDictmaterialType();
+// });
 const tableData = ref<any[]>([]);
 const dialogVisible = ref<boolean>(false);
 const dialogOptions = ref<{ type: "update" | "detail" } & any>({});
@@ -78,8 +87,22 @@ function transformBlackListData() {
     });
   }
 }
-(() => {
-  [...types].forEach(async (item) => {
+(async () => {
+  const res: any = await dictFilterTree();
+  let { materialTypes } = res?.data;
+  let getDictmaterialList = [];
+  getDictmaterialList = materialTypes.map(
+    (item: { code: any; message: any }) => {
+      return {
+        type: item.code,
+        name: item.message,
+      };
+    }
+  );
+
+  console.log(getDictmaterialList, "materialType");
+
+  [...getDictmaterialList].forEach(async (item) => {
     const res: any = await getGlobalDisturbDetail({ type: item.type });
 
     const obj = reactive({

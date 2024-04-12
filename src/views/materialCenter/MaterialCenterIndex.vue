@@ -3,6 +3,7 @@ import { ref, unref, reactive, onMounted, watch } from "vue";
 import dayjs from "dayjs";
 import {
   getQryMaterial,
+  dictFilterTree,
   setDeleteMaterial,
   setUpdateMaterialStatus,
 } from "~/api/index";
@@ -11,7 +12,7 @@ import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { createTemplatePopover } from "~/utils/touch-templates";
-import { materialType } from "~/utils/common";
+import { getDictmaterialType } from "~/utils/common";
 import { de, el } from "element-plus/es/locale";
 import Maskgroup from "~/assets/icon/Maskgroup.png";
 
@@ -50,32 +51,55 @@ const statusLabels = {
 // })
 
 const value = ref();
+type MaterialType = {
+    name: string;
+    value: string;
+};
+
+const materialType = ref<MaterialType[]>([]);
+
+const getDictmaterialType = async () => {
+  const res: any = await dictFilterTree();
+  let { materialTypes } = res?.data;
+  let getDictmaterialList = [];
+  getDictmaterialList = materialTypes.map(
+    (item: { code: any; message: any }) => {
+      return {
+        value: item.code,
+        name: item.message,
+      };
+    }
+  );
+  getDictmaterialList.unshift({ value: "all", name: "模版总览" });
+  materialType.value = getDictmaterialList;
+
+  console.log(materialType, "materialType");
+
+  materialTypeName.value = getNameByValue(
+    materialType,
+    String(route.params.type).replace("Template", "")
+  );
+};
+onMounted(async () => {
+  fetchDataApi();
+  getDictmaterialType();
+});
 
 function getNameByValue(data: any[], val: string) {
-  const item = data.find((item: { value: any }) => item.value === val);
+  const item = data.values?.find((item: { value: any }) => item.value === val);
   return item ? item.name : "";
 }
 
-const materialTypeName = ref(
-  getNameByValue(
-    materialType,
-    String(route.params.type).replace("Template", "")
-  )
-);
-
-console.log(materialTypeName); // 输出：短信
-onMounted(async () => {
-  fetchDataApi();
-});
+const materialTypeName = ref("");
 
 watch(
   () => route.fullPath,
   (val) => {
     console.log(`output->val`, val);
-    materialTypeName.value = getNameByValue(
-      materialType,
-      String(route.params.type).replace("Template", "")
-    );
+    // materialTypeName.value = getNameByValue(
+    //   materialType,
+    //   String(route.params.type).replace("Template", "")
+    // );
     formInline.type = String(route.params.type).replace("Template", "");
     fetchDataApi();
   }
@@ -236,8 +260,8 @@ const changeTime = (val: any) => {
         <el-table-column label="模版名称" prop="name" />
         <el-table-column label="模版类型" prop="type">
           <template #default="scope">
-            {{             getNameByValue(materialType, String(scope.row.type))
-          }}
+            <!-- {{             getNameByValue(materialType, String(scope.row.type))
+          }} -->
           </template>
         </el-table-column>
         <el-table-column label="状态">
@@ -281,7 +305,7 @@ const changeTime = (val: any) => {
           </template>
         </el-table-column>
         <template #empty>
-          <el-empty  :image="Maskgroup" :image-size="76">
+          <el-empty :image="Maskgroup" :image-size="76">
             <template #description>
               暂无数据
             </template>
