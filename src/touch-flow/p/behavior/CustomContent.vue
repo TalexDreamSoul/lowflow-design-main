@@ -72,7 +72,7 @@ const attrs = computed(() => {
   const _labels = labels.map((label: any) => {
     const children: any = [];
     if (label.labelValue) {
-      [...label.labelValue.data].forEach((item) => {
+      [...(label?.labelValue?.data || [])].forEach((item) => {
         children.push({
           label: item,
           value: item,
