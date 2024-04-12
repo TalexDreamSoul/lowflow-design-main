@@ -61,12 +61,12 @@
             }}
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="province"
           label="省份"
           width="77"
         ></el-table-column>
-        <el-table-column prop="city" label="城市" width="75"></el-table-column>
+        <el-table-column prop="city" label="城市" width="75"></el-table-column> -->
         <el-table-column
           prop="birthday"
           label="生日"
