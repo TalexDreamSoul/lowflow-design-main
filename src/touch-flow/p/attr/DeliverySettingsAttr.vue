@@ -121,13 +121,9 @@ function saveData() {
     return false;
   }
 
+  const _preId = randomStr(12)
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)
-
-  Object.defineProperty(_, 'father', {
-    value: markRaw(props.p),
-    enumerable: false
-  })
 
   // transform branch prop 2 children prop
   sizeForm.diversionRuleContent.data.forEach((branch: any, index) => {
@@ -160,16 +156,17 @@ function saveData() {
       },
       branchRatio: branch.branchRatio,
       nodeId: randomStr(12),
+      preNodeId: _.nodeId || _preId,
       children: branch.children || [],
       // father: _
     }
 
     // branch.branchName = branch.nodeName
 
-    Object.defineProperty(child, 'father', {
-      value: markRaw(_),
-      enumerable: false
-    })
+    // Object.defineProperty(child, 'father', {
+    //   value: markRaw(_),
+    //   enumerable: false
+    // })
 
     _.children.push(child)
   });
@@ -183,7 +180,8 @@ function saveData() {
   }
 
   else /* if (!_.id?.length)  */ {
-    _.nodeId = randomStr(12)
+    _.nodeId = _preId
+    _.preNodeId = props.p.nodeId
 
     props.p.children.push(_);
 

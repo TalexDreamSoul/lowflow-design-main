@@ -427,7 +427,7 @@ export type MarketingTouchNodeEditDTO = {
    * 是否包含目标
    */
   containTarget?: boolean;
-  customRuleContent: CustomSearchDTO;
+  customRuleContent?: CustomSearchDTO;
   diversionRuleContent?: JsonStructListDiversionRuleDTO;
   /**
    * 执行类型：noDiversion:不分流，event:按事件，attr：按属性, safeguard: 兜底

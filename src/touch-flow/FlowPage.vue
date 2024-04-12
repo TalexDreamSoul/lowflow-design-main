@@ -43,7 +43,7 @@ const flowOptions = reactive<
     },
   },
   p: {
-    nodeId: randomStr(12),
+    nodeId: "root",/* randomStr(12) */
     nodeType: "Start",
     height: 250,
     children: [] as any[],
@@ -135,30 +135,30 @@ function transformNodes(__nodes: Array<any>) {
   const res: Array<any> = [];
 
   [...__nodes].forEach((node: any) => {
-    console.log("do have father", node.father);
+    const nodeFather = window.$getNodeById(node.preNodeId)
 
     node.$id && (node.id = node.$id);
 
-    if (node.father) {
-      if (node.father.nodeType === "Start") {
-        node.preNodeId = "root";
-      } else {
-        // 先拿到父元素中children 我这个元素的位置
-        // const fatherInd = [...node.father.children].indexOf(
-        //   (item: any) => item.nodeId === node.nodeId
-        // );
+    if (nodeFather) {
+      // if (nodeFather.nodeType === "Start") {
+      //   node.preNodeId = "root";
+      // } else {
+      //   // 先拿到父元素中children 我这个元素的位置
+      //   // const fatherInd = [...node.father.children].indexOf(
+      //   //   (item: any) => item.nodeId === node.nodeId
+      //   // );
 
-        node.preNodeId = node.father.nodeId
-        // node.preNodeId =
-        //   fatherInd < 1
-        //     ? node.father.nodeId
-        //     : node.father.children[fatherInd - 1].nodeId;
-      }
+      //   node.preNodeId = node.father.nodeId
+      //   // node.preNodeId =
+      //   //   fatherInd < 1
+      //   //     ? node.father.nodeId
+      //   //     : node.father.children[fatherInd - 1].nodeId;
+      // }
 
       // node.nextNodeId = (fatherInd < node.father.children.length - 1 ? node.father.children[fatherInd + 1].nodeId : node.children?.[0]?.nodeId)
 
-      if (!node.father?.nextNodeId?.data) {
-        node.father.nextNodeId = {
+      if (!nodeFather?.nextNodeId?.data) {
+        nodeFather.nextNodeId = {
           data: [],
         };
       }

@@ -68,8 +68,6 @@ watchEffect(() => {
 
     if (props.p.touchTemplateContent)
       sizeForm.touchTemplateContent = props.p.touchTemplateContent;
-
-    console.log("aqwqsdadas", props.p, sizeForm)
   }
 });
 

@@ -19,8 +19,7 @@ export async function getDictAnalyzedTree() {
   const _labels = labels.map((label: any) => {
     const children: any = [];
     if (label.labelValue) {
-      let arr=label?.labelValue?.data||[]
-      arr.forEach((item:any) => {
+      [...(label?.labelValue?.data || [])].forEach((item: any) => {
         children.push({
           label: item,
           value: item,
@@ -62,12 +61,15 @@ export function _delChild(parent: any, child: any) {
 }
 
 export function delChild(child: {
-  father: any;
+  preNodeId: string;
   children: any[];
   [key: string]: any;
 }) {
+  const father = window.$getNodeById(child.preNodeId)
+  if (!father) return false;
+
   console.log("Del", child)
-  return _delChild(child.father, child);
+  return _delChild(father, child);
 }
 
 export interface IFlowUtils {
