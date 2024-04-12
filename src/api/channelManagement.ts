@@ -56,11 +56,11 @@ const customerAPI = {
   },
   // 权益上下线
   updateEquityStatus(data: any) {
-    return request.put({ url: "/api/updateEquityStatus.do", data });
+    return request.post({ url: "/api/updateEquityStatus.do", data });
   },
   // 更新勿扰设置
   updateGlobalDisturb(data: any) {
-    return request.put({ url: "/api/updateGlobalDisturb.do", data });
+    return request.post({ url: "/api/updateGlobalDisturb.do", data });
   },
 
 };

@@ -79,19 +79,19 @@ function transformBlackListData() {
   [...types].forEach(async (item) => {
     const res: any = await getGlobalDisturbDetail({ type: item.type })
 
-    const obj = {
+    const obj = reactive({
       ...res.data,
       name: item.name
-    }
+    })
 
     Object.defineProperty(obj, '$blacklistLimit', {
-      // value: obj.blacklistLimit,
       enumerable: true,
       get() {
-        return String(+obj.blacklistLimit)
+        return obj.blacklistLimit ? "过滤" : "不过滤"
       },
       set(val) {
-        obj.blacklistLimit = val
+        console.log('setter', 'blacklistLimit', val, obj)
+        obj.blacklistLimit = val === "过滤"
       }
     })
 
@@ -143,17 +143,17 @@ function transformBlackListData() {
       }
     }) */
 
-    obj._enable = !!obj.blacklistList?.length
+    // obj._enable = !!obj.blacklistList?.length
 
-    Object.defineProperty(obj, '$enable', {
-      enumerable: true,
-      get() {
-        return obj._enable ? "过滤" : "不过滤"
-      },
-      set(val) {
-        obj._enable = val === "过滤"
-      }
-    })
+    // Object.defineProperty(obj, '$enable', {
+    //   enumerable: true,
+    //   get() {
+    //     return obj._enable ? "过滤" : "不过滤"
+    //   },
+    //   set(val) {
+    //     obj._enable = val === "过滤"
+    //   }
+    // })
 
     console.log(obj)
 
@@ -203,7 +203,7 @@ const onSubmit = async () => {
       type: "info"
     })
 
-    location.reload()
+    // location.reload()
   }
 
 };
@@ -217,7 +217,7 @@ const onSubmit = async () => {
         <el-table-column label="渠道名称" prop="name" />
         <el-table-column label="触达次数是否限制">
           <template #default="{ row }">
-            {{ row.blacklistLimit ? '限制' : '不限制' }}
+            {{ row.touchLimit ? '限制' : '不限制' }}
           </template>
         </el-table-column>
         <el-table-column label="勿扰时段是否限制">
@@ -228,7 +228,8 @@ const onSubmit = async () => {
 
         <el-table-column label="过滤黑名单" prop="usedCount">
           <template #default="{ row }">
-            <span>{{ row.blacklistList?.length || '-' }}</span>
+            <!-- <span>{{ row.blacklistList?.length || '-' }}</span> -->
+            <span>{{ row.blacklistLimit ? "过滤" : '不过滤' }}</span>
           </template>
         </el-table-column>
 
@@ -250,7 +251,7 @@ const onSubmit = async () => {
       <div class="line">
         <span>1.每个客户触达次数限制：</span>
         <span>
-          <el-radio-group :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$blacklistLimit" class="ml-4">
+          <el-radio-group :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$touchLimit" class="ml-4">
             <el-radio label="0">不限制</el-radio>
             <el-radio label="1">限制</el-radio>
           </el-radio-group>
@@ -282,13 +283,14 @@ const onSubmit = async () => {
       </div>
       <div class="line">
         3.过滤黑名单
-        <el-select :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$enable" style="width: 100px">
+        <el-select :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$blacklistLimit"
+          style="width: 100px">
           <el-option label="不过滤" value="不过滤">不过滤</el-option>
           <el-option label="过滤" value="过滤">过滤</el-option>
         </el-select>
         &nbsp;
         <el-select collapse-tags :disabled="dialogOptions?.disabled" placeholder="请选择" v-model="blackList" multiple
-          v-if="dialogOptions.data._enable" style="width: 300px">
+          v-if="dialogOptions.data.blacklistLimit" style="width: 300px">
           <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
             <!-- <p>{{ item.blacklistDesc }}</p> -->
