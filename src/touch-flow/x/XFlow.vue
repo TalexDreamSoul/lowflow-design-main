@@ -107,7 +107,7 @@ const layoutFn = () => {
   } = { nodes: [], edges: [] };
 
   const _: any = {
-    Start: (height: number) => height - 95,
+    Start: (height: number) => height - 90,
     strategy: (height: number, data: any) => {
       console.log("@@@---", data.data);
       if (data.data?.father?.nodeType === "subDiversion") return height - 360;
@@ -115,7 +115,7 @@ const layoutFn = () => {
 
       if (props.readonly) {
         if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
-          return height - 60
+          return height - 77
 
         return height - 160
       }
