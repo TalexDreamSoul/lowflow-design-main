@@ -219,11 +219,12 @@ function getNodes() {
               <span class="pseudo-text">至未来</span>
             </template>
             <template #suffix>
-              <span class="pseudo-text">天</span>
+              <span class="pseudo-text">天之内</span>
             </template>
           </el-input>
         </template>
-        <el-select :placeholder="_ph" :disabled="readonly" style="width: 120px" @change="onTimeCastChange"
+
+        <el-select v-else :placeholder="_ph" :disabled="readonly" style="width: 120px" @change="onTimeCastChange"
         v-model="timeCastSection">
         <el-option :value="true" label="之内" />
         <el-option :value="false" :label="timePointSection!='past'?'之后':'之前'" />
