@@ -4,7 +4,6 @@ import {
   getGlobalDisturbDetail, getBlackList
 } from "~/api/index";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
-import DayJs from "dayjs";
 import API from "~/api/channelManagement";
 import { ElMessage } from "element-plus";
 
@@ -81,6 +80,7 @@ function transformBlackListData() {
 
     const obj = reactive({
       ...res.data,
+      originData: Object.freeze(res.data),
       name: item.name
     })
 
@@ -155,7 +155,7 @@ function transformBlackListData() {
     //   }
     // })
 
-    console.log(obj)
+    console.log(obj, tableData)
 
     tableData.value.push(obj)
 
@@ -203,7 +203,7 @@ const onSubmit = async () => {
       type: "info"
     })
 
-    // location.reload()
+    location.reload()
   }
 
 };
@@ -217,19 +217,19 @@ const onSubmit = async () => {
         <el-table-column label="渠道名称" prop="name" />
         <el-table-column label="触达次数是否限制">
           <template #default="{ row }">
-            {{ row.touchLimit ? '限制' : '不限制' }}
+            {{ row.originData.touchLimit ? '限制' : '不限制' }}
           </template>
         </el-table-column>
         <el-table-column label="勿扰时段是否限制">
           <template #default="{ row }">
-            {{ row.disturbLimit ? '限制' : '不限制' }}
+            {{ row.originData.disturbLimit ? '限制' : '不限制' }}
           </template>
         </el-table-column>
 
         <el-table-column label="过滤黑名单" prop="usedCount">
           <template #default="{ row }">
             <!-- <span>{{ row.blacklistList?.length || '-' }}</span> -->
-            <span>{{ row.blacklistLimit ? "过滤" : '不过滤' }}</span>
+            <span>{{ row.originData.blacklistLimit ? "过滤" : '不过滤' }}</span>
           </template>
         </el-table-column>
 
