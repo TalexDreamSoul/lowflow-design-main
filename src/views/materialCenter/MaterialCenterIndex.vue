@@ -51,7 +51,12 @@ const statusLabels = {
 // })
 
 const value = ref();
-const materialType = ref("");
+type MaterialType = {
+    name: string;
+    value: string;
+};
+
+const materialType = ref<MaterialType[]>([]);
 
 const getDictmaterialType = async () => {
   const res: any = await dictFilterTree();
