@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref, reactive, computed, provide, inject, watch, onBeforeUnmount } from "vue";
-import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
+import BaseNode from "./common/BaseNode.vue";
+import { computed, watch } from "vue";
+import { CircleCheckFilled } from "@element-plus/icons-vue";
 import ConditionSetAttr from "./attr/ConditionSetAttr.vue";
 import { genNodeParams } from './common/node-util'
 import peoples from "~/assets/icon/peoples.png";
-import peoplesactive from "~/assets/icon/peoplesactive.png";
-import sendactive from "~/assets/icon/sendactive.png";
-import send from "~/assets/icon/send.png";
+import PeopleActive from "~/assets/icon/peoplesactive.png";
+import SendActive from "~/assets/icon/sendactive.png";
+import Send from "~/assets/icon/send.png";
 
-const { readonly, data, openCustomer, dialogVisible, drawerOptions, openDrawer, comps, handleClick, handleSave, haveDiverse } = genNodeParams()
+const params = genNodeParams()
+const { readonly, data, openDrawer, openCustomer, haveDiverse } = params
 
 watch(data, () => {
   const { children } = data;
@@ -93,17 +95,13 @@ function openCondition() {
 </script>
 
 <template>
-  <!-- style="    margin-top: 100px;" -->
-  <el-card class="PBlock">
+  <BaseNode :params="params" :display="conditioned && customerConditioned.display" :disabled="readonly || haveDiverse">
     <p>进入流程设置</p>
     <div class="PBlock-Content">
       <div @click="openCustomer" :class="{ checked: customerConditioned.display }" class="PBlock-Section">
         <p>
-          <!-- <el-icon>
-            <User />
-          </el-icon> -->
-          
-          <el-image style="width: 18px; height: 18px" :src="customerConditioned.display?peoplesactive:peoples"  />
+
+          <el-image style="width: 18px; height: 18px" :src="customerConditioned.display ? PeopleActive : peoples" />
           受众客户
           <span v-if="customerConditioned.display">
             <el-icon>
@@ -119,8 +117,8 @@ function openCondition() {
       </div>
       <div @click="openCondition" :class="{ checked: conditioned }" class="PBlock-Section">
         <p>
-         
-          <el-image style="width: 18px; height: 18px" :src="conditioned?sendactive:send"  />
+
+          <el-image style="width: 18px; height: 18px" :src="conditioned ? SendActive : Send" />
 
           进入条件
           <span v-if="conditioned">
@@ -136,128 +134,5 @@ function openCondition() {
         <span v-else>设置流程类型、流程有效期、流程开始时间、进入限制。</span>
       </div>
     </div>
-
-    <teleport to=".FlowPage">
-      <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
-        <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
-            class="PBlock-Section">
-            <p style="    display: flex;
-            align-items: center;">
-              <el-icon v-if="item.icon.type === 'comp'">
-                <component :is="item.icon.value" />
-              </el-icon>
-              <img v-else :src="item.icon.value as any"  style="    margin-right: 2px;" />
-              {{ item.title }}
-            </p>
-            <span v-text="item.desc" />
-          </div>
-        </div>
-      </el-dialog>
-    </teleport>
-
-    <teleport to=".FlowPage">
-      <el-drawer @click="handleClick" v-model="drawerOptions.visible" :title="drawerOptions.title" size="65%">
-        <component :readonly="readonly" :p="data" :is="drawerOptions.comp" />
-        <template #footer>
-          <template v-if="readonly">
-            <el-button round @click="drawerOptions.visible = false">返回</el-button>
-          </template>
-          <template v-else>
-            <el-button round @click="drawerOptions.visible = false">取消</el-button>
-            <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
-          </template>
-        </template>
-      </el-drawer>
-    </teleport>
-  </el-card>
-  <!-- && !customerConditioned.display -->
-  <el-button :class="{
-        display: conditioned && customerConditioned.display,
-        disabled: readonly || haveDiverse,
-      }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
+  </BaseNode>
 </template>
-
-<style lang="scss">
-.Dialog-Sections {
-  p {
-    margin: 0;
-  }
-
-  display: flex;
-
-  gap: 2rem;
-  justify-content: center;
-}
-
-.PBlock-Section {
-  &.disabled {
-    opacity: 0.5;
-    border: 1px solid var(--el-border-color);
-    pointer-events: none;
-  }
-
-  p {
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 20px;
-    color: #333;
-    overflow: hidden;
-    position: relative;
-    padding-bottom: 12px;
-
-    &::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: 20px;
-      width: 60%;
-      height: 8px;
-      transition: 0.25s;
-      transform: scaleX(0) translateX(-100%);
-      width: 160px;
-      height: 7px;
-      background: linear-gradient(82deg,
-          rgba(64, 120, 224, 0.4) 0%,
-          rgba(64, 120, 224, 0) 100%);
-      border-radius: 2px 2px 2px 2px;
-      opacity: 0.6;
-      position: absolute;
-    }
-
-    span {
-      float: right;
-
-      font-size: 1.25rem;
-
-      color: #00c068 !important;
-    }
-
-    position: relative;
-  }
-
-  &.checked {
-    p {
-      &::before {
-        transform: scaleX(1) translateX(0%);
-      }
-
-      color: #4078e0;
-    }
-  }
-
-  &:hover {
-    border: 1px solid #4078e0;
-  }
-
-  width: 50%;
-
-  border: 1px solid transparent;
-}
-
-.PBlock-Section .el-icon {
-  top: 0.125rem;
-
-  margin-bottom: 0.5rem;
-}
-</style>

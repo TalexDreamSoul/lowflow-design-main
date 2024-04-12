@@ -166,7 +166,7 @@ function saveData() {
 
   const { touchTemplateContent }: any = sizeForm
 
-  console.log("touchTemplateContent", sizeForm,touchTemplateContent,touchTemplateContent.type)
+  console.log("touchTemplateContent", sizeForm, touchTemplateContent, touchTemplateContent.type)
 
   if (String(sizeForm.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1 && !touchTemplateContent?.type?.length) {
     ElMessage.warning({
@@ -226,7 +226,8 @@ regSaveFunc(saveData);
         <el-input :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" />
       </el-form-item>
       <el-form-item label="分流类型：">
-        <el-radio-group :disabled="_edit || readonly || sizeForm.$index" v-model="sizeForm.diversionType">
+        <!-- (_edit && sizeForm.nodeId) || -->
+        <el-radio-group :disabled="readonly || sizeForm.$index" v-model="sizeForm.diversionType">
           <el-radio label="noDiversion">不分流</el-radio>
           <el-radio label="attr">按属性用户行为分流</el-radio>
           <el-radio label="event">按触发事件分流</el-radio>
@@ -247,12 +248,12 @@ regSaveFunc(saveData);
         <FilterGroup :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus title="触发事件分流" color="#333333"  :default-expand="true"
+      <BehaviorGroupPlus title="触发事件分流" color="#333333" :default-expand="true"
         :class="{ animation: true, display: sizeForm.diversionType === 'event' }">
         <div class="flex-column titleCondition">
           <el-text>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</el-text>
-          <el-input-number :disabled="readonly || sizeForm.$index" :min="1" v-model="sizeForm.eventDelayed!.delayedTime"  controls-position="right" 
-            type="number" style="width: 100px" />&nbsp;
+          <el-input-number :disabled="readonly || sizeForm.$index" :min="1" v-model="sizeForm.eventDelayed!.delayedTime"
+            controls-position="right" type="number" style="width: 100px" />&nbsp;
           <el-select :disabled="readonly || sizeForm.$index" v-model="sizeForm.eventDelayed!.delayedUnit"
             style="width: 100px">
             <el-option value="minute" label="分钟">分钟</el-option>

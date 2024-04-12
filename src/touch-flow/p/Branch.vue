@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import BaseNode from './common/BaseNode.vue';
 import { ref } from 'vue'
-import { Plus, Delete } from '@element-plus/icons-vue'
+import { Delete } from '@element-plus/icons-vue'
 import DeliverySettingsAttr from './attr/DeliverySettingsAttr.vue'
 import { MarketingTouchEditDTO } from './behavior/marketing';
 import { genNodeParams } from './common/node-util';
 
-const { readonly, $data, data, __data, dialogVisible, drawerOptions, openDrawer, comps, handleClick, handleSave } = genNodeParams()
+const params = genNodeParams()
+const { readonly, $data, data, __data, openDrawer } = params
 
 function openCondition() {
   openDrawer({
@@ -23,7 +25,7 @@ function del(p: MarketingTouchEditDTO) {
 </script>
 
 <template>
-  <el-card style="width: 355px" class="PBlock">
+  <BaseNode :params="params" :disabled="readonly" :display="true">
     <p class="title">
       {{ data.nodeName }}
       <el-popover :visible="visible" placement="top" :width="160">
@@ -49,69 +51,5 @@ function del(p: MarketingTouchEditDTO) {
         </div>
       </div>
     </div>
-
-    <teleport to=".FlowPage">
-      <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
-        <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
-            class="PBlock-Section">
-            <p>
-              <el-icon v-if="item.icon.type === 'comp'">
-                <component :is="item.icon.value" />
-              </el-icon>
-              <img v-else :src="item.icon.value as any" />
-              {{ item.title }}
-            </p>
-            <span v-text="item.desc" />
-          </div>
-        </div>
-      </el-dialog>
-    </teleport>
-
-    <teleport to=".FlowPage">
-      <el-drawer @click="handleClick" v-model="drawerOptions.visible" :title="drawerOptions.title" size="65%">
-        <component :readonly="readonly" :p="data" :is="drawerOptions.comp" />
-        <template #footer>
-          <template v-if="readonly">
-            <el-button round @click="drawerOptions.visible = false">返回</el-button>
-          </template>
-          <template v-else>
-            <el-button round @click="drawerOptions.visible = false">取消</el-button>
-            <el-button round @click="handleSave" type="primary" primaryStyle>保存</el-button>
-          </template>
-        </template>
-      </el-drawer>
-    </teleport>
-  </el-card>
-
-  <el-button :class="{
-    disabled: readonly,
-  }" @click="dialogVisible = true" class="start-add" type="primary" :icon="Plus" circle />
+  </BaseNode>
 </template>
-
-<style lang="scss">
-.Dialog-Sections {
-  display: flex;
-
-  gap: 1rem;
-  justify-content: center;
-}
-
-.PBlock-Section {
-  width: 50%;
-}
-
-.start-add {
-  position: absolute;
-
-  left: 50%;
-
-  transform: translate(-50%, -50%);
-}
-
-.PBlock-Section .el-icon {
-  top: .125rem;
-
-  margin-bottom: .5rem;
-}
-</style>
