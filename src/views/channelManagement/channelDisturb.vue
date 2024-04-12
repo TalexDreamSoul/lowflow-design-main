@@ -1,37 +1,37 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from "vue";
-import {
-  getGlobalDisturbDetail, getBlackList
-} from "~/api/index";
+import { getGlobalDisturbDetail, getBlackList } from "~/api/index";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import API from "~/api/channelManagement";
 import { ElMessage } from "element-plus";
+// 定义名称固定顺序
+const nameOrder: string[] = ["APP PUSH", "手机短信", "企微", "外呼", "站内信"];
 
 const types = [
   {
-    type: 'appPush',
-    name: 'APP PUSH'
+    type: "appPush",
+    name: "APP PUSH",
   },
   {
-    type: 'digital',
-    name: '企微'
+    type: "digital",
+    name: "企微",
   },
   {
-    type: 'outbound',
-    name: '外呼'
+    type: "outbound",
+    name: "外呼",
   },
   {
-    type: 'sms',
-    name: '手机短信'
+    type: "sms",
+    name: "手机短信",
   },
   {
-    type: 'znx',
-    name: '站内信'
-  }
-]
+    type: "znx",
+    name: "站内信",
+  },
+];
 const tableData = ref<any[]>([]);
 const dialogVisible = ref<boolean>(false);
-const dialogOptions = ref<{ type: 'update' | 'detail' } & any>({});
+const dialogOptions = ref<{ type: "update" | "detail" } & any>({});
 const blackListFields = ref();
 
 !(async () => {
@@ -45,78 +45,85 @@ const blackListFields = ref();
 })();
 const blackList = ref<Array<any>>([]);
 
-watch(() => blackList.value, val => {
-  if (!val?.length) return
+watch(
+  () => blackList.value,
+  (val) => {
+    if (!val?.length) return;
 
-  dialogOptions.value.data.blacklistList = blackList.value.map((item) => {
-    const res = [...blackListFields.value.records].find((each) => +each.id === +item);
+    dialogOptions.value.data.blacklistList = blackList.value.map((item) => {
+      const res = [...blackListFields.value.records].find(
+        (each) => +each.id === +item
+      );
 
-    if (!res) return
+      if (!res) return;
 
-    return {
-      id: res.id,
-      blacklistName: res.blacklistName,
-    };
-  })
+      return {
+        id: res.id,
+        blacklistName: res.blacklistName,
+      };
+    });
 
-  console.log('233', dialogOptions.value.data)
-
-}, { immediate: true })
+    console.log("233", dialogOptions.value.data);
+  },
+  { immediate: true }
+);
 
 function transformBlackListData() {
-  blackList.value.length = 0
+  blackList.value.length = 0;
 
   if (dialogOptions.value.data?.blacklistList?.length) {
     [...dialogOptions.value.data.blacklistList].forEach((item) => {
-      if (!item) return
+      if (!item) return;
       blackList.value.push(item.id);
     });
   }
 }
 (() => {
-
   [...types].forEach(async (item) => {
-    const res: any = await getGlobalDisturbDetail({ type: item.type })
+    const res: any = await getGlobalDisturbDetail({ type: item.type });
 
     const obj = reactive({
       ...res.data,
       originData: Object.freeze(res.data),
-      name: item.name
-    })
+      name: item.name,
+    });
 
-    Object.defineProperty(obj, '$blacklistLimit', {
+    Object.defineProperty(obj, "$blacklistLimit", {
       enumerable: true,
       get() {
-        return obj.blacklistLimit ? "过滤" : "不过滤"
+        return obj.blacklistLimit ? "过滤" : "不过滤";
       },
       set(val) {
-        console.log('setter', 'blacklistLimit', val, obj)
-        obj.blacklistLimit = val === "过滤"
-      }
-    })
+        console.log("setter", "blacklistLimit", val, obj);
+        obj.blacklistLimit = val === "过滤";
+      },
+    });
 
-    Object.defineProperty(obj, '$touchLimit', {
+    Object.defineProperty(obj, "$touchLimit", {
       enumerable: true,
       get() {
-        return String(+obj.touchLimit)
+        return String(+obj.touchLimit);
       },
       set(val) {
-        obj.touchLimit = val
+        obj.touchLimit = val;
+      },
+    });
+
+    const { startDate, endDate } = obj;
+
+    obj.$date = ref([startDate, endDate]);
+
+    watch(
+      () => obj.$date.value,
+      () => {
+        if (obj.$date.value?.length === 2) {
+          obj.startTime = obj.$date.value[0];
+          obj.endTime = obj.$date.value[1];
+
+          console.log("test demo", obj);
+        }
       }
-    })
-
-    const { startDate, endDate } = obj
-
-    obj.$date = ref([startDate, endDate])
-
-    watch(() => obj.$date.value, () => {
-      if (obj.$date.value?.length === 2) {
-        obj.startTime = obj.$date.value[0]
-        obj.endTime = obj.$date.value[1]
-
-        console.log("test demo", obj)
-      }
-    })
+    );
     /* Object.defineProperty(obj, '$date', {
       enumerable: true,
       get() {
@@ -155,57 +162,56 @@ function transformBlackListData() {
     //   }
     // })
 
-    console.log(obj, tableData)
+    console.log(obj, tableData);
 
-    tableData.value.push(obj)
-
-    // 排序
-    tableData.value = tableData.value.sort((a, b) => a.name - b.name)
-  })
-
-})()
+    tableData.value.push(obj);
+    // 根据名称固定顺序对tableData进行排序
+    tableData.value = tableData.value.sort((a, b) => {
+      return nameOrder.indexOf(a.name) - nameOrder.indexOf(b.name);
+    });
+  });
+})();
 
 function updateData(data: any) {
   Object.assign(dialogOptions.value, {
-    type: 'update',
+    type: "update",
     disabled: false,
-    data
-  })
+    data,
+  });
 
-  transformBlackListData()
+  transformBlackListData();
 
-  console.log(blackList)
+  console.log(blackList);
 
-  dialogVisible.value = true
+  dialogVisible.value = true;
 }
 
 function detailsData(data: any) {
   Object.assign(dialogOptions.value, {
-    type: 'detail',
+    type: "detail",
     disabled: true,
-    data
-  })
+    data,
+  });
 
-  transformBlackListData()
+  transformBlackListData();
 
-  dialogVisible.value = true
+  dialogVisible.value = true;
 }
 
 const onSubmit = async () => {
   let res: any;
   res = await API.updateGlobalDisturb({
-    ...dialogOptions.value.data
+    ...dialogOptions.value.data,
   });
 
   if (res.data) {
     ElMessage({
       message: "修改成功！",
-      type: "info"
-    })
+      type: "info",
+    });
 
-    location.reload()
+    location.reload();
   }
-
 };
 </script>
 
@@ -246,8 +252,7 @@ const onSubmit = async () => {
   </CustomEventComponent>
 
   <template v-if="dialogVisible">
-    <el-dialog :title="dialogOptions?.type === 'update' ? '编辑渠道勿扰设置' : '查看渠道勿扰设置'" align-center v-model="dialogVisible"
-      append-to-body>
+    <el-dialog :title="dialogOptions?.type === 'update' ? '编辑渠道勿扰设置' : '查看渠道勿扰设置'" align-center v-model="dialogVisible" append-to-body>
       <div class="line">
         <span>1.每个客户触达次数限制：</span>
         <span>
@@ -259,10 +264,8 @@ const onSubmit = async () => {
       </div>
       <div class="line">
         <span>当前渠道客户
-          <el-input-number v-model="dialogOptions.data.limitDay" :disabled="dialogOptions?.disabled" :min="1"
-            placeholder="填写次数" style="width: 120px" controls-position="right" />&nbsp;天内，最多通过营销平台触达
-          <el-input-number v-model="dialogOptions.data.limitCount" :disabled="dialogOptions?.disabled" :min="1"
-            placeholder="填写次数" style="width: 120px" controls-position="right" />&nbsp;次
+          <el-input-number v-model="dialogOptions.data.limitDay" :disabled="dialogOptions?.disabled" :min="1" placeholder="填写次数" style="width: 120px" controls-position="right" />&nbsp;天内，最多通过营销平台触达
+          <el-input-number v-model="dialogOptions.data.limitCount" :disabled="dialogOptions?.disabled" :min="1" placeholder="填写次数" style="width: 120px" controls-position="right" />&nbsp;次
         </span>
       </div>
       <div class="line">
@@ -275,22 +278,18 @@ const onSubmit = async () => {
         </span>
       </div>
       <div v-if="dialogOptions.data.$touchLimit === '1'" class="line">
-        <el-time-picker is-range value-format="HH:mm" format="HH:mm" style="width: 200px"
-          v-model="dialogOptions.data.$date" :disabled="dialogOptions?.disabled" type="daterange" unlink-panels
-          range-separator="-" start-placeholder="开始时间" end-placeholder="结束时间" />&nbsp;
+        <el-time-picker is-range value-format="HH:mm" format="HH:mm" style="width: 200px" v-model="dialogOptions.data.$date" :disabled="dialogOptions?.disabled" type="daterange" unlink-panels range-separator="-" start-placeholder="开始时间" end-placeholder="结束时间" />&nbsp;
         <span>为该渠道的默认勿扰时段
         </span>
       </div>
       <div class="line">
         3.过滤黑名单
-        <el-select :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$blacklistLimit"
-          style="width: 100px">
+        <el-select :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$blacklistLimit" style="width: 100px">
           <el-option label="不过滤" value="不过滤">不过滤</el-option>
           <el-option label="过滤" value="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select collapse-tags :disabled="dialogOptions?.disabled" placeholder="请选择" v-model="blackList" multiple
-          v-if="dialogOptions.data.blacklistLimit" style="width: 300px">
+        <el-select collapse-tags :disabled="dialogOptions?.disabled" placeholder="请选择" v-model="blackList" multiple v-if="dialogOptions.data.blacklistLimit" style="width: 300px">
           <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
             <!-- <p>{{ item.blacklistDesc }}</p> -->
@@ -302,8 +301,7 @@ const onSubmit = async () => {
         <el-button @click="dialogVisible = false" round>
           {{ dialogOptions?.type === 'detail' ? '返回' : '取消' }}
         </el-button>
-        <el-button v-if="dialogOptions?.type !== 'detail'" @click.prevent="onSubmit()" round
-          type="primary">保存</el-button>
+        <el-button v-if="dialogOptions?.type !== 'detail'" @click.prevent="onSubmit()" round type="primary">保存</el-button>
 
       </template>
     </el-dialog>
