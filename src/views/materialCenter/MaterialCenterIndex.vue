@@ -86,7 +86,7 @@ onMounted(async () => {
 });
 
 function getNameByValue(data: any[], val: string) {
-  const item = data?.find((item: { value: any }) => item.value === val);
+  const item = data.values?.find((item: { value: any }) => item.value === val);
   return item ? item.name : "";
 }
 
