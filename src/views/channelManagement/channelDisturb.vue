@@ -116,7 +116,7 @@ function transformBlackListData() {
 
         console.log("test demo", obj)
       }
-    }) 
+    })
     /* Object.defineProperty(obj, '$date', {
       enumerable: true,
       get() {
@@ -158,13 +158,12 @@ function transformBlackListData() {
     console.log(obj)
 
     tableData.value.push(obj)
+
+    // 排序
+    tableData.value = tableData.value.sort((a, b) => a.name - b.name)
   })
 
 })()
-
-function genDate(num: any) {
-
-}
 
 function updateData(data: any) {
   Object.assign(dialogOptions.value, {
@@ -288,7 +287,7 @@ const onSubmit = async () => {
           <el-option label="过滤" value="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select collapse-tags  :disabled="dialogOptions?.disabled" placeholder="请选择" v-model="blackList" multiple
+        <el-select collapse-tags :disabled="dialogOptions?.disabled" placeholder="请选择" v-model="blackList" multiple
           v-if="dialogOptions.data._enable" style="width: 300px">
           <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
