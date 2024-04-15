@@ -153,7 +153,7 @@
         <el-form-item
           :rules="[{ max: 40, message: '最多可输入40字' }]"
           label="属性说明"
-          prop="fieldValue"
+          prop="describe"
         >
           <el-input
             v-model="formValues.describe"

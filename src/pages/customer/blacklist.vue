@@ -135,6 +135,7 @@
       :id="drawerOptions.id"
       :type="drawerOptions.type"
       @getData="() => getData({ ...pageParams, pageNum })"
+      @onCancel="onCancel"
     />
     <!-- <PdDrawer ref="drawerRef" :getData="() => getData({ ...pageParams, pageNum })" /> -->
   </div>
@@ -171,6 +172,11 @@ const drawerOptions = reactive<{
 const pageNum = ref(1);
 const total = ref(0);
 const tableData = ref<any[]>([]);
+
+const onCancel = () => {
+  drawerOptions.id = -1;
+  drawerOptions.type = undefined;
+}
 
 const currentChange = (value: number) => {
   pageNum.value = value;
@@ -212,6 +218,7 @@ const getData = async (params: any) => {
 };
 
 const handleModal = async (type: typeof drawerOptions.type, values?: any) => {
+  console.log(type);
   drawerOptions.id = values?.id || -1;
   drawerOptions.type = type;
 
