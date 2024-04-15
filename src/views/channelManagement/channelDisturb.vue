@@ -8,36 +8,11 @@ import { dictFilterTree } from "~/api/index";
 // 定义名称固定顺序
 const nameOrder: string[] = ["APP PUSH", "手机短信", "企微", "外呼", "站内信"];
 
-// const types = [
-//   {
-//     type: "appPush",
-//     name: "APP PUSH",
-//   },
-//   {
-//     type: "digital",
-//     name: "企微",
-//   },
-//   {
-//     type: "outbound",
-//     name: "外呼",
-//   },
-//   {
-//     type: "sms",
-//     name: "手机短信",
-//   },
-//   {
-//     type: "znx",
-//     name: "站内信",
-//   },
-// ];
 
-// onMounted(async () => {
-//   getDictmaterialType();
-// });
 const tableData = ref<any[]>([]);
+const OptionsData = ref<any>({});
 const materialTypesList = ref<any>();
 const dialogVisible = ref<boolean>(false);
-const dialogOptions = ref<{ type: "update" | "detail" } & any>({});
 const blackListFields = ref();
 
 !(async () => {
@@ -56,7 +31,7 @@ watch(
   (val) => {
     if (!val?.length) return;
 
-    dialogOptions.value.data.blacklistList = blackList.value.map((item) => {
+    OptionsData.value.data.blacklistList = blackList.value.map((item) => {
       const res = [...blackListFields.value.records].find(
         (each) => +each.id === +item
       );
@@ -69,7 +44,7 @@ watch(
       };
     });
 
-    console.log("233", dialogOptions.value.data);
+    console.log("233", OptionsData.value.data);
   },
   { immediate: true }
 );
@@ -77,8 +52,8 @@ watch(
 function transformBlackListData() {
   blackList.value.length = 0;
 
-  if (dialogOptions.value.data?.blacklistList?.length) {
-    [...dialogOptions.value.data.blacklistList].forEach((item) => {
+  if (OptionsData.value.data?.blacklistList?.length) {
+    [...OptionsData.value.data.blacklistList].forEach((item) => {
       if (!item) return;
       blackList.value.push(item.id);
     });
@@ -89,7 +64,7 @@ onMounted(async () => {
 });
 
 const fetchDataApi = async () => {
-  tableData.value=[]
+  tableData.value = [];
   const res: any = await dictFilterTree();
   let { materialTypes } = res?.data;
   let getDictmaterialList = [];
@@ -113,47 +88,16 @@ const fetchDataApi = async () => {
       originData: Object.freeze(res.data),
       name: item.name,
     });
-
-    Object.defineProperty(obj, "$blacklistLimit", {
-      enumerable: true,
-      get() {
-        return String(+obj.blacklistLimit);
-      },
-      set(val) {
-        obj.blacklistLimit = val;
-      },
-    });
-
-    Object.defineProperty(obj, "$touchLimit", {
-      enumerable: true,
-      get() {
-        return String(+obj.touchLimit);
-      },
-      set(val) {
-        obj.touchLimit = val;
-      },
-    });
-
-    Object.defineProperty(obj, "$disturbLimit", {
-      enumerable: true,
-      get() {
-        return String(+obj.disturbLimit);
-      },
-      set(val) {
-        obj.disturbLimit = val;
-      },
-    });
-
     const { startDate, endDate } = obj;
 
-    obj.$date = ref([startDate, endDate]);
+    obj.date = ref([startDate, endDate]);
 
     watch(
-      () => obj.$date.value,
+      () => obj.date.value,
       () => {
-        if (obj.$date.value?.length === 2) {
-          obj.startTime = obj.$date.value[0];
-          obj.endTime = obj.$date.value[1];
+        if (obj.date.value?.length === 2) {
+          obj.startTime = obj.date.value[0];
+          obj.endTime = obj.date.value[1];
 
           console.log("test demo", obj);
         }
@@ -168,26 +112,28 @@ const fetchDataApi = async () => {
     });
   });
 };
+
+
 function updateData(data: any) {
-  Object.assign(dialogOptions.value, {
+  OptionsData.value={
     type: "update",
     disabled: false,
     data,
-  });
+  }
 
   transformBlackListData();
 
-  console.log(blackList);
+  // console.log(blackList,OptionsData.value,data);
 
   dialogVisible.value = true;
 }
 
 function detailsData(data: any) {
-  Object.assign(dialogOptions.value, {
-    type: "detail",
+  OptionsData.value={
+    type: "update",
     disabled: true,
     data,
-  });
+  }
 
   transformBlackListData();
 
@@ -198,39 +144,21 @@ const onSubmit = async () => {
   let res: any;
 
   // 替换字段并进行值转换
-  const modifiedData = { ...dialogOptions.value.data };
-  console.log("modifiedData",dialogOptions.value.data, modifiedData);
-  debugger
-  modifiedData.touchLimit =
-    (dialogOptions.value.$touchLimit == "1" ||
-    dialogOptions.value.$touchLimit == null)
-      ? false
-      : dialogOptions.value.$touchLimit;
-  modifiedData.disturbLimit =
-    (dialogOptions.value.$disturbLimit == "1" ||
-    dialogOptions.value.$disturbLimit == null)
-      ? false
-      : dialogOptions.value.$disturbLimit;
-  modifiedData.blacklistLimit =
-(    dialogOptions.value.$blacklistLimit == "1" ||
-    dialogOptions.value.$blacklistLimit == null)
-      ? false
-      : dialogOptions.value.$blacklistLimit;
+  const modifiedData = { ...OptionsData.value.data };
+  // console.log(
+  //   "modifiedData",
+  //   OptionsData.value.data,
+  //   modifiedData,
+  //   OptionsData.value.$touchLimit
+  // );
   // 如果 startDate 和 endDate 字段为 null，则将 $date 字段的值赋给它们
-  if (modifiedData.startDate === null && modifiedData.endDate === null) {
-    if (dialogOptions.value.data.$date.length === 2) {
-      modifiedData.startDate = dialogOptions.value.data.$date[0];
-      modifiedData.endDate = dialogOptions.value.data.$date[1];
+  if (modifiedData.date.length == 2) {
+      modifiedData.startDate = modifiedData.date[0];
+      modifiedData.endDate = modifiedData.date[1];
     }
-  }
-  delete modifiedData.$touchLimit;
-  delete modifiedData.$disturbLimit;
-  delete modifiedData.$blacklistLimit;
-  delete modifiedData.originData;
-  delete modifiedData.$date;
 
   // 如果 type 字段为 null，则查找并设置其值
-  if (modifiedData.type === null) {
+  if (!modifiedData.type) {
     const matchedType = materialTypesList.value.find(
       (item: { code: string; message: string }) =>
         item.message === modifiedData.name
@@ -248,7 +176,7 @@ const onSubmit = async () => {
       message: "修改成功！",
       type: "info",
     });
-    dialogVisible.value=false;
+    dialogVisible.value = false;
     fetchDataApi();
 
     // location.reload();
@@ -293,44 +221,44 @@ const onSubmit = async () => {
   </CustomEventComponent>
 
   <template v-if="dialogVisible">
-    <el-dialog :title="dialogOptions?.type === 'update' ? '编辑渠道勿扰设置' : '查看渠道勿扰设置'" align-center v-model="dialogVisible" append-to-body>
+    <el-dialog :title="OptionsData?.type === 'update' ? '编辑渠道勿扰设置' : '查看渠道勿扰设置'" align-center v-model="dialogVisible" append-to-body>
       <div class="line">
         <span>1.每个客户触达次数限制：</span>
         <span>
-          <el-radio-group :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$touchLimit" class="ml-4">
-            <el-radio label="1">不限制</el-radio>
-            <el-radio label="0">限制</el-radio>
-          </el-radio-group>
+        <el-select :disabled="OptionsData?.disabled" v-model="OptionsData.data.touchLimit" class="ml-4" style="width: 100px">
+          <el-option :value="false" label="不限制">不限制</el-option>
+          <el-option :value="true" label="限制">限制</el-option>
+        </el-select>
         </span>
       </div>
-      <div class="line" v-if="dialogOptions.data.$touchLimit == '0'">
+      <div class="line" v-if="OptionsData.data.touchLimit ">
         <span>当前渠道客户
-          <el-input-number v-model="dialogOptions.data.limitDay" :disabled="dialogOptions?.disabled" :min="1" placeholder="填写次数" style="width: 120px" controls-position="right" />&nbsp;天内，最多通过营销平台触达
-          <el-input-number v-model="dialogOptions.data.limitCount" :disabled="dialogOptions?.disabled" :min="1" placeholder="填写次数" style="width: 120px" controls-position="right" />&nbsp;次
+          <el-input-number v-model="OptionsData.data.limitDay" :disabled="OptionsData?.disabled" :min="1" placeholder="填写次数" style="width: 120px" controls-position="right" />&nbsp;天内，最多通过营销平台触达
+          <el-input-number v-model="OptionsData.data.limitCount" :disabled="OptionsData?.disabled" :min="1" placeholder="填写次数" style="width: 120px" controls-position="right" />&nbsp;次
         </span>
       </div>
       <div class="line">
         <span>2.勿扰时段限制：</span>
         <span>
-          <el-radio-group :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$disturbLimit" class="ml-4">
-            <el-radio label="1">不限制</el-radio>
-            <el-radio label="0">限制</el-radio>
-          </el-radio-group>
+        <el-select :disabled="OptionsData?.disabled" v-model="OptionsData.data.disturbLimit" class="ml-4" style="width: 100px">
+          <el-option :value="false" label="不限制">不限制</el-option>
+          <el-option :value="true" label="限制">限制</el-option>
+        </el-select>
         </span>
       </div>
-      <div v-if="dialogOptions.data.$disturbLimit == '0'" class="line">
-        <el-time-picker is-range value-format="HH:mm" format="HH:mm" style="width: 200px" v-model="dialogOptions.data.$date" :disabled="dialogOptions?.disabled" type="daterange" unlink-panels range-separator="-" start-placeholder="开始时间" end-placeholder="结束时间" />&nbsp;
+      <div v-if="OptionsData.data.disturbLimit" class="line">
+        <el-time-picker is-range value-format="HH:mm" format="HH:mm" style="width: 200px" v-model="OptionsData.data.date" :disabled="OptionsData?.disabled" type="daterange" unlink-panels range-separator="-" start-placeholder="开始时间" end-placeholder="结束时间" />&nbsp;
         <span>为该渠道的默认勿扰时段
         </span>
       </div>
       <div class="line">
         3.过滤黑名单
-        <el-select :disabled="dialogOptions?.disabled" v-model="dialogOptions.data.$blacklistLimit" style="width: 100px">
-          <el-option value="1" label="不过滤">不过滤</el-option>
-          <el-option value="0" label="过滤">过滤</el-option>
+        <el-select :disabled="OptionsData?.disabled" v-model="OptionsData.data.blacklistLimit" style="width: 100px">
+          <el-option :value="false" label="不过滤">不过滤</el-option>
+          <el-option :value="true" label="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select collapse-tags :disabled="dialogOptions?.disabled" placeholder="请选择" v-model="blackList" multiple  v-if="dialogOptions.data.$blacklistLimit == '0'" style="width: 300px">
+        <el-select collapse-tags :disabled="OptionsData?.disabled" placeholder="请选择" v-model="blackList" multiple v-if="OptionsData.data.blacklistLimit " style="width: 300px">
           <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
             <!-- <p>{{ item.blacklistDesc }}</p> -->
@@ -340,9 +268,9 @@ const onSubmit = async () => {
 
       <template #footer>
         <el-button @click="dialogVisible = false" round>
-          {{ dialogOptions?.type === 'detail' ? '返回' : '取消' }}
+          {{ OptionsData?.type === 'detail' ? '返回' : '取消' }}
         </el-button>
-        <el-button v-if="dialogOptions?.type !== 'detail'" @click.prevent="onSubmit()" round type="primary">保存</el-button>
+        <el-button v-if="OptionsData?.type !== 'detail'" @click.prevent="onSubmit()" round type="primary">保存</el-button>
 
       </template>
     </el-dialog>
