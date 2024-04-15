@@ -295,7 +295,7 @@ const changeTime = (val: any) => {
           <template #default="scope">
             <el-space wrap v-if="String(route.params.type).replace('Template', '') != 'all'">
               <el-link type="primary" v-if="scope.row.status == 'offline'" @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
-              <el-link type="primary" v-if="scope.row.status !== 'offline'" @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
+              <el-link type="primary" v-if="scope.row.status !== 'offline'&& scope.row.usedCount <1" @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
               <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
               <el-link type="primary" @click="delData(scope.row)">删除</el-link>
 
