@@ -199,7 +199,8 @@ const onSubmit = async () => {
 
   // 替换字段并进行值转换
   const modifiedData = { ...dialogOptions.value.data };
-  console.log("modifiedData",...dialogOptions.value.data, modifiedData);
+  console.log("modifiedData",dialogOptions.value.data, modifiedData);
+  debugger
   modifiedData.touchLimit =
     (dialogOptions.value.$touchLimit == "1" ||
     dialogOptions.value.$touchLimit == null)
