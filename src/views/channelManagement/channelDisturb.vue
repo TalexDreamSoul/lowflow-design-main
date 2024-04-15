@@ -115,6 +115,9 @@ const fetchDataApi = async () => {
 
 
 function updateData(data: any) {
+  data.touchLimit = !data.touchLimit?false:data.touchLimit;
+  data.disturbLimit = !data.disturbLimit?false:data.disturbLimit;
+  data.blacklistLimit = !data.blacklistLimit?false:data.blacklistLimit;
   OptionsData.value={
     type: "update",
     disabled: false,
@@ -129,6 +132,9 @@ function updateData(data: any) {
 }
 
 function detailsData(data: any) {
+  data.touchLimit = !data.touchLimit?false:data.touchLimit;
+  data.disturbLimit = !data.disturbLimit?false:data.disturbLimit;
+  data.blacklistLimit = !data.blacklistLimit?false:data.blacklistLimit;
   OptionsData.value={
     type: "update",
     disabled: true,
