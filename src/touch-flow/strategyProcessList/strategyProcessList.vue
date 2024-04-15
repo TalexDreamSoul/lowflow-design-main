@@ -148,7 +148,6 @@ const modalVisible = ref(false);
 const modalData = ref<any>([]);
 
 const handleModal = async (values?: any) => {
-  Object.assign(modalData, []);
   modalData.value=[]
   let res: any = await API.listApproveRecord({
     businessId: values.id,

@@ -4,34 +4,15 @@
     <div class="search">
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
-          <el-select
-            v-model="pageParams.executeType"
-            placeholder="请选择"
-            clearable
-          >
-            <el-option
-              v-for="(item, key) in typeMap"
-              :label="item"
-              :value="key"
-            />
+          <el-select v-model="pageParams.executeType" placeholder="请选择" clearable>
+            <el-option v-for="(item, key) in typeMap" :label="item" :value="key" />
           </el-select>
         </el-form-item>
         <el-form-item label="起止日期">
-          <el-date-picker
-            v-model="pageParams.time"
-            type="daterange"
-            range-separator="-"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          />
+          <el-date-picker v-model="pageParams.time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />
         </el-form-item>
         <el-form-item>
-          <el-input
-            v-model="pageParams.touchName"
-            placeholder="策略流程名称"
-            clearable
-            :suffix-icon="Search"
-          />
+          <el-input v-model="pageParams.touchName" placeholder="策略流程名称" clearable :suffix-icon="Search" />
         </el-form-item>
       </el-form>
     </div>
@@ -48,92 +29,32 @@
         <el-table-column label="类型" width="314">
           <template #default="scope">
             {{ typeMap[scope.row.executeType] }}
-          </template></el-table-column
-        >
-        <el-table-column
-          prop="createUserName"
-          label="创建人"
-          width="272"
-        ></el-table-column>
+          </template></el-table-column>
+        <el-table-column prop="createUserName" label="创建人" width="272"></el-table-column>
         <el-table-column label="操作" min-width="238" fixed="right">
           <template #default="scope">
-            <el-button
-              link
-              type="primary"
-              class="action-btn"
-              @click="handleModal(DrawerType.Detail, scope.row)"
-              >查看详情</el-button
-            >
-            <el-button
-              link
-              type="primary"
-              class="action-btn"
-              @click="handleModal(DrawerType.ApproveDatail, scope.row)"
-              >审核详情</el-button
-            >
-            <el-button
-              :disabled="
+            <el-button link type="primary" class="action-btn" @click="handleModal(DrawerType.Detail, scope.row)">查看详情</el-button>
+            <el-button link type="primary" class="action-btn" @click="handleModal(DrawerType.ApproveDatail, scope.row)">审核详情</el-button>
+            <el-button :disabled="
                 !checkStringEqual(appOptions?.user?.id, scope.row.auditorId)
-              "
-              @click="handleModal(DrawerType.Approve, scope.row)"
-              link
-              type="primary"
-              class="action-btn"
-              >审核</el-button
-            >
+              " @click="handleModal(DrawerType.Approve, scope.row)" link type="primary" class="action-btn">审核</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        background
-        layout="prev, pager, next, jumper"
-        :total="total"
-        :page-sizes="[10]"
-        @current-change="currentChange"
-      />
+      <el-pagination background layout="prev, pager, next, jumper" :total="total" :page-sizes="[10]" @current-change="currentChange" />
     </div>
-    <el-dialog
-      class="pd-modal"
-      destroy-on-close
-      :close-on-click-modal="false"
-      v-model="modalVisible"
-      :title="ModalTitleMap[modalType]"
-      :width="checkStringEqual(modalType, DrawerType.ApproveDatail) ? 800 : 400"
-    >
-      <el-form
-        v-if="checkStringEqual(modalType, DrawerType.Approve)"
-        ref="formRef"
-        :hide-required-asterisk="true"
-        label-position="top"
-        :model="formValues"
-      >
-        <el-form-item
-          label="审核意见"
-          prop="approveStatus"
-          :rules="[{ required: true, message: '请选择' }]"
-        >
-          <el-select
-            v-model="formValues.approveStatus"
-            placeholder="请选择"
-            clearable
-          >
-            <el-option
-              v-for="item of [
+    <el-dialog class="pd-modal" destroy-on-close :close-on-click-modal="false" v-model="modalVisible" :title="ModalTitleMap[modalType]" :width="checkStringEqual(modalType, DrawerType.ApproveDatail) ? 800 : 400">
+      <el-form v-if="checkStringEqual(modalType, DrawerType.Approve)" ref="formRef" :hide-required-asterisk="true" label-position="top" :model="formValues">
+        <el-form-item label="审核意见" prop="approveStatus" :rules="[{ required: true, message: '请选择' }]">
+          <el-select v-model="formValues.approveStatus" placeholder="请选择" clearable>
+            <el-option v-for="item of [
                 { label: '通过', value: '1' },
                 { label: '拒绝', value: '2' },
-              ]"
-              :label="item.label"
-              :value="item.value"
-            />
+              ]" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
       </el-form>
-      <el-table
-        :data="modalData"
-        style="width: 100%"
-        height="400"
-        v-if="!checkStringEqual(modalType, DrawerType.Approve)"
-      >
+      <el-table :data="modalData" style="width: 100%" height="400" v-if="!checkStringEqual(modalType, DrawerType.Approve)">
         <el-table-column prop="approveLevel" label="节点" width="92" />
         <el-table-column prop="auditorName" label="审核人" width="101">
         </el-table-column>
@@ -144,44 +65,20 @@
         </el-table-column>
         <el-table-column prop="approveStatus" label="审核状态" width="125">
           <template #default="scope">
-            <el-tag v-if="scope.row.approveStatus === null" type="success"
-              >待审批</el-tag
-            >
-            <el-tag v-if="scope.row.approveStatus === true" type=""
-              >已通过</el-tag
-            >
-            <el-tag v-if="scope.row.approveStatus === false" type="danger"
-              >未通过</el-tag
-            >
-          </template></el-table-column
-        >
+            <el-tag v-if="scope.row.approveStatus === null" type="success">待审批</el-tag>
+            <el-tag v-if="scope.row.approveStatus === true" type="">已通过</el-tag>
+            <el-tag v-if="scope.row.approveStatus === false" type="danger">未通过</el-tag>
+          </template></el-table-column>
         <el-table-column prop="operationTime" label="操作时间" min-width="202">
           <template #default="scope">
             {{ scope.row.operationTime || "-" }}
-          </template></el-table-column
-        >
+          </template></el-table-column>
       </el-table>
       <template #footer>
         <span class="dialog-footer">
-          <el-button
-            v-if="modalType === DrawerType.ApproveDatail"
-            round
-            @click="modalVisible = false"
-            >返回</el-button
-          >
-          <el-button
-            v-if="modalType !== DrawerType.ApproveDatail"
-            round
-            @click="modalVisible = false"
-            >取消</el-button
-          >
-          <el-button
-            v-if="modalType !== DrawerType.ApproveDatail"
-            round
-            type="primary"
-            @click.prevent="onSubmit(formRef)"
-            >确认</el-button
-          >
+          <el-button v-if="modalType === DrawerType.ApproveDatail" round @click="modalVisible = false">返回</el-button>
+          <el-button v-if="modalType !== DrawerType.ApproveDatail" round @click="modalVisible = false">取消</el-button>
+          <el-button v-if="modalType !== DrawerType.ApproveDatail" round type="primary" @click.prevent="onSubmit(formRef)">确认</el-button>
         </span>
       </template>
     </el-dialog>
@@ -231,7 +128,8 @@ const defaultFormValues = {
   approveStatus: "",
 };
 let formValues = reactive({ ...defaultFormValues });
-let modalData = reactive<any>([]);
+const modalData = ref<any>([]);
+
 const pageNum = ref(1);
 
 const formRef = ref<FormInstance>();
@@ -303,6 +201,7 @@ const getData = async (params: any) => {
 };
 
 const handleModal = async (type: string, values?: any) => {
+  modalData.value = [];
   if (type === DrawerType.Detail) {
     router.push(`/touchCenter/details/${values.id}`);
     return;
@@ -310,7 +209,7 @@ const handleModal = async (type: string, values?: any) => {
     let res: any = await API.listApproveRecord({
       businessId: values.id,
     });
-    Object.assign(modalData, res?.data);
+    modalData.value = res?.data;
   } else {
     Object.assign(formValues, {
       recordId: values.approveRecordId,
