@@ -62,13 +62,14 @@
         </el-table-column>
 
         <el-table-column prop="creatorName" label="创建人" width="120" />
-        <el-table-column prop="creatorName" label="操作" fixed="right" width="300">
+        <el-table-column prop="creatorName" label="操作" fixed="right" width="350">
           <template #default="scope">
             <el-space wrap>
-              <el-button link type="primary" @click="openUrl(scope.row.activityId,'true')">编辑</el-button>
+  
+              <el-button :disabled="![1,3,4].includes(scope.row.activityStatus)" link type="primary" @click="openUrl(scope.row.activityId,'true')">编辑</el-button>
             <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
-            <el-button link type="primary" @click="del(scope.row.activityId)">删除</el-button>
-            <el-button v-if="scope.row.activityStatus==4" link type="primary" @click="()=>{
+            <el-button :disabled="![1,3,5].includes(scope.row.activityStatus)" link type="primary" @click="del(scope.row.activityId)">删除</el-button>
+            <el-button :disabled="!([4,5].includes(scope.row.activityStatus))" link type="primary" @click="()=>{
               activityInfo = scope.row;
               dialogVisible = true;
             }">查看传播方式</el-button>
@@ -93,7 +94,7 @@
         placeholder="链接"
       >
         <template #append>
-          <el-button type="primary" @click="copy(activityInfo.diffuseUrl)">
+          <el-button type="primary" @click="copyToClipboard(activityInfo.diffuseUrl)">
           复制
         </el-button>
         </template>
@@ -103,7 +104,7 @@
     <div class="my-2">二维码</div>
     <div class="flex items-center gap-3">
       <el-image preview-teleported style="width: 150px; height: 150px" :src="activityInfo.diffuseCode" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="[activityInfo.diffuseCode]" :z-index="9999" fit="cover" />
-      <a  :href="activityInfo.diffuseCode" target="downloadFile" download>
+      <a  :href="activityInfo.diffuseCode" download="二维码">
         <el-button :icon="Download" type="primary">下载</el-button>
       </a>
     </div>
@@ -179,9 +180,14 @@ queryDict().then((res) => {
 interface ActivityTypes {
   [key: string]: string;
 }
-const copy = (e)=>{
-  console.log(e,111)
-}
+async function copyToClipboard(text:string) {  
+    try {  
+        await navigator.clipboard.writeText(text);  
+        ElMessage.success("复制成功！");
+    } catch (err) {  
+        console.error('无法复制文本: ', err);  
+    }  
+}  
 const activities: ActivityTypes = {
   "1": "问卷玩法",
   "2": "抽奖玩法",
