@@ -4,18 +4,17 @@ import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import FilterGroup from "./condition/FilterGroup.vue";
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
-import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
 import { markRaw, computed } from "vue";
 import CommonAttr from "./CommonAttr.vue";
 import { validateCommonDays } from "~/touch-flow/flow-utils";
 import { MarketingTouchNodeEditDTO } from "~/touch-flow/touch-total";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
-import { useRoute } from "vue-router";
 
 const origin: MarketingTouchNodeEditDTO = {
   nodeId: "",
   nodeType: "strategy",
   nodeName: "",
+  preNodeId: "",
   containTarget: false,
   diversionType: "noDiversion",
   touchTemplateContent: {},
@@ -77,18 +76,19 @@ const props = defineProps<{
 const $getNodeName: any = window['$getNodeName']
 
 const touchSettingsRef = ref();
-const _edit = computed(() => {
-  const splits = location.pathname.split('/')
+// const _edit = computed(() => {
+//   const splits = location.pathname.split('/')
 
-  // 取最后两个
-  const [, design, id] = splits
+//   // 取最后两个
+//   const [, design, id] = splits
 
-  if (design !== 'design' || !id) return false
+//   if (design !== 'design' || !id) return false
 
-  // console.log("11212121212121212", splits, design, id)
+//   // console.log("11212121212121212", splits, design, id)
 
-  return true
-})
+//   return true
+// })
+
 const sizeForm = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 
 watch(
@@ -99,11 +99,19 @@ watch(
 );
 
 watch(props.p, () => {
-  const { nodeType, children } = props.p;
+  const { nodeType, children, preNodeId } = props.p;
 
-  if (nodeType === 'strategy') return;
+  if (nodeType === 'strategy') {
+    const fatherNode = window.$getNodeById(preNodeId)
+    if (!fatherNode) return
 
-  if (!children.length || children[0].nodeType !== 'strategy') return
+    sizeForm.$index = fatherNode.children.length
+    //[...fatherNode.children].indexOf(props.p)
+
+    return;
+  }
+
+  if (!children?.length || children[0].nodeType !== 'strategy') return
 
   sizeForm.$index = children.length
 
@@ -166,8 +174,6 @@ function saveData() {
 
   const { touchTemplateContent }: any = sizeForm
 
-  console.log("touchTemplateContent", sizeForm,touchTemplateContent,touchTemplateContent.type)
-
   if (String(sizeForm.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1 && !touchTemplateContent?.type?.length) {
     ElMessage.warning({
       message: "请选择模板！",
@@ -181,33 +187,19 @@ function saveData() {
 
   // console.log("ppp", _);
 
-  Object.defineProperty(_, "father", {
-    value: markRaw(props.p),
-    enumerable: false,
-  });
+  // Object.defineProperty(_, "father", {
+  //   value: markRaw(props.p),
+  //   enumerable: false,
+  // });
 
   // 修改 Modify Edit
   if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId!.length) {
     Object.assign(props.p, _);
   } else {
-    const arr = [...props.p.children];
-
-    while (arr.length) {
-      const item = arr.shift();
-
-      if (item.nodeName === _.nodeName) {
-        ElMessage.warning({
-          message: "策略名称重复",
-        });
-
-        return false;
-      }
-    }
 
     _.nodeId = randomStr(12);
 
-    // console.log("add", props.p);
-
+    _.preNodeId = props.p.nodeId
     props.p.children.push(_);
   }
 
@@ -226,7 +218,8 @@ regSaveFunc(saveData);
         <el-input :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" />
       </el-form-item>
       <el-form-item label="分流类型：">
-        <el-radio-group :disabled="_edit || readonly || sizeForm.$index" v-model="sizeForm.diversionType">
+        <!-- (_edit && sizeForm.nodeId) || -->
+        <el-radio-group :disabled="readonly || sizeForm.$index > 1" v-model="sizeForm.diversionType">
           <el-radio label="noDiversion">不分流</el-radio>
           <el-radio label="attr">按属性用户行为分流</el-radio>
           <el-radio label="event">按触发事件分流</el-radio>
@@ -244,15 +237,15 @@ regSaveFunc(saveData);
       <BehaviorGroupPlus title="用户属性行为分流" color="#333333" :default-expand="true"
         :class="{ animation: true, display: sizeForm.diversionType === 'attr' }">
         <div class="titleCondition">进入该策略期的用户需要满足以下条件：</div>
-        <FilterGroup :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
+        <FilterGroup :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent!" />
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus title="触发事件分流" color="#333333"  :default-expand="true"
+      <BehaviorGroupPlus title="触发事件分流" color="#333333" :default-expand="true"
         :class="{ animation: true, display: sizeForm.diversionType === 'event' }">
         <div class="flex-column titleCondition">
           <el-text>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</el-text>
-          <el-input-number :disabled="readonly || sizeForm.$index" :min="1" v-model="sizeForm.eventDelayed!.delayedTime"  controls-position="right" 
-            type="number" style="width: 100px" />&nbsp;
+          <el-input-number :disabled="readonly || sizeForm.$index" :min="1" v-model="sizeForm.eventDelayed!.delayedTime"
+            controls-position="right" type="number" style="width: 100px" />&nbsp;
           <el-select :disabled="readonly || sizeForm.$index" v-model="sizeForm.eventDelayed!.delayedUnit"
             style="width: 100px">
             <el-option value="minute" label="分钟">分钟</el-option>

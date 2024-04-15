@@ -68,6 +68,10 @@
               <el-button link type="primary" @click="openUrl(scope.row.activityId,'true')">编辑</el-button>
             <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
             <el-button link type="primary" @click="del(scope.row.activityId)">删除</el-button>
+            <el-button link type="primary" @click="()=>{
+              activityInfo = scope.row;
+              dialogVisible = true;
+            }">查看传播方式</el-button>
             <el-button link type="primary" @click="addTem(scope.row.activityId)">存为模板</el-button>
          </el-space>
          </template>
@@ -75,25 +79,61 @@
       </el-table>
       <el-pagination background layout="prev, pager, next, jumper" :total="total" v-model:current-page="pageParams.pageNum" @current-change="handleCurrentChange" />
     </div>
+    <el-dialog
+    v-model="dialogVisible"
+    title="传播链接"
+    width="500"
+  >
+    <div>链接</div>
+    <div class="mt-2">
+      <el-input
+        :disabled="true"
+        :model-value="activityInfo.diffuseUrl"
+        style="max-width: 600px"
+        placeholder="链接"
+      >
+        <template #append>复制</template>
+      </el-input>
+
+    </div>
+    <div class="my-2">二维码</div>
+    <div>
+      <el-image preview-teleported style="width: 150px; height: 150px" :src="activityInfo.diffuseCode" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="[activityInfo.diffuseCode]" :z-index="9999" fit="cover" />
+    </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false">
+          返回
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
     <el-drawer v-model="dialog" title="新建H5活动" direction="rtl" size="50%">
       <div v-for="(item, key) in temList" :key="key">
         <div class="temTitle my-2">{{ item.playTypeName }}</div>
         <div class="grid grid-cols-3 gap-10">
-          <div class="temBox" v-for="(i,k) in item.templateList" :key="k" :style="{background:!i.templateCover&&'#353535'}" @click="openUrl(i.activityId,'')">
-            <img v-if="i.templateCover" :src="i.templateCover" alt="" srcset="">
-
-            <template v-else>
-              <el-icon>
-                <Plus />
-              </el-icon>
-              <div class="creatTem">新建空白模板</div>
-            </template>
-            <div class="delTem" @click.stop="delTem(i.activityId,'')" v-if="i.activityId">
-              <el-icon>
-                <Delete />
-              </el-icon>
+          <div v-for="(i,k) in item.templateList" :key="k">
+            <div class="temBox"  :style="{background:!i.templateCover&&'#353535'}" @click="openUrl(i.activityId,'')">
+              <img v-if="i.templateCover" :src="i.templateCover" alt="" srcset="">
+  
+              <template v-else>
+                <el-icon>
+                  <Plus />
+                </el-icon>
+                <div class="creatTem">新建空白模板</div>
+              </template>
+              <div class="delTem" @click.stop="delTem(i.activityId,'')" v-if="i.activityId">
+                <el-icon>
+                  <Delete />
+                </el-icon>
+              </div>
             </div>
+            <div class="text-center pt-2">
+              {{ i.activityName }}
+            </div>
+
           </div>
+
         </div>
       </div>
       <!-- <div class="temBox">
@@ -123,8 +163,9 @@ import { Search } from "@element-plus/icons-vue";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
 const router = useRouter();
-
 let BaseUrl = ref("");
+let activityInfo = ref({});
+let dialogVisible = ref(false);
 queryDict().then((res) => {
   BaseUrl.value = res.data[0].domain;
 });
@@ -209,10 +250,16 @@ onMounted(() => {
   getActivityList();
 });
 const addTem = async (activityId: number) => {
-  try {
+  ElMessageBox.prompt('模板名称', '存为模板', {
+    confirmButtonText: '保存',
+    cancelButtonText: '取消',
+  })
+    .then(async({ value }) => {
+      try {
     let res = await saveActivityTemplate({
       activityId,
       templateFlag: true,
+      activityName:value
     });
     if (res) {
       console.log(res, "ppp");
@@ -222,6 +269,11 @@ const addTem = async (activityId: number) => {
     console.log(error);
     ElMessage.error("添加失败");
   }
+    })
+    .catch(() => {
+      
+    })
+  
 };
 const del = async (activityId: number) => {
   ElMessageBox.alert("活动删除后将无法恢复", "确认删除", {

@@ -46,7 +46,7 @@ window['$getNodeById'] = getNodeReactive
 // provide('$getNodeName', getNodeName)
 
 const del = (p: MarketingTouchEditDTO) => {
-  const fatherNode = getNodeReactive(p.father.id);
+  const fatherNode = getNodeReactive(p.preNodeId);
 
   console.log("delete", fatherNode, p);
 
@@ -107,15 +107,16 @@ const layoutFn = () => {
   } = { nodes: [], edges: [] };
 
   const _: any = {
-    Start: (height: number) => height - 95,
+    Start: (height: number) => height - 90,
     strategy: (height: number, data: any) => {
+      const fatherNode = getNodeReactive(data.data?.preNodeId)
       console.log("@@@---", data.data);
-      if (data.data?.father?.nodeType === "subDiversion") return height - 40;
+      if (fatherNode?.nodeType === "subDiversion") return height - 360;
       if (data.data.diversionType === "safeguard") return height - 455;
 
       if (props.readonly) {
         if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
-          return height - 60
+          return height - 77
 
         return height - 160
       }

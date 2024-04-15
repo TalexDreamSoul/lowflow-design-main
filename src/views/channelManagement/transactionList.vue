@@ -3,13 +3,10 @@ import { ref, unref, reactive, onMounted, watch } from "vue";
 import dayjs from "dayjs";
 import { useRouter, useRoute } from "vue-router";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
-import { createTemplatePopover } from "~/utils/touch-templates";
-import { materialType } from "~/utils/common";
+
 import API from "~/api/channelManagement";
 
-// 使用 useRoute 获取当前路由信息
-const route = useRoute();
-// 通过 route.params 获取路由中的 type 参数
+
 // const getType = route.params.type;
 const formInline = reactive({
   startDate: "",
@@ -30,16 +27,8 @@ const statusLabels = {
   pointDecrease: { Text: "减少积分", type: "info" },
   distributionEquity: { Text: "派发权益", type: "info" },
 };
-const value = ref();
 
-function getNameByValue(data: any[], val: string) {
-  const item = data.find((item: { value: any }) => item.value === val);
-  return item ? item.name : "";
-}
 
-const materialTypeName = ref(getNameByValue(materialType, route.params.type));
-
-console.log(materialTypeName); // 输出：短信
 onMounted(async () => {
   fetchDataApi();
 });

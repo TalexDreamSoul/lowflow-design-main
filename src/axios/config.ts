@@ -1,10 +1,26 @@
 import { AxiosResponse, InternalAxiosRequestConfig } from './types'
-import { ElMessage } from 'element-plus'
+import { ElMessage , ElLoading} from 'element-plus'
 import qs from 'qs'
 import { SUCCESS_CODE,SessionLost_CODE } from '~/constants'
 import { reactiveMessage } from "~/utils/mention/mention";
+let loadingInstance: any = null;  // 定义一个loading实例
+
+const startLoading = () => {
+  loadingInstance = ElLoading.service({
+    lock: true,
+    text: 'Loading',
+    background: 'rgba(0, 0, 0, 0.7)',
+  })
+};
+
+const endLoading = () => {
+  if (loadingInstance) {
+    loadingInstance.close();
+  }
+};
 
 const defaultRequestInterceptors = (config: InternalAxiosRequestConfig) => {
+  startLoading();  // 请求开始时显示loading
   if (
     config.method === 'post' &&
     config.headers['Content-Type'] === 'application/x-www-form-urlencoded'
@@ -28,6 +44,7 @@ const defaultRequestInterceptors = (config: InternalAxiosRequestConfig) => {
 }
 
 const defaultResponseInterceptors = (response: AxiosResponse) => {
+  endLoading();  // 请求结束时关闭loading
   if (response?.config?.responseType === 'blob') {
     // 如果是文件流，直接过
     return response
@@ -48,5 +65,13 @@ const defaultResponseInterceptors = (response: AxiosResponse) => {
     else ElMessage.error(response?.data?.message)
   }
 }
+// 请求超时处理函数
+const requestTimeoutHandler = (error: any) => {
+  if (error.code === 'ECONNABORTED') {
+    ElMessage.error('请求超时，请重试');
+    endLoading(); // 超时时关闭loading
+  }
+  return Promise.reject(error);
+};
 
-export { defaultResponseInterceptors, defaultRequestInterceptors }
+export { defaultResponseInterceptors, defaultRequestInterceptors , requestTimeoutHandler}

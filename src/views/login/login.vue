@@ -2,7 +2,7 @@
   <div class="login-container">
     <el-form ref="refLoginForm" :model="state.loginForm" :rules="state.loginRules" class="login-form" autocomplete="on" label-position="left">
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">H5 活动制作系统</h3>
       </div>
 
       <el-form-item prop="accountName">
@@ -11,15 +11,6 @@
 
       <el-form-item prop="accountPassword">
         <el-input v-model="state.loginForm.accountPassword" placeholder="帐号密码" name="accountPassword" tabindex="2" autocomplete="on" />
-      </el-form-item>
-      <el-form-item prop="email">
-        <el-input v-model="state.loginForm.email" placeholder="邮箱" name="accountemail" tabindex="2" autocomplete="on" />
-      </el-form-item>
-      <el-form-item prop="phone">
-        <el-input v-model="state.loginForm.phone" placeholder="电话" name="phone" tabindex="2" autocomplete="on" />
-      </el-form-item>
-      <el-form-item prop="roleId">
-        <el-input v-model="state.loginForm.roleId" placeholder="角色Id" name="roleId" tabindex="2" autocomplete="on" />
       </el-form-item>
       <el-button :loading="state.loading" type="primary" size="large" style="width: 100%; margin-bottom: 30px" @click="handleLogin">Login</el-button>
     </el-form>
@@ -32,53 +23,17 @@ import { useRouter, useRoute } from "vue-router";
 import API from "~/api/account";
 import { useLocalStorage } from "@vueuse/core";
 import customerAPI from "~/api/account";
+import { checkStringEqual, debounce } from "~/utils/common";
 
 const router = useRouter();
-const route = useRoute();
 
-const validateaccountName = (rule, value, callback) => {
-  if (!value) {
-    callback(new Error("Please enter the correct user name"));
-  } else {
-    callback();
-  }
-};
-
-const validateaccountPassword = (rule, value, callback) => {
-  if (value.length < 6) {
-    callback(new Error("The accountPassword can not be less than 6 digits"));
-  } else {
-    callback();
-  }
-};
-const validateEmail = (rule, value, callback) => {
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!value) {
-    callback(new Error("Please enter your email address"));
-  } else if (!emailPattern.test(value)) {
-    callback(new Error("Please enter a valid email address"));
-  } else {
-    callback();
-  }
-};
-
-const validatePhone = (rule, value, callback) => {
-  const phonePattern = /^[1][3-9][0-9]{9}$/;
-  if (!value) {
-    callback(new Error("Please enter your phone number"));
-  } else if (!phonePattern.test(value)) {
-    callback(new Error("Please enter a valid phone number"));
-  } else {
-    callback();
-  }
-};
 const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
 
 const state = ref({
   refLoginForm: null,
   loginForm: {
-    accountName: "4pdadmin",
-    accountPassword: "4pdadmin",
+    accountName: "",
+    accountPassword: "",
     email: "",
     phone: "",
     roleId: 0,
@@ -138,9 +93,12 @@ const goBack = async () => {
     menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode,
     Object.keys(menuMap.value)
   );
-  useLocalStorage("router-default", `/${Object.keys(menuMap.value)[0]}/${
+  useLocalStorage(
+    "router-default",
+    `/${Object.keys(menuMap.value)[0]}/${
       menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
-    }`);
+    }`
+  );
   router.push(
     `/${Object.keys(menuMap.value)[0]}/${
       menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
@@ -157,9 +115,10 @@ const fetchDataApi = async () => {
 const handleLogin = async () => {
   state.loading = true;
 
-  const rs = await API.login(state.value.loginForm);
-  fetchDataApi();
-
+  const res = await API.login(state.value.loginForm);
+  if (checkStringEqual(res?.code, 0)) {
+    fetchDataApi();
+  }
   state.loading = false;
 };
 </script>

@@ -12,8 +12,8 @@ const origin = {
   nodeId: "",
   diversionRuleContent: {
     data: [
-      { branchName: "分支1", branchRatio: 50, children: [] },
-      { branchName: "分支2", branchRatio: 50, children: [] },
+      { branchName: "", branchRatio: 50, children: [] },
+      { branchName: "", branchRatio: 50, children: [] },
     ],
   },
 };
@@ -121,13 +121,9 @@ function saveData() {
     return false;
   }
 
+  const _preId = randomStr(12)
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)
-
-  Object.defineProperty(_, 'father', {
-    value: markRaw(props.p),
-    enumerable: false
-  })
 
   // transform branch prop 2 children prop
   sizeForm.diversionRuleContent.data.forEach((branch: any, index) => {
@@ -160,16 +156,17 @@ function saveData() {
       },
       branchRatio: branch.branchRatio,
       nodeId: randomStr(12),
+      preNodeId: _.nodeId || _preId,
       children: branch.children || [],
       // father: _
     }
 
     // branch.branchName = branch.nodeName
 
-    Object.defineProperty(child, 'father', {
-      value: markRaw(_),
-      enumerable: false
-    })
+    // Object.defineProperty(child, 'father', {
+    //   value: markRaw(_),
+    //   enumerable: false
+    // })
 
     _.children.push(child)
   });
@@ -183,7 +180,8 @@ function saveData() {
   }
 
   else /* if (!_.id?.length)  */ {
-    _.nodeId = randomStr(12)
+    _.nodeId = _preId
+    _.preNodeId = props.p.nodeId
 
     props.p.children.push(_);
 
@@ -233,7 +231,7 @@ const deleteBranch = (index: number) => {
           <el-row :gutter="20" style="    align-items: center;
           margin-top: 16px;" v-for="(branch, index) in sizeForm.diversionRuleContent.data" :key="index">
             <el-col :span="12">
-              <el-input v-model="branch.branchName" />
+              <el-input placeholder="请输入分支名称" v-model="branch.branchName" />
             </el-col>
             <el-col :span="7">
               <el-input-number :min="0" :max="100 - +totalBranchRatio + branch.branchRatio" placeholder="百分比"

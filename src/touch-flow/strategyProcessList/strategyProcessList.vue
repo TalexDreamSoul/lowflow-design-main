@@ -377,7 +377,7 @@ const flowTime = (data: any) => {
               <el-link type="primary" v-if="scope.row.status=='approvalRefuse'||scope.row.status=='draft'" @click="updateData(scope.row)">编辑</el-link>
               <el-link type="primary" @click="handleModal(scope.row)">审核详情</el-link>
               <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
-              <el-link type="primary" @click="successData(scope.row)">审核通过</el-link>
+              <!-- <el-link type="primary" @click="successData(scope.row)">审核通过</el-link> -->
             </el-space>
           </template>
         </el-table-column>

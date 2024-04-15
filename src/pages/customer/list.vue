@@ -59,12 +59,12 @@
             }}
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="province"
           label="省份"
           width="187"
         ></el-table-column>
-        <el-table-column prop="city" label="城市" width="186"></el-table-column>
+        <el-table-column prop="city" label="城市" width="186"></el-table-column> -->
         <el-table-column
           prop="birthday"
           label="生日"
@@ -180,7 +180,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="省份" prop="province">
+          <!-- <el-form-item label="省份" prop="province">
             <el-select
               v-model="formValues.province"
               placeholder="请选择"
@@ -203,7 +203,7 @@
                 :value="item.value"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
         </div>
         <el-form-item label="生日" prop="birthday">
           <el-date-picker
@@ -248,7 +248,7 @@
                 }}
               </template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
               prop="province"
               label="省份"
               width="111"
@@ -257,7 +257,7 @@
               prop="city"
               label="城市"
               width="90"
-            ></el-table-column>
+            ></el-table-column> -->
             <el-table-column
               prop="birthday"
               label="生日"

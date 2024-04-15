@@ -5,17 +5,19 @@ import { randomStr } from "~/utils/common";
 import CommonAttr from "./CommonAttr.vue";
 import { markRaw } from "vue";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
+import { MarketingTouchNodeEditDTO } from "~/touch-flow/touch-total";
 
-const origin = {
+const origin: MarketingTouchNodeEditDTO = {
   nodeId: "",
   nodeType: "strategy",
   nodeName: "",
+  preNodeId: "",
   diversionType: "safeguard",
   touchTemplateContent: {},
   nodeDelayed: {
     delayedAction: "nothing",
     delayedTime: 0,
-    delayedUnit: "",
+    delayedUnit: "day",
     isDelayed: false,
   },
   labelContent: {
@@ -32,14 +34,8 @@ const props = defineProps<{
 }>();
 
 const touchSettingsRef = ref();
-const sizeForm = reactive<typeof origin>(origin);
+const sizeForm = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 const $getNodeName: any = window['$getNodeName']
-
-function reset() {
-  Object.assign(sizeForm, origin);
-  console.log(sizeForm, origin, props.p);
-}
-reset();
 
 watchEffect(() => {
   const { nodeType, nodeId } = props.p;
@@ -51,7 +47,6 @@ watchEffect(() => {
   if (props.p.touchTemplateContent)
     sizeForm.touchTemplateContent = props.p.touchTemplateContent;
 
-  console.log("aqwqsdadas", props.p, sizeForm)
 });
 
 function saveData() {
@@ -77,16 +72,17 @@ function saveData() {
   const _: any = { nodeId: "", children: [], reveal: true };
   Object.assign(_, sizeForm);
 
-  Object.defineProperty(_, "father", {
-    value: markRaw(props.p),
-    enumerable: false,
-  });
+  // Object.defineProperty(_, "father", {
+  //   value: markRaw(props.p),
+  //   enumerable: false,
+  // });
 
   // 修改 Modify Edit
-  if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId.length) {
+  if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId?.length) {
     Object.assign(props.p, _);
   } else {
     _.nodeId = randomStr(12);
+    _.preNodeId = props.p.nodeId;
 
     props.p.children.push(_);
   }

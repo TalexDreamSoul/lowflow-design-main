@@ -1,6 +1,6 @@
 <template>
   <el-config-provider :button="{ autoInsertSpace: true }" :locale="zhCn">
-    <el-watermark style="height: 100%;" :content='`${appOptions?.user?.accountName}+${dayjs(new Date().getTime()).format("YYYY-MM-DD")}`' :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
+    <el-watermark zIndex="9999" style="height: 100%;" :content='`${appOptions?.user?.accountName}+${dayjs(new Date().getTime()).format("YYYY-MM-DD")}`' :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
       <div class="common-layout">
         <TopMenu v-if="!meta.hideTopMenu" />
         <div class="content">

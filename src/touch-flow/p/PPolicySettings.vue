@@ -294,7 +294,7 @@ function del(p: MarketingTouchEditDTO) {
   </el-card>
 
   <el-button @click="dialogVisible = true" :class="{
-    disabled: _data.$readonly,
+    disabled: _data.$readonly || haveDiverse,
     display:
       data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate,
   }" class="start-add" type="primary" :icon="Plus" circle />

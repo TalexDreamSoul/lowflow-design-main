@@ -40,7 +40,8 @@ function getNodes() {
       if (item.children) {
         each.push(...item.children)
 
-        nodes.value.push(item)
+        if (item.nodeType !== 'diversion')
+          nodes.value.push(item)
       }
     }
   }

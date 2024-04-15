@@ -14,7 +14,6 @@ const props = defineProps<{
   readonly?: boolean;
   dict: any;
   outside?: boolean;
-
 }>();
 
 const dataObj = Object.freeze({
@@ -73,7 +72,7 @@ const attrs = computed(() => {
   const _labels = labels.map((label: any) => {
     const children: any = [];
     if (label.labelValue) {
-      [...label.labelValue.data].forEach((item) => {
+      [...(label?.labelValue?.data || [])].forEach((item) => {
         children.push({
           label: item,
           value: item,
@@ -109,19 +108,21 @@ const attrs = computed(() => {
 const getCurrSelected = (condition: any) => {
   const arr = [...attrs.value]
     .map((_: any) =>
-      [..._.children].map((__: any) => (__.children?.length ? __.children : [__]))
+      [..._.children].map((__: any) =>
+        __.children?.length ? __.children : [__]
+      )
     )
-    .flat(2)
-  const { type } = condition
+    .flat(2);
+  const { type } = condition;
 
-  if (type === 'attr') {
-    const { id } = condition.attr
+  if (type === "attr") {
+    const { id } = condition.attr;
 
-    return arr.find((_: any) => _.id === id)
+    return arr.find((_: any) => _.id === id);
   } else {
-    const { id } = condition.label
+    const { id } = condition.label;
 
-    return arr.find((_: any) => _.id === id)
+    return arr.find((_: any) => _.id === id);
   }
 
   // console.log("233", [...attrs.value]
@@ -143,12 +144,9 @@ const getCurrSelected = (condition: any) => {
   <div class="CustomContent">
     <LogicalLine :readonly="readonly" :display="conditionArr?.length < 2" v-model="condition.logicalChar">
       <div v-for="(item, index) in conditionArr" :key="index" class="AttrLine">
-        <MultipleTrigger :readonly="readonly" :obj="item" :attrs="attrs" :disabled="readonly" placeholder="客户属性/标签"
-          :style="`width: ${item.type === 'label' ? '500' : '220'}px`" />
-        <operator :readonly="readonly" :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :obj="item"
-          :disabled="readonly" ref="operatorRef" v-model="item.attr.fieldOp" style="width: 120px" />
-        <AttrRender :conditions="conditionArr" :readonly="readonly" :outside="outside"  :selected="getCurrSelected(item)" :disabled="readonly" :item="item.attr"
-          :obj="item" :attrs="attrs" />
+        <MultipleTrigger :readonly="readonly" :obj="item" :attrs="attrs" :disabled="readonly" placeholder="客户属性/标签" :style="`width: ${item.type === 'label' ? '500' : '220'}px`" />
+        <operator :readonly="readonly" :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :obj="item" :disabled="readonly" ref="operatorRef" v-model="item.attr.fieldOp" style="width: 120px" />
+        <AttrRender :conditions="conditionArr" :readonly="readonly" :outside="outside" :selected="getCurrSelected(item)" :disabled="readonly" :item="item.attr" :obj="item" :attrs="attrs" />
 
         <div v-if="!readonly" style="zoom:.8">
           <template v-if="index + 1 === conditionArr.length">
@@ -191,7 +189,7 @@ const getCurrSelected = (condition: any) => {
 .AttrLine {
   display: flex;
   margin-top: 1rem;
-
+  flex-wrap: wrap;
   align-items: center;
 
   flex: 1;
