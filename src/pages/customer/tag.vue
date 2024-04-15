@@ -488,7 +488,8 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       .el-table {
         border-radius: 0;
 
-        .el-table__cell, .el-table__empty-block {
+        .el-table__cell,
+        .el-table__empty-block {
           background-color: rgba(242, 244, 248, 1);
         }
       }
