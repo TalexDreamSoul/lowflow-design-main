@@ -145,13 +145,15 @@ const detailsData = async (row: any) => {
   router.push(`/touchCenter/details/${row.id}`);
 };
 const modalVisible = ref(false);
-let modalData = reactive<any>([]);
+const modalData = ref<any>([]);
 
 const handleModal = async (values?: any) => {
+  Object.assign(modalData, []);
+  modalData.value=[]
   let res: any = await API.listApproveRecord({
     businessId: values.id,
   });
-  Object.assign(modalData, res?.data);
+  modalData.value=res?.data
   modalVisible.value = true;
 };
 const successData = async (row: any) => {
