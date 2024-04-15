@@ -68,7 +68,7 @@
               <el-button link type="primary" @click="openUrl(scope.row.activityId,'true')">编辑</el-button>
             <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
             <el-button link type="primary" @click="del(scope.row.activityId)">删除</el-button>
-            <el-button v-if="scope.row.activityStatus!==4" link type="primary" @click="()=>{
+            <el-button v-if="scope.row.activityStatus==4" link type="primary" @click="()=>{
               activityInfo = scope.row;
               dialogVisible = true;
             }">查看传播方式</el-button>
@@ -103,7 +103,7 @@
     <div class="my-2">二维码</div>
     <div class="flex items-center gap-3">
       <el-image preview-teleported style="width: 150px; height: 150px" :src="activityInfo.diffuseCode" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="[activityInfo.diffuseCode]" :z-index="9999" fit="cover" />
-      <a  :href="activityInfo.diffuseCode" download="qrCode">
+      <a  :href="activityInfo.diffuseCode" target="downloadFile" download>
         <el-button :icon="Download" type="primary">下载</el-button>
       </a>
     </div>
