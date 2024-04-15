@@ -68,7 +68,7 @@
               <el-button link type="primary" @click="openUrl(scope.row.activityId,'true')">编辑</el-button>
             <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
             <el-button link type="primary" @click="del(scope.row.activityId)">删除</el-button>
-            <el-button link type="primary" @click="()=>{
+            <el-button v-if="scope.row.activityStatus!==4" link type="primary" @click="()=>{
               activityInfo = scope.row;
               dialogVisible = true;
             }">查看传播方式</el-button>
@@ -87,18 +87,25 @@
     <div>链接</div>
     <div class="mt-2">
       <el-input
-        :disabled="true"
+        :readonly="true"
         :model-value="activityInfo.diffuseUrl"
         style="max-width: 600px"
         placeholder="链接"
       >
-        <template #append>复制</template>
+        <template #append>
+          <el-button type="primary" @click="copy(activityInfo.diffuseUrl)">
+          复制
+        </el-button>
+        </template>
       </el-input>
 
     </div>
     <div class="my-2">二维码</div>
-    <div>
+    <div class="flex items-center gap-3">
       <el-image preview-teleported style="width: 150px; height: 150px" :src="activityInfo.diffuseCode" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="[activityInfo.diffuseCode]" :z-index="9999" fit="cover" />
+      <a  :href="activityInfo.diffuseCode" download="qrCode">
+        <el-button :icon="Download" type="primary">下载</el-button>
+      </a>
     </div>
     <template #footer>
       <div class="dialog-footer">
@@ -159,7 +166,7 @@ import {
   queryDict,
 } from "~/api/activity";
 import dayjs from "dayjs";
-import { Search } from "@element-plus/icons-vue";
+import { Search,Download } from "@element-plus/icons-vue";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
 const router = useRouter();
@@ -172,7 +179,9 @@ queryDict().then((res) => {
 interface ActivityTypes {
   [key: string]: string;
 }
-
+const copy = (e)=>{
+  console.log(e,111)
+}
 const activities: ActivityTypes = {
   "1": "问卷玩法",
   "2": "抽奖玩法",
@@ -386,7 +395,7 @@ const clear = () => {
 }
 .temBox {
   position: relative;
-  width: 212px;
+  //width: 212px;
   height: 377px;
   // background: #353535;
   box-shadow: 0px 20px 50px 0px rgba(0, 0, 0, 0.02);
