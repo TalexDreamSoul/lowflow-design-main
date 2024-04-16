@@ -1,6 +1,6 @@
 <script setup lang="ts" name="TouchSettings">
 import TouchSettingContents from "../touch/TouchSettingContents.vue";
-import { reactive, ref, computed, watchEffect, nextTick, onMounted } from "vue";
+import { reactive, ref, computed, watchEffect, nextTick, onMounted, watch } from "vue";
 import { getQryMaterial } from "~/api";
 import { MaterialTemplateEditDTO } from "./touch-types";
 import { createTemplatePopover } from "~/utils/touch-templates";
@@ -97,8 +97,8 @@ watchEffect(() => {
 });
 
 type MaterialType = {
-    name: string;
-    value: string;
+  name: string;
+  value: string;
 };
 
 const materialType = ref<MaterialType[]>([]);
@@ -119,7 +119,7 @@ const getDictmaterialType = async () => {
   // getDictmaterialList.unshift({ value: "all", name: "模版总览" });
   materialType.value = getDictmaterialList;
 
-  console.log(materialType, "materialType");
+  // console.log(materialType, "materialType");
 
 };
 onMounted(async () => {
@@ -131,7 +131,7 @@ async function refreshMaterialTemplate(clearStatus: boolean = true) {
 
   const { material } = touchOptions;
 
-  let res = await getQryMaterial({
+  const res: any = await getQryMaterial({
     ...material,
     type: touchOptions.type,
   });
@@ -181,7 +181,7 @@ function assignData(val: any) {
     res.sceneCode = "";
   } else res = touchOptions.material.templates.find((item: any) => item.id === val);
 
-  console.log("assign", res, touchOptions, curPlatform.value.propKey);
+  // console.log("assign", res, touchOptions, curPlatform.value.propKey);
 
   Object.assign(touchOptions[curPlatform.value.propKey], {
     ...res.content,
@@ -283,6 +283,16 @@ const platformOptions: Record<
 
 const curPlatform = computed(() => platformOptions[touchOptions.type!]);
 
+watch(() => touchOptions.type, (val, oldVal) => {
+  if (!oldVal) return
+
+  const propKey = `${oldVal}Template`
+
+  delete touchOptions[propKey]
+
+  touchOptions[propKey] = JSON.parse(JSON.stringify(origin[propKey]))
+})
+
 defineExpose({ updateData });
 </script>
 
@@ -292,17 +302,13 @@ defineExpose({ updateData });
       <el-form-item label="触达通道">
         <el-select :disabled="readonly" placeholder="请选择通道" @change="refreshMaterialTemplate"
           v-model="touchOptions.type" style="width: 120px">
-<!-- 
+          <!-- 
           <el-option value="sms" label="短信">手机短信</el-option>
           <el-option value="appPush" label="app消息">appPush</el-option>
           <el-option value="digital" label="企微">企微</el-option>
           <el-option value="outbound" label="智能外呼">智能外呼</el-option>
           <el-option value="znx" label="站内信">站内信</el-option> -->
-          <el-option
-          v-for="(item, key) in materialType" :key="key"
-          :label="item?.name"
-          :value="item?.value"
-        />
+          <el-option v-for="(item, key) in materialType" :key="key" :label="item?.name" :value="item?.value" />
         </el-select>
       </el-form-item>
       <el-form-item v-if="touchOptions.type" label="选择模版">
