@@ -126,7 +126,7 @@ const { readonly, data, dialogVisible, drawerOptions, openDrawer, comps, handleC
     border: 1px solid #4078e0;
   }
 
-  width: 50%;
+/*  width: 50%;*/
 
   border: 1px solid transparent;
 }

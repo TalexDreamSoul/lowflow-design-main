@@ -503,6 +503,8 @@ div.PBlock {
   position: relative;
 
   left: 50%;
+  min-width: 280px;
+  width: max-content;
 
   border-radius: 8px;
 

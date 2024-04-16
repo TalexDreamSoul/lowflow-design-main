@@ -1,5 +1,4 @@
 import { computed, inject, onBeforeUnmount, provide, reactive, ref } from "vue";
-import { Stamp, Plus, CircleCheckFilled, User, Position } from "@element-plus/icons-vue";
 import CustomersAttr from "../attr/CustomersAttr.vue";
 import PolicySettingsAttr from "../attr/PolicySettingsAttr.vue";
 import DeliverySettingsAttr from "../../p/attr/DeliverySettingsAttr.vue";
@@ -77,10 +76,10 @@ export function genPopoverManager(innerData: any) {
     });
   }
 
-  function openDrawer(comp: any) {
+  function openDrawer(comp: any, doNew: boolean = false) {
     dialogVisible.value = false;
 
-    Object.assign(drawerOptions, comp);
+    Object.assign(drawerOptions, { ...comp, new: doNew });
 
     if (!innerData.executeType) innerData.executeType = "immediately";
 
@@ -186,6 +185,97 @@ function useSaveFunc(innerData: any, refNodeData: any, callback: Function) {
   return [handleClick, handleSave]
 }
 
+function genDel($data: any) {
+
+  return function useDel() {
+    const visible = ref(false)
+    function del(p: any) {
+      $data.$del(p);
+
+      visible.value = false;
+    }
+
+    return {
+      del,
+      visible
+    }
+  }
+}
+
+function genDisplayAttr(data: any) {
+  return function useDisplayAttr() {
+    const delayedActionStr = computed(() => {
+      const action = data?.nodeDelayed?.delayedAction;
+      if (!action) return "";
+
+      if (action === "touch") return "发送触达";
+
+      const { labelName, labelValue } = data?.labelContent || {}
+
+      const _LABEL = (labelName) ? `${labelName}:${labelValue}` : ""
+
+      if (action === "label") return "打上标签" + _LABEL;
+      if (action === "touchAndLabel") return "发送触达并打上标签" + _LABEL;
+      return "不执行动作";
+    });
+
+    const _pushes: Record<string, Function> = {
+      'sms': () => {
+        return {
+          title: "短信模板",
+          val: ``
+        }
+      },
+      'znx': () => {
+        return {
+          title: "站内信模板",
+          val: ``
+        }
+      },
+      'appPush': () => {
+        return {
+          title: "APP消息模板",
+          val: ``
+        }
+      },
+      'digital': () => {
+        return {
+          title: "企微模板",
+          val: ``
+        }
+      },
+      'outbound': () => {
+        return {
+          title: "智能外呼模板",
+          val: ``
+        }
+      }
+    }
+
+    const pushTemplate = computed(() => {
+      const { type } = data?.touchTemplateContent || {};
+      if (!type || String(data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') === -1)
+        return {
+          has: false,
+          val: "",
+        };
+
+      const { title, val } = _pushes[type]();
+
+      return {
+        has: type?.length,
+        title,
+        val,
+      };
+    });
+
+    return {
+      pushTemplate,
+      delayedActionStr
+    }
+  }
+}
+
 export function genNodeParams() {
 
   // console.group("NODE")
@@ -211,6 +301,8 @@ export function genNodeParams() {
     data: innerData,
     __data,
     $data,
+    useDel: genDel($data),
+    useDisplayAttr: genDisplayAttr(innerData),
     openDrawer,
     openCustomer,
     dialogVisible,
