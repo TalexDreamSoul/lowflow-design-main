@@ -1,14 +1,16 @@
 import { AxiosResponse, InternalAxiosRequestConfig } from './types'
-import { ElMessage , ElLoading} from 'element-plus'
+import { ElMessage, ElLoading } from 'element-plus'
 import qs from 'qs'
-import { SUCCESS_CODE,SessionLost_CODE } from '~/constants'
+import { SUCCESS_CODE, SessionLost_CODE } from '~/constants'
 import { reactiveMessage } from "~/utils/mention/mention";
-let loadingInstance: any = null;  // 定义一个loading实例
+
+let loadingInstance: any
 
 const startLoading = () => {
   loadingInstance = ElLoading.service({
     lock: true,
     text: 'Loading',
+    fullscreen: true,
     background: 'rgba(0, 0, 0, 0.7)',
   })
 };
@@ -52,13 +54,13 @@ const defaultResponseInterceptors = (response: AxiosResponse) => {
     return response.data
   } else {
     if (response?.data?.code === SessionLost_CODE) {
-        // 判断当前不是登录页面时才进行提示和跳转
-        if (!window.location.href.includes('/login')) {
-          const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false);
-          promise.then(() => {
-            window.location.href = '/login';
-          });
-        }
+      // 判断当前不是登录页面时才进行提示和跳转
+      if (!window.location.href.includes('/login')) {
+        const [promise] = reactiveMessage('会话失效', '您的会话已失效，请重新登录！', false);
+        promise.then(() => {
+          window.location.href = '/login';
+        });
+      }
     }
 
     if (response.config.url?.indexOf('addMarketingTouch.do') !== -1) return response.data
@@ -74,4 +76,4 @@ const requestTimeoutHandler = (error: any) => {
   return Promise.reject(error);
 };
 
-export { defaultResponseInterceptors, defaultRequestInterceptors , requestTimeoutHandler}
+export { defaultResponseInterceptors, defaultRequestInterceptors, requestTimeoutHandler }
