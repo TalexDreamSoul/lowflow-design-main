@@ -155,17 +155,29 @@ function useComputedData(data: any) {
   }
 }
 
-function useSaveFunc(innerData: any, refNodeData: any, callback: Function) {
+function useSaveFunc(innerData: any, refNodeData: any, pushTemplate: any, callback: Function) {
   let _saveFunc: (() => boolean) | null = null;
 
   function handleSave() {
     if (!_saveFunc || !_saveFunc()) return;
 
+    if (pushTemplate) {
+      if (innerData.nodeContent?.data) {
+        innerData.nodeContent.data.$template = pushTemplate.value
+      } else {
+        innerData.nodeContent = {
+          data: {
+            $template: pushTemplate.value
+          }
+        }
+      }
+    }
+
     Object.assign(refNodeData, innerData);
 
     refNodeData.children = innerData.children
 
-    // console.log("__data", refNodeData)
+    window.$refreshLayout()
 
     callback()
   }
@@ -289,7 +301,8 @@ export function genNodeParams() {
 
   // console.log("节点数据 OUTER", { $data, __data, dialogVisible, drawerOptions, openCustomer, openDrawer, comps, haveDiverse })
 
-  const [handleClick, handleSave] = useSaveFunc(innerData, __data, () => {
+  const { pushTemplate, delayedActionStr } = genDisplayAttr(innerData)()
+  const [handleClick, handleSave] = useSaveFunc(innerData, __data, pushTemplate, () => {
     dialogVisible.value = false;
     drawerOptions.visible = false;
   })
@@ -302,7 +315,7 @@ export function genNodeParams() {
     __data,
     $data,
     useDel: genDel($data),
-    useDisplayAttr: genDisplayAttr(innerData),
+    useDisplayAttr: () => { return { pushTemplate, delayedActionStr } },
     openDrawer,
     openCustomer,
     dialogVisible,

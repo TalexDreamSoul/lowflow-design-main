@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { watch } from "vue";
 import { Delete } from "@element-plus/icons-vue";
 import PolicySettingsAttr from "./attr/PolicySettingsAttr.vue";
 import { _delChild } from "../flow-utils";
 import Strategist from "./attr/Strategist.vue";
-import { MarketingTouchEditDTO } from "./behavior/marketing";
 import StatisticsDisplay from './attr/StatisticsDisplay.vue'
 import { genNodeParams } from "./common/node-util";
 import BaseNode from "./common/BaseNode.vue";
