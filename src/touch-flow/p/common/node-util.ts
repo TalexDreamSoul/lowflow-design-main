@@ -161,7 +161,8 @@ function useSaveFunc(innerData: any, refNodeData: any, pushTemplate: any, callba
   function handleSave() {
     if (!_saveFunc || !_saveFunc()) return;
 
-    if (pushTemplate) {
+    if (pushTemplate?.value?.has) {
+      console.log('pushTemplate', pushTemplate)
       if (innerData.nodeContent?.data) {
         innerData.nodeContent.data.$template = pushTemplate.value
       } else {
@@ -171,13 +172,15 @@ function useSaveFunc(innerData: any, refNodeData: any, pushTemplate: any, callba
           }
         }
       }
+
+      setTimeout(() => {
+        window.$refreshLayout()
+      })
     }
 
     Object.assign(refNodeData, innerData);
 
     refNodeData.children = innerData.children
-
-    window.$refreshLayout()
 
     callback()
   }
