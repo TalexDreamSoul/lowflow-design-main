@@ -228,7 +228,7 @@ const flowTime = (data: any) => {
         <el-form-item>
           <el-select v-model="formInline.executeType" clearable style="width:200px">
             <el-option label="定时-单次" value="immediately" />
-            <el-option label="定时-重复" value="delayed" />
+            <el-option label="定时-重复" value="repeat" />
             <el-option label="触发型" value="trigger" />
           </el-select>
         </el-form-item>
@@ -318,6 +318,8 @@ const flowTime = (data: any) => {
         </el-table-column>
         <el-table-column label="类型" width="150">
           <template #default="scope">
+            {{scope.row.executeType}}
+
             {{ getTypeText(scope.row.executeType) }}
           </template>
         </el-table-column>
