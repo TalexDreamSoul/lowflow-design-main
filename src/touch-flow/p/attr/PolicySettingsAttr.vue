@@ -76,18 +76,18 @@ const props = defineProps<{
 const $getNodeName: any = window['$getNodeName']
 
 const touchSettingsRef = ref();
-// const _edit = computed(() => {
-//   const splits = location.pathname.split('/')
+const _edit = computed(() => {
+  const splits = location.pathname.split('/')
 
-//   // 取最后两个
-//   const [, design, id] = splits
+  // 取最后两个
+  const [, design, id] = splits
 
-//   if (design !== 'design' || !id) return false
+  if (design !== 'design' || !id) return false
 
-//   // console.log("11212121212121212", splits, design, id)
+  // console.log("11212121212121212", splits, design, id)
 
-//   return true
-// })
+  return true
+})
 
 const sizeForm = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 
@@ -99,14 +99,19 @@ watch(
 );
 
 watch(props.p, () => {
-  const { nodeType, children, preNodeId } = props.p;
+  const { nodeId, nodeType, children, preNodeId } = props.p;
 
-  if (nodeType === 'strategy') {
-    const fatherNode = window.$getNodeById(preNodeId)
-    if (!fatherNode) return
+  if (nodeId && nodeType === 'strategy') {
 
-    sizeForm.$index = fatherNode.children.length
-    //[...fatherNode.children].indexOf(props.p)
+    if (props.new) {
+      sizeForm.$index = children?.length || 0
+    } else {
+      const fatherNode = window.$getNodeById(preNodeId)
+      if (!fatherNode) return
+
+      sizeForm.$index = _edit.value ? fatherNode.children.length : [...fatherNode.children].findIndex(item => item.nodeId === nodeId)  //fatherNode.children.length
+      //[...fatherNode.children].indexOf(props.p)
+    }
 
     return;
   }
@@ -200,7 +205,11 @@ function saveData() {
     _.nodeId = randomStr(12);
 
     _.preNodeId = props.p.nodeId
-    props.p.children.push(_);
+
+    if (props.p.children) {
+      props.p.children.push(_);
+    } else props.p.children = [_]
+
   }
 
   return true;
@@ -219,7 +228,8 @@ regSaveFunc(saveData);
       </el-form-item>
       <el-form-item label="分流类型：">
         <!-- (_edit && sizeForm.nodeId) || -->
-        <el-radio-group :disabled="readonly || sizeForm.$index > 1" v-model="sizeForm.diversionType">
+        <el-radio-group :disabled="(_edit && sizeForm.$index && !props.new) || readonly || sizeForm.$index"
+          v-model="sizeForm.diversionType">
           <el-radio label="noDiversion">不分流</el-radio>
           <el-radio label="attr">按属性用户行为分流</el-radio>
           <el-radio label="event">按触发事件分流</el-radio>

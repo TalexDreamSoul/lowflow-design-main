@@ -17,6 +17,7 @@ import { MarketingTouchEditDTO } from "../p/behavior/marketing";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
 import { useWindowSize } from "@vueuse/core";
+import { groupCollapsed } from "console";
 
 interface IGraphData {
   id: string;
@@ -64,6 +65,13 @@ const del = (p: MarketingTouchEditDTO) => {
 };
 
 const layoutFn = () => {
+  const _c = window.console
+  var console = {
+    log: (...arg: any) => void 0,
+    groupCollapsed: (arg: any) => void 0,
+    groupEnd: () => void 0
+  }
+
   console.groupCollapsed("layoutFn");
 
   const result = Hierarchy.compactBox(treeMap, {
@@ -244,6 +252,7 @@ const layoutFn = () => {
   console.log(model);
 
   console.groupEnd();
+  window.console = _c
 
   _Graph.fromJSON(model);
 
