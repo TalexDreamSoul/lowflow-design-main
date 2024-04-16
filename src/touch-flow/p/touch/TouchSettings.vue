@@ -155,11 +155,19 @@ function validateData(type: string, formData: any) {
 
   function _(key: string, val: any) {
     if (Array.isArray(val)) {
-      console.log("array validate", key, val);
+      console.log("123 array validate", key, val);
 
-      if (!val.length) return true;
-      else if (!validatePropValue(val[0]?.field)) return true;
-      return [...val].filter((item) => !item.fieldName && !item.labelName)?.length < 1;
+      for (let variable of val) {
+        if (variable.hasOwnProperty('field')) {
+          if (!validatePropValue(variable.field)) return false
+          if (!variable.fieldName && !variable.labelName) return false
+
+          if (!variable.variables?.length) {
+            return false
+          }
+        }
+      }
+      // console.log("vd ___", key, val)
     }
 
     return true;
@@ -167,7 +175,7 @@ function validateData(type: string, formData: any) {
 
   // 获得 res 中每一个key 判断是否为空
   const key = type.indexOf('Template') === -1 ? `${type}Template` : type
-  console.log("vd", key, type, res);
+  // console.log("vd", key, type, res);
   if (
     !validatePropValue(res[key], {
       ignores: {

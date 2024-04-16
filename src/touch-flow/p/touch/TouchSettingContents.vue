@@ -213,7 +213,15 @@ function addLabel() {
     id,
     reactive({
       field: id,
-      variables: [],
+      variables: [
+        // {
+        //   compareValue: "",
+        //   fieldOp: "",
+        //   fieldRangeValue: "",
+        //   fieldValue: "",
+        //   timeCondition: []
+        // }
+      ],
     })
   );
 

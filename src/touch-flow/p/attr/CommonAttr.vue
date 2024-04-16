@@ -15,7 +15,7 @@ defineExpose({
   updateData: () => {
 
     if (!touchSettingsRef.value) {
-      return
+      return true
     }
 
     console.log("touch updated!!!")
