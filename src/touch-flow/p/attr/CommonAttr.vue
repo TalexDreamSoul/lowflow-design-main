@@ -18,8 +18,6 @@ defineExpose({
       return true
     }
 
-    console.log("touch updated!!!")
-
     return touchSettingsRef.value.updateData()
 
   }

@@ -43,11 +43,11 @@ function saveData() {
     type: "appPush",
   };
 
-  if ( contentVariables?.length ) {
+  if (contentVariables?.length) {
     appPushTemplate.contentVariables = contentVariables
   }
 
-  if ( titleVariables?.length ) {
+  if (titleVariables?.length) {
     appPushTemplate.titleVariables = titleVariables
   }
 
