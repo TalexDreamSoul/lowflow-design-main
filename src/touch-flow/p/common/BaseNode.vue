@@ -18,7 +18,7 @@ const { readonly, data, dialogVisible, drawerOptions, openDrawer, comps, handleC
     <teleport to=".FlowPage">
       <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
-          <div @click="openDrawer(item)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
+          <div @click="openDrawer(item, true)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
             class="PBlock-Section">
             <p style="    display: flex;
             align-items: center;">
@@ -36,7 +36,7 @@ const { readonly, data, dialogVisible, drawerOptions, openDrawer, comps, handleC
 
     <teleport to=".FlowPage">
       <el-drawer @click="handleClick" v-model="drawerOptions.visible" :title="drawerOptions.title" size="65%">
-        <component :readonly="readonly" :p="data" :is="drawerOptions.comp" />
+        <component :new="drawerOptions?.new" :readonly="readonly" :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <template v-if="readonly">
             <el-button round @click="drawerOptions.visible = false">返回</el-button>

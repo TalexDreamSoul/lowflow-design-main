@@ -185,7 +185,7 @@ function saveData() {
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm);
 
-  // console.log("ppp", _);
+  console.log("ppp", _);
 
   // Object.defineProperty(_, "father", {
   //   value: markRaw(props.p),
