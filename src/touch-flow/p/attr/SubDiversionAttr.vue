@@ -102,7 +102,7 @@ function saveData() {
     return false;
   }
 
-  touchSettingsRef.value.updateData();
+  if (!touchSettingsRef.value.updateData()) return false
 
   console.log("> update", sizeForm, props);
 

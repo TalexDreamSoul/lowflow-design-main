@@ -170,7 +170,7 @@ function saveData() {
     return false;
   }
 
-  touchSettingsRef.value.updateData();
+  if (!touchSettingsRef.value.updateData()) return false
 
   const { touchTemplateContent }: any = sizeForm
 

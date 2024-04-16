@@ -1,5 +1,4 @@
 <script setup lang="ts" name="TouchSettings">
-import TouchSettingContents from "../touch/TouchSettingContents.vue";
 import { reactive, ref, computed, watchEffect, nextTick, onMounted, watch } from "vue";
 import { getQryMaterial } from "~/api";
 import { MaterialTemplateEditDTO } from "./touch-types";
@@ -12,6 +11,8 @@ import SmsTemplateVue from "~/utils/templates/SmsTemplateVue.vue";
 import AppTemplateVue from "~/utils/templates/AppTemplateVue.vue";
 import DigitalTemplateVue from "~/utils/templates/DigitalTemplateVue.vue";
 import OutboundTemplateVue from "~/utils/templates/OutboundTemplateVue.vue";
+import { validatePropValue } from "~/touch-flow/flow-utils";
+import { ElMessage } from "element-plus";
 
 type TemplateComponents =
   | typeof ZnxTemplateVue
@@ -89,7 +90,7 @@ watchEffect(() => {
 
     Object.assign(touchOptions, props.touch);
 
-    // console.log("touch", Object.freeze({ ...props.touch }), Object.freeze({ ...touchOptions }), touchOptions)
+    console.log("touch", Object.freeze({ ...props.touch }), Object.freeze({ ...touchOptions }), touchOptions)
     nextTick(() => {
       refreshMaterialTemplate(false).then(() => assignData(touchOptions.id))
     });
@@ -149,19 +150,70 @@ async function refreshMaterialTemplate(clearStatus: boolean = true) {
   }
 }
 
+function validateData(type: string, formData: any) {
+  const res = formData;
+
+  function _(key: string, val: any) {
+    if (Array.isArray(val)) {
+      console.log("array validate", key, val);
+
+      if (!val.length) return true;
+      else if (!validatePropValue(val[0]?.field)) return true;
+      return [...val].filter((item) => !item.fieldName && !item.labelName)?.length < 1;
+    }
+
+    return true;
+  }
+
+  // 获得 res 中每一个key 判断是否为空
+  const key = type.indexOf('Template') === -1 ? `${type}Template` : type
+  console.log("vd", key, type, res);
+  if (
+    !validatePropValue(res[key], {
+      ignores: {
+        variables: {
+          validate: _,
+        },
+        titleVariables: {
+          validate: _,
+        },
+        znxContentVariables: {
+          validate: _,
+        },
+        znxTitleVariables: {
+          validate: _,
+        },
+        contentVariables: {
+          validate: _,
+        },
+      },
+    })
+  ) {
+    return ElMessage.error({
+      message: "请完整填写信息！",
+    }), false
+  }
+
+  return true
+}
+
 function updateData() {
   const _comp = comp.value;
   if (_comp) {
     const { saveData: save } = _comp
 
-    const templateData = touchOptions[curPlatform.value.propKey];
+    const formData = save()
+    console.log('t', curPlatform.value.propKey, touchOptions, props)
+    if (!validateData(curPlatform.value.propKey, formData)) return false
 
-    Object.assign(templateData, save());
+    // const templateData = touchOptions[curPlatform.value.propKey];
+
+    Object.assign(touchOptions, formData);
   }
 
   Object.assign(props.touch, touchOptions);
 
-  // console.log("ud", templateData, props.touch);
+  return true
 }
 
 function handleAddDone() {
@@ -176,17 +228,20 @@ function assignData(val: any) {
   if (val === -1) {
     res = origin[curPlatform.value.propKey];
 
-    res.content = {};
+    // 不使用模板时使用 touch 中的参数
+    res.content = touchOptions[curPlatform.value.propKey];
     res.name = "";
     res.sceneCode = "";
+
   } else res = touchOptions.material.templates.find((item: any) => item.id === val);
 
-  // console.log("assign", res, touchOptions, curPlatform.value.propKey);
+  console.log(',,', touchOptions, curPlatform.value.propKey, res)
+
 
   Object.assign(touchOptions[curPlatform.value.propKey], {
     ...res.content,
     id: res.id,
-    name: res.name,
+    name: res.name || props.touch.name,
     status: res.status,
   });
 

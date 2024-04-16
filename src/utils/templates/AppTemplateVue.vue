@@ -29,6 +29,7 @@ watchEffect(() => {
   if (!_data) return
 
   Object.assign(data, _data)
+  console.log('apppp', data, _data)
 })
 
 function saveData() {
