@@ -114,7 +114,7 @@ const appOptions: any = inject("appOptions")!;
 
 const typeMap: any = {
   immediately: "定时-单次",
-  delayed: "定时-重复",
+  repeat: "定时-重复",
   trigger: "触发型",
 };
 
