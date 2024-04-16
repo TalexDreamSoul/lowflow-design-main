@@ -245,7 +245,9 @@ async function submitReview(status: string = "approvalPending") {
   if (route.params?.id?.length) {
     Object.assign(data, { ..._flowOptions, id: route.params?.id,status:status });
   } else {
-    Object.assign(data,{ _flowOptions,status:status});
+    
+    Object.assign(_flowOptions,{... _flowOptions,status:status});
+    Object.assign(data, _flowOptions);
   }
   let res: any = route.params?.id?.length
     ? await updateMarketingTouch(data)
