@@ -11,7 +11,7 @@ const startLoading = () => {
     lock: true,
     text: 'Loading',
     fullscreen: true,
-    background: 'rgba(0, 0, 0, 0.7)',
+    // background: 'rgba(0, 0, 0, 0.7)',
   })
 };
 
