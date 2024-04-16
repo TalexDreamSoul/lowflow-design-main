@@ -22,7 +22,10 @@ const endLoading = () => {
 };
 
 const defaultRequestInterceptors = (config: InternalAxiosRequestConfig) => {
-  startLoading();  // 请求开始时显示loading
+  if (config.url !== "/api/dictFilterTree.do"
+  )
+    startLoading();  // 请求开始时显示loading
+
   if (
     config.method === 'post' &&
     config.headers['Content-Type'] === 'application/x-www-form-urlencoded'
