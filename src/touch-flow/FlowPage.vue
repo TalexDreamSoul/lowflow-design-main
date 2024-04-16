@@ -134,8 +134,41 @@ function targetReduction(data: Request) {
 function transformNodes(__nodes: Array<any>) {
   const res: Array<any> = [];
 
-  [...__nodes].forEach((node: any) => {
+  [...__nodes].forEach((_node: any) => {
+    const node = { ..._node }
     const nodeFather = window.$getNodeById(node.preNodeId)
+
+    if (node.touchTemplateContent?.type) {
+      const type = node.touchTemplateContent.type
+
+      if (type === 'sms') {
+        delete node.touchTemplateContent.appPushTemplate
+        delete node.touchTemplateContent.digitalTemplate
+        delete node.touchTemplateContent.outboundTemplate
+        delete node.touchTemplateContent.znxTemplate
+      } else if (type === 'znx') {
+        delete node.touchTemplateContent.appPushTemplate
+        delete node.touchTemplateContent.digitalTemplate
+        delete node.touchTemplateContent.outboundTemplate
+        delete node.touchTemplateContent.smsTemplate
+      } else if (type === 'appPush') {
+        delete node.touchTemplateContent.znxTemplate
+        delete node.touchTemplateContent.digitalTemplate
+        delete node.touchTemplateContent.outboundTemplate
+        delete node.touchTemplateContent.smsTemplate
+      } else if (type === 'outbound') {
+        delete node.touchTemplateContent.appPushTemplate
+        delete node.touchTemplateContent.digitalTemplate
+        delete node.touchTemplateContent.znxTemplate
+        delete node.touchTemplateContent.smsTemplate
+      } else if (type === 'digital') {
+        delete node.touchTemplateContent.appPushTemplate
+        delete node.touchTemplateContent.outboundTemplate
+        delete node.touchTemplateContent.znxTemplate
+        delete node.touchTemplateContent.smsTemplate
+      }
+
+    }
 
     node.$id && (node.id = node.$id);
 
@@ -243,10 +276,10 @@ async function submitReview(status: string = "approvalPending") {
     status,
   };
   if (route.params?.id?.length) {
-    Object.assign(data, { ..._flowOptions, id: route.params?.id,status:status });
+    Object.assign(data, { ..._flowOptions, id: route.params?.id, status: status });
   } else {
-    
-    Object.assign(_flowOptions,{... _flowOptions,status:status});
+
+    Object.assign(_flowOptions, { ..._flowOptions, status: status });
     Object.assign(data, _flowOptions);
   }
   let res: any = route.params?.id?.length
