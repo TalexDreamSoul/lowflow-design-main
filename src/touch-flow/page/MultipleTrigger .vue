@@ -69,12 +69,12 @@ function handleChangeSelect(val: string) {
   obj.type = doLabel ? 'label' : 'attr'
 
   if (doLabel) {
-    obj.label = {
+
+    Object.assign(obj.label, {
       id: res.id,
       labelId: res.id,
       labelName: res.labelName,
-      labelValue: [],
-    };
+    })
 
     labelOptions.value.label = res
   } else {
