@@ -4,7 +4,7 @@
     <div class="search">
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
-          <el-select v-model="pageParams.executeType" placeholder="请选择" clearable>
+          <el-select v-model="pageParams.executeType" placeholder="请选择类型" clearable>
             <el-option v-for="(item, key) in typeMap" :label="item" :value="key" />
           </el-select>
         </el-form-item>
