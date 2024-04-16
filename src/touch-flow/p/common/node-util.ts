@@ -280,7 +280,7 @@ function genDisplayAttr(data: any) {
       return {
         has: type?.length,
         title,
-        val,
+        val: val + data?.touchTemplateContent.name,
       };
     });
 
