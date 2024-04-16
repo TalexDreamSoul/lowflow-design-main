@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import { useDebounceFn, useVModel } from "@vueuse/core";
-import { ref, h, reactive, watchEffect, nextTick, computed, onBeforeMount } from "vue";
+import {
+  ref,
+  h,
+  reactive,
+  watchEffect,
+  nextTick,
+  computed,
+  onBeforeMount,
+} from "vue";
 import { createFloatingPanel } from "./floating-panel";
 import { getDictAnalyzedTree, validatePropValue } from "../../flow-utils";
 import TouchSelectWrapper from "./TouchSelectable.vue";
 import Operator from "../../page/Operator.vue";
 import AttrRender from "~/touch-flow/page/AttrRender.vue";
 import { randomStr } from "~/utils/common";
-import { CirclePlusFilled, Plus } from "@element-plus/icons-vue";
+import { Delete, CirclePlusFilled, Plus } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { VariableTemplateDTO } from "../../touch-total";
 
@@ -17,7 +25,8 @@ const props = defineProps<{
   content: string;
   variables: string;
   disabled?: boolean;
-  ignoreId?: boolean;
+  ignoreId?: string;
+  outside?: boolean;
 }>();
 
 const contentRef = ref<HTMLElement>();
@@ -41,7 +50,8 @@ const displayRender = useDebounceFn(_displayRender, 100);
 const settingSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L21.5 6.5V17.5L12 23L2.5 17.5V6.5L12 1ZM12 3.311L4.5 7.65311V16.3469L12 20.689L19.5 16.3469V7.65311L12 3.311ZM12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12C16 14.2091 14.2091 16 12 16ZM12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"></path></svg>`;
 
 function _displayRender() {
-  if (!props.ignoreId && !props.modelValue?.id) return;
+  console.log("DISPLAY RENDER", props)
+  if ((props.ignoreId === `false`) && !props.modelValue?.id) return;
   console.groupCollapsed("TouchSettingContents");
 
   const { modelValue, content, variables } = props;
@@ -109,7 +119,8 @@ function _displayRender() {
 
         const _ = `<button unselectable="on" id="${index}" data-id="${index}" contenteditable="false" class="TouchLabel"><span>变量：</span><span class="value">${text}</span>&nbsp;${settingSvg}</button>`;
 
-        __content = __content.slice(0, ind) + _ + __content.slice(ind + id.length);
+        __content =
+          __content.slice(0, ind) + _ + __content.slice(ind + id.length);
       }
     }
   }
@@ -178,10 +189,14 @@ function insertNode(htmlX: string) {
 const getCurrSelected = (condition: any) =>
   [...dictTree.value]
     .map((_: any) =>
-      [..._.children].map((__: any) => (__.children?.length ? __.children : [__]))
+      [..._.children].map((__: any) =>
+        __.children?.length ? __.children : [__]
+      )
     )
     .flat(2)
-    .find((_: any) => _.field === condition.field || _.label === condition.field);
+    .find(
+      (_: any) => _.field === condition.field || _.label === condition.field
+    );
 
 let _floating: any;
 
@@ -198,7 +213,15 @@ function addLabel() {
     id,
     reactive({
       field: id,
-      variables: [],
+      variables: [
+        // {
+        //   compareValue: "",
+        //   fieldOp: "",
+        //   fieldRangeValue: "",
+        //   fieldValue: "",
+        //   timeCondition: []
+        // }
+      ],
     })
   );
 
@@ -302,11 +325,11 @@ function _handleBlur() {
   contentDom?.childNodes.forEach((node: ChildNode) => {
     if (node.nodeName === "BUTTON") {
       const id = (node as HTMLElement).dataset.id;
-      const obj = variableMap.get(id!)!
+      const obj = variableMap.get(id!)!;
       if (obj.labelName || obj.fieldName) {
-        console.log("aaa", obj)
+        console.log("aaa", obj);
         content += `$$${id}$$`;
-      } else variableMap.delete(id!)
+      } else variableMap.delete(id!);
     } else content += node.nodeValue;
   });
 
@@ -434,7 +457,7 @@ function handleAdd() {
         class="TouchFloatingContent">
         <Operator style="width: 100px" :item="item" :attrs="attrs.attrs" v-model="item.fieldOp" />
         <!-- && item.fieldOp?.indexOf('等于') === -1 -->
-        <AttrRender v-if="item.fieldOp?.indexOf('空') === -1" style="width: 300px" :item="item" :attrs="attrs.attrs" />
+        <AttrRender :outside="outside" v-if="item.fieldOp?.indexOf('空') === -1" :item="item" :attrs="attrs.attrs" />
         <div class="ContentSingleLine">
           <span>赋值为</span>
           <el-input v-model="item.compareValue" />
@@ -486,6 +509,8 @@ function handleAdd() {
 }
 
 .TouchFloatingContent {
+  flex-wrap: wrap;
+
   .el-icon {
     &:hover {
       color: #277ae7;
@@ -523,9 +548,9 @@ function handleAdd() {
 
 .TouchSettingsContentWrapper {
   &.disabled {
-    opacity: 0.75;
+    // opacity: 0.75;
     pointer-events: none;
-
+    color: var(--el-disabled-text-color);
     background-color: var(--el-disabled-bg-color); //#F5F7FA;
   }
 
@@ -630,10 +655,7 @@ function handleAdd() {
   background-image: none;
   border-radius: var(--el-input-border-radius, var(--el-border-radius-base));
   cursor: text;
-  transition: var(--el-transition-box-shadow);
-  transform: translate3d(0, 0, 0);
   box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color)) inset;
 
-  overflow: hidden;
 }
 </style>

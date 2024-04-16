@@ -118,7 +118,7 @@ const handleModal = async (type: string, values?: any) => {
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   console.error(formValues, "formValues");
-  formValues.menuIds = formValues.menuIds.flat(1);
+  formValues.menuIds = formValues.menuIds?.flat(1);
   try {
     await formEl.validate();
     let res = { code: "0000" };
@@ -180,7 +180,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   <el-dialog width="650" destroy-on-close :close-on-click-modal="false" v-model="modalVisible" :title="ModalTitleMap[modalType]">
     <el-form ref="formRef" :hide-required-asterisk="true" label-position="top" class="form" :model="formValues">
       <el-form-item :rules="[
-    { required: true, message: '请输入帐号名称' },
+    { required: true, message: '请输入名称' },
     {
       pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
       message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
@@ -193,7 +193,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         <el-input v-model="formValues.describe" style="width:300px" placeholder="请输入" clearable />
       </el-form-item>
       <el-form-item :rules="[
-    { required: true, message: '请输入角色权限' },
+    { required: true, message: '请选择权限' },
   ]" label="角色权限" prop="menuIds">
 
         <el-cascader-panel v-model="formValues.menuIds" class="custom-cascader" :options="MenuList" :props="{

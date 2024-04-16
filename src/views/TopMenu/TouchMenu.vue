@@ -70,7 +70,7 @@ const active = computed(() => props.path && route.path.startsWith(props.path))
       box-shadow: 0 2px 4px 0 #277AE7;
 
       left: 0;
-      top: 0;
+      bottom: 0;
 
       opacity: 0;
       transform: translateY(-10%) scale(.8);

@@ -54,7 +54,7 @@ const estimation = async () => {
         </div>
         <div style="color: #ff5050" v-else>无法预估数据</div>
       </div>
-      <div class="MainBlock-ContentSection">
+      <!-- <div class="MainBlock-ContentSection">
         <div class="innerblock">
           <div>
             <div class="topName">APP Push</div>
@@ -115,7 +115,7 @@ const estimation = async () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

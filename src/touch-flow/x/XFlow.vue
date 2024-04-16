@@ -12,11 +12,12 @@
 import { onMounted, ref, toRefs, provide, watchEffect, computed } from "vue";
 import Hierarchy from "@antv/hierarchy";
 import initGraph from "./graph";
-import { _delChild, genIdNodeReactive } from "./../flow-utils";
+import { _delChild, genIdNodeReactive, genNameFunc } from "./../flow-utils";
 import { MarketingTouchEditDTO } from "../p/behavior/marketing";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
 import { useWindowSize } from "@vueuse/core";
+import { groupCollapsed } from "console";
 
 interface IGraphData {
   id: string;
@@ -39,9 +40,14 @@ const route = useRoute()
 const { width, height } = useWindowSize()
 const _edit = computed(() => route.params?.id)
 const getNodeReactive = genIdNodeReactive(props.p);
+const getNodeName = genNameFunc(props.p);
+
+window['$getNodeName'] = getNodeName
+window['$getNodeById'] = getNodeReactive
+// provide('$getNodeName', getNodeName)
 
 const del = (p: MarketingTouchEditDTO) => {
-  const fatherNode = getNodeReactive(p.father.id);
+  const fatherNode = getNodeReactive(p.preNodeId);
 
   console.log("delete", fatherNode, p);
 
@@ -59,6 +65,13 @@ const del = (p: MarketingTouchEditDTO) => {
 };
 
 const layoutFn = () => {
+  const _c = window.console
+  var console = {
+    log: (...arg: any) => void 0,
+    groupCollapsed: (arg: any) => void 0,
+    groupEnd: () => void 0
+  }
+
   console.groupCollapsed("layoutFn");
 
   const result = Hierarchy.compactBox(treeMap, {
@@ -102,15 +115,16 @@ const layoutFn = () => {
   } = { nodes: [], edges: [] };
 
   const _: any = {
-    Start: (height: number) => height - 95,
+    Start: (height: number) => height - 90,
     strategy: (height: number, data: any) => {
+      const fatherNode = getNodeReactive(data.data?.preNodeId)
       console.log("@@@---", data.data);
-      if (data.data?.father?.nodeType === "subDiversion") return height - 40;
-      if (data.data.nodeName === "兜底策略器") return height - 155;
+      if (fatherNode?.nodeType === "subDiversion") return height - 360;
+      if (data.data.diversionType === "safeguard") return height - 455;
 
       if (props.readonly) {
         if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
-          return height - 60
+          return height - 77
 
         return height - 160
       }
@@ -132,8 +146,12 @@ const layoutFn = () => {
         }
       }
 
+      if (data.nodeDelayed?.delayedAction) {
+        calcHeight = calcHeight - 180;
+      }
+
       if (props.readonly) {
-        calcHeight -= 100
+        calcHeight -= 80
       }
 
       console.log("><", data);
@@ -150,7 +168,7 @@ const layoutFn = () => {
       const shape = `${data.data.nodeType}`;
       const calc = _[shape];
 
-      console.log("calc-height", data.height, calc(data.height, data));
+      console.log("calc-height", shape, data.height, calc(data.height, data));
 
       model.nodes?.push({
         id: `${data.id}`,
@@ -160,6 +178,7 @@ const layoutFn = () => {
         data: {
           ...data,
           $del: del,
+          $getName: getNodeName,
           $edit: _edit,
           $d: getNodeReactive,
           $readonly: props.readonly,
@@ -233,14 +252,11 @@ const layoutFn = () => {
   console.log(model);
 
   console.groupEnd();
+  window.console = _c
 
   _Graph.fromJSON(model);
-  // _Graph.fitToContent();
-  // _Graph.center();
-  // _Graph.centerContent();
 
-  console.log(_Graph.centerContent)
-  _Graph.positionContent("top");
+  setTimeout(() => _Graph.positionContent("top"), 200)
 };
 
 onMounted(() => {
@@ -412,10 +428,14 @@ div.PBlock {
       justify-content: space-between;
 
       width: 100%;
+
+      font-size: 18px;
+      font-weight: 500;
     }
 
     margin: 0;
-    font-size: 1.25rem;
+    font-size: 20px;
+    font-weight: 500;
   }
 
   display: flex;
@@ -492,6 +512,8 @@ div.PBlock {
   position: relative;
 
   left: 50%;
+  min-width: 280px;
+  width: max-content;
 
   border-radius: 8px;
 

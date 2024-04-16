@@ -10,6 +10,7 @@ const props = defineProps<{
   length: number;
   index: number;
   dict: any;
+  outside?: boolean;
   readonly?: boolean;
   configuration: {
     time: boolean,
@@ -106,7 +107,7 @@ const defaultTime2: [Date, Date] = [
         </el-option-group>
       </el-select>
 
-      <div v-if="!readonly" class="CustomBehavior-Line-Group" style="zoom:.8">
+      <div v-if="!readonly" class="CustomBehavior-Line-Group" style="zoom:.8;min-width: 255px;">
         <el-text :disabled="readonly" v-if="condition.eventCode" type="primary" style="cursor: pointer"
           @click="handleAdd(condition)">
           <el-icon size="12">
@@ -132,7 +133,7 @@ const defaultTime2: [Date, Date] = [
       </div>
     </div>
 
-    <BehaviorSubContent :readonly="readonly" title="并且满足" :index="index" :dict="dict" :condition="condition" />
+    <BehaviorSubContent :outside="outside" :readonly="readonly" title="并且满足" :index="index" :dict="dict" :condition="condition" />
 
     <!-- </div> -->
     <!-- </LogicalLine> -->

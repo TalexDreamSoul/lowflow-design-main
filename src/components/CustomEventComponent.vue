@@ -42,8 +42,6 @@ const props = defineProps({
   .search {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-
     .el {
       &-select {
         width: 278px;
@@ -77,6 +75,7 @@ const props = defineProps({
     &-table {
       border-radius: 8px;
       overflow: hidden;
+      height: 100% !important;
 
       .cell {
         padding: 0;
@@ -165,7 +164,6 @@ const props = defineProps({
 
       .el-table {
         border-radius: 0;
-
         .el-table__cell {
           background-color: rgba(242, 244, 248, 1);
         }

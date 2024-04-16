@@ -11,6 +11,8 @@ const data = ref({
   accumulateEntryCount: 0,
   accumulateTouchCount: 0,
   completeTargetCount: 0,
+  completeTargetCount1: 0,
+  completeTargetCount2: 0,
   _fetched: false,
 });
 const modalVisible = ref(false);
@@ -33,6 +35,8 @@ async function handleClick() {
   Object.assign(data.value, {
     accumulateEntryCount: res.data.accumulateEntryCount,
     accumulateTouchCount: res.data.accumulateTouchCount,
+    completeTargetCount1: res.data.completeTargetCount1,
+    completeTargetCount2: res.data.completeTargetCount2,
     completeTargetCount: res.data.completeTargetCount,
     _fetched: true,
   });
@@ -51,6 +55,7 @@ async function handleClickqryNodeTouchCustom() {
   tableData.value = res.data;
   modalVisible.value = true;
 }
+const { status, containTarget } = window.$flow?.p;
 </script>
 
 <template>
@@ -65,10 +70,25 @@ async function handleClickqryNodeTouchCustom() {
       </el-button>
     </div>
     <ul>
-      <li>累计进入：<span class="bold">{{ data.accumulateEntryCount }}人</span></li>
-      <li>累计触达：<span class="bold">{{ data.accumulateTouchCount }}人</span></li>
-      <li>策略器目标完成：<span class="bold">{{ data.completeTargetCount }}人</span></li>
-      <li>策略器目标完成率：<span class="bold">0%</span></li>
+      <span v-if="status=='draft'||status=='approvalPending'||status=='approvalRefuse'">
+        <br />
+        <br />
+        <br />
+        <br />
+        <li>暂无数据，流程尚未发布</li>
+
+      </span>
+      <span v-else>
+        <li>累计进入：<span class="bold">{{ data.accumulateEntryCount }}人</span></li>
+        <li>累计触达：<span class="bold">{{ data.accumulateTouchCount }}人</span></li>
+        <!-- <li v-if="data.completeTargetCount1">策略器目标一完成：<span class="bold">{{ data.completeTargetCount1 }}人</span></li> -->
+        <!-- <li v-if="data.completeTargetCount1">策略器目标二完成：<span class="bold">{{ data.completeTargetCount2 }}人</span></li> -->
+        <li>策略器目标完成：<span class="bold">{{ data.completeTargetCount }}人</span></li>
+
+        <li v-if="containTarget==false">策略器目标完成率：<span class="bold">-</span></li>
+        <li v-else>策略器目标完成率：<span class="bold">{{ 
+          ((data.completeTargetCount/data.accumulateTouchCount) * 100).toFixed(2) }}%</span></li>
+      </span>
     </ul>
   </div>
 

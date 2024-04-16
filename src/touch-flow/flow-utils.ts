@@ -19,7 +19,7 @@ export async function getDictAnalyzedTree() {
   const _labels = labels.map((label: any) => {
     const children: any = [];
     if (label.labelValue) {
-      [...label.labelValue.data].forEach((item) => {
+      [...(label?.labelValue?.data || [])].forEach((item: any) => {
         children.push({
           label: item,
           value: item,
@@ -61,12 +61,15 @@ export function _delChild(parent: any, child: any) {
 }
 
 export function delChild(child: {
-  father: any;
+  preNodeId: string;
   children: any[];
   [key: string]: any;
 }) {
+  const father = window.$getNodeById(child.preNodeId)
+  if (!father) return false;
+
   console.log("Del", child)
-  return _delChild(child.father, child);
+  return _delChild(father, child);
 }
 
 export interface IFlowUtils {
@@ -108,7 +111,7 @@ export function validateSingleCondition(condition: SearchCondition) {
 }
 
 export function validateConditions(conditions: Array<any>): boolean {
-  return (
+  return Array.isArray(conditions) && (
     [...conditions].filter((condition: any) => {
       if (condition.conditions) {
         return !validateObjConditions(condition);
@@ -202,6 +205,28 @@ export function genIdNodeReactive(p: any) {
       // console.log("search target", id, node)
 
       if (node.id === id) {
+        return node
+      }
+
+      if (node.children) {
+        stack.push(...node.children)
+      }
+    }
+
+    return null
+  };
+}
+
+export function genNameFunc(p: any) {
+  return function (name: string) {
+    const stack: any[] = [p]
+
+    while (stack.length) {
+      const node = stack.pop()
+
+      // console.log("search target", id, node)
+
+      if (node.nodeName === name) {
         return node
       }
 

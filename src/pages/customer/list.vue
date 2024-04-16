@@ -59,12 +59,12 @@
             }}
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="province"
           label="省份"
           width="187"
         ></el-table-column>
-        <el-table-column prop="city" label="城市" width="186"></el-table-column>
+        <el-table-column prop="city" label="城市" width="186"></el-table-column> -->
         <el-table-column
           prop="birthday"
           label="生日"
@@ -79,7 +79,7 @@
             }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="280" fixed="right">
+        <el-table-column label="操作" min-width="158" fixed="right">
           <template #default="scope">
             <el-button
               v-if="scope.row.source === peopleSourceEnum.Manual"
@@ -145,14 +145,22 @@
           <el-input v-model="formValues.name" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请输入手机号' }]"
+          :rules="
+            formValues.itFinCode
+              ? []
+              : [{ required: true, message: '请输入手机号' }]
+          "
           label="手机号"
           prop="phone"
         >
           <el-input v-model="formValues.phone" placeholder="请输入" clearable />
         </el-form-item>
         <el-form-item
-          :rules="[{ required: true, message: '请输入互金客户号' }]"
+          :rules="
+            formValues.phone
+              ? []
+              : [{ required: true, message: '请输入互金客户号' }]
+          "
           label="互金客户号"
           prop="itFinCode"
         >
@@ -172,7 +180,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="省份" prop="province">
+          <!-- <el-form-item label="省份" prop="province">
             <el-select
               v-model="formValues.province"
               placeholder="请选择"
@@ -195,7 +203,7 @@
                 :value="item.value"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
         </div>
         <el-form-item label="生日" prop="birthday">
           <el-date-picker
@@ -221,7 +229,6 @@
             </div>
             <div class="user-content">
               <div class="name">{{ modalData?.custom?.name }}</div>
-              <div class="desc">xxx</div>
             </div>
           </div>
           <el-table :data="[modalData?.custom]" style="width: 100%">
@@ -241,7 +248,7 @@
                 }}
               </template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
               prop="province"
               label="省份"
               width="111"
@@ -250,11 +257,11 @@
               prop="city"
               label="城市"
               width="90"
-            ></el-table-column>
+            ></el-table-column> -->
             <el-table-column
               prop="birthday"
               label="生日"
-              width="120"
+              min-width="120"
             ></el-table-column>
           </el-table>
         </div>
@@ -387,9 +394,9 @@ const currentChange = (value: number) => {
 const getData = async (params: any, filtering?: any) => {
   try {
     let res = await API.qryCustomList({
+      pageNum: 1,
       ...filtering,
       ...params,
-      pageNum: 1,
       pageSize: 10,
     });
     if (checkStringEqual(res?.code, 0)) {
@@ -489,6 +496,8 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         display: flex;
         gap: 4px;
         margin-top: 8px;
+        overflow: hidden;
+        flex-wrap: wrap;
         .el-tag {
           padding: 8px;
           font-size: 14px;

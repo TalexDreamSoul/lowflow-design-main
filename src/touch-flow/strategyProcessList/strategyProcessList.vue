@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, unref, reactive, onMounted, watch } from "vue";
+import { ref, unref, reactive, onMounted, watch, computed } from "vue";
 import {
   getqryMarketingTouch,
   deleteMarketingTouch,
@@ -12,6 +12,8 @@ import {
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import dayjs from "dayjs";
+import { Calendar, Search } from "@element-plus/icons-vue";
+import API from "~/api/approve";
 
 const formInline = reactive({
   touchName: "",
@@ -21,25 +23,42 @@ const formInline = reactive({
   status: "",
 });
 
-const time = ref(null);
+const time = ref<Date | null>(null);
+
 const router = useRouter();
 
-const statusLabels = {
-  draft: { Text: "草稿", type: "info" },
-  approvalPending: { Text: "待审批", type: "success" },
-  approvalSuccess: { Text: "审批成功", type: "info" },
-  approvalRefuse: { Text: "审批拒绝", type: "warning" },
-  waitStart: { Text: "等待启动", type: "warning" },
-  running: { Text: "发送中", type: "" },
-  suspend: { Text: "暂停", type: "warning" },
-  done: { Text: "已结束", type: "info" },
+const statusLabels: Record<string, StatusLabel> = {
+  draft: { text: "草稿", type: "info" },
+  approvalPending: { text: "待审批", type: "success" },
+  approvalSuccess: { text: "审批成功", type: "info" },
+  approvalRefuse: { text: "审批拒绝", type: "warning" },
+  waitStart: { text: "等待启动", type: "warning" },
+  running: { text: "发送中", type: "" },
+  suspend: { text: "暂停", type: "warning" },
+  done: { text: "已结束", type: "info" },
 };
+
+interface StatusLabel {
+  text: string;
+  type: string;
+}
+
+const getStatusType = (status: string) =>
+  (statusLabels[status]?.type as
+    | ""
+    | "success"
+    | "warning"
+    | "info"
+    | "danger") || "";
+const getStatusText = (status: string) =>
+  statusLabels[status]?.text || "其他状态";
 const typeMap = {
   immediately: "定时-单次",
-  delayed: "定时-重复",
+  repeat: "定时-重复",
   trigger: "触发型",
 };
-const tableData = ref([]);
+const getTypeText = (executeType: keyof typeof typeMap) => typeMap[executeType];
+const tableData = ref<any[]>([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
@@ -47,7 +66,19 @@ const background = ref(false);
 const disabled = ref(false);
 const total = ref(110);
 
-const StatisticsList = ref({
+interface Statistics {
+  suspend: number;
+  running: number;
+  total: number;
+  waitStart: number;
+  draft: number;
+  approvalPending: number;
+  approvalSuccess: number;
+  approvalRefuse: number;
+  done: number;
+}
+
+const StatisticsList = ref<Statistics>({
   suspend: 0,
   running: 0,
   total: 0,
@@ -58,7 +89,6 @@ const StatisticsList = ref({
   approvalRefuse: 0,
   done: 0,
 });
-
 onMounted(async () => {
   getmarketingTouchNode();
   fetchDataApi();
@@ -67,16 +97,16 @@ watch([currentPage, pageSize, formInline], () => {
   fetchDataApi();
 });
 const fetchDataApi = async () => {
-  const res = await getqryMarketingTouch({
+  const res = (await getqryMarketingTouch({
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
     ...formInline,
-  });
+  })) as { data: { records: any[]; total: number } };
   tableData.value = res.data.records;
   total.value = res.data.total;
 };
 const getmarketingTouchNode = async () => {
-  const res = await getqryTouchStatusCount();
+  const res = (await getqryTouchStatusCount()) as { data: Statistics };
   StatisticsList.value = res.data;
   console.log(StatisticsList, "res");
 };
@@ -88,12 +118,12 @@ const delData = async (row: any) => {
     confirmButtonClass: "pd-button",
     customClass: "delete-modal",
   }).then(async () => {
-    let res = await deleteMarketingTouch({ id: row.id }).finally(() => {});
-    if (res?.code == 0) {
-      fetchDataApi();
-      getmarketingTouchNode();
-      ElMessage.success(res.message);
-    }
+    let res = (await deleteMarketingTouch({ id: row.id }).finally(
+      () => {}
+    )) as { data: true; message: ""; code: "" };
+    fetchDataApi();
+    getmarketingTouchNode();
+    ElMessage.success(res.message);
   });
 };
 const startData = async (row: any) => {
@@ -114,25 +144,35 @@ const updateData = async (row: any) => {
 const detailsData = async (row: any) => {
   router.push(`/touchCenter/details/${row.id}`);
 };
+const modalVisible = ref(false);
+const modalData = ref<any>([]);
 
+const handleModal = async (values?: any) => {
+  modalData.value=[]
+  let res: any = await API.listApproveRecord({
+    businessId: values.id,
+  });
+  modalData.value=res?.data
+  modalVisible.value = true;
+};
 const successData = async (row: any) => {
-  let res = await updateMarketingTouchStatus({
+  let res = (await updateMarketingTouchStatus({
     id: row.id,
     status: "approvalSuccess",
   }).finally(() => {
     fetchDataApi();
     getmarketingTouchNode();
-  });
+  })) as { data: true; message: ""; code: "" };
   ElMessage.success(res.message);
 };
 
 const copyData = async (row: any) => {
-  let res = await copyMarketingTouch({
+  let res = (await copyMarketingTouch({
     id: row.id,
   }).finally(() => {
     fetchDataApi();
     getmarketingTouchNode();
-  });
+  })) as { data: true; message: ""; code: "" };
   ElMessage.success(res.message);
 };
 const handleSizeChange = (val: any) => {
@@ -156,6 +196,25 @@ const changeStatus = (val: any) => {
   console.log(val, "change");
   formInline.status = val;
 };
+const flowTime = (data: any) => {
+  const _time = data.executeTime;
+  // if (!_time) return "-";
+
+  if (_time) {
+    const s: Date = _time;
+
+    return s.toLocaleString().replaceAll("/", "-");
+  }
+
+  // const [date1, date2] = _time;
+  const { startTime, endTime } = data;
+  if (!startTime || !endTime) return "-";
+
+  const date1Text = startTime; //.toLocaleDateString().replaceAll("/", "-");
+  const date2Text = endTime; //.toLocaleDateString().replaceAll("/", "-");
+
+  return `${date1Text} 至 ${date2Text}`;
+};
 </script>
 
 <template>
@@ -163,20 +222,16 @@ const changeStatus = (val: any) => {
     <div class="pageTitle">策略流程列表</div>
     <div class="topSearch">
       <el-form :inline="true" class="demo-form-inline">
-
-        <el-form-item label="创建时间：">
-          <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
+        <el-form-item label="起止日期">
+          <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" @change="changeTime" />
         </el-form-item>
         <el-form-item>
-
-          <el-select v-model="formInline.executeType" clearable style="width:200px">
-            <el-option label="定时-单次" value="immediately" />
-            <el-option label="定时-重复" value="delayed" />
-            <el-option label="触发型" value="trigger" />
+          <el-select v-model="formInline.executeType" clearable placeholder="请选择类型" style="width:200px">
+            <el-option v-for="(item, key) in typeMap" :label="item" :value="key" />
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="formInline.touchName" placeholder="请输入策略流程名称" clearable style="width:200px" />
+          <el-input v-model="formInline.touchName" placeholder="请输入策略流程名称" clearable style="width:200px" :prefix-icon="Search" />
         </el-form-item>
 
       </el-form>
@@ -240,7 +295,7 @@ const changeStatus = (val: any) => {
           <div class="undercount">审核不通过</div>
         </div>
       </div>
-      <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
+      <el-table :data="tableData" style="width: 100% ;----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
         <el-table-column label="策略流程ID" width="120">
           <template #default="scope">
             {{ scope.row.id }}
@@ -249,41 +304,60 @@ const changeStatus = (val: any) => {
         <el-table-column label="名称" width="180" prop="touchName" />
         <el-table-column label="状态" width="100">
           <template #default="scope">
-            <el-tag class="mx-1" :type="statusLabels[scope.row.status].type" effect="light">
-              {{ statusLabels[scope.row.status].Text }}
+            <el-tag class="mx-1" :type="getStatusType(scope.row.status)" effect="light">
+              {{ getStatusText(scope.row.status) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="起止日期" width="330">
+        <el-table-column label="起止日期" width="380">
           <template #default="scope">
-            {{ scope.row.startTime }}~{{ scope.row.endTime }}
+            {{ flowTime(scope.row) }}
           </template>
         </el-table-column>
-
         <el-table-column label="类型" width="150">
           <template #default="scope">
-            {{ typeMap[scope.row.executeType] }}
+            <!-- {{scope.row.executeType}} -->
+
+            {{ getTypeText(scope.row.executeType) }}
           </template>
         </el-table-column>
-
         <el-table-column label="目标完成率" width="150">
           <template #default="scope">
-            {{ scope.row.targetCount }}%
+            <span v-if="scope.row.status=='draft'||scope.row.status=='approvalPending'||scope.row.status=='approvalRefuse'">
+              无数据
+            </span>
+            <span v-else-if="scope.row.containTarget==false">
+              未设置目标
+            </span>
+            <span v-else>
+              {{ scope.row.targetCount }}%
+            </span>
           </template>
         </el-table-column>
 
-        <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="280">
+        <el-table-column label=" 累计进入 / 累计触达 / 累计目标完成" width="300">
           <template #default="scope">
-            <!-- targetCount 完成目标数量
+            <span v-if="scope.row.status=='draft'||scope.row.status=='approvalPending'">
+              暂无数据，流程尚未发布
+            </span>
+            <span v-else-if="scope.row.containTarget==false">
+              {{ scope.row.triggerCount }}/
+              {{ scope.row.touchCount }}/
+              -
+            </span>
+            <span v-else>
+              <!-- targetCount 完成目标数量
             touchCount 触达数量
             triggerCount 触发数量 -->
-            {{ scope.row.triggerCount }}/
-            {{ scope.row.touchCount }}/
-            {{ scope.row.targetCount }}
+              {{ scope.row.triggerCount }}/
+              {{ scope.row.touchCount }}/
+              {{ scope.row.targetCount }}
+            </span>
+
           </template>
         </el-table-column>
 
-        <el-table-column label="创建人" prop="createUserName" />
+        <el-table-column label="创建人" prop="createUserName" width="150" />
 
         <el-table-column label="操作" width="300" fixed="right">
           <template #default="scope">
@@ -302,8 +376,9 @@ const changeStatus = (val: any) => {
               <el-link type="primary" v-if="scope.row.status=='draft'||scope.row.status=='approvalRefuse'||scope.row.status=='suspend'||scope.row.status=='done'" @click="delData(scope.row)">删除</el-link>
               <el-link type="primary" @click="copyData(scope.row)">复制</el-link>
               <el-link type="primary" v-if="scope.row.status=='approvalRefuse'||scope.row.status=='draft'" @click="updateData(scope.row)">编辑</el-link>
+              <el-link type="primary" @click="handleModal(scope.row)">审核详情</el-link>
               <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
-              <el-link type="primary" @click="successData(scope.row)">审核通过</el-link>
+              <!-- <el-link type="primary" @click="successData(scope.row)">审核通过</el-link> -->
             </el-space>
           </template>
         </el-table-column>
@@ -313,6 +388,34 @@ const changeStatus = (val: any) => {
     </div>
 
   </div>
+  <el-dialog class="pd-modal" destroy-on-close :close-on-click-modal="false" v-model="modalVisible" title="审核详情" :width="800">
+
+    <el-table :data="modalData" style="width: 100%" height="400">
+      <el-table-column prop="approveLevel" label="节点" width="92" />
+      <el-table-column prop="auditorName" label="审核人" width="101">
+      </el-table-column>
+      <el-table-column prop="receiptTime" label="接收时间" width="231">
+        <template #default="scope">
+          {{ scope.row.receiptTime || "-" }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="approveStatus" label="审核状态" width="125">
+        <template #default="scope">
+          <el-tag v-if="scope.row.approveStatus === null" type="success">待审批</el-tag>
+          <el-tag v-if="scope.row.approveStatus === true" type="">已通过</el-tag>
+          <el-tag v-if="scope.row.approveStatus === false" type="danger">未通过</el-tag>
+        </template></el-table-column>
+      <el-table-column prop="operationTime" label="操作时间" min-width="202">
+        <template #default="scope">
+          {{ scope.row.operationTime || "-" }}
+        </template></el-table-column>
+    </el-table>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button round @click="modalVisible = false">返回</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 <style lang="scss" scoped>
 .warp {
@@ -357,7 +460,8 @@ const changeStatus = (val: any) => {
 
 .showCount {
   cursor: pointer;
-  min-width: 150px;
+  min-width: 160px;
+  max-height: 96px;
   margin-right: 16px;
   background: linear-gradient(
     180deg,
@@ -367,12 +471,13 @@ const changeStatus = (val: any) => {
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
-  padding: 24px;
+  padding: 18px 16px 20px 16px;
   color: rgba(0, 0, 0, 0.9);
-
   .topcount {
-    font-size: 32px;
+    font-family: font1;
+    font-size: 28px;
     font-weight: 800;
+    margin-bottom: 5px;
   }
 
   .undercount {
@@ -415,5 +520,10 @@ const changeStatus = (val: any) => {
   border-radius: 4px;
   box-sizing: border-box;
   white-space: nowrap;
+}
+.el-table__header,
+.el-table__body,
+.el-table__footer {
+  width: 100%;
 }
 </style>

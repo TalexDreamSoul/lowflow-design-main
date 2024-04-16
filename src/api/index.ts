@@ -104,7 +104,10 @@ export const addMaterial = (data: any) => {
   });
 };
 
-export const updateMarketingTouch = (data: any) => {
+export const updateMarketingTouch = (_data: any) => {
+  const data = _data
+
+
   return request.post({
     url: "/api/updateMarketingTouch.do",
     data,

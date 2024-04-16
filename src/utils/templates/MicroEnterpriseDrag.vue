@@ -113,7 +113,7 @@ function getBlockSectionName(item: any) {
           <img v-if="item.type === 'image'" :src="item.imgUrl" alt="AddonPic" />
           <TouchSettingContents
             :disabled="readonly"
-            :ignore-id="true"
+            :ignore-id="`true`"
             content="content"
             variables="variables"
             :modelValue="item"

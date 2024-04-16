@@ -93,7 +93,8 @@ watchEffect(() => {
 
     justify-content: space-between;
     align-items: center;
-
+    font-weight: 500;
+    font-size: 14px;
     background-color: var(--el-fill-color-light);
   }
 

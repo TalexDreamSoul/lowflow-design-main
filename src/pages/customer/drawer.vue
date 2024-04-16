@@ -73,16 +73,16 @@
           :name="BlackAddTypeEnum.StaticRule"
         >
           <div class="pannel">
-            <FilterGroup :custom-rule-content="ruleContent" />
+            <FilterGroup :outside="true" :custom-rule-content="ruleContent" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="客户事件添加" :name="BlackAddTypeEnum.RealtimeEvent">
-          <EventGroup :p="eventContent" />
+          <EventGroup  :outside="true" :p="eventContent" />
         </el-tab-pane>
       </el-tabs>
       <div class="detail" v-if="drawerType === DrawerType.Detail">
         <div class="item">
-          <FilterGroup :custom-rule-content="ruleContent" />
+          <FilterGroup :outside="true" :custom-rule-content="ruleContent" />
         </div>
         <div class="item">
           <!-- <EventGroup :p="eventContent" /> -->

@@ -29,6 +29,7 @@ const flowOptions = reactive<
   basic: {
     _expand: false,
     touchName: "",
+    touchCode: randomStr(),
     disturb: {
       enable: false,
       time: [],
@@ -42,7 +43,7 @@ const flowOptions = reactive<
     },
   },
   p: {
-    nodeId: randomStr(12),
+    nodeId: "root",/* randomStr(12) */
     nodeType: "Start",
     height: 250,
     children: [] as any[],
@@ -133,30 +134,64 @@ function targetReduction(data: Request) {
 function transformNodes(__nodes: Array<any>) {
   const res: Array<any> = [];
 
-  [...__nodes].forEach((node: any) => {
-    console.log("do have father", node.father);
+  [...__nodes].forEach((_node: any) => {
+    const node = { ..._node }
+    const nodeFather = window.$getNodeById(node.preNodeId)
 
-    node.$id && (node.id = node.$id)
+    if (node.touchTemplateContent?.type) {
+      const type = node.touchTemplateContent.type
 
-    if (node.father) {
-      if (node.father.nodeType === "Start") {
-        node.preNodeId = "root";
-      } else {
-        // 先拿到父元素中children 我这个元素的位置
-        const fatherInd = [...node.father.children].indexOf(
-          (item: any) => item.nodeId === node.nodeId
-        );
-
-        node.preNodeId =
-          fatherInd < 1
-            ? node.father.nodeId
-            : node.father.children[fatherInd - 1].nodeId;
+      if (type === 'sms') {
+        delete node.touchTemplateContent.appPushTemplate
+        delete node.touchTemplateContent.digitalTemplate
+        delete node.touchTemplateContent.outboundTemplate
+        delete node.touchTemplateContent.znxTemplate
+      } else if (type === 'znx') {
+        delete node.touchTemplateContent.appPushTemplate
+        delete node.touchTemplateContent.digitalTemplate
+        delete node.touchTemplateContent.outboundTemplate
+        delete node.touchTemplateContent.smsTemplate
+      } else if (type === 'appPush') {
+        delete node.touchTemplateContent.znxTemplate
+        delete node.touchTemplateContent.digitalTemplate
+        delete node.touchTemplateContent.outboundTemplate
+        delete node.touchTemplateContent.smsTemplate
+      } else if (type === 'outbound') {
+        delete node.touchTemplateContent.appPushTemplate
+        delete node.touchTemplateContent.digitalTemplate
+        delete node.touchTemplateContent.znxTemplate
+        delete node.touchTemplateContent.smsTemplate
+      } else if (type === 'digital') {
+        delete node.touchTemplateContent.appPushTemplate
+        delete node.touchTemplateContent.outboundTemplate
+        delete node.touchTemplateContent.znxTemplate
+        delete node.touchTemplateContent.smsTemplate
       }
+
+    }
+
+    node.$id && (node.id = node.$id);
+
+    if (nodeFather) {
+      // if (nodeFather.nodeType === "Start") {
+      //   node.preNodeId = "root";
+      // } else {
+      //   // 先拿到父元素中children 我这个元素的位置
+      //   // const fatherInd = [...node.father.children].indexOf(
+      //   //   (item: any) => item.nodeId === node.nodeId
+      //   // );
+
+      //   node.preNodeId = node.father.nodeId
+      //   // node.preNodeId =
+      //   //   fatherInd < 1
+      //   //     ? node.father.nodeId
+      //   //     : node.father.children[fatherInd - 1].nodeId;
+      // }
 
       // node.nextNodeId = (fatherInd < node.father.children.length - 1 ? node.father.children[fatherInd + 1].nodeId : node.children?.[0]?.nodeId)
 
-      if (!node.father?.nextNodeId?.data) {
-        node.father.nextNodeId = {
+      if (!nodeFather?.nextNodeId?.data) {
+        nodeFather.nextNodeId = {
           data: [],
         };
       }
@@ -227,6 +262,7 @@ async function submitReview(status: string = "approvalPending") {
     ...flowOptions.p,
     nodes: flatMaps(transformNodes([...flowOptions.p.children])),
     touchName: flowOptions.basic.touchName,
+    touchCode: flowOptions.basic.touchCode,
     ...transformDisturb(flowOptions.basic.disturb),
     ...transformTarget(flowOptions.basic.target),
   };
@@ -240,8 +276,10 @@ async function submitReview(status: string = "approvalPending") {
     status,
   };
   if (route.params?.id?.length) {
-    Object.assign(data, { ..._flowOptions, id: route.params?.id });
+    Object.assign(data, { ..._flowOptions, id: route.params?.id, status: status });
   } else {
+
+    Object.assign(_flowOptions, { ..._flowOptions, status: status });
     Object.assign(data, _flowOptions);
   }
   let res: any = route.params?.id?.length
@@ -252,14 +290,14 @@ async function submitReview(status: string = "approvalPending") {
 
   console.log("done", res);
 
-  if (!!+res?.code) {
-    promise.then(goBack);
-  }
-
   loading.value = false;
 
   title.value = "提交完毕";
   content.value = res.message || "失败";
+
+  if (res?.code === '0') {
+    router.push("/touchCenter/touchList");
+  }
 
   console.log(data);
 
@@ -295,7 +333,8 @@ const goBack = () => {
             <div>
               <el-button @click="goBack" round>返回</el-button>
               <el-button @click="submitReview('draft')" round>保存草稿</el-button>
-              <el-button round type="primary" @click="submitReview('')" class="primaryStyle">提交审核</el-button>
+              <el-button round type="primary" @click="submitReview('approvalPending')"
+                class="primaryStyle">提交审核</el-button>
             </div>
           </template>
         </FlowHeader>
@@ -331,7 +370,7 @@ div.el-dialog {
 
 .FlowPage-Container.expand {
   .el-header {
-    height: 60%;
+    height: 80%;
   }
 }
 

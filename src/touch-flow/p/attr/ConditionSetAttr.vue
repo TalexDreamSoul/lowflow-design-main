@@ -229,11 +229,10 @@ const defaultTime2: [Date, Date] = [
 </script>
 
 <template>
-  <el-form :disabled="true" class="MainForm" ref="form" :model="sizeForm" label-width="auto" label-position="top">
-    <el-form-item label="流程类型">
+  <el-form :disabled="readonly" class="MainForm" ref="form" :model="sizeForm" label-width="auto" label-position="top">
+    <el-form-item label="流程类型" style="    margin-bottom: 40px;">
       <FlowTypeSelector :readonly="readonly" v-model="sizeForm.executeType" />
     </el-form-item>
-    <br />
 
     <el-form-item v-if="sizeForm.executeType === 'immediately'" label="流程开始时间（任务开始时间）">
       <el-text> 客户在&nbsp;&nbsp; </el-text>
@@ -245,7 +244,7 @@ const defaultTime2: [Date, Date] = [
     </el-form-item>
 
     <div v-else-if="sizeForm.executeType === 'repeat'">
-      <el-form-item label="流程有效期：">
+      <el-form-item label="流程有效期">
         <el-date-picker :disabled="readonly" v-model="sizeForm.date3" type="datetimerange"
           value-format="YYYY-MM-DD HH:mm:ss" style="max-width: 382px" range-separator="至" start-placeholder="开始日期"
           end-placeholder="结束日期" :default-time="defaultTime2" />
@@ -257,21 +256,22 @@ const defaultTime2: [Date, Date] = [
         &nbsp;
         <el-select @change="Object.assign(sizeForm.repeatTime, { repeatDay: [], repeatTime: '' })"
           v-model="sizeForm.repeatTime.repeatType" style="width: 100px">
-          <el-option value="month" label="月份">月</el-option>
-          <el-option value="week" label="周">周</el-option>
-          <el-option value="day" label="天">天</el-option>
+          <el-option value="month" label="每月">每月</el-option>
+          <el-option value="week" label="每周">每周</el-option>
+          <el-option value="day" label="每天">每天</el-option>
         </el-select>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;
+        &nbsp;
         <el-select v-if="sizeForm.repeatTime.repeatType === 'month'" v-model="sizeForm.repeatTime.repeatDay"
           placeholder="选择月份的天数" style="width: 150px" multiple collapse-tags>
           <el-option v-for="day in 30" :key="day" :label="`${day}号`" :value="day"></el-option>
         </el-select>
-        &nbsp;&nbsp;&nbsp;
+        &nbsp;
         <el-select v-if="sizeForm.repeatTime.repeatType === 'week'" v-model="sizeForm.repeatTime.repeatDay"
           placeholder="选择星期几" style="width: 150px" multiple collapse-tags>
           <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="index + 1"></el-option>
         </el-select>
-
+        &nbsp;
         <el-time-picker v-model="sizeForm.repeatTime.repeatTime" value-format="HH:mm" placeholder="选择时间"
           style="width: 120px"></el-time-picker>
         &nbsp;&nbsp;
@@ -287,7 +287,6 @@ const defaultTime2: [Date, Date] = [
         </el-col>
       </el-form-item>
 
-      <br />
       <EventGroup :readonly="readonly" :p="sizeForm" />
     </div>
 
@@ -302,9 +301,9 @@ const defaultTime2: [Date, Date] = [
       </el-form-item>
       <div class="flex-column" v-if="sizeForm.enterType === 'multi'">
         <el-text>当前流程，同一客户</el-text>&nbsp;
-        <el-input-number :max="30" :min="1" style="width: 100px" v-model="sizeForm.enterDay" placeholder="天数" />
+        <el-input-number :max="30" :min="1" style="width: 100px" v-model="sizeForm.enterDay" placeholder="天数"  controls-position="right" />
         <el-text>&nbsp;天内，最多进入</el-text>&nbsp;
-        <el-input-number :min="1" style="width: 100px" v-model="sizeForm.enterCount" placeholder="次数" />
+        <el-input-number :min="1" style="width: 100px" v-model="sizeForm.enterCount" placeholder="次数"   controls-position="right" />
         <el-text> &nbsp;次 </el-text>
       </div>
     </template>

@@ -3,6 +3,7 @@ import { ref, unref, reactive, onMounted, watch } from "vue";
 import dayjs from "dayjs";
 import {
   getQryMaterial,
+  dictFilterTree,
   setDeleteMaterial,
   setUpdateMaterialStatus,
 } from "~/api/index";
@@ -11,20 +12,21 @@ import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { createTemplatePopover } from "~/utils/touch-templates";
-import { materialType } from "~/utils/common";
+import { getDictmaterialType } from "~/utils/common";
 import { de, el } from "element-plus/es/locale";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
 
-console.log("1", String(route.params.type).replace('Template', ''))
+console.log("1", String(route.params.type).replace("Template", ""));
 
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
 const formInline = reactive({
   name: "",
   // type	素材类型：sms 短信，appPush app消息，digital 数字员工，outbound 智能外呼，znx 站内信
-  type: String(route.params.type).replace('Template', ''),
+  type: String(route.params.type).replace("Template", ""),
   beginTime: "",
   endTime: "",
   status: "",
@@ -49,25 +51,56 @@ const statusLabels = {
 // })
 
 const value = ref();
+type MaterialType = {
+    name: string;
+    value: string;
+};
+
+const materialType = ref<MaterialType[]>([]);
+
+const getDictmaterialType = async () => {
+  const res: any = await dictFilterTree();
+  let { materialTypes } = res?.data;
+  let getDictmaterialList = [];
+  getDictmaterialList = materialTypes.map(
+    (item: { code: any; message: any }) => {
+      return {
+        value: item.code,
+        name: item.message,
+      };
+    }
+  );
+  getDictmaterialList.unshift({ value: "all", name: "模版总览" });
+  materialType.value = getDictmaterialList;
+
+  console.log(materialType, "materialType");
+
+  materialTypeName.value = getNameByValue(
+    materialType,
+    String(route.params.type).replace("Template", "")
+  );
+};
+onMounted(async () => {
+  fetchDataApi();
+  getDictmaterialType();
+});
 
 function getNameByValue(data: any[], val: string) {
-  const item = data.find((item: { value: any }) => item.value === val);
+  const item = data.values?.find((item: { value: any }) => item.value === val);
   return item ? item.name : "";
 }
 
-const materialTypeName = ref(getNameByValue(materialType,  String(route.params.type).replace('Template', '')));
-
-console.log(materialTypeName); // 输出：短信
-onMounted(async () => {
-  fetchDataApi();
-});
+const materialTypeName = ref("");
 
 watch(
   () => route.fullPath,
   (val) => {
     console.log(`output->val`, val);
-    materialTypeName.value = getNameByValue(materialType, String(route.params.type).replace('Template', ''));
-    formInline.type = String(route.params.type).replace('Template', '')
+    // materialTypeName.value = getNameByValue(
+    //   materialType,
+    //   String(route.params.type).replace("Template", "")
+    // );
+    formInline.type = String(route.params.type).replace("Template", "");
     fetchDataApi();
   }
 );
@@ -122,7 +155,7 @@ const updateMaterialStatusData = async (row: any, status: String) => {
 };
 
 const detailsData = async (row: any) => {
-  updateData(row, true, 'details');
+  updateData(row, true, "details");
 };
 
 const addData = async () => {
@@ -193,32 +226,30 @@ const changeTime = (val: any) => {
 </script>
 
 <template>
-  <CustomEventComponent :title="formInline.type == 'all' ? `${materialTypeName}` : `${materialTypeName}模版列表`
+  <CustomEventComponent :title="String(route.params.type).replace('Template', '') == 'all' ? `${materialTypeName}` : `${materialTypeName}模版列表`
     " :tableData="tableData" :total="total">
     <template #search>
       <div class="search">
         <el-form :inline="true">
-          <el-form-item label="创建时间：">
-            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期"
-              end-placeholder="结束日期" :size="size" @change="changeTime" />
+          <el-form-item label="创建时间:">
+            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
           </el-form-item>
-          <el-form-item v-if="formInline.type == 'all'">
+          <el-form-item v-if="String(route.params.type).replace('Template', '') == 'all'" label="模板类型:">
             <el-select v-model="formInline.type" style="width: 200px" placeholder="模板类型">
               <el-option v-for="item in materialType" :label="item.name" :value="item.value" />
             </el-select>
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="模板状态:">
             <el-select v-model="formInline.status" clearable style="width: 200px" placeholder="模板状态">
               <el-option label="可用" value="available" />
               <el-option label="下线" value="offline" />
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable
-              style="width: 200px" :suffix-icon="Search" />
+            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width: 200px" :suffix-icon="Search" />
           </el-form-item>
         </el-form>
-        <div v-if="formInline.type != 'all'">
+        <div v-if="String(route.params.type).replace('Template', '') != 'all'">
           <el-button type="primary" class="add" @click="addData()" round>新建{{ materialTypeName }}模版</el-button>
         </div>
       </div>
@@ -227,6 +258,12 @@ const changeTime = (val: any) => {
       <el-table :data="tableData">
         <el-table-column label="模版ID" prop="id" />
         <el-table-column label="模版名称" prop="name" />
+        <el-table-column label="模版类型" prop="type">
+          <template #default="scope">
+            <!-- {{             getNameByValue(materialType, String(scope.row.type))
+          }} -->
+          </template>
+        </el-table-column>
         <el-table-column label="状态">
           <template #default="scope">
             <el-tag class="mx-1" :type="statusLabels[scope.row.status].type
@@ -242,18 +279,23 @@ const changeTime = (val: any) => {
         <el-table-column label="创建人" prop="createUserName" />
         <el-table-column label="正在使用" prop="usedCount">
           <template #default="scope">
-            <span :style="scope.row.usedCount > 0 ? 'color: #00C068' : 'color: #333'">{{
-    scope.row.usedCount
-  }}</span>
+
+            <el-tooltip placement="bottom" v-if="scope.row.usedCount > 0">
+              <template #content> {{ `流程${scope.row.usedTouchNames}正在使用` }}</template>
+              <span style="color: #00C068">{{
+                scope.row.usedCount
+              }}</span>
+            </el-tooltip>
+            <span v-else style="color: #333">{{
+              scope.row.usedCount
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
-            <el-space wrap v-if="formInline.type != 'all'">
-              <el-link type="primary" v-if="scope.row.status == 'offline'"
-                @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
-              <el-link type="primary" v-if="scope.row.status !== 'offline'"
-                @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
+            <el-space wrap v-if="String(route.params.type).replace('Template', '') != 'all'">
+              <el-link type="primary" v-if="scope.row.status == 'offline'" @click="updateMaterialStatusData(scope.row, 'available')">上线</el-link>
+              <el-link type="primary" v-if="scope.row.status !== 'offline'&& scope.row.usedCount <1" @click="updateMaterialStatusData(scope.row, 'offline')">下线</el-link>
               <el-link type="primary" @click="updateData(scope.row)">编辑</el-link>
               <el-link type="primary" @click="delData(scope.row)">删除</el-link>
 
@@ -262,12 +304,17 @@ const changeTime = (val: any) => {
             <el-link v-else type="primary" @click="detailsData(scope.row)">查看详情</el-link>
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
     </template>
     <template #pagination>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background
-        layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total"
-        @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </template>
   </CustomEventComponent>
 </template>

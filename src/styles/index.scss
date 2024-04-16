@@ -1,5 +1,21 @@
 // import dark theme
 @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+html,body,#app{
+  padding: 0;
+  margin: 0;
+}
+@font-face {
+  font-family: "font1";
+  src: url("~/assets/fonts/PangMenZhengDaoBiaoTiTiMianFeiBan-2.ttf") format("truetype"); /* 字体文件路径和格式 */
+}
+
+.font1 {
+  font-family: "font1", sans-serif; /* 使用定义的字体，如果找不到则回退到系统默认 sans-serif 字体 */
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --el-color-primary: #277AE7;
@@ -75,3 +91,11 @@ code {
   background-color: var(--el-color-primary-light-9);
   color: var(--el-color-primary);
 }
+
+
+.el-form--inline .el-form-item {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+

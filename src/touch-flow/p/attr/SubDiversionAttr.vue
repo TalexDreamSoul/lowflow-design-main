@@ -46,6 +46,7 @@ const props = defineProps<{
   new?: boolean;
   readonly?: boolean;
 }>();
+const $getNodeName: any = window['$getNodeName']
 
 const touchSettingsRef = ref();
 const sizeForm = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
@@ -67,8 +68,6 @@ watchEffect(() => {
 
     if (props.p.touchTemplateContent)
       sizeForm.touchTemplateContent = props.p.touchTemplateContent;
-
-    console.log("aqwqsdadas", props.p, sizeForm)
   }
 });
 
@@ -81,6 +80,15 @@ function saveData() {
     return false;
   }
 
+  const _gotNode = $getNodeName(sizeForm.nodeName)
+  if (_gotNode && _gotNode?.nodeId !== sizeForm.nodeId) {
+    ElMessage.warning({
+      message: "节点名称重复",
+    });
+
+    return false;
+  }
+
   if (
     !validateCommonDays(
       sizeForm.nodeDelayed.delayedTime,
@@ -88,17 +96,17 @@ function saveData() {
     )
   ) {
     ElMessage.warning({
-      message: "延迟设置折算时间不可超过30天！",
+      message: "延时设置折算时间不可超过30天！",
     });
 
     return false;
   }
 
-  touchSettingsRef.value.updateData();
+  if (!touchSettingsRef.value.updateData()) return false
 
   console.log("> update", sizeForm, props);
 
-  const _: any = { nodeId: "", children: [] };
+  const _: any = { nodeId: "", nodeContent: {}, children: [] };
   Object.assign(_, sizeForm);
 
   Object.assign(props.p, _);
@@ -120,7 +128,7 @@ regSaveFunc(saveData);
 
       <CommonAttr ref="touchSettingsRef" :size-form="sizeForm" />
 
-      <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
+      <!-- <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" /> -->
 
       <StrategistTargetAttr :readonly="readonly" :size-form="sizeForm" />
     </el-form>

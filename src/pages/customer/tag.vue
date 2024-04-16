@@ -105,6 +105,17 @@
             {{ scope.row.coverRatio * 100 + "%" }}
           </template></el-table-column
         >
+        <el-table-column label="正在使用" prop="usedCount" width="88">
+          <template #default="scope">
+            <el-tooltip placement="bottom" v-if="scope.row.usedCount > 0">
+              <template #content>
+                {{ `流程${scope.row.usedTouchNames}正在使用` }}</template
+              >
+              <span style="color: #00c068">{{ scope.row.usedCount }}</span>
+            </el-tooltip>
+            <span v-else style="color: #333">{{ scope.row.usedCount }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="280" fixed="right">
           <template #default="scope">
             <el-button
@@ -477,7 +488,8 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       .el-table {
         border-radius: 0;
 
-        .el-table__cell, .el-table__empty-block {
+        .el-table__cell,
+        .el-table__empty-block {
           background-color: rgba(242, 244, 248, 1);
         }
       }

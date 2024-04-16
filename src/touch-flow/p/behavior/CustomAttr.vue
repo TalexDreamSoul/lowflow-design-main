@@ -7,6 +7,7 @@ import { CustomAttrConditionDTO } from "../../touch-total";
 
 const props = defineProps<{
   custom: CustomAttrConditionDTO;
+  outside?: boolean;
   readonly?: boolean;
 }>();
 
@@ -20,10 +21,10 @@ watchEffect(() => {
 });
 
 onMounted(async () => {
-  const res = await getDictFilterTree(
+  const res: any = await getDictFilterTree(
     {
-      pageNum:"1",
-      pageSize:"999"
+      pageNum: "1",
+      pageSize: "999"
     }
   );
 
@@ -46,9 +47,9 @@ provide("refreshTree", refreshTree);
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
       <div v-if="dict && custom?.conditions?.length" class="Target-Block">
-        <LogicalLine :readonly="readonly" :display="!custom?.conditions?.length" v-model="custom.logicalChar">
-          <div v-for="(condition, index) in custom.conditions" :key="index">
-            <CustomContent :readonly="readonly" :condition="condition" :dict="dict" />
+        <LogicalLine :readonly="readonly" :display="custom?.conditions?.length < 2" v-model="custom.logicalChar">
+          <div class="item" v-for="(condition, index) in custom.conditions" :key="index">
+            <CustomContent  :readonly="readonly"   :outside="outside" :condition="condition" :dict="dict" />
           </div>
         </LogicalLine>
       </div>
@@ -61,5 +62,9 @@ provide("refreshTree", refreshTree);
   background-color: #f7f8fa;
 
   user-select: none;
+
+  .item {
+    padding: 0 1rem;
+  }
 }
 </style>

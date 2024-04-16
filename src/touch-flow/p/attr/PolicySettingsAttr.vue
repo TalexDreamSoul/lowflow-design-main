@@ -4,18 +4,17 @@ import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import FilterGroup from "./condition/FilterGroup.vue";
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
-import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
 import { markRaw, computed } from "vue";
 import CommonAttr from "./CommonAttr.vue";
 import { validateCommonDays } from "~/touch-flow/flow-utils";
 import { MarketingTouchNodeEditDTO } from "~/touch-flow/touch-total";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
-import { useRoute } from "vue-router";
 
 const origin: MarketingTouchNodeEditDTO = {
   nodeId: "",
   nodeType: "strategy",
   nodeName: "",
+  preNodeId: "",
   containTarget: false,
   diversionType: "noDiversion",
   touchTemplateContent: {},
@@ -74,6 +73,7 @@ const props = defineProps<{
   new?: boolean;
   readonly?: boolean;
 }>();
+const $getNodeName: any = window['$getNodeName']
 
 const touchSettingsRef = ref();
 const _edit = computed(() => {
@@ -88,6 +88,7 @@ const _edit = computed(() => {
 
   return true
 })
+
 const sizeForm = reactive<typeof origin>(JSON.parse(JSON.stringify(origin)));
 
 watch(
@@ -98,11 +99,24 @@ watch(
 );
 
 watch(props.p, () => {
-  const { nodeType, children } = props.p;
+  const { nodeId, nodeType, children, preNodeId } = props.p;
 
-  if (nodeType === 'strategy') return;
+  if (nodeId && nodeType === 'strategy') {
 
-  if (!children.length || children[0].nodeType !== 'strategy') return
+    if (props.new) {
+      sizeForm.$index = children?.length || 0
+    } else {
+      const fatherNode = window.$getNodeById(preNodeId)
+      if (!fatherNode) return
+
+      sizeForm.$index = _edit.value ? fatherNode.children.length : [...fatherNode.children].findIndex(item => item.nodeId === nodeId)  //fatherNode.children.length
+      //[...fatherNode.children].indexOf(props.p)
+    }
+
+    return;
+  }
+
+  if (!children?.length || children[0].nodeType !== 'strategy') return
 
   sizeForm.$index = children.length
 
@@ -139,6 +153,15 @@ function saveData() {
     return false;
   }
 
+  const _gotNode = $getNodeName(sizeForm.nodeName)
+  if (_gotNode && _gotNode?.nodeId !== sizeForm.nodeId) {
+    ElMessage.warning({
+      message: "节点名称重复",
+    });
+
+    return false;
+  }
+
   if (
     !validateCommonDays(
       sizeForm.nodeDelayed.delayedTime,
@@ -146,47 +169,47 @@ function saveData() {
     )
   ) {
     ElMessage.warning({
-      message: "延迟设置折算时间不可超过30天！",
+      message: "延时设置折算时间不可超过30天！",
     });
 
     return false;
   }
 
-  touchSettingsRef.value.updateData();
+  if (!touchSettingsRef.value.updateData()) return false
+
+  const { touchTemplateContent }: any = sizeForm
+
+  if (String(sizeForm.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1 && !touchTemplateContent?.type?.length) {
+    ElMessage.warning({
+      message: "请选择模板！",
+    })
+
+    return false;
+  }
 
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm);
 
-  // console.log("ppp", _);
+  console.log("ppp", _);
 
-  Object.defineProperty(_, "father", {
-    value: markRaw(props.p),
-    enumerable: false,
-  });
+  // Object.defineProperty(_, "father", {
+  //   value: markRaw(props.p),
+  //   enumerable: false,
+  // });
 
   // 修改 Modify Edit
   if (sizeForm.nodeId === _.nodeId && sizeForm.nodeId!.length) {
     Object.assign(props.p, _);
   } else {
-    const arr = [...props.p.children];
-
-    while (arr.length) {
-      const item = arr.shift();
-
-      if (item.nodeName === _.nodeName) {
-        ElMessage.warning({
-          message: "策略名称重复",
-        });
-
-        return false;
-      }
-    }
 
     _.nodeId = randomStr(12);
 
-    // console.log("add", props.p);
+    _.preNodeId = props.p.nodeId
 
-    props.p.children.push(_);
+    if (props.p.children) {
+      props.p.children.push(_);
+    } else props.p.children = [_]
+
   }
 
   return true;
@@ -204,7 +227,9 @@ regSaveFunc(saveData);
         <el-input :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" />
       </el-form-item>
       <el-form-item label="分流类型：">
-        <el-radio-group :disabled="_edit || readonly || sizeForm.$index" v-model="sizeForm.diversionType">
+        <!-- (_edit && sizeForm.nodeId) || -->
+        <el-radio-group :disabled="(_edit && sizeForm.$index && !props.new) || readonly || sizeForm.$index"
+          v-model="sizeForm.diversionType">
           <el-radio label="noDiversion">不分流</el-radio>
           <el-radio label="attr">按属性用户行为分流</el-radio>
           <el-radio label="event">按触发事件分流</el-radio>
@@ -219,19 +244,20 @@ regSaveFunc(saveData);
         </span>
       </span>
 
-      <BehaviorGroupPlus title="用户属性行为分流" color="#333333"
+      <BehaviorGroupPlus title="用户属性行为分流" color="#333333" :default-expand="true"
         :class="{ animation: true, display: sizeForm.diversionType === 'attr' }">
         <div class="titleCondition">进入该策略期的用户需要满足以下条件：</div>
-        <FilterGroup :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
+        <FilterGroup :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent!" />
       </BehaviorGroupPlus>
 
-      <BehaviorGroupPlus title="触发事件分流" color="#333333"
+      <BehaviorGroupPlus title="触发事件分流" color="#333333" :default-expand="true"
         :class="{ animation: true, display: sizeForm.diversionType === 'event' }">
         <div class="flex-column titleCondition">
           <el-text>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</el-text>
-          <el-input-number :disabled="readonly || sizeForm.$index" :min="1" v-model="sizeForm.eventDelayed!.delayedTime"
-            type="number" style="width: 100px" />&nbsp;
-          <el-select :disabled="readonly || sizeForm.$index" v-model="sizeForm.eventDelayed!.delayedUnit"
+          <el-input-number :disabled="readonly || sizeForm.$index > 1" :min="1"
+            v-model="sizeForm.eventDelayed!.delayedTime" controls-position="right" type="number"
+            style="width: 100px" />&nbsp;
+          <el-select :disabled="readonly || sizeForm.$index > 1" v-model="sizeForm.eventDelayed!.delayedUnit"
             style="width: 100px">
             <el-option value="minute" label="分钟">分钟</el-option>
             <el-option value="hour" label="小时">小时</el-option>
@@ -251,7 +277,7 @@ regSaveFunc(saveData);
 
       <CommonAttr :readonly="readonly" ref="touchSettingsRef" :sizeForm="sizeForm" />
 
-      <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" />
+      <!-- <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" /> -->
 
       <StrategistTargetAttr :readonly="readonly" :size-form="sizeForm" />
     </el-form>
@@ -329,7 +355,7 @@ li:has(.template-option):has(.template-desc) {
 
 :deep(.el-form-item) {
   margin-right: 0;
-  margin-bottom: 0;
+  //margin-bottom: 0;
 }
 
 .BlockBackground {

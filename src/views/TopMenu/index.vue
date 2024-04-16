@@ -66,20 +66,20 @@ import HeaderIcon from "~/assets/header-icon.png";
 import { CaretBottom } from "@element-plus/icons-vue";
 import TouchMenu from "./TouchMenu.vue";
 import TouchMenuItem from "./TouchMenuItem.vue";
+import { useLocalStorage } from "@vueuse/core";
 
 const appOptions: any = inject('appOptions')!
 const menuMap = ref()
-
 watchEffect(() => {
   // $ignored: appOptions.value
   if (!appOptions.value?.menu) return
 
   const { menus, menuIds } = appOptions.value.menu
-  const filteredMenu = [...menus].filter((item: any) => menuIds.includes(item.id))
+  const filteredMenu = menus&&[...menus].filter((item: any) => menuIds.includes(item.id))
 
   const map: any = {}
 
-  filteredMenu.forEach((item: any) => map[item.menuCode] = reactive({
+  filteredMenu&&filteredMenu.forEach((item: any) => map[item.menuCode] = reactive({
     children: [],
     ...item,
   }))
@@ -109,9 +109,12 @@ watchEffect(() => {
 
   menuMap.value = map
 
-  console.log("1", map)
+  // console.log("1", map)
 
 })
+
+useLocalStorage("menuMap-default", { menuMap });
+
 
 const handleloca = () => {
   window.open('http://172.30.3.6:18700/', '_blank');

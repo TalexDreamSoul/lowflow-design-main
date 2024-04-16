@@ -1,131 +1,125 @@
 <template>
   <div class="login-container">
-    <el-form ref="refLoginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+    <el-form ref="refLoginForm" :model="state.loginForm" :rules="state.loginRules" class="login-form" autocomplete="on" label-position="left">
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">H5 活动制作系统</h3>
       </div>
 
       <el-form-item prop="accountName">
-        <el-input v-model="loginForm.accountName" placeholder="帐号名称" name="accountName" type="text" tabindex="1" autocomplete="on" />
+        <el-input v-model="state.loginForm.accountName" placeholder="帐号名称" name="accountName" type="text" tabindex="1" autocomplete="on" />
       </el-form-item>
 
       <el-form-item prop="accountPassword">
-        <el-input v-model="loginForm.accountPassword" placeholder="帐号密码" name="accountPassword" tabindex="2" autocomplete="on" />
+        <el-input v-model="state.loginForm.accountPassword" placeholder="帐号密码" name="accountPassword" tabindex="2" autocomplete="on" />
       </el-form-item>
-      <el-form-item prop="email">
-        <el-input v-model="loginForm.email" placeholder="邮箱" name="accountemail" tabindex="2" autocomplete="on" />
-      </el-form-item>
-      <el-form-item prop="phone">
-        <el-input v-model="loginForm.phone" placeholder="电话" name="phone" tabindex="2" autocomplete="on" />
-      </el-form-item>
-      <el-form-item prop="roleId">
-        <el-input v-model="loginForm.roleId" placeholder="角色Id" name="roleId" tabindex="2" autocomplete="on" />
-      </el-form-item>
-      <el-button :loading="loading" type="primary" size="large" style="width: 100%; margin-bottom: 30px" @click.prevent="handleLogin">Login</el-button>
+      <el-button :loading="state.loading" type="primary" size="large" style="width: 100%; margin-bottom: 30px" @click="handleLogin">Login</el-button>
     </el-form>
   </div>
 </template>
 
 <script setup>
-import { nextTick, onMounted, reactive, toRefs } from "vue";
-import { useUserStore } from "~/store/user";
+import { nextTick, onMounted, reactive, toRefs, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import API from "~/api/account";
+import { useLocalStorage } from "@vueuse/core";
+import customerAPI from "~/api/account";
+import { checkStringEqual, debounce } from "~/utils/common";
 
 const router = useRouter();
-const route = useRoute();
 
-const validateaccountName = (rule, value, callback) => {
-  if (!value) {
-    callback(new Error("Please enter the correct user name"));
-  } else {
-    callback();
-  }
-};
+const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
 
-const validateaccountPassword = (rule, value, callback) => {
-  if (value.length < 6) {
-    callback(new Error("The accountPassword can not be less than 6 digits"));
-  } else {
-    callback();
-  }
-};
-const validateEmail = (rule, value, callback) => {
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!value) {
-    callback(new Error("Please enter your email address"));
-  } else if (!emailPattern.test(value)) {
-    callback(new Error("Please enter a valid email address"));
-  } else {
-    callback();
-  }
-};
-
-const validatePhone = (rule, value, callback) => {
-  const phonePattern = /^[1][3-9][0-9]{9}$/;
-  if (!value) {
-    callback(new Error("Please enter your phone number"));
-  } else if (!phonePattern.test(value)) {
-    callback(new Error("Please enter a valid phone number"));
-  } else {
-    callback();
-  }
-};
-
-const state = reactive({
+const state = ref({
   refLoginForm: null,
   loginForm: {
-    accountName: "4pd2",
-    accountPassword: "4pdadmin",
+    accountName: "",
+    accountPassword: "",
     email: "",
     phone: "",
     roleId: 0,
   },
-  loginRules: {
-    // accountName: [
-    //   { required: true, trigger: "blur", validator: validateaccountName },
-    // ],
-    // accountPassword: [
-    //   { required: true, trigger: "blur", validator: validateaccountPassword },
-    // ],
-    // email: [{  trigger: "blur", validator: validateEmail }],
-    // phone: [{  trigger: "blur", validator: validatePhone }],
-    // roleId: [
-    //   {  trigger: "blur", message: "Please enter the role ID" },
-    // ],
-  },
+  loginRules: {},
   loading: false,
 });
-const {
-  refLoginForm,
-  loginForm,
-  loginRules,
-  loading
-} = toRefs(state)
-const handleLogin = () => {
-  state.refLoginForm.validate(async (valid) => {
-    if (valid) {
-      try {
-        state.loading = true;
+const menuMap = ref();
 
-        const userStore = useUserStore();
+const goBack = async () => {
+  const { user } = appOptions.value;
+  const { id } = user;
+  const res = await customerAPI.accountContainMenuList({ id, accountId: id });
+  appOptions.value.menu = res?.data;
 
-        const { token, id, accountName } = await API.login(state.loginForm);
+  const { menus, menuIds } = appOptions.value.menu;
+  const filteredMenu =
+    menus && [...menus].filter((item) => menuIds.includes(item.id));
 
-        userStore.setToken({ token });
+  const map = {};
 
-        userStore.setUserInfo({ userInfo: { id, accountName } });
+  filteredMenu &&
+    filteredMenu.forEach(
+      (item) =>
+        (map[item.menuCode] = reactive({
+          children: [],
+          ...item,
+        }))
+    );
 
-        state.loading = false;
+  const clearCodes = [];
 
-        router.push();
-      } catch (error) {
-        state.loading = false;
+  // 将flat array转成tree map
+  Object.values(map).forEach((item) => {
+    const { id, menuCode, parentMenuCode } = item;
+
+    if (menuCode !== parentMenuCode && parentMenuCode?.length) {
+      const p = map[parentMenuCode];
+
+      if (p) {
+        const c = p.children;
+
+        c.push(item);
       }
-    } else {
-      return false;
+
+      clearCodes.push(menuCode);
+      // delete map[menuCode]
     }
   });
+
+  [...clearCodes].forEach((code) => delete map[code]);
+
+  menuMap.value = map;
+
+  console.log(
+    `output->`,
+    menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode,
+    Object.keys(menuMap.value)
+  );
+  useLocalStorage(
+    "router-default",
+    `/${Object.keys(menuMap.value)[0]}/${
+      menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+    }`
+  );
+  router.push(
+    `/${Object.keys(menuMap.value)[0]}/${
+      menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+    }`
+  );
+};
+
+const fetchDataApi = async () => {
+  const res = await customerAPI.accountDetail();
+  appOptions.value.user = res?.data;
+  goBack();
+};
+
+const handleLogin = async () => {
+  state.loading = true;
+
+  const res = await API.login(state.value.loginForm);
+  if (checkStringEqual(res?.code, 0)) {
+    fetchDataApi();
+  }
+  state.loading = false;
 };
 </script>
 

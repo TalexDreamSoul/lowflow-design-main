@@ -3,7 +3,7 @@ import { inject, ref, reactive, watchEffect, computed } from "vue";
 import { ElMessage } from "element-plus";
 import { randomStr } from "~/utils/common";
 import { markRaw } from "vue";
-import { Delete } from '@element-plus/icons-vue'
+import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 
 const origin = {
   nodeName: "",
@@ -12,44 +12,58 @@ const origin = {
   nodeId: "",
   diversionRuleContent: {
     data: [
-      { nodeName: "流量策略器1", branchName: "", branchRatio: 50, children: [] },
-      { nodeName: "流量策略器2", branchName: "", branchRatio: 50, children: [] },
+      { branchName: "", branchRatio: 50, children: [] },
+      { branchName: "", branchRatio: 50, children: [] },
     ],
   },
 };
 
 const props = defineProps<{
   p: any;
+  readonly?: boolean;
 }>();
+const $getNodeName: any = window['$getNodeName']
 
-const { children } = props.p
+const { diversionRuleContent, children } = props.p
 
 const sizeForm = reactive<typeof origin>(origin);
 
 !(
-  children.length &&
+  diversionRuleContent?.data?.length &&
   (() => {
     origin.diversionRuleContent.data = [];
 
-    children.forEach((child: any) => {
-      origin.diversionRuleContent.data.push({
-        nodeName: child.branchName,
+    diversionRuleContent.data.forEach((child: any, index: number) => {
+      let _gotNode
+      if (index >= 0 && index < children.length) {
+        _gotNode = children[index]
+      }
+      console.log('index', index, _gotNode)
+      // const _gotNode = $getNodeName(child.branchName)
+
+      const obj = {
         branchName: child.branchName,
         branchRatio: child.branchRatio,
         children: child.children,
-      });
+        $id: _gotNode?.nodeId
+      }
+      console.log("obj", obj)
+
+      origin.diversionRuleContent.data.push(obj);
     });
   })()
 );
 
 watchEffect(() => {
-  const { nodeType, nodeId } = props.p
+  const { nodeType, nodeId, nodeName } = props.p
 
   if (nodeType !== 'diversion') return
 
   if (nodeId) {
     sizeForm.nodeId = nodeId;
   }
+
+  sizeForm.nodeName = nodeName
 })
 
 const totalBranchRatio = computed(() => sizeForm.diversionRuleContent.data.reduce((acc: number, curVal) => acc + +curVal.branchRatio, 0))
@@ -58,6 +72,15 @@ function saveData() {
   if (!sizeForm.nodeName) {
     ElMessage.warning({
       message: "请输入流量策略器名称",
+    });
+
+    return false;
+  }
+
+  const _gotNode = $getNodeName(sizeForm.nodeName)
+  if (_gotNode && _gotNode?.nodeId !== sizeForm.nodeId) {
+    ElMessage.warning({
+      message: "节点名称重复",
     });
 
     return false;
@@ -73,7 +96,8 @@ function saveData() {
   }
 
   const _map: any = {}
-  if (sizeForm.diversionRuleContent.data.filter(branch => (branch.branchRatio === 0 || branch.nodeName.length < 1) || ((m: any) => m[branch.nodeName] === 1 ? true : ((m[branch.nodeName] = 1) && false))(_map)).length) {
+  if (sizeForm.diversionRuleContent.data.filter(branch => (branch.branchRatio === 0 || branch.branchName.length < 1) || ((m: any) => m[branch.branchName] === 1 ? true : ((m[branch.branchName] = 1) && false))(_map)).length) {
+    console.log(`output->sizeForm.diversionRuleContent.data`, sizeForm.diversionRuleContent.data)
     ElMessage.warning({
       message: "不能存在重复、未命名或配比为0%的流量",
     });
@@ -81,31 +105,68 @@ function saveData() {
     return false;
   }
 
+  if (sizeForm.diversionRuleContent.data.filter(branch => {
+    if (sizeForm.nodeName === branch.branchName) return true
+
+    const _gotNode = $getNodeName(branch.branchName)
+    if (!_gotNode || _gotNode?.nodeName === branch.branchName) {
+      return false
+    }
+    return true;
+  })?.length) {
+    ElMessage.warning({
+      message: "有重复的分支名称",
+    });
+
+    return false;
+  }
+
+  const _preId = randomStr(12)
   const _: any = { nodeId: "", children: [] };
   Object.assign(_, sizeForm)
 
-  Object.defineProperty(_, 'father', {
-    value: markRaw(props.p),
-    enumerable: false
-  })
-
   // transform branch prop 2 children prop
-  sizeForm.diversionRuleContent.data.forEach((branch) => {
+  sizeForm.diversionRuleContent.data.forEach((branch: any, index) => {
+    if (branch['$id']) {
+      const _gotNode = window.$getNodeById(branch.$id)
+      console.log("_", branch, _gotNode)
+
+      if (_gotNode.nodeContent?.data) {
+        _gotNode.nodeContent.data.branchName = branch.branchName
+      } else {
+        _gotNode.nodeContent = {
+          data: {
+            branchName: branch.branchName
+          }
+        }
+      }
+
+      _.children.push(_gotNode)
+
+      return;
+    }
+
     const child = {
       nodeType: "subDiversion",
-      nodeName: branch.nodeName,
+      nodeName: branch.branchName,
+      nodeContent: {
+        data: {
+          branchName: branch.branchName
+        }
+      },
       branchRatio: branch.branchRatio,
       nodeId: randomStr(12),
+      preNodeId: _.nodeId || _preId,
       children: branch.children || [],
       // father: _
     }
 
-    branch.branchName = branch.nodeName
+    // branch.branchName = branch.nodeName
 
-    Object.defineProperty(child, 'father', {
-      value: markRaw(_),
-      enumerable: false
-    })
+    // Object.defineProperty(child, 'father', {
+    //   value: markRaw(_),
+    //   enumerable: false
+    // })
 
     _.children.push(child)
   });
@@ -114,15 +175,20 @@ function saveData() {
 
     Object.assign(props.p, _)
 
+    // props.p.children = [..._.children]
+
   }
 
   else /* if (!_.id?.length)  */ {
-    _.nodeId = randomStr(12)
+    _.nodeId = _preId
+    _.preNodeId = props.p.nodeId
 
     props.p.children.push(_);
 
     //window.$refreshLayout()
   }
+
+  setTimeout(() => window.$refreshLayout(), 50)
 
   return true;
 }
@@ -132,9 +198,9 @@ const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
 const addBranch = () => {
-  const name = "流量策略器" + (sizeForm.diversionRuleContent.data.length + 1)
+  const nodeName = "分支" + (sizeForm.diversionRuleContent.data.length + 1)
 
-  sizeForm.diversionRuleContent.data.push({ branchName: name, nodeName: name, branchRatio: 0, children: [] });
+  sizeForm.diversionRuleContent.data.push({ branchName: nodeName, branchRatio: 0, children: [] });
 };
 
 const deleteBranch = (index: number) => {
@@ -144,7 +210,7 @@ const deleteBranch = (index: number) => {
 
 <template>
   <div>
-    <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
+    <el-form :disabled="readonly" ref="form" :model="sizeForm" label-width="auto" label-position="left">
       <div class="deliveryDesc">
         客户将流量分配比例随机进入任一分支，流量总和为100%。如果同一个客户多次进入该流程，每次都默认分配到同一个组内。
       </div>
@@ -158,18 +224,18 @@ const deleteBranch = (index: number) => {
         </div>
         <div class="underbg">
           <el-row :gutter="20">
-            <el-col :span="14">分支名称</el-col>
+            <el-col :span="12">分支名称</el-col>
             <el-col :span="10">流量分配（剩余<span style="color:#00C068;font-weight:500;">{{ 100 - +totalBranchRatio
                 }}%</span>）</el-col>
           </el-row>
           <el-row :gutter="20" style="    align-items: center;
           margin-top: 16px;" v-for="(branch, index) in sizeForm.diversionRuleContent.data" :key="index">
             <el-col :span="12">
-              <el-input v-model="branch.nodeName" />
+              <el-input placeholder="请输入分支名称" v-model="branch.branchName" />
             </el-col>
             <el-col :span="7">
               <el-input-number :min="0" :max="100 - +totalBranchRatio + branch.branchRatio" placeholder="百分比"
-                v-model="branch.branchRatio" />
+                controls-position="right" v-model="branch.branchRatio" />
             </el-col>
             <el-col :span="5">
               <el-text v-if="index > 1" type="primary" style="cursor: pointer;" @click="deleteBranch(index)">
@@ -181,7 +247,7 @@ const deleteBranch = (index: number) => {
             </el-col>
           </el-row>
 
-          <el-row :gutter="20" style="    align-items: center;
+          <el-row v-if="!readonly" :gutter="20" style="    align-items: center;
           margin-top: 16px;padding: 0 12px;">
             <el-text type="primary" style="cursor: pointer;" @click="addBranch">
               <el-icon size="14">

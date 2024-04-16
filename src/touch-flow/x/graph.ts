@@ -160,13 +160,13 @@ export default function initGraph() {
       enabled: true,
       eventTypes: ["leftMouseDown", "mouseWheel"],
     },
-    mousewheel: {
-      enabled: true,
-      modifiers: "ctrl",
-      factor: 0.8,
-      maxScale: 1.5,
-      minScale: 0.5,
-    },
+    // mousewheel: {
+    //   enabled: true,
+    //   modifiers: "ctrl",
+    //   factor: 0.8,
+    //   maxScale: 1.5,
+    //   minScale: 0.5,
+    // },
     highlighting: {
       magnetAdsorbed: {
         name: "stroke",
@@ -193,7 +193,7 @@ export default function initGraph() {
         // 限制连线配置
         return true;
       },
-      createEdge() {},
+      createEdge() { },
     },
     // selecting: {
     //   enabled: true,

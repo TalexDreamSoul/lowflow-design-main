@@ -11,6 +11,7 @@ import {
 const props = defineProps<{
   condition: SequenceConditionDTO;
   dict: any;
+  outside?: boolean;
   readonly?: boolean;
 }>();
 const emits = defineEmits(["del"]);
@@ -117,7 +118,7 @@ const defaultTime2: [Date, Date] = [
         start-placeholder="开始日期" end-placeholder="结束日期" style="width: 120px" :default-time="defaultTime2" />
       <span style="color: #484545"> &nbsp;&nbsp; 依次做过 </span>
 
-      <span style="zoom:.8">
+      <span style="zoom:.8;min-width: 255px;">    
         <!-- <el-text
           :disabled="readonly"
           type="primary"
@@ -130,14 +131,14 @@ const defaultTime2: [Date, Date] = [
           添加同组
         </el-text>
         &nbsp;&nbsp;&nbsp; -->
-        <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="handleAdd">
+        <el-text :disabled="readonly" v-if="!readonly" type="primary" style="cursor: pointer" @click="handleAdd">
           <el-icon size="14">
             <CirclePlusFilled />
           </el-icon>
           添加事件
         </el-text>
         &nbsp;&nbsp;&nbsp;
-        <el-text :disabled="readonly" type="primary" style="cursor: pointer" @click="handleDel">
+        <el-text :disabled="readonly" v-if="!readonly" type="primary" style="cursor: pointer" @click="handleDel">
           <el-icon size="14">
             <Delete />
           </el-icon>
@@ -170,7 +171,7 @@ const defaultTime2: [Date, Date] = [
         删除
       </el-text>
 
-      <SequenceSubContent :index="_index" :dict="dict" :eventCode="event.eventCode" :condition="event.conditions" />
+      <SequenceSubContent :index="_index" :dict="dict" :eventCode="event.eventCode" :condition="event.conditions" :readonly="readonly" :outside="outside"/>
     </div>
   </div>
 </template>
@@ -180,13 +181,15 @@ const defaultTime2: [Date, Date] = [
   &-Line {
     padding-right: 20%;
     display: flex;
-
+    flex-wrap: wrap;
     gap: 0.5rem;
     align-items: center;
+    margin-top: 1rem;
   }
 
   &-Events {
     margin-left: 1rem;
+    margin-top: 1rem;
   }
 
   margin: 10px 0;

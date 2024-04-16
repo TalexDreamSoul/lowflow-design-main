@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DayJs from "dayjs";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { IHeaderDisturb } from "../flow-types";
 
 interface IDisturbProp {
@@ -26,39 +26,33 @@ const disturbOptions = [
   },
 ];
 
-const timeRange = ref();
 
-watch(
-  props.disturb,
-  (val) => {
-    const { time } = val;
 
-    if (!time.length || !time[0] || !time[1]) return;
 
-    timeRange.value = [analyzeTime(time[0]), analyzeTime(time[1])];
-  },
-  { immediate: true }
-);
+// function analyzeTime(time: string) {
+//   // 新建一个 new Date对象 将小时 分钟 秒 设置为传入进来的 `HH:MM:ss`
+//   const date = new Date();
 
-function analyzeTime(time: string) {
-  // 新建一个 new Date对象 将小时 分钟 秒 设置为传入进来的 `HH:MM:ss`
-  const date = new Date();
+//   date.setHours(+time.split(":")[0]);
+//   date.setMinutes(+time.split(":")[1]);
+//   // date.setSeconds(+time.split(":")[2]);
 
-  date.setHours(+time.split(":")[0]);
-  date.setMinutes(+time.split(":")[1]);
-  // date.setSeconds(+time.split(":")[2]);
-
-  return date;
-}
+//   return date;
+// }
+console.log("change", props.disturb.time);
 
 function handleChange(value: any) {
   console.log("change", value);
+  if (!value.length || !value[0] || !value[1]) return;
 
   props.disturb.time = [
-    DayJs(value[0]).format("HH:MM"),
-    DayJs(value[1]).format("HH:MM"),
+    value[0],
+    value[1],
   ];
+  console.log(`output->props.disturb.time`,props.disturb.time)
 }
+
+
 </script>
 
 <template>
@@ -72,10 +66,9 @@ function handleChange(value: any) {
     </template>
     <div class="Basic-Block-Content" v-show="disturb.enable">
       <el-form-item>
-        <el-time-picker is-range @change="handleChange"   :disabled="readonly"
-          v-model="timeRange" type="daterange" range-separator="-" start-placeholder="开始时间"
-          end-placeholder="结束时间" />
-      </el-form-item>
+        <el-time-picker  :disabled="readonly"  type="daterange" v-model="disturb.time[0]" placeholder="开始时间"   value-format="HH:mm"/>&nbsp;-&nbsp;
+        <el-time-picker :disabled="readonly" v-model="disturb.time[1]" placeholder="结束时间"  value-format="HH:mm"/>
+        </el-form-item>
       <el-text>为客户勿扰时间段，勿扰时间内触达则</el-text>
       <el-form-item>
         <el-select :disabled="readonly" v-model="disturb.action" style="width: 240px">
@@ -90,10 +83,10 @@ function handleChange(value: any) {
 .Basic-Block {
   &-Content {
     display: flex;
-    padding: 0.5rem 1rem 1rem;
+    padding:1rem;
 
     align-items: center;
-
+    flex-wrap: wrap;
     width: calc(100% - 30px);
 
     gap: 0.5rem;

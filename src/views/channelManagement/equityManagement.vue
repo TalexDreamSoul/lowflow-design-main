@@ -226,7 +226,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
           <template v-slot="{ row }">
             <!-- {{ row.equityName }} -->
             <!-- <br /> -->
-            <el-image style="width: 40px;height: 40px" :src="row.equityImageUrl" />
+            <el-image fit="contain" :src="row.equityImageUrl" />
           </template>
         </el-table-column>
         <el-table-column label="权益展示金额" width="180" prop="equityAmount">
@@ -280,7 +280,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         <div style="width: 100%;">
           <el-upload   :action="action" :on-success="addPic" :auto-upload="true" :data="{ type: 'material', date: getCurrentDate() }" :show-file-list="false"
           >
-          <img  v-if="formValues.equityImageUrl" class="equityImageUrl" :src="formValues.equityImageUrl" alt="" />
+          <el-image fit="contain"  v-if="formValues.equityImageUrl" class="equityImageUrl" :src="formValues.equityImageUrl" alt=""/>
         
           <div v-if="!checkStringEqual(modalType, DrawerType.Detail)" class="upload-demo button-groupupload">
 

@@ -3,13 +3,13 @@
     :with-header="false" class="pd-drawer">
     <div class="pd-drawer-header">高级筛选</div>
     <div class=" pd-drawer-content"  >
-      <FilterGroup :custom-rule-content="customRuleContent" />
+      <FilterGroup :outside="true" :custom-rule-content="customRuleContent" />
     </div>
     <div class="pd-drawer-footer">
       <el-button  @click="modalVisible = false"
         round>取消</el-button>
       <el-button   @click.prevent="onSubmit(formRef)" round
-        type="primary">保存</el-button>
+        type="primary">筛选</el-button>
     </div>
   </el-drawer>
 </template>

@@ -15,26 +15,24 @@ defineExpose({
   updateData: () => {
 
     if (!touchSettingsRef.value) {
-      return
+      return true
     }
 
-    console.log("touch updated!!!")
-
-     return touchSettingsRef.value.updateData()
+    return touchSettingsRef.value.updateData()
 
   }
 })
 </script>
 
 <template>
-  <BehaviorGroupPlus :default-expand="true" title="延迟设置" color="#62C943">
+  <BehaviorGroupPlus :default-expand="true" title="延时设置" color="#62C943">
     &nbsp;
     <el-select :disabled="readonly" v-model="sizeForm.nodeDelayed.isDelayed" style="width: 100px">
       <el-option :value="true" label="延迟">延迟</el-option>
       <el-option :value="false" label="立即">立即</el-option> </el-select>&nbsp;
     <template v-if="sizeForm.nodeDelayed.isDelayed">
       <el-input-number :disabled="readonly" :min="1" v-model="sizeForm.nodeDelayed.delayedTime" type="number"
-        style="width: 100px" />&nbsp;
+        controls-position="right" style="width: 100px" />&nbsp;
       <el-select :disabled="readonly" placeholder="请选择" v-model="sizeForm.nodeDelayed.delayedUnit" style="width: 100px">
         <el-option value="minute" label="分钟">分钟</el-option>
         <el-option value="hour" label="小时">小时</el-option>
@@ -53,13 +51,13 @@ defineExpose({
 
   <BehaviorGroupPlus :readonly="readonly"
     v-if="String(sizeForm.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1" title="触达设置"
-    color="#FFD561">
+    :default-expand="true" color="#FFD561">
     <TouchSettings :readonly="readonly" ref="touchSettingsRef" :touch="sizeForm.touchTemplateContent" />
   </BehaviorGroupPlus>
 
   <BehaviorGroupPlus :readonly="readonly"
     v-if="String(sizeForm.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('label') !== -1" title="标签设置"
-    color="#277AE7">
+    :default-expand="true" color="#277AE7">
     <NewLabel :readonly="readonly" :p="sizeForm" />
   </BehaviorGroupPlus>
 </template>

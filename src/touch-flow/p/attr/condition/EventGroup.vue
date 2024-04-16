@@ -7,6 +7,7 @@ import { ref } from "vue";
 
 const props = defineProps<{
   p: any;
+  outside?: boolean;
   readonly?: boolean;
 }>();
 
@@ -17,7 +18,7 @@ function addEventA() {
     conditions: [],
     logicalChar: "或",
   });
-  console.log(props.p)
+  console.log(props.p);
 }
 
 function addEventB() {
@@ -28,14 +29,10 @@ function addEventB() {
 }
 
 !(async () => {
-  console.error('demo')
-
-  const res: any = await getDictFilterTree(
-    {
-      pageNum: "1",
-      pageSize: "999"
-    }
-  );
+  const res: any = await getDictFilterTree({
+    pageNum: "1",
+    pageSize: "999",
+  });
 
   if (res.data) {
     dict.value = res.data;
@@ -45,22 +42,25 @@ function addEventB() {
 
 <template>
   <div class="EventGroup">
-    <BehaviorGroupPlus :readonly="readonly" :default-expand="true" :hideToggleButton="true" title="触发时间组A"
-      color="#F5F7FA">
-      <el-text>在流程有效期内依次完成下列事件后</el-text>&nbsp; &nbsp;
-      <el-text v-if="!readonly" type="primary" style="cursor: pointer" @click="addEventA">
-        <el-icon size="14">
-          <CirclePlusFilled />
-        </el-icon>
-        添加事件
-      </el-text>
+    <BehaviorGroupPlus :readonly="readonly" :default-expand="true" :hideToggleButton="true" title="触发时间组A" color="#F5F7FA">
+      <el-form-item>
+        <div class="EventGroup-SubEvent">
 
-      <TouchBlockGenre :readonly="readonly" v-if="dict" :condition="p.triggerRuleContent.eventA.customEvent"
-        :dict="dict" />
+          <el-text>在流程有效期内依次完成下列事件后</el-text>&nbsp; &nbsp;
+          <el-text v-if="!readonly" type="primary" style="cursor: pointer" @click="addEventA">
+            <el-icon size="14">
+              <CirclePlusFilled />
+            </el-icon>
+            添加事件
+          </el-text>
+        </div>
+
+      </el-form-item>
+
+      <TouchBlockGenre :readonly="readonly" :outside="outside" v-if="dict" :condition="p.triggerRuleContent.eventA.customEvent" :dict="dict" />
     </BehaviorGroupPlus>
 
-    <BehaviorGroupPlus :readonly="readonly" :default-expand="p.triggerRuleContent.delayed.isDelayed" title="触发时间组B"
-      color="#F5F7FA">
+    <BehaviorGroupPlus :readonly="readonly" :default-expand="p.triggerRuleContent.delayed.isDelayed" title="触发时间组B" color="#F5F7FA">
       <template #title>
         <el-text style="color: #4078e0; cursor: pointer" v-if="!p.triggerRuleContent.delayed.isDelayed" @click="
       p.triggerRuleContent.delayed.isDelayed = !p.triggerRuleContent.delayed
@@ -74,8 +74,7 @@ function addEventB() {
         <span v-else>触发事件组B</span>
       </template>
       <template #toggle>
-        <el-text style="cursor: pointer" type="primary" v-if="!readonly && p.triggerRuleContent.delayed.isDelayed"
-          @click="p.triggerRuleContent.delayed.isDelayed = false">
+        <el-text style="cursor: pointer" type="primary" v-if="!readonly && p.triggerRuleContent.delayed.isDelayed" @click="p.triggerRuleContent.delayed.isDelayed = false">
           <el-icon size="14">
             <Delete />
           </el-icon>
@@ -87,17 +86,14 @@ function addEventB() {
       <el-form-item v-if="p.triggerRuleContent.delayed.isDelayed">
         <div class="EventGroup-SubEvent">
           <el-text>且在</el-text>&nbsp;
-          <el-input-number :disabled="readonly" :min="1" placeholder="输入值"
-            v-model="p.triggerRuleContent.delayed.delayedTime" style="width: 100px" />
-          <el-select :disabled="readonly" placeholder="选择单位" v-model="p.triggerRuleContent.delayed.delayedUnit"
-            style="width: 100px">
+          <el-input-number :disabled="readonly" :min="1" placeholder="输入值" controls-position="right" v-model="p.triggerRuleContent.delayed.delayedTime" style="width: 100px" />
+          <el-select :disabled="readonly" placeholder="选择单位" v-model="p.triggerRuleContent.delayed.delayedUnit" style="width: 100px">
             <el-option value="minute" label="分钟">分钟</el-option>
             <el-option value="hour" label="小时">小时</el-option>
             <el-option value="day" label="天">天</el-option>
           </el-select>
           <el-text>后立即判断</el-text>
-          <el-select :disabled="readonly" placeholder="是否做过" v-model="p.triggerRuleContent.delayed.delayedAction"
-            style="width: 150px">
+          <el-select :disabled="readonly" placeholder="是否做过" v-model="p.triggerRuleContent.delayed.delayedAction" style="width: 150px">
             <el-option value="=" label="做过">做过</el-option>
             <el-option value="!=" label="未做过">未做过</el-option>
           </el-select>
@@ -110,8 +106,9 @@ function addEventB() {
           </el-text>
         </div>
 
-        <TouchBlockGenre v-if="dict" :condition="p.triggerRuleContent.eventB.customEvent" :dict="dict" />
       </el-form-item>
+      <TouchBlockGenre v-if="dict" :outside="outside" :condition="p.triggerRuleContent.eventB.customEvent" :dict="dict" :readonly="readonly" />
+
     </BehaviorGroupPlus>
   </div>
 </template>
@@ -129,4 +126,5 @@ function addEventB() {
 
 // .EventGroup .BehaviorGroupPlus-Main {
 //   padding: 0;
-// }</style>
+// }
+</style>

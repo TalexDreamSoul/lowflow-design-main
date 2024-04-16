@@ -34,75 +34,73 @@
       >
     </div>
     <div class="content">
-      <el-watermark content="11111" :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
-        <el-table :data="tableData" style="width: 100%">
-          <el-table-column prop="eventCode" label="事件编码" width="246" />
-          <el-table-column prop="eventName" label="事件名称" width="303" />
-          <el-table-column prop="describe" label="事件说明" width="289" />
-          <el-table-column prop="eventType" label="类别" width="200">
-            <template #default="scope">
-              {{
-                EVENT_TYPE.find((v) =>
-                  checkStringEqual(v.value, scope.row.eventType)
-                )?.label
-              }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="status" label="状态" width="162">
-            <template #default="scope">
-              <el-tag
-                v-if="!!scope.row.status"
-                :type="
-                  checkStringEqual(scope.row.status, ConfigStatus.Available)
-                    ? ''
-                    : 'info'
-                "
-                >{{
-                  checkStringEqual(scope.row.status, ConfigStatus.Available)
-                    ? "可用"
-                    : "已下线"
-                }}</el-tag
-              >
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="280" fixed="right">
-            <template #default="scope">
-              <el-button
-                @click="handleSetStatus(scope.row)"
-                link
-                type="primary"
-                class="action-btn"
-                >{{
-                  checkStringEqual(scope.row.status, ConfigStatus.Available)
-                    ? "下线"
-                    : "上线"
-                }}</el-button
-              >
-              <el-button
-                @click="handleDrawer(DrawerType.Edit, scope.row)"
-                link
-                type="primary"
-                class="action-btn"
-                >编辑</el-button
-              >
-              <el-button
-                link
-                type="primary"
-                class="action-btn"
-                @click="handleDelete(scope.row)"
-                >删除</el-button
-              >
-              <el-button
-                @click="handleDrawer(DrawerType.Detail, scope.row)"
-                link
-                type="primary"
-                class="action-btn"
-                >查看详情</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-watermark>
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column prop="eventCode" label="事件编码" width="246" />
+        <el-table-column prop="eventName" label="事件名称" width="303" />
+        <el-table-column prop="describe" label="事件说明" width="289" />
+        <el-table-column prop="eventType" label="类别" width="200">
+          <template #default="scope">
+            {{
+              EVENT_TYPE.find((v) =>
+                checkStringEqual(v.value, scope.row.eventType)
+              )?.label
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" width="162">
+          <template #default="scope">
+            <el-tag
+              v-if="!!scope.row.status"
+              :type="
+                checkStringEqual(scope.row.status, ConfigStatus.Available)
+                  ? ''
+                  : 'info'
+              "
+              >{{
+                checkStringEqual(scope.row.status, ConfigStatus.Available)
+                  ? "可用"
+                  : "已下线"
+              }}</el-tag
+            >
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" min-width="240" fixed="right">
+          <template #default="scope">
+            <el-button
+              @click="handleSetStatus(scope.row)"
+              link
+              type="primary"
+              class="action-btn"
+              >{{
+                checkStringEqual(scope.row.status, ConfigStatus.Available)
+                  ? "下线"
+                  : "上线"
+              }}</el-button
+            >
+            <el-button
+              @click="handleDrawer(DrawerType.Edit, scope.row)"
+              link
+              type="primary"
+              class="action-btn"
+              >编辑</el-button
+            >
+            <el-button
+              link
+              type="primary"
+              class="action-btn"
+              @click="handleDelete(scope.row)"
+              >删除</el-button
+            >
+            <el-button
+              @click="handleDrawer(DrawerType.Detail, scope.row)"
+              link
+              type="primary"
+              class="action-btn"
+              >查看详情</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
       <el-pagination
         background
         layout="prev, pager, next, jumper"
@@ -205,53 +203,44 @@
               >新建事件属性</el-button
             >
           </div>
-          <el-watermark
-            content="11111"
-            :font="{ color: 'rgba(0, 0, 0, 0.15)' }"
-          >
-            <el-table :data="formValues.attrTableData" style="width: 100%">
-              <el-table-column prop="field" label="属性编码" width="109" />
-              <el-table-column prop="fieldName" label="属性名称" width="200" />
-              <el-table-column prop="describe" label="属性说明" width="360" />
-              <el-table-column prop="fieldType" label="数据类别">
-                <template #default="scope">
-                  {{
-                    ATTR_FIELD_TYPE.find((v) =>
-                      checkStringEqual(v.value, scope.row.fieldType)
-                    )?.label
-                  }}
-                </template>
-              </el-table-column>
-              <el-table-column
-                v-if="drawerType !== DrawerType.Detail"
-                label="操作"
-                width="105"
-              >
-                <template #default="scope">
-                  <el-button
-                    link
-                    type="primary"
-                    @click="
-                      onCreateEventAttr(
-                        DrawerType.Edit,
-                        scope.row,
-                        scope.$index
-                      )
-                    "
-                    class="action-btn"
-                    >编辑</el-button
-                  >
-                  <el-button
-                    link
-                    type="primary"
-                    @click="handleAttrDelete(scope.$index)"
-                    class="action-btn"
-                    >删除</el-button
-                  >
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-watermark>
+          <el-table :data="formValues.attrTableData" style="width: 100%">
+            <el-table-column prop="field" label="属性编码" width="109" />
+            <el-table-column prop="fieldName" label="属性名称" width="200" />
+            <el-table-column prop="describe" label="属性说明" width="360" />
+            <el-table-column prop="fieldType" label="数据类别">
+              <template #default="scope">
+                {{
+                  ATTR_FIELD_TYPE.find((v) =>
+                    checkStringEqual(v.value, scope.row.fieldType)
+                  )?.label
+                }}
+              </template>
+            </el-table-column>
+            <el-table-column
+              v-if="drawerType !== DrawerType.Detail"
+              label="操作"
+              width="105"
+            >
+              <template #default="scope">
+                <el-button
+                  link
+                  type="primary"
+                  @click="
+                    onCreateEventAttr(DrawerType.Edit, scope.row, scope.$index)
+                  "
+                  class="action-btn"
+                  >编辑</el-button
+                >
+                <el-button
+                  link
+                  type="primary"
+                  @click="handleAttrDelete(scope.$index)"
+                  class="action-btn"
+                  >删除</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
       </div>
       <div class="pd-drawer-footer">

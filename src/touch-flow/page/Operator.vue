@@ -30,7 +30,7 @@ const operatorOptions = [
   },
   {
     value: "等于",
-    type: ["num", "text"],
+    type: ["num", "text", "nodeId", "touchResult", "touchId"],
   },
   {
     value: "不等于",
@@ -72,20 +72,35 @@ const $emits = defineEmits<{
   (e: "update:modelValue", modelValue: any): void;
 }>();
 const data = useVModel($props, "modelValue", $emits);
+const selectItem = computed(() =>
+  $props.selected || $props.attrs.filter(
+    (attr: any) =>
+      attr.field === ($props.item?.attr?.field || $props.item.field) //|| attr.labelName === $props.item?.labelName
+  )?.[0]
+);
 const type = computed(() =>
-  $props.selected
-    ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected)
-    : $props.attrs.filter(
-        (attr: any) =>
-          attr.field === $props.item.field //|| attr.labelName === $props.item?.labelName
-      )?.[0]?.fieldType ?? "none"
+  $props.selected ? ((_: any) => _.labelValueType || _.labelType || _.fieldType)($props.selected) : selectItem.value?.fieldType ?? "none"
 );
 const operators = computed(() => {
+  let _type = type.value
 
-  console.log('1', operatorOptions, type.value)
+  if (selectItem.value?.field === "nodeId") {
+    _type = "nodeId"
+  } else if (selectItem.value?.field === "touchResult") {
+    _type = "touchResult"
+  } else if (selectItem.value?.field === "touchId") {
+    _type = "touchId"
+  }
 
-  return operatorOptions.filter((item) => item.type.includes(type.value)) }
-);
+  return operatorOptions.filter((item) => item.type.includes(_type))
+});
+
+watch(() => $props.item.field, () => {
+  $props.item.fieldOp = ''
+  console.log('1', selectItem.value, operatorOptions, type.value, $props.attrs, $props.item, $props.attrs.filter(
+    (attr: any) =>
+      attr.field === ($props.item?.attr?.field || $props.item.field)))
+})
 
 // watchEffect(() => {
 //   $_ignored: $props
@@ -102,19 +117,9 @@ const operators = computed(() => {
 </script>
 
 <template>
-  <el-select
-    :disabled="readonly"
-    v-if="obj?.type !== 'label'"
-    class="operator-container"
-    v-model="data"
-    placeholder="筛选符"
-  >
-    <el-option
-      v-for="item in operators"
-      :key="item.value"
-      :label="item.value"
-      :value="item.value"
-    />
+  <el-select :disabled="readonly" v-if="obj?.type !== 'label'" class="operator-container" v-model="data"
+    placeholder="筛选符">
+    <el-option v-for="item in operators" :key="item.value" :label="item.value" :value="item.value" />
   </el-select>
 </template>
 

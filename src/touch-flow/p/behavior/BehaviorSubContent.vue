@@ -13,6 +13,8 @@ const props = defineProps<{
   dict: any;
   title?: string;
   readonly?: boolean;
+  outside?: boolean;
+
 }>();
 
 const dataObj = Object.freeze({
@@ -83,11 +85,12 @@ const getCurrSelected = (condition: any) => {
     <LogicalLine :title="title" :readonly="readonly" :model-value="condition.conditions.logicalChar"
       :display="condition.conditions?.conditions?.length < 2">
       <div class="BehaviorSubContent-Line" v-if="attrs" v-for="(item, index) in getConditions()" :key="index">
-        <trigger v-model="item.attr.field" :item="item" :attrs="attrs" :readonly="readonly" placeholder="客户属性/标签"
-          style="width: 220px" />
+        <trigger :conditions="getConditions()" v-model="item.attr.field" :item="item" :attrs="attrs"
+          :readonly="readonly" placeholder="客户属性/标签" style="width: 220px" />
         <operator :selected="getCurrSelected(item)" :attrs="attrs" :item="item.attr" :disabled="readonly"
           v-model="item.attr.fieldOp" />
-        <AttrRender :selected="getCurrSelected(item)" :readonly="readonly" :item="item.attr" :attrs="attrs" />
+        <AttrRender :obj="item"  :conditions="getConditions()"   :outside="outside"  :selected="getCurrSelected(item)" :readonly="readonly"
+          :item="item.attr" :attrs="attrs" />
 
         <el-text v-if="!readonly" type="primary" style="cursor: pointer" @click="handleDel(index)">
           <el-icon size="14">
@@ -108,6 +111,8 @@ const getCurrSelected = (condition: any) => {
     flex: 1;
     gap: 0.5rem;
     align-items: center;
+    margin-top: 1rem;
+
   }
 
   margin: 10px 0;

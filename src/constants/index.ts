@@ -1,7 +1,8 @@
 /**
  * 请求成功状态码
  */
-export const SUCCESS_CODE = 0;
+export const SUCCESS_CODE = '0';
+export const SessionLost_CODE = 'ASE1100';
 
 /**
  * 请求contentType
@@ -48,6 +49,10 @@ export const EVENT_TYPE = [
     label: "app事件",
     value: "app",
   },
+  {
+    label: "触达结果",
+    value: "touchResult",
+  }, 
 ];
 
 /**
@@ -1855,6 +1860,129 @@ export const CITY_DATA = [
         label: "香港特别行政区",
         value: "香港特别行政区",
       },
+    ],
+  },
+];
+
+
+/**
+ * 玩法数据类型
+ */
+export const GAMEPLAY_DATA_TYPT = [
+  {
+    label: "任务",
+    labelvalue: 'task',
+    tab: [{
+      tabName: "参与数据",
+      detailBlocks: true,
+      detailBlocksList: [
+        { name: '总参存款任务人数', value: '' },
+        { name: '总参存款任务人次', value: '' },
+        { name: '总绑定支付宝完成…', value: '' },
+        { name: '总绑定支付宝完成…', value: '' },
+      ],
+      screenFilter: true,
+    },
+    {
+      tabName: "参与客户明细",
+      detailBlocks: false,
+      screenFilter: true,
+      detailBlocksList: [],
+    }
+    ],
+
+  },
+  {
+    label: "助力",
+    labelvalue: 'Assistance',
+    tab: [{
+      tabName: "参与数据",
+      detailBlocks: true,
+      detailBlocksList: [
+        { name: '总发起助力人数', value: '' },
+        { name: '总发起助力人次', value: '' },
+        { name: '总助力成功人数', value: '' },
+        { name: '总助力成功人次', value: '' },
+        { name: '总被助力成功人数', value: '' },
+        { name: '被助力成功人次', value: '' },
+      ],
+      screenFilter: true,
+    },
+    {
+      tabName: "参与客户明细",
+      detailBlocks: false,
+      screenFilter: true,
+      detailBlocksList: [],
+    }
+    ],
+  },
+
+  {
+    label: "抽奖",
+    labelvalue: 'Assistance',
+    tab: [{
+      tabName: "参与数据",
+      detailBlocks: true,
+      detailBlocksList: [
+        { name: '总参与抽奖人数', value: '' },
+        { name: '总参与抽奖人次', value: '' },
+        { name: '总中奖人数', value: '' },
+        { name: '总中奖人次', value: '' },
+        { name: '总微信5元立减券…', value: '' },
+        { name: '总100米粒中奖人数', value: '' },
+        { name: '总100米粒中奖人数', value: '' },
+      ],
+      screenFilter: true,
+    },
+    {
+      tabName: "奖品数据",
+      detailBlocks: true,
+      detailBlocksList: [
+        { name: '总微信5元立减券…', value: '' },
+        { name: '总100米粒发放数量', value: '' },
+      ],
+      screenFilter: true,
+    },
+    {
+      tabName: "参与客户明细",
+      detailBlocks: false,
+      screenFilter: true,
+      detailBlocksList: [],
+    }
+    ],
+  },
+    {
+    label: "抽奖",
+    labelvalue: 'Assistance',
+    tab: [{
+      tabName: "参与数据",
+      detailBlocks: true,
+      detailBlocksList: [
+        { name: '总参与抽奖人数', value: '' },
+        { name: '总参与抽奖人次', value: '' },
+        { name: '总中奖人数', value: '' },
+        { name: '总中奖人次', value: '' },
+        { name: '总微信5元立减券…', value: '' },
+        { name: '总100米粒中奖人数', value: '' },
+        { name: '总100米粒中奖人数', value: '' },
+      ],
+      screenFilter: true,
+    },
+    {
+      tabName: "奖品数据",
+      detailBlocks: true,
+      detailBlocksList: [
+        { name: '总微信5元立减券…', value: '' },
+        { name: '总100米粒发放数量', value: '' },
+      ],
+      screenFilter: true,
+    },
+    {
+      tabName: "参与客户明细",
+      detailBlocks: false,
+      screenFilter: true,
+      detailBlocksList: [],
+    }
     ],
   },
 ];

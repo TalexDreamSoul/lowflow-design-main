@@ -13,7 +13,7 @@ export function createFloatingPanel(reference: HTMLElement, render: any) {
   function handleClick(e: Event) {
     const res = e.composedPath().find((el: any) => targetClasses.some((c) => el?.className?.indexOf?.(c) !== -1))
 
-    if (!res) {
+    if (!res || res === document) {
       dispose()
     }
 

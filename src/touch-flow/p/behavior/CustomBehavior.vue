@@ -12,6 +12,7 @@ import {
 const props = defineProps<{
   custom: CustomEventConditionDTO;
   readonly?: boolean;
+  outside?: boolean;
   configuration: {
     time: boolean,
     action: boolean
@@ -71,11 +72,11 @@ provide("refreshTree", refreshTree);
   <div class="Basic-Block">
     <div class="Basic-Block-Content">
       <div v-if="dict && custom.conditions?.length" class="Target-Block">
-        <LogicalLine :display="!custom.conditions?.length" v-model="custom.logicalChar">
+        <LogicalLine  :display="custom.conditions?.length<2" v-model="custom.logicalChar">
           <LogicalLine v-model="condition.logicalChar" v-for="(condition, index) in custom.conditions"
             :display="condition?.conditions?.length < 2" :key="index">
             <BehaviorContent v-for="(item, ind) in condition.conditions" :key="ind" @addSub="handleAdd(condition)"
-              @del="handleDel(ind, condition)" :readonly="readonly" :condition="item" :configuration="configuration"
+              @del="handleDel(ind, condition)" :readonly="readonly"  :outside="outside" :condition="item" :configuration="configuration"
               :index="ind" :length="condition.conditions.length" :dict="dict" />
           </LogicalLine>
         </LogicalLine>
@@ -89,5 +90,9 @@ provide("refreshTree", refreshTree);
   background-color: #f7f8fa;
 
   user-select: none;
+
+  .Target-Block {
+    padding: 0 1rem;
+  }
 }
 </style>

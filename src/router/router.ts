@@ -1,11 +1,13 @@
+import { useStorage } from "@vueuse/core";
 import type { RouterOptions } from "vue-router";
 import { createRouter, createWebHistory } from "vue-router";
 
+
+const routerDefault = useStorage("router-default");
 export const routes: RouterOptions["routes"] = [
   {
     path: "/",
-    redirect: '/configuration'
-    // component: () => import("~/views/dashboard/index.vue"),
+    redirect: routerDefault.value?`${routerDefault.value}`:'/login'
   },
   {
     path: '/login',
@@ -55,6 +57,10 @@ export const routes: RouterOptions["routes"] = [
         path: "attrDict",
         component: () => import("~/pages/configuration/attr.vue"),
       },
+      {
+        path: "globalDisturb",
+        component: () => import("~/views/channelManagement/channelDisturb.vue"),
+      }
     ],
   },
   {
@@ -101,10 +107,6 @@ export const routes: RouterOptions["routes"] = [
       {
         path: "equityManage",
         component: () => import("~/views/channelManagement/equityManagement.vue"),
-      },
-      {
-        path: "globalDisturb",
-        component: () => import("~/views/channelManagement/channelDisturb.vue"),
       }
     ],
   },
@@ -127,27 +129,41 @@ export const routes: RouterOptions["routes"] = [
     ],
   },
   {
-    path: "/approve",
-    redirect: "/approve/activity",
+    path: "/examineCenter",
+    redirect: "/examineCenter/activityExamine",
     children: [
       {
-        path: "activity",
+        path: "activityExamine", // h5
         component: () => import("~/pages/approve/activity.vue"),
       },
       {
-        path: 'strategyProcess',
+        path: 'touchExamine', // 策略
         component: () => import("~/pages/approve/strategyProcess.vue"),
       },
       {
-        path: 'configuration',
+        path: 'examineSetting', // 流程配置
         component: () => import("~/pages/approve/configuration.vue"),
       }
     ],
   },
   {
-    path: "/activityCenter/activityList",
-    component: () => import("~/pages/activity/index.vue"),
+    path: "/activityCenter",
+    redirect: "/activityCenter/activityList",
+    children: [
+      {
+        path: "activityList",
+        component: () => import("~/pages/activity/index.vue"),
+      },
+      {
+        path: "details/:id",
+        component: () => import("~/views/activityDetailsList/details.vue"),
+      },
+    ],
   },
+  {
+    path: '/dictCenter/boothManage',
+    component: () => import('~/pages/boothManagement/index.vue'),
+  }
   // 添加需要隐藏 TopMenu 的页面，并设置 meta.hideTopMenu 为 true
 ];
 

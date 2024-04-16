@@ -61,12 +61,12 @@
             }}
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="province"
           label="省份"
           width="77"
         ></el-table-column>
-        <el-table-column prop="city" label="城市" width="75"></el-table-column>
+        <el-table-column prop="city" label="城市" width="75"></el-table-column> -->
         <el-table-column
           prop="birthday"
           label="生日"
@@ -224,7 +224,6 @@ const getSelectData = async (params: any) => {
     addType: props.drawerType!=="detail"? BlackAddTypeEnum.Manual:"",
   });
   if (checkStringEqual(res?.code, 0)) {
-    console.log(res);
     total.value = res?.data?.total;
     tableData.value = res?.data?.records;
   }
