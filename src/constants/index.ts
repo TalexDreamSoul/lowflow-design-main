@@ -109,7 +109,9 @@ export const PEOPLE_SEX = [
 export enum peopleSourceEnum {
   Manual = "manual",
   H5 = "H5",
-  Third = "third",
+  APP = "app",
+  Sensor = "sensor",
+  Bigdata = "bigdata",
 }
 
 /**
@@ -121,12 +123,20 @@ export const PEOPLE_SOURCE = [
     value: peopleSourceEnum.Manual,
   },
   {
-    label: "活动收集",
+    label: "系统自建",
     value: peopleSourceEnum.H5,
   },
   {
-    label: "第三方导入",
-    value: peopleSourceEnum.Third,
+    label: "app",
+    value: peopleSourceEnum.APP,
+  },
+  {
+    label: "神策",
+    value: peopleSourceEnum.Sensor,
+  },
+  {
+    label: "大数据",
+    value: peopleSourceEnum.Bigdata,
   },
 ];
 
