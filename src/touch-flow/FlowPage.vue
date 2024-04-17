@@ -242,7 +242,7 @@ function flatMaps(__nodes: Array<any>) {
     obj.$id && ((obj.id = obj.$id), delete obj.$id);
     // 判断obj.id是否为字符串类型
     if (typeof obj.id === "string") {
-      obj.id = -1;
+      delete obj.id
     }
     if (obj.children) {
       stack.push(...node.children);
