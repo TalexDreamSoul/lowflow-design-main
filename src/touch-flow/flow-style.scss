@@ -99,3 +99,12 @@ div.MainBlock-Title {
     font-weight: 500;
   }
 }
+
+div.PBlock p.title {
+  span{
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

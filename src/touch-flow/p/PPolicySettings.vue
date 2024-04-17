@@ -43,7 +43,9 @@ const del  = useDel().del
     :display="data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate">
     <p class="title"> 
       <!-- 选择策略器 -->
+     <span>
       {{ data.nodeName }}
+     </span> 
       <el-popover :visible="visible" placement="top" :width="160">
         <p>是否确认删除？</p>
         <div style="text-align: right; margin: 0">

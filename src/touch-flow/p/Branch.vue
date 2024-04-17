@@ -27,7 +27,9 @@ function del(p: MarketingTouchEditDTO) {
 <template>
   <BaseNode :params="params" :disabled="readonly" :display="true">
     <p class="title">
+    <span>
       {{ data.nodeName }}
+    </span>
       <el-popover :visible="visible" placement="top" :width="160">
         <p>是否确认删除？</p>
         <div style="text-align: right; margin: 0">
