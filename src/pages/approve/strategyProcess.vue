@@ -48,8 +48,8 @@
         <el-form-item label="审核意见" prop="approveStatus" :rules="[{ required: true, message: '请选择' }]">
           <el-select v-model="formValues.approveStatus" placeholder="请选择" clearable>
             <el-option v-for="item of [
-                { label: '通过', value: '1' },
-                { label: '拒绝', value: '2' },
+                { label: '通过', value: true },
+                { label: '拒绝', value: false },
               ]" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
