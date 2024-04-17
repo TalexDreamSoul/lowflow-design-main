@@ -134,7 +134,7 @@ const layoutFn = () => {
 
       return height - 360;
     },
-    diversion: (height: number) => height - 132,
+    diversion: (height: number) => height - 513,
     subDiversion: (height: number, _data: any) => {
       const { data } = _data;
       let calcHeight = height - 125;
