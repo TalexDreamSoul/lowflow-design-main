@@ -235,8 +235,10 @@ function flatMaps(__nodes: Array<any>) {
     const node = stack.pop();
 
     const obj = { ...node };
-    (obj.$id && (obj.id = obj.$id, delete obj.$id)), delete obj.id
-
+    console.log(obj," (obj.$id && (obj.id = obj.$id, delete obj.$id)), delete obj.id");
+    debugger
+    (obj.$id && (obj.id = obj.$id, delete obj.$id))
+  
     if (obj.children) {
       stack.push(...node.children);
 
