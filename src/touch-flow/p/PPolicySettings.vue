@@ -34,13 +34,14 @@ function openCondition() {
 
 const { pushTemplate, delayedActionStr } = useDisplayAttr()
 
-const { visible, del } = useDel()
+const visible= useDel().visible
+const del  = useDel().del
 </script>
 
 <template>
   <BaseNode :params="params" :disabled="readonly || haveDiverse"
     :display="data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate">
-    <p>
+    <p class="title"> 
       <!-- 选择策略器 -->
       {{ data.nodeName }}
       <el-popover :visible="visible" placement="top" :width="160">
@@ -50,7 +51,7 @@ const { visible, del } = useDel()
           <el-button size="small" type="primary" @click="del(__data)">确认</el-button>
         </div>
         <template #reference>
-          <el-button v-if="readonly" @click="visible = true" text type="primary">
+          <el-button v-if="!readonly" @click="visible = true" text type="primary">
             <el-icon>
               <Delete />
             </el-icon>

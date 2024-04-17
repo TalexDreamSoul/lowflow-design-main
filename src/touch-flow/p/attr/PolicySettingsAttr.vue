@@ -121,7 +121,7 @@ watch(props.p, () => {
   sizeForm.$index = children.length
 
   sizeForm.diversionType = children[0].diversionType
-
+  debugger
   sizeForm.eventDelayed!.delayedTime = children[0].eventDelayed.delayedTime
   sizeForm.eventDelayed!.delayedUnit = children[0].eventDelayed.delayedUnit
 }, { immediate: true })
