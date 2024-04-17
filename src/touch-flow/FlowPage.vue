@@ -236,7 +236,7 @@ function flatMaps(__nodes: Array<any>) {
 
     const obj = { ...node };
     console.log(obj," (obj.$id && (obj.id = obj.$id, delete obj.$id)), delete obj.id");
-    debugger
+    // debugger
     (obj.$id && (obj.id = obj.$id, delete obj.$id))
   
     if (obj.children) {

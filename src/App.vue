@@ -24,10 +24,10 @@ import dayjs from "dayjs";
 
 onBeforeRouteUpdate((to, from, next) => {
   if (to.path === "/") {
-    debugger;
+    // debugger;
     next("/dashboard"); // 这里可以根据实际需求重定向到其他路径
   } else {
-    debugger;
+    // debugger;
     next(); // 继续路由导航
   }
 });

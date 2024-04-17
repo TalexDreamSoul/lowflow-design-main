@@ -84,7 +84,10 @@ const layoutFn = () => {
       console.log("__d", d, nodeType);
       if (nodeType === "subDiversion") {
         console.log("__subDiversion");
-        return 450;
+        return 540;
+      }else if (nodeType === "diversion") {
+        console.log("diversion");
+        return 210;
       }
       return d.height ? parseInt(d.height) : 600;
     },
@@ -130,11 +133,13 @@ const layoutFn = () => {
       }
 
       if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
-        return height - 260
+        return height - 280
 
-      return height - 360;
+    // c策略器节点连接策略器长度连线
+      return height - 380;
     },
-    diversion: (height: number) => height - 513,
+    // 分流器节点长度连线---包含{xx}分支
+    diversion: (height: number) => height - 125,
     subDiversion: (height: number, _data: any) => {
       const { data } = _data;
       let calcHeight = height - 125;
