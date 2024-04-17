@@ -134,14 +134,14 @@ const layoutFn = () => {
 
       return height - 360;
     },
-    diversion: (height: number) => height - 132,
+    diversion: (height: number) => height - 513,
     subDiversion: (height: number, _data: any) => {
       const { data } = _data;
       let calcHeight = height - 125;
 
       if (data.diversionType || data.eventDelayed?.isDelayed) {
         calcHeight = calcHeight - 200;
-        if (data?.nodeContent?.data?.$template.has) {
+        if (data?.nodeContent?.data?.$template?.has) {
           calcHeight += 100;
         }
       }

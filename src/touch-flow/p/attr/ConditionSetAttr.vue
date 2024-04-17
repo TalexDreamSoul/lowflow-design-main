@@ -28,8 +28,7 @@ const timeFuncs: { [func: string]: any } = {
     },
     (obj: any) => {
       if (!props.p._executeTime) return false;
-
-      const date = new Date(props.p._executeTime);
+      const date =DayJs(props.p._executeTime).format("YYYY-MM-DD HH:mm:ss");
       obj.date1 = date.toString();
       obj.date2 = date.toString();
     },
