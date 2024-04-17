@@ -145,7 +145,7 @@ const layoutFn = () => {
       let calcHeight = height - 125;
 
       if (data.diversionType || data.eventDelayed?.isDelayed) {
-        calcHeight = calcHeight - 200;
+        calcHeight = calcHeight - 100;
         if (data?.nodeContent?.data?.$template?.has) {
           calcHeight += 100;
         }
