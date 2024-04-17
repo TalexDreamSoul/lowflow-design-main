@@ -105,6 +105,13 @@ watch(props.p, () => {
 
     if (props.new) {
       sizeForm.$index = children?.length || 0
+
+      if (sizeForm.$index) {
+        sizeForm.diversionType = children[0].diversionType
+        sizeForm.eventDelayed!.delayedTime = children[0].eventDelayed.delayedTime
+        sizeForm.eventDelayed!.delayedUnit = children[0].eventDelayed.delayedUnit
+      }
+
     } else {
       const fatherNode = window.$getNodeById(preNodeId)
       if (!fatherNode) return
@@ -121,7 +128,6 @@ watch(props.p, () => {
   sizeForm.$index = children.length
 
   sizeForm.diversionType = children[0].diversionType
-  debugger
   sizeForm.eventDelayed!.delayedTime = children[0].eventDelayed.delayedTime
   sizeForm.eventDelayed!.delayedUnit = children[0].eventDelayed.delayedUnit
 }, { immediate: true })
