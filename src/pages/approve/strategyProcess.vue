@@ -40,6 +40,14 @@
               " @click="handleModal(DrawerType.Approve, scope.row)" link type="primary" class="action-btn">审核</el-button>
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination background layout="prev, pager, next, jumper" :total="total" :page-sizes="[10]" @current-change="currentChange" />
     </div>
@@ -95,6 +103,7 @@ import "element-plus/theme-chalk/el-message-box.css";
 import { getqryMarketingTouch } from "~/api";
 import { useRouter } from "vue-router";
 import { inject } from "vue";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 const router = useRouter();
 

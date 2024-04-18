@@ -122,6 +122,13 @@
             >
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination
         background
@@ -149,6 +156,7 @@ import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import BlackListDrawer from "./BlackListDrawer.vue";
 import "element-plus/theme-chalk/el-message-box.css";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 enum DrawerType {
   Create = "create",

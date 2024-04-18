@@ -14,6 +14,7 @@ import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import dayjs from "dayjs";
 import { Calendar, Search } from "@element-plus/icons-vue";
 import API from "~/api/approve";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 const formInline = reactive({
   touchName: "",
@@ -223,7 +224,7 @@ const flowTime = (data: any) => {
     <div class="topSearch">
       <el-form :inline="true" class="demo-form-inline">
         <el-form-item label="起止日期">
-          <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" @change="changeTime" />
+          <el-date-picker v-model="time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" @change="changeTime" />
         </el-form-item>
         <el-form-item>
           <el-select v-model="formInline.executeType" clearable placeholder="请选择类型" style="width:200px">
@@ -409,6 +410,14 @@ const flowTime = (data: any) => {
         <template #default="scope">
           {{ scope.row.operationTime || "-" }}
         </template></el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
     </el-table>
     <template #footer>
       <span class="dialog-footer">

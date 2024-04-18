@@ -70,7 +70,7 @@ const changeTime = (val: any) => {
         <div class="search">
           <el-form :inline="true">
             <el-form-item label="创建时间：">
-              <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
+              <el-date-picker v-model="time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
             </el-form-item>
 
           <el-form-item >
@@ -100,6 +100,14 @@ const changeTime = (val: any) => {
           </el-table-column>
           <el-table-column label="交易话术" prop="trsChatContent" />
           <el-table-column label="交易成功时间" width="180" prop="createTime" />
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
         </el-table>
       </template>
       <template #pagination>
