@@ -49,7 +49,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="活动链接" show-overflow-tooltip width="250">
+        <!-- <el-table-column label="活动链接" show-overflow-tooltip width="250">
           <template #default="scope">
             <span>{{ scope.row.diffuseUrl }}</span>
           </template>
@@ -59,7 +59,7 @@
             <el-image preview-teleported style="width: 50px; height: 50px" :src="scope.row.diffuseCode" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="[scope.row.diffuseCode]" :z-index="9999" fit="cover" />
             <div></div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
         <el-table-column prop="creatorName" label="创建人" width="120" />
         <el-table-column prop="creatorName" label="操作" fixed="right" width="350">
