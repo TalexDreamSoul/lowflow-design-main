@@ -69,6 +69,11 @@ watch(() => model.value, () => {
     display: block;
 
     text-indent: 12px;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
   }
 }
 
