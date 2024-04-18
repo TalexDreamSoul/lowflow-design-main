@@ -131,7 +131,7 @@ function destroy() {
       <el-button @click="destroy" round>{{
         type !== "details" ? "取消" : "返回"
       }}</el-button>
-      <el-button @click="saveData" round class="primaryStyle" v-if="type !== 'details'"
+      <el-button @click="saveData" type="primary" round class="primaryStyle" v-if="type !== 'details'"
         >保存</el-button
       >
     </div>
