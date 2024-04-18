@@ -8,7 +8,7 @@
             <el-option v-for="(item, key) in activities" :label="item" :value="key" />
           </el-select>
         </el-form-item>
-        <el-form-item label="创建日期">
+        <el-form-item label="活动有效期">
           <el-date-picker v-model="pageParams.time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />
         </el-form-item>
         <el-form-item>
