@@ -39,9 +39,9 @@ const small = ref(false);
 const background = ref(false);
 const disabled = ref(false);
 const time = ref(null);
-const statusLabels = {
-  available: { Text: "可用", type: "success" },
-  offline: { Text: "下线", type: "info" },
+const statusLabels : Record<string, StatusLabel> = {
+  available: { text: "可用", type: "success" },
+  offline: { text: "下线", type: "info" },
 };
 // const crudVisibles = reactive({
 //   create: false,
@@ -49,6 +49,23 @@ const statusLabels = {
 //   update: false,
 //   delete: false,
 // })
+
+
+interface StatusLabel {
+  text: string;
+  type: string;
+}
+
+const getStatusType = (status: string) =>
+  (statusLabels[status]?.type as
+    | ""
+    | "success"
+    | "warning"
+    | "info"
+    | "danger") || "";
+const getStatusText = (status: string) =>
+  statusLabels[status]?.text || "其他状态";
+
 
 const value = ref();
 type MaterialType = {
@@ -112,7 +129,7 @@ const fetchDataApi = async () => {
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
     ...formInline,
-  });
+  })as {code:any, message:any, data:any};
   tableData.value = res.data.records;
   total.value = res.data.total;
   console.log(`output->tabledata`, tableData.value);
@@ -134,7 +151,7 @@ const delData = async (row: any) => {
       id: row.id,
       status: row.status,
       type: formInline.type,
-    });
+    })as {code:any, message:any, data:any};
     if (res?.code == 0) {
       fetchDataApi();
       ElMessage.success(res.message);
@@ -147,7 +164,7 @@ const updateMaterialStatusData = async (row: any, status: String) => {
     id: row.id,
     status: status,
     type: formInline.type,
-  });
+  })as {code:any, message:any, data:any};
   if (res?.code == 0) {
     ElMessage.success(res.message);
     fetchDataApi();
@@ -266,11 +283,8 @@ const changeTime = (val: any) => {
         </el-table-column>
         <el-table-column label="状态">
           <template #default="scope">
-            <el-tag class="mx-1" :type="statusLabels[scope.row.status].type
-    ? statusLabels[scope.row.status].type
-    : 'info'
-    " effect="light">
-              {{ statusLabels[scope.row.status].Text }}
+            <el-tag class="mx-1" :type="getStatusType(scope.row.status)" effect="light">
+              {{ getStatusText(scope.row.status) }}
             </el-tag>
           </template>
         </el-table-column>
