@@ -199,12 +199,13 @@
             </el-select>
           </el-form-item> -->
         </div>
-        <el-form-item label="生日" prop="birthday">
+        <el-form-item label="生日" prop="birthday" >
           <el-date-picker
             v-model="formValues.birthday"
             type="date"
             placeholder="请选择"
             value-format="YYYY-MM-DD"
+            width="100%"
           />
         </el-form-item>
       </el-form>
