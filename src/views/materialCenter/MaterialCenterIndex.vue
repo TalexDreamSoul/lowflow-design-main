@@ -76,7 +76,7 @@ const getDictmaterialType = async () => {
   console.log(materialType, "materialType");
 
   materialTypeName.value = getNameByValue(
-    materialType,
+    materialType.value,
     String(route.params.type).replace("Template", "")
   );
 };
@@ -86,7 +86,7 @@ onMounted(async () => {
 });
 
 function getNameByValue(data: any[], val: string) {
-  const item = data.values?.find((item: { value: any }) => item.value === val);
+  const item = data?.find((item: { value: any }) => item.value === val);
   return item ? item.name : "";
 }
 
@@ -96,10 +96,10 @@ watch(
   () => route.fullPath,
   (val) => {
     console.log(`output->val`, val);
-    // materialTypeName.value = getNameByValue(
-    //   materialType,
-    //   String(route.params.type).replace("Template", "")
-    // );
+    materialTypeName.value = getNameByValue(
+      materialType.value,
+      String(route.params.type).replace("Template", "")
+    );
     formInline.type = String(route.params.type).replace("Template", "");
     fetchDataApi();
   }
