@@ -6,6 +6,7 @@ import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, FormInstance } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { checkStringEqual, debounce } from "~/utils/common";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
@@ -175,6 +176,14 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
     </template>
     <template #pagination>

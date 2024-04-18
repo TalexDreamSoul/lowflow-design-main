@@ -82,6 +82,14 @@
             >
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination
         background
@@ -384,6 +392,7 @@ import { Search, CirclePlusFilled } from "@element-plus/icons-vue";
 import { ElMessage, FormInstance, dayjs } from "element-plus";
 import Dialog from "./dialog.vue";
 import "element-plus/theme-chalk/el-message-box.css";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 const inputRules = [
   {

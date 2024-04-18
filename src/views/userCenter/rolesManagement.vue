@@ -11,6 +11,7 @@ import {
 } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { checkStringEqual, debounce } from "~/utils/common";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
@@ -170,6 +171,14 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
     </template>
     <template #pagination>

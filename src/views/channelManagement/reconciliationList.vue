@@ -6,6 +6,7 @@ import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 import API from "~/api/channelManagement";
 import { checkStringEqual, debounce } from "~/utils/common";
@@ -194,6 +195,14 @@ function formatDate(value: number) {
             </el-space>
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
     </template>
     <template #pagination>
@@ -235,6 +244,14 @@ function formatDate(value: number) {
             </el-space>
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination v-model:current-page="colmPage" v-model:page-size="colmpageSize" background layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="colmDatatotal" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </div>

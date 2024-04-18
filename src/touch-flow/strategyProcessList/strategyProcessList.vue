@@ -14,6 +14,7 @@ import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import dayjs from "dayjs";
 import { Calendar, Search } from "@element-plus/icons-vue";
 import API from "~/api/approve";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 const formInline = reactive({
   touchName: "",
@@ -409,6 +410,14 @@ const flowTime = (data: any) => {
         <template #default="scope">
           {{ scope.row.operationTime || "-" }}
         </template></el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
     </el-table>
     <template #footer>
       <span class="dialog-footer">

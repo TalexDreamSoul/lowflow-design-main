@@ -7,6 +7,7 @@ import { ElMessage } from "element-plus";
 import { dictFilterTree } from "~/api/index";
 // 定义名称固定顺序
 const nameOrder: string[] = ["APP PUSH", "手机短信", "企微", "外呼", "站内信"];
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 
 const tableData = ref<any[]>([]);
@@ -222,6 +223,14 @@ const onSubmit = async () => {
             </el-space>
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
     </template>
   </CustomEventComponent>

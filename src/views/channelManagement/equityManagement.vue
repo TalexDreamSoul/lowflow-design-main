@@ -12,6 +12,7 @@ import {
   UploadFiles,
 } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 import API from "~/api/channelManagement";
 import { checkStringEqual, debounce } from "~/utils/common";
@@ -270,6 +271,14 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
             </el-space>
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
     </template>
     <template #pagination>

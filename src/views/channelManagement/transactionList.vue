@@ -100,6 +100,14 @@ const changeTime = (val: any) => {
           </el-table-column>
           <el-table-column label="交易话术" prop="trsChatContent" />
           <el-table-column label="交易成功时间" width="180" prop="createTime" />
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
         </el-table>
       </template>
       <template #pagination>

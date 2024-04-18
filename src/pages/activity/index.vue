@@ -77,6 +77,14 @@
          </el-space>
          </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination background layout="prev, pager, next, jumper" :total="total" v-model:current-page="pageParams.pageNum" @current-change="handleCurrentChange" />
     </div>
@@ -168,6 +176,8 @@ import {
 } from "~/api/activity";
 import dayjs from "dayjs";
 import { Search,Download } from "@element-plus/icons-vue";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
+
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
 const router = useRouter();

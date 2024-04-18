@@ -152,6 +152,13 @@
               >查看详情</el-button
             >
           </template>
+          <template #empty>
+            <el-empty :image="Maskgroup" :image-size="76">
+              <template #description>
+                暂无数据
+              </template>
+            </el-empty>
+          </template>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -219,6 +226,13 @@
               {{ (scope.row.coverRatio * 100).toFixed(2) }}%
             </template></el-table-column
           >
+          <template #empty>
+            <el-empty :image="Maskgroup" :image-size="76">
+              <template #description>
+                暂无数据
+              </template>
+            </el-empty>
+          </template>
         </el-table>
       </div>
       <div class="create" v-if="checkStringEqual(modalType, DrawerType.Create)">
@@ -292,6 +306,7 @@ import { Search } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox, FormInstance, genFileId } from "element-plus";
 import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 enum DrawerType {
   Create = "create",
