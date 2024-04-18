@@ -268,7 +268,7 @@ const onSubmit = async () => {
       </div>
       <div class="line">
         3.过滤黑名单
-        <el-select :disabled="OptionsData?.disabled" v-model="OptionsData.data.blacklistLimit" style="width: 100px">
+        <el-select :disabled="OptionsData?.disabled" v-model="OptionsData.data.blacklistLimit" style="width: 100px" @change="OptionsData.data.blacklistList=[],blackList=[]">
           <el-option :value="false" label="不过滤">不过滤</el-option>
           <el-option :value="true" label="过滤">过滤</el-option>
         </el-select>
