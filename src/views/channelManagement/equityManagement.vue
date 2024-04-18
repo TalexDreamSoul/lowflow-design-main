@@ -57,11 +57,31 @@ const small = ref(false);
 const background = ref(false);
 const disabled = ref(false);
 const time = ref(null);
-const statusLabels = {
-  available: { Text: "可用", type: "primary" },
-  offline: { Text: "已下线", type: "info" },
+
+interface StatusLabel {
+  text: string;
+  type: string;
+}
+const statusLabels : Record<string, StatusLabel>= {
+  available: { text: "可用", type: "primary" },
+  offline: { text: "已下线", type: "info" },
 };
+const getStatusType = (status: string) =>
+  (statusLabels[status]?.type as
+    | ""
+    | "success"
+    | "warning"
+    | "info"
+    | "danger") || "";
+const getStatusText = (status: string) =>
+  statusLabels[status]?.text || "其他状态";
+
 const modalVisible = ref(false);
+const EquityTypeList=[ 
+    {label: "微信立减金", value: "1"}, 
+    {label: "支付宝红包", value: "2"}, 
+    {label: "京东E卡", value: "4"} 
+]
 
 onMounted(async () => {
   fetchDataApi();
@@ -83,7 +103,7 @@ const fetchDataApi = async () => {
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
     ...formInline,
-  });
+  })as {code:any, message:any, data:any};
   tableData.value = res.data.records;
   total.value = res.data.total;
   console.log(`output->tabledata`, tableData.value);
@@ -99,7 +119,7 @@ const delData = async (row: any) => {
     let res = await API.deleteEquity({
       id: row.id,
       status: row.status,
-    });
+    })as {code:any, message:any, data:any};
     if (res?.code == 0) {
       fetchDataApi();
       ElMessage.success(res.message);
@@ -115,7 +135,7 @@ const updateMaterialStatusData = async (row: any, status: String) => {
   let res = await API.updateEquityStatus({
     id: row.id,
     status: status,
-  });
+  })as {code:any, message:any, data:any};
   if (res?.code == 0) {
     ElMessage.success(res.message);
     fetchDataApi();
@@ -132,7 +152,6 @@ function addPic(
   formValues.equityImageUrl = response.data;
 }
 
-let modalData = reactive<any>({});
 
 const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Create) {
@@ -147,10 +166,9 @@ const handleModal = async (type: string, values?: any) => {
     let res = await API.equityDetail({
       id: values?.id,
       status: values?.status,
-    });
+    }) as {code:any, message:any, data:any};
     if (!checkStringEqual(res?.code, 0)) return;
     Object.assign(formValues, res?.data);
-    // Object.assign(modalData, res?.data);
   }
   modalType.value = type;
   modalVisible.value = true;
@@ -177,11 +195,11 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     if (modalType.value === DrawerType.Create) {
       res = await API.addEquity({
         ...formValues
-      });
+      })as {code:any, message:any, data:any};
     } else {
       res = await API.updateEquity({
         ...formValues
-      });
+      })as {code:any, message:any, data:any};
     }
     if (checkStringEqual(res?.code, 0)) {
       await fetchDataApi();
@@ -236,8 +254,8 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         </el-table-column>
         <el-table-column label="状态" prop="usedCount">
           <template #default="scope">
-            <el-tag class="mx-1" :type="statusLabels[scope.row.status].type ? statusLabels[scope.row.status].type : 'info'" effect="light">
-              {{ statusLabels[scope.row.status].Text }}
+            <el-tag class="mx-1" :type="getStatusType(scope.row.status)" effect="light">
+              {{ getStatusText(scope.row.status) }}
             </el-tag>
           </template>
         </el-table-column>
@@ -307,7 +325,13 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       </el-form-item>
 
       <el-form-item :rules="[{ required: true, message: '请输入权益类别' }]" label="权益类别" prop="equityType">
-        <el-input v-model="formValues.equityType" placeholder="请输入权益类别" clearable />
+        <el-select v-model="formValues.equityType" placeholder="请选择权益类别"  clearable>
+          <el-option
+            v-for="item of EquityTypeList"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item :rules="[{ required: true, message: '请输入权益规则' }]" label="权益规则" prop="equityRule">
         <el-input v-model="formValues.equityRule" placeholder="请输入权益规则" type="textarea" clearable :row="5" />
