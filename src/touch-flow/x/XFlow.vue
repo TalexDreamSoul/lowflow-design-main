@@ -17,6 +17,7 @@ import { MarketingTouchEditDTO } from "../p/behavior/marketing";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
 import { useWindowSize } from "@vueuse/core";
+import { groupCollapsed } from "console";
 
 interface IGraphData {
   id: string;
@@ -64,6 +65,13 @@ const del = (p: MarketingTouchEditDTO) => {
 };
 
 const layoutFn = () => {
+  const _c = window.console
+  var console = {
+    log: (...arg: any) => void 0,
+    groupCollapsed: (arg: any) => void 0,
+    groupEnd: () => void 0
+  }
+
   console.groupCollapsed("layoutFn");
 
   const result = Hierarchy.compactBox(treeMap, {
@@ -76,7 +84,10 @@ const layoutFn = () => {
       console.log("__d", d, nodeType);
       if (nodeType === "subDiversion") {
         console.log("__subDiversion");
-        return 450;
+        return 540;
+      }else if (nodeType === "diversion") {
+        console.log("diversion");
+        return 210;
       }
       return d.height ? parseInt(d.height) : 600;
     },
@@ -122,18 +133,20 @@ const layoutFn = () => {
       }
 
       if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
-        return height - 260
+        return height - 280
 
-      return height - 360;
+    // c策略器节点连接策略器长度连线
+      return height - 380;
     },
-    diversion: (height: number) => height - 132,
+    // 分流器节点长度连线---包含{xx}分支
+    diversion: (height: number) => height - 125,
     subDiversion: (height: number, _data: any) => {
       const { data } = _data;
       let calcHeight = height - 125;
 
       if (data.diversionType || data.eventDelayed?.isDelayed) {
-        calcHeight = calcHeight - 200;
-        if (data?.nodeContent?.data?.$template.has) {
+        calcHeight = calcHeight - 100;
+        if (data?.nodeContent?.data?.$template?.has) {
           calcHeight += 100;
         }
       }
@@ -244,6 +257,7 @@ const layoutFn = () => {
   console.log(model);
 
   console.groupEnd();
+  window.console = _c
 
   _Graph.fromJSON(model);
 
@@ -503,6 +517,8 @@ div.PBlock {
   position: relative;
 
   left: 50%;
+  min-width: 280px;
+  width: max-content;
 
   border-radius: 8px;
 

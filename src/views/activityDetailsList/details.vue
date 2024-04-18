@@ -1,56 +1,13 @@
 <script setup lang="ts">
-import {
-  ref,
-  unref,
-  reactive,
-  onMounted,
-  watch,
-  computed,
-  defineAsyncComponent,
-  DefineComponent,
-} from "vue";
-import { getmarketingTouchDetail, marketingTouchStatistics } from "~/api/index";
-import dayjs from "dayjs";
-import { useRoute, Router, useRouter } from "vue-router";
-import * as echarts from "echarts";
-import { num2character } from "~/utils/common";
-import strategyProcessList from "./strategyProcessList.vue";
+import { ref, computed, defineAsyncComponent, DefineComponent } from "vue";
+import { useRouter } from "vue-router";
 import { ArrowLeft } from "@element-plus/icons-vue";
+
 const router = useRouter();
-const route = useRoute();
 
 const goBack = () => {
   router.go(-1);
 };
-
-const formInline = reactive({
-  touchName: "",
-  executeType: "",
-  beginTime: "",
-  endTime: "",
-  status: "",
-});
-
-const typeMap = {
-  immediately: "定时-单次",
-  delayed: "定时-重复",
-  trigger: "触发型",
-};
-
-const marketingDetail = ref();
-const currentPage = ref(1);
-const pageSize = ref(10);
-
-const StatisticsList = ref({
-  accumulateCompleteCount: 0,
-  accumulateEntryCount: 0,
-  accumulateTouchCount: 0,
-  completeTargetCount1: 0,
-  completeTargetCount2: 0,
-});
-
-const chartContainer = ref(null);
-const chart = ref(null);
 
 const tabs = ["浏览数据", "转化数据", "表单数据", "玩法数据"];
 const activeTab = ref(tabs[3]);
@@ -58,21 +15,27 @@ const activeTab = ref(tabs[3]);
 interface Components {
   [key: string]: DefineComponent<{}, {}, any>;
 }
-
 const components: Components = {
-  浏览数据: defineAsyncComponent(() => import("./ComponentA.vue")),
-  转化数据: defineAsyncComponent(() => import("./ComponentB.vue")),
-  表单数据: defineAsyncComponent(() => import("./ComponentC.vue")),
-  玩法数据: defineAsyncComponent(() => import("./ComponentD.vue")),
+  浏览数据: defineAsyncComponent(
+    () => import("./ComponentA.vue")
+  ),
+  转化数据: defineAsyncComponent(
+    () => import("./ComponentB.vue")
+  ),
+  表单数据: defineAsyncComponent(
+    () => import("./ComponentC.vue")
+  ),
+  玩法数据: defineAsyncComponent(
+    () => import("./ComponentD.vue")
+  ),
 };
-
 const activeTabComponent = computed(() => components[activeTab.value]);
 </script>
 
 <template>
   <div>
     <div class="pageTitle">
-      <el-button :icon="ArrowLeft"></el-button>&nbsp;&nbsp;
+      <el-button :icon="ArrowLeft" @click="goBack"></el-button>&nbsp;&nbsp;
       活动详情名称
     </div>
     <div class="tab-switch">

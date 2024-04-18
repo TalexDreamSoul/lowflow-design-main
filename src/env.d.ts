@@ -22,7 +22,6 @@ interface ImportMeta {
 
 declare module globalThis {
   interface Window {
-    jsPlumb: any;
     $refreshLayout: Function
     $getNodeName: Function
     $getNodeById: Function

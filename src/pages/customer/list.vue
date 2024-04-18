@@ -51,14 +51,8 @@
           label="手机号"
           width="187"
         ></el-table-column>
-        <el-table-column prop="sex" label="性别" width="188">
-          <template #default="scope">
-            {{
-              PEOPLE_SEX.find((v) => checkStringEqual(v.value, scope.row.sex))
-                ?.label || "未知"
-            }}
-          </template>
-        </el-table-column>
+        <el-table-column prop="sex" label="性别" width="188"/>
+       
         <!-- <el-table-column
           prop="province"
           label="省份"
@@ -205,12 +199,13 @@
             </el-select>
           </el-form-item> -->
         </div>
-        <el-form-item label="生日" prop="birthday">
+        <el-form-item label="生日" prop="birthday" >
           <el-date-picker
             v-model="formValues.birthday"
             type="date"
             placeholder="请选择"
             value-format="YYYY-MM-DD"
+            width="100%"
           />
         </el-form-item>
       </el-form>
@@ -239,15 +234,7 @@
               label="手机号"
               width="120"
             ></el-table-column>
-            <el-table-column prop="sex" label="性别" width="71">
-              <template #default="scope">
-                {{
-                  PEOPLE_SEX.find((v) =>
-                    checkStringEqual(v.value, scope.row.sex)
-                  )?.label || "未知"
-                }}
-              </template>
-            </el-table-column>
+            <el-table-column prop="sex" label="性别" width="71"/>
             <!-- <el-table-column
               prop="province"
               label="省份"

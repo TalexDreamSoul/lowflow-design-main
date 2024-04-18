@@ -29,6 +29,7 @@ watchEffect(() => {
   if (!_data) return
 
   Object.assign(data, _data)
+  console.log('apppp', data, _data)
 })
 
 function saveData() {
@@ -42,11 +43,11 @@ function saveData() {
     type: "appPush",
   };
 
-  if ( contentVariables?.length ) {
+  if (contentVariables?.length) {
     appPushTemplate.contentVariables = contentVariables
   }
 
-  if ( titleVariables?.length ) {
+  if (titleVariables?.length) {
     appPushTemplate.titleVariables = titleVariables
   }
 

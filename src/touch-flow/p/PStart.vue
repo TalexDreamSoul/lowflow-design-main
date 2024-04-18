@@ -15,7 +15,7 @@ const { readonly, data, openDrawer, openCustomer, haveDiverse } = params
 watch(data, () => {
   const { children } = data;
 
-  [...children].forEach((item, index) => {
+  children && [...children].forEach((item, index) => {
     if (!index) return
 
     item.$index = index

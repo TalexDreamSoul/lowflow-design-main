@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DayJs from "dayjs";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { IHeaderDisturb } from "../flow-types";
 
 interface IDisturbProp {
@@ -51,6 +51,8 @@ function handleChange(value: any) {
   ];
   console.log(`output->props.disturb.time`,props.disturb.time)
 }
+
+
 </script>
 
 <template>
@@ -64,11 +66,9 @@ function handleChange(value: any) {
     </template>
     <div class="Basic-Block-Content" v-show="disturb.enable">
       <el-form-item>
-        <!-- {{ disturb.time }} -->
-        <el-time-picker is-range @change="handleChange"   :disabled="readonly"
-          v-model="disturb.time" type="daterange" range-separator="-" start-placeholder="开始时间"
-          end-placeholder="结束时间"  value-format="HH:mm" format="HH:mm" unlink-panels/>
-      </el-form-item>
+        <el-time-picker  :disabled="readonly"  type="daterange" v-model="disturb.time[0]" placeholder="开始时间"   value-format="HH:mm"/>&nbsp;-&nbsp;
+        <el-time-picker :disabled="readonly" v-model="disturb.time[1]" placeholder="结束时间"  value-format="HH:mm"/>
+        </el-form-item>
       <el-text>为客户勿扰时间段，勿扰时间内触达则</el-text>
       <el-form-item>
         <el-select :disabled="readonly" v-model="disturb.action" style="width: 240px">

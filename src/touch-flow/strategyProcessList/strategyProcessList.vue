@@ -226,10 +226,8 @@ const flowTime = (data: any) => {
           <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" @change="changeTime" />
         </el-form-item>
         <el-form-item>
-          <el-select v-model="formInline.executeType" clearable style="width:200px">
-            <el-option label="定时-单次" value="immediately" />
-            <el-option label="定时-重复" value="delayed" />
-            <el-option label="触发型" value="trigger" />
+          <el-select v-model="formInline.executeType" clearable placeholder="请选择类型" style="width:200px">
+            <el-option v-for="(item, key) in typeMap" :label="item" :value="key" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -318,6 +316,8 @@ const flowTime = (data: any) => {
         </el-table-column>
         <el-table-column label="类型" width="150">
           <template #default="scope">
+            <!-- {{scope.row.executeType}} -->
+
             {{ getTypeText(scope.row.executeType) }}
           </template>
         </el-table-column>

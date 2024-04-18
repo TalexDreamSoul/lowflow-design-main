@@ -16,18 +16,18 @@
 // @ts-ignore sure exist
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import TopMenu from "~/views/TopMenu/index.vue";
-import { computed, reactive, provide, watchEffect, ref, onMounted } from "vue";
-import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
+import { computed, provide, watchEffect } from "vue";
+import { onBeforeRouteUpdate, useRoute } from "vue-router";
 import { useLocalStorage } from "@vueuse/core";
 import customerAPI from "~/api/account";
 import dayjs from "dayjs";
 
 onBeforeRouteUpdate((to, from, next) => {
   if (to.path === "/") {
-    debugger;
+    // debugger;
     next("/dashboard"); // 这里可以根据实际需求重定向到其他路径
   } else {
-    debugger;
+    // debugger;
     next(); // 继续路由导航
   }
 });
@@ -38,7 +38,7 @@ const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
 const route = useRoute();
 const meta = computed(() => route.meta);
 const fetchDataApi = async () => {
-  const res = await customerAPI.accountDetail();
+  const res: any = await customerAPI.accountDetail();
   appOptions.value.user = res?.data;
 };
 
@@ -65,6 +65,8 @@ watchEffect(() => {
 provide("appOptions", appOptions);
 </script>
 <style lang="scss">
+
+
 html,
 body,
 #app {

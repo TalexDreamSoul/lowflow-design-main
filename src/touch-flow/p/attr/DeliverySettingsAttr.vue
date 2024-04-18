@@ -183,7 +183,11 @@ function saveData() {
     _.nodeId = _preId
     _.preNodeId = props.p.nodeId
 
-    props.p.children.push(_);
+   
+    if (props.p.children) {
+      props.p.children.push(_);
+    } else props.p.children = [_]
+
 
     //window.$refreshLayout()
   }

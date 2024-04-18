@@ -21,19 +21,7 @@ const estimation = async () => {
   let data = {
     ...props.customRuleContent,
   };
-  let res = await getmarketingTouchEstimate(JSON.stringify(data));
-  res = {
-    data: {
-      total: 1000,
-      appPushCount: 500,
-      znxCount: 120,
-      digitalCount: 800,
-      outboundCount: 200,
-      smsCount: 499,
-    },
-    message: "交易成功",
-    code: "0",
-  };
+  let res = await getmarketingTouchEstimate(JSON.stringify(data)) as {data:any};
   marketingTouchNode.value = res.data;
   console.log("Mounted", res);
 };

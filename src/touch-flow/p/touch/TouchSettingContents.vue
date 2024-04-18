@@ -25,7 +25,7 @@ const props = defineProps<{
   content: string;
   variables: string;
   disabled?: boolean;
-  ignoreId?: boolean;
+  ignoreId?: string;
   outside?: boolean;
 }>();
 
@@ -50,7 +50,8 @@ const displayRender = useDebounceFn(_displayRender, 100);
 const settingSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L21.5 6.5V17.5L12 23L2.5 17.5V6.5L12 1ZM12 3.311L4.5 7.65311V16.3469L12 20.689L19.5 16.3469V7.65311L12 3.311ZM12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12C16 14.2091 14.2091 16 12 16ZM12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"></path></svg>`;
 
 function _displayRender() {
-  if (!props.ignoreId && !props.modelValue?.id) return;
+  console.log("DISPLAY RENDER", props)
+  if ((props.ignoreId === `false`) && !props.modelValue?.id) return;
   console.groupCollapsed("TouchSettingContents");
 
   const { modelValue, content, variables } = props;
@@ -212,7 +213,15 @@ function addLabel() {
     id,
     reactive({
       field: id,
-      variables: [],
+      variables: [
+        // {
+        //   compareValue: "",
+        //   fieldOp: "",
+        //   fieldRangeValue: "",
+        //   fieldValue: "",
+        //   timeCondition: []
+        // }
+      ],
     })
   );
 
@@ -423,7 +432,8 @@ function handleAdd() {
 
 <template>
   <div :class="{ disabled }" tabindex="1" class="TouchSettingsContentWrapper">
-    <div @click="handleClick" @input="handleBlur" ref="contentRef" class="TouchSettingsContent" contenteditable="true" />
+    <div @click="handleClick" @input="handleBlur" ref="contentRef" class="TouchSettingsContent"
+      contenteditable="true" />
 
     <el-button @click="addLabel">
       <el-icon color="#326DD7">
@@ -443,7 +453,8 @@ function handleAdd() {
     </template>
 
     <div class="DialogWrapper">
-      <div :id="`variable-item-${index}`" v-for="(item, index) in dialogVariable?.variables" class="TouchFloatingContent">
+      <div :id="`variable-item-${index}`" v-for="(item, index) in dialogVariable?.variables"
+        class="TouchFloatingContent">
         <Operator style="width: 100px" :item="item" :attrs="attrs.attrs" v-model="item.fieldOp" />
         <!-- && item.fieldOp?.indexOf('等于') === -1 -->
         <AttrRender :outside="outside" v-if="item.fieldOp?.indexOf('空') === -1" :item="item" :attrs="attrs.attrs" />
@@ -451,7 +462,8 @@ function handleAdd() {
           <span>赋值为</span>
           <el-input v-model="item.compareValue" />
         </div>
-        <el-icon @click="dialogVariable?.variables?.splice(index, 1)" :style="!index ? `opacity: 0;pointer-events: none` : ''">
+        <el-icon @click="dialogVariable?.variables?.splice(index, 1)"
+          :style="!index ? `opacity: 0;pointer-events: none` : ''">
           <Delete />
         </el-icon>
       </div>
@@ -498,6 +510,7 @@ function handleAdd() {
 
 .TouchFloatingContent {
   flex-wrap: wrap;
+
   .el-icon {
     &:hover {
       color: #277ae7;
@@ -642,8 +655,7 @@ function handleAdd() {
   background-image: none;
   border-radius: var(--el-input-border-radius, var(--el-border-radius-base));
   cursor: text;
-  box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color))
-    inset;
+  box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color)) inset;
 
 }
 </style>

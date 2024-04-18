@@ -25,11 +25,19 @@ async function saveData() {
 
   function _(key: string, val: any) {
     if (Array.isArray(val)) {
-      console.log("array validate", key, val);
+      console.log("123 array validate", key, val);
 
-      if (!val.length) return true;
-      else if (!validatePropValue(val[0]?.field)) return true;
-      return [...val].filter((item) => !item.fieldName && !item.labelName)?.length < 1;
+      for (let variable of val) {
+        if (variable.hasOwnProperty('field')) {
+          if (!validatePropValue(variable.field)) return false
+          if (!variable.fieldName && !variable.labelName) return false
+
+          if (!variable.variables?.length) {
+            return false
+          }
+        }
+      }
+      // console.log("vd ___", key, val)
     }
 
     return true;
@@ -123,7 +131,7 @@ function destroy() {
       <el-button @click="destroy" round>{{
         type !== "details" ? "取消" : "返回"
       }}</el-button>
-      <el-button @click="saveData" round class="primaryStyle" v-if="type !== 'details'"
+      <el-button @click="saveData" type="primary" round class="primaryStyle" v-if="type !== 'details'"
         >保存</el-button
       >
     </div>

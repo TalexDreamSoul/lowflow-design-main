@@ -67,7 +67,7 @@ function saveData() {
     return false;
   }
 
-  touchSettingsRef.value.updateData();
+  if (!touchSettingsRef.value.updateData()) return false
 
   const _: any = { nodeId: "", children: [], reveal: true };
   Object.assign(_, sizeForm);
@@ -84,7 +84,11 @@ function saveData() {
     _.nodeId = randomStr(12);
     _.preNodeId = props.p.nodeId;
 
-    props.p.children.push(_);
+   
+    if (props.p.children) {
+      props.p.children.push(_);
+    } else props.p.children = [_]
+
   }
 
   return true;
