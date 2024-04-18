@@ -17,16 +17,16 @@ interface Components {
 }
 const components: Components = {
   浏览数据: defineAsyncComponent(
-    () => import("./views/activityDetailsList/ComponentA.vue")
+    () => import("./ComponentA.vue")
   ),
   转化数据: defineAsyncComponent(
-    () => import("./views/activityDetailsList/ComponentB.vue")
+    () => import("./ComponentB.vue")
   ),
   表单数据: defineAsyncComponent(
-    () => import("./views/activityDetailsList/ComponentC.vue")
+    () => import("./ComponentC.vue")
   ),
   玩法数据: defineAsyncComponent(
-    () => import("./views/activityDetailsList/ComponentD.vue")
+    () => import("./ComponentD.vue")
   ),
 };
 const activeTabComponent = computed(() => components[activeTab.value]);

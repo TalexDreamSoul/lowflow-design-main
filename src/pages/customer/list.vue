@@ -51,14 +51,8 @@
           label="手机号"
           width="187"
         ></el-table-column>
-        <el-table-column prop="sex" label="性别" width="188">
-          <template #default="scope">
-            {{
-              PEOPLE_SEX.find((v) => checkStringEqual(v.value, scope.row.sex))
-                ?.label || "未知"
-            }}
-          </template>
-        </el-table-column>
+        <el-table-column prop="sex" label="性别" width="188"/>
+       
         <!-- <el-table-column
           prop="province"
           label="省份"
@@ -239,15 +233,7 @@
               label="手机号"
               width="120"
             ></el-table-column>
-            <el-table-column prop="sex" label="性别" width="71">
-              <template #default="scope">
-                {{
-                  PEOPLE_SEX.find((v) =>
-                    checkStringEqual(v.value, scope.row.sex)
-                  )?.label || "未知"
-                }}
-              </template>
-            </el-table-column>
+            <el-table-column prop="sex" label="性别" width="71"/>
             <!-- <el-table-column
               prop="province"
               label="省份"
