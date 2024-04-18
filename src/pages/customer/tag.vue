@@ -102,7 +102,7 @@
         ></el-table-column>
         <el-table-column prop="coverRatio" label="覆盖度" width="151">
           <template #default="scope">
-            {{ scope.row.coverRatio * 100 + "%" }}
+            {{ (scope.row.coverRatio * 100).toFixed(2) }}%
           </template></el-table-column
         >
         <el-table-column label="正在使用" prop="usedCount" width="88">
@@ -201,7 +201,9 @@
           <div style="color: rgba(64, 120, 224, 1)">客户活跃度</div>
           <div>标签说明：根据客户启动APP的次数，对客户的活跃程度进行判断</div>
           <div>
-            覆盖度：{{ modalData?.coverRatio * 100 }}% 覆盖{{
+            覆盖度：
+            {{ (modalData?.coverRatio * 100).toFixed(2) }}%
+            覆盖{{
               modalData?.count
             }}名客户
           </div>
@@ -214,7 +216,7 @@
           <el-table-column prop="count" label="覆盖人数" />
           <el-table-column prop="coverRatio" label="覆盖度">
             <template #default="scope">
-              {{ scope.row.coverRatio * 100 + "%" }}
+              {{ (scope.row.coverRatio * 100).toFixed(2) }}%
             </template></el-table-column
           >
         </el-table>
