@@ -368,7 +368,11 @@ const handleExceed: UploadProps["onExceed"] = (files) => {
 const submitUpload = () => {
   upload.value!.submit();
 };
-const onSuccess = () => {
+const onSuccess = (response: any) => {
+  if(!checkStringEqual(response?.code, 0)) {
+    ElMessage.error(response.message);
+    return;
+  }
   modalVisible.value = false;
   getData({ ...pageParams, pageNum: pageNum.value });
 };
