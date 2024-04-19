@@ -16,9 +16,17 @@
 // @ts-ignore sure exist
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import TopMenu from "~/views/TopMenu/index.vue";
-import { computed, onMounted, provide, reactive, ref, watchEffect } from "vue";
+import {
+  computed,
+  onMounted,
+  provide,
+  reactive,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
-import { useLocalStorage } from "@vueuse/core";
+import { RemovableRef, useLocalStorage } from "@vueuse/core";
 import customerAPI from "~/api/account";
 import dayjs from "dayjs";
 
@@ -36,25 +44,75 @@ const getMarketingTokenFromURL = async () => {
     // 将值存储到cookie中
     document.cookie = `X-MARKETING-TOKEN=${token}; path=/`;
 
-  const res: any = await customerAPI.accountDetail();
-  appOptions.value.user = res?.data;
+    const res: any = await customerAPI.accountDetail();
+    appOptions.value.user = res?.data;
+
+    if (!res?.data) return;
+    const user = res?.data;
+    // console.log("user", user)
+    const { id } = user;
+    setTimeout(async () => {
+      const res = (await customerAPI.accountContainMenuList({
+        id,
+        accountId: id,
+      })) as { data: any };
+
+      appOptions.value.menu = res?.data;
+
+      if (!res?.data) return;
+
+      const { menus, menuIds } = res?.data;
+      const filteredMenu =
+        menus && [...menus].filter((item: any) => menuIds.includes(item.id));
+
+      const map: any = {};
+
+      filteredMenu &&
+        filteredMenu.forEach(
+          (item: any) =>
+            (map[item.menuCode] = reactive({
+              children: [],
+              ...item,
+            }))
+        );
+
+      const clearCodes: string[] = [];
+
+      // 将flat array转成tree map
+      Object.values(map).forEach((item: any) => {
+        const { id, menuCode, parentMenuCode } = item;
+
+        if (menuCode !== parentMenuCode && parentMenuCode?.length) {
+          const p = map[parentMenuCode];
+
+          if (p) {
+            const c = p.children;
+
+            c.push(item);
+          }
+
+          clearCodes.push(menuCode);
+          // delete map[menuCode]
+        }
+      });
+
+      [...clearCodes].forEach((code: string) => delete map[code]);
+
+      menuMap.value = map;
+      useLocalStorage("menuMap-default", { menuMap });
+      useLocalStorage(
+        "router-default",
+        `/${Object.keys(menuMap.value)[0]}/${
+          menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+        }`
+      );
+      router.push(
+        `/${Object.keys(menuMap.value)[0]}/${
+          menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+        }`
+      );
+    });
   }
-  // const { user }: any = appOptions.value;
-  // // console.log("user", user)
-  // if (!user?.accountName?.length) {
-  //   fetchDataApi();
-  // } else {
-  //   const { id } = user;
-
-  //   setTimeout(async () => {
-  //     const res = (await customerAPI.accountContainMenuList({
-  //       id,
-  //       accountId: id,
-  //     })) as { data: any };
-
-  //     appOptions.value.menu = res?.data;
-  //   });
-  // }
 };
 
 // 监听路由变化以确保在路由切换时也能获取新URL中的token值
@@ -72,7 +130,10 @@ onBeforeRouteUpdate((to, from, next) => {
   }
 });
 
-const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
+const appOptions: RemovableRef<{
+  user: {};
+  menu: {};
+}> = useLocalStorage("app-options", { user: {}, menu: {} });
 // const appOptions = ref({})
 
 const meta = computed(() => route.meta);
@@ -84,26 +145,81 @@ const fetchDataApi = async () => {
 // });
 watchEffect(() => {
   $ignored: appOptions;
-  const { user }: any = appOptions.value;
-  // console.log("user", user)
-  if (!user?.accountName?.length) {
-    fetchDataApi();
-  } else {
-    const { id } = user;
+  getMarketingTokenFromURL();
 
-    setTimeout(async () => {
-      const res = (await customerAPI.accountContainMenuList({
-        id,
-        accountId: id,
-      })) as { data: any };
+  // const { user }: any = appOptions.value;
+  // // console.log("user", user)
+  // if (!user?.accountName?.length) {
+  //   fetchDataApi();
+  // } else {
+  //   const { id } = user;
 
-      appOptions.value.menu = res?.data;
-    });
-  }
+  //   setTimeout(async () => {
+  //     const res = (await customerAPI.accountContainMenuList({
+  //       id,
+  //       accountId: id,
+  //     })) as { data: any };
+
+  //     appOptions.value.menu = res?.data;
+
+  //     if (!res?.data) return;
+
+  //     const { menus, menuIds } = res?.data;
+  //     const filteredMenu =
+  //       menus && [...menus].filter((item: any) => menuIds.includes(item.id));
+
+  //     const map: any = {};
+
+  //     filteredMenu &&
+  //       filteredMenu.forEach(
+  //         (item: any) =>
+  //           (map[item.menuCode] = reactive({
+  //             children: [],
+  //             ...item,
+  //           }))
+  //       );
+
+  //     const clearCodes: string[] = [];
+
+  //     // 将flat array转成tree map
+  //     Object.values(map).forEach((item: any) => {
+  //       const { id, menuCode, parentMenuCode } = item;
+
+  //       if (menuCode !== parentMenuCode && parentMenuCode?.length) {
+  //         const p = map[parentMenuCode];
+
+  //         if (p) {
+  //           const c = p.children;
+
+  //           c.push(item);
+  //         }
+
+  //         clearCodes.push(menuCode);
+  //         // delete map[menuCode]
+  //       }
+  //     });
+
+  //     [...clearCodes].forEach((code: string) => delete map[code]);
+
+  //     menuMap.value = map;
+  //     useLocalStorage("menuMap-default", { menuMap });
+  //     useLocalStorage(
+  //       "router-default",
+  //       `/${Object.keys(menuMap.value)[0]}/${
+  //         menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+  //       }`
+  //     );
+  //     router.push(
+  //       `/${Object.keys(menuMap.value)[0]}/${
+  //         menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+  //       }`
+  //     );
+  //   });
+  // }
 });
 
 const menuMap = ref();
-watchEffect(() => {
+watch([appOptions.value?.menu], () => {
   if (!appOptions.value?.menu) return;
 
   const { menus, menuIds } = appOptions.value.menu;
@@ -144,18 +260,14 @@ watchEffect(() => {
   [...clearCodes].forEach((code: string) => delete map[code]);
 
   menuMap.value = map;
-useLocalStorage("menuMap-default", { menuMap });
+  useLocalStorage("menuMap-default", { menuMap });
   useLocalStorage(
-  "router-default",
-  `/${Object.keys(menuMap.value)[0]}/${
-    menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
-  }`
-);
-  // console.log("1", map)
+    "router-default",
+    `/${Object.keys(menuMap.value)[0]}/${
+      menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+    }`
+  );
 });
-
-
-
 
 provide("appOptions", appOptions);
 </script>

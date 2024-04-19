@@ -192,6 +192,13 @@
             clearable
           />
         </el-form-item>
+
+        <el-form-item label="仅使用当日数据" prop="onlyuseDaily">
+          <span>
+            （若此开关打开，使用该标签时仅当日效据有效）
+          </span> <el-switch v-model="formValues.onlyuseDaily" />
+         
+        </el-form-item>
         <el-form-item label="标签说明" prop="labelDesc">
           <el-input
             v-model="formValues.labelDesc"
@@ -329,6 +336,7 @@ const pageParams = reactive({
 const defaultFormValues = {
   labelName: "",
   labelDesc: "",
+  onlyuseDaily:''
 };
 let formValues = reactive({ ...defaultFormValues });
 let modalData = reactive<any>({});
