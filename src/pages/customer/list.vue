@@ -51,8 +51,7 @@
           label="手机号"
           width="187"
         ></el-table-column>
-        <el-table-column prop="sex" label="性别" width="188"/>
-       
+        <!-- <el-table-column prop="sex" label="性别" width="188" /> -->
         <!-- <el-table-column
           prop="province"
           label="省份"
@@ -102,9 +101,7 @@
         </el-table-column>
         <template #empty>
           <el-empty :image="Maskgroup" :image-size="76">
-            <template #description>
-              暂无数据
-            </template>
+            <template #description> 暂无数据 </template>
           </el-empty>
         </template>
       </el-table>
@@ -148,8 +145,19 @@
         <el-form-item
           :rules="
             formValues.itFinCode
-              ? []
-              : [{ required: true, message: '请输入手机号' }]
+              ? [
+                  {
+                    pattern: /^[1][3-9][0-9]{9}$/,
+                    message: '请输入按照正确格式输入手机号',
+                  },
+                ]
+              : [
+                  {
+                    pattern: /^[1][3-9][0-9]{9}$/,
+                    message: '请输入按照正确格式输入手机号',
+                  },
+                  { required: true, message: '请输入手机号' },
+                ]
           "
           label="手机号"
           prop="phone"
@@ -172,7 +180,7 @@
           />
         </el-form-item>
         <div class="flex">
-          <el-form-item label="性别" prop="sex">
+          <!-- <el-form-item label="性别" prop="sex">
             <el-select v-model="formValues.sex" placeholder="请选择" clearable>
               <el-option
                 v-for="item of PEOPLE_SEX"
@@ -180,7 +188,7 @@
                 :value="item.value"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <!-- <el-form-item label="省份" prop="province">
             <el-select
               v-model="formValues.province"
@@ -206,7 +214,7 @@
             </el-select>
           </el-form-item> -->
         </div>
-        <el-form-item label="生日" prop="birthday" >
+        <el-form-item label="生日" prop="birthday">
           <el-date-picker
             v-model="formValues.birthday"
             type="date"
@@ -239,9 +247,9 @@
             <el-table-column
               prop="phone"
               label="手机号"
-              width="120"
+              width="180"
             ></el-table-column>
-            <el-table-column prop="sex" label="性别" width="71"/>
+            <!-- <el-table-column prop="sex" label="性别" width="71" /> -->
             <!-- <el-table-column
               prop="province"
               label="省份"
@@ -259,9 +267,7 @@
             ></el-table-column>
             <template #empty>
               <el-empty :image="Maskgroup" :image-size="76">
-                <template #description>
-                  暂无数据
-                </template>
+                <template #description> 暂无数据 </template>
               </el-empty>
             </template>
           </el-table>
@@ -269,19 +275,31 @@
         <div class="tag">
           <div class="title">客户标签</div>
           <div class="tag-content">
-            <el-tag v-for="item of modalData?.labels || []"
-              >{{ item.labelName }}：{{
-                item.labelValue?.data?.join?.("、")
-              }}</el-tag
+            <el-tooltip
+              effect="dark"
+              v-for="item of modalData?.labels || []"
+              :content="`${item.labelName}：${item.labelValue?.data?.join?.('、')}`"
+              placement="top-start"
             >
+              <el-tag
+                >{{ item.labelName }}：{{
+                  item.labelValue?.data?.join?.("、")
+                }}</el-tag
+              >
+            </el-tooltip>
           </div>
         </div>
         <div class="black-list">
           <div class="title">所在黑名单</div>
           <div class="tag-content">
-            <el-tag v-for="item of modalData?.blacklists || []">{{
-              item.blacklistName
-            }}</el-tag>
+            <el-tooltip
+              effect="dark"
+              v-for="item of modalData?.blacklists || []"
+              :content="`${item.blacklistName}`"
+              placement="top-start"
+            >
+              <el-tag>{{ item.blacklistName }}</el-tag>
+            </el-tooltip>
             <a v-if="!modalData?.blacklists">无</a>
           </div>
         </div>
@@ -343,7 +361,7 @@ enum DrawerType {
 const ModalTitleMap: any = {
   [DrawerType.Create]: "手动添加客户",
   [DrawerType.Detail]: "客户详情",
-  [DrawerType.Edit]: "编辑属性",
+  [DrawerType.Edit]: "编辑客户信息",
 };
 
 const pageParams = reactive({
@@ -496,14 +514,22 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       }
       .tag-content {
         display: flex;
-        gap: 4px;
+        gap: 8px;
         margin-top: 8px;
         overflow: hidden;
         flex-wrap: wrap;
         .el-tag {
-          padding: 8px;
+          padding: 0 8px;
           font-size: 14px;
           line-height: 16px;
+          max-width: 150px;
+          &__content {
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            word-break: keep-all;
+          }
         }
       }
       .user {
