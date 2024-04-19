@@ -7,7 +7,8 @@ const routerDefault = useStorage("router-default");
 export const routes: RouterOptions["routes"] = [
   {
     path: "/",
-    redirect: routerDefault.value?`${routerDefault.value}`:'/login'
+    redirect: routerDefault.value&&`${routerDefault.value}`
+    // :'/login'
   },
   {
     path: '/login',
