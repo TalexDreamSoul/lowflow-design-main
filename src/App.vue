@@ -16,11 +16,36 @@
 // @ts-ignore sure exist
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import TopMenu from "~/views/TopMenu/index.vue";
-import { computed, provide, watchEffect } from "vue";
-import { onBeforeRouteUpdate, useRoute } from "vue-router";
+import { computed, onMounted, provide, ref, watchEffect } from "vue";
+import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { useLocalStorage } from "@vueuse/core";
 import customerAPI from "~/api/account";
 import dayjs from "dayjs";
+
+const route = useRoute();
+
+const router = useRouter();
+const xMarketingToken = ref("");
+
+// 获取URL中的X-MARKETING-TOKEN的值
+const getMarketingTokenFromURL = () => {
+  const urlParams = new URLSearchParams(route.query as unknown as string);
+  const token = urlParams.get("X-MARKETING-TOKEN");
+  if (token) {
+    xMarketingToken.value = token;
+    // 将值存储到cookie中
+    document.cookie = `X-MARKETING-TOKEN=${token}; path=/`;
+  }
+};
+
+onMounted(() => {
+  getMarketingTokenFromURL();
+});
+
+// 监听路由变化以确保在路由切换时也能获取新URL中的token值
+router.afterEach(() => {
+  getMarketingTokenFromURL();
+});
 
 onBeforeRouteUpdate((to, from, next) => {
   if (to.path === "/") {
@@ -35,7 +60,6 @@ onBeforeRouteUpdate((to, from, next) => {
 const appOptions = useLocalStorage("app-options", { user: {}, menu: {} });
 // const appOptions = ref({})
 
-const route = useRoute();
 const meta = computed(() => route.meta);
 const fetchDataApi = async () => {
   const res: any = await customerAPI.accountDetail();
@@ -65,8 +89,6 @@ watchEffect(() => {
 provide("appOptions", appOptions);
 </script>
 <style lang="scss">
-
-
 html,
 body,
 #app {
