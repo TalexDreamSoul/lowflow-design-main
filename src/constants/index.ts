@@ -140,12 +140,18 @@ export const PEOPLE_SOURCE = [
   },
 ];
 
+
+
+
+
 /**
  * 标签来源
  */
 export enum TagSourceEnum {
   Market = "market",
   Other = "other",
+  Sensor = "sensor",
+  Bigdata = "bigdata",
 }
 
 /**
@@ -159,6 +165,14 @@ export const TAG_SOURCE = [
   {
     label: "第三方导入",
     value: TagSourceEnum.Other,
+  },
+  {
+    label: "神策",
+    value: TagSourceEnum.Sensor,
+  },
+  {
+    label: "大数据",
+    value: TagSourceEnum.Bigdata,
   },
 ];
 /**
