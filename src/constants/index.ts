@@ -91,15 +91,15 @@ export enum ConfigStatus {
 export const PEOPLE_SEX = [
   {
     label: "男",
-    value: "man",
+    value: "男",
   },
   {
     label: "女",
-    value: "woman",
+    value: "女",
   },
   {
     label: "未知",
-    value: "unknown",
+    value: "未知",
   },
 ];
 
