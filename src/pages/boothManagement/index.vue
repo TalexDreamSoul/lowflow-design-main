@@ -5,6 +5,7 @@
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
           <el-select
+            style="width: 150px;"
             :fit-input-width="true"
             v-model="pageParams.configType"
             placeholder="配置类型"
@@ -12,6 +13,21 @@
           >
             <el-option
               v-for="(item, key) in configTypeMap"
+              :label="item"
+              :value="key"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-select
+            style="width: 150px;"
+            :fit-input-width="true"
+            v-model="pageParams.configStatus"
+            placeholder="展位状态"
+            clearable
+          >
+            <el-option
+              v-for="(item, key) in {1: '生效', 2: '失效'}"
               :label="item"
               :value="key"
             />
@@ -54,6 +70,17 @@
             {{ visualRangeMap[scope.row.visualRange] }}
           </template>
         </el-table-column>
+        <el-table-column prop="configStatus" label="展位状态" width="200">
+          <template #default="scope">
+            {{
+              scope.row.configStatus
+                ? checkStringEqual(scope.row.configStatus, 1)
+                  ? "生效"
+                  : "失效"
+                : "-"
+            }}
+          </template>
+        </el-table-column>
         <el-table-column label="配置有效期" width="333">
           <template #default="scope">
             {{ scope.row.startTime }} - {{ scope.row.endTime }}
@@ -85,9 +112,7 @@
 
         <template #empty>
           <el-empty :image="Maskgroup" :image-size="76">
-            <template #description>
-              暂无数据
-            </template>
+            <template #description> 暂无数据 </template>
           </el-empty>
         </template>
       </el-table>
@@ -125,6 +150,12 @@
               type="textarea"
               v-model="formValues.configDesc"
             />
+          </el-form-item>
+          <el-form-item label="展位状态" prop="configStatus">
+            <el-radio-group v-model="formValues.configStatus">
+              <el-radio :value="1" size="large">生效</el-radio>
+              <el-radio :value="2" size="large">失效</el-radio>
+            </el-radio-group>
           </el-form-item>
           <div class="flex">
             <div class="item">
@@ -224,6 +255,7 @@
                   :fit-input-width="true"
                   placeholder="请选择"
                   style="width: 160px"
+                  @change="formValues.boothName = ''"
                 >
                   <el-option
                     v-for="(item, key) in configTypeMap"
@@ -440,6 +472,7 @@ const pageParams = reactive({
   configName: "",
   configType: "",
   time: "",
+  configStatus: ''
 });
 
 const defaultFormValues = {
@@ -459,6 +492,7 @@ const defaultFormValues = {
   skipActivityName: null,
   skipParam: null,
   skipActivityId: null,
+  configStatus: 1,
 };
 let formValues = reactive<any>({ ...defaultFormValues });
 const pageNum = ref(1);
@@ -572,8 +606,13 @@ const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Create) {
     Object.assign(formValues, defaultFormValues);
   } else {
+    // console.log(values);
     let { startTime, endTime, blacklist, ...params } = values;
-    Object.assign(formValues, { time: [new Date(startTime), new Date(endTime)], blacklist: blacklist.map((v: any) => v.blacklistId), ...params });
+    Object.assign(formValues, {
+      time: [new Date(startTime), new Date(endTime)],
+      blacklist: blacklist.map((v: any) => v.blacklistId),
+      ...params,
+    });
   }
   modalType.value = type;
   modalVisible.value = true;
