@@ -24,7 +24,7 @@
       <el-table :data="tableData" style="width: 100%">
         <el-table-column prop="activityId" label="H5活动ID" width="220" show-overflow-tooltip />
         <el-table-column prop="activityName" label="H5活动名称" width="220" show-overflow-tooltip />
-        <el-table-column label="状态" width="120">
+        <el-table-column label="状态">
           <template #default="scope">
             <span>{{ activityStatus[scope.row.activityStatus] }}</span>
           </template>
@@ -39,7 +39,7 @@
             <div v-else>-</div>
           </template>
         </el-table-column>
-        <el-table-column label="包含玩法" width="220" show-overflow-tooltip>
+        <el-table-column label="包含玩法" show-overflow-tooltip>
           <template #default="scope">
             <div>
               <span v-if="!scope.row.playTypeList.length">-</span>
@@ -61,7 +61,7 @@
           </template>
         </el-table-column> -->
 
-        <el-table-column prop="creatorName" label="创建人" width="120" />
+        <el-table-column prop="creatorName" label="创建人"  />
         <el-table-column prop="creatorName" label="操作" fixed="right" width="350">
           <template #default="scope">
             <el-space wrap>
