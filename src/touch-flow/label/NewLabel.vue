@@ -10,7 +10,7 @@ const props = defineProps<{
 }>();
 const origin = {
   labelName: "",
-  onlyuseDaily:false,
+  currentDayEffective: false,
   labelType: "",
   labelValue: {
     data: [""],
@@ -109,7 +109,7 @@ function handleChange(val: any) {
           <el-select collapse-tags :disabled="readonly" v-if="selectItem.labelValueType === 'text'" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px" multiple>
             <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
           </el-select>
-          <el-select   :disabled="readonly" v-else="" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px">
+          <el-select :disabled="readonly" v-else="" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px">
             <!-- <el-option /> -->
             <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
           </el-select>
@@ -140,8 +140,12 @@ function handleChange(val: any) {
           <el-form-item label="仅使用当日数据">
             <span>
               （若此开关打开，使用该标签时仅当日效据有效）
-            </span> <el-switch v-model="model.onlyuseDaily" />
-           
+            </span> <el-switch v-model="model.currentDayEffective" />
+
+          </el-form-item>
+
+          <el-form-item label="标签说明">
+            <el-input v-model="model.labelDesc" placeholder="请输入" clearable />
           </el-form-item>
           <el-form-item v-if="model.labelValueType === 'text'" v-for="(item, index) in model.labelValue.data" :label="`标签值${index + 1}`">
             <div style="display: flex;width: 100%;">

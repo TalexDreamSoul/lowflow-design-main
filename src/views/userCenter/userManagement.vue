@@ -217,7 +217,6 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         </el-select>
       </el-form-item>
       <el-form-item :rules="[
-        { required: true, message: '请输入手机号' },
         {
           pattern: /^[1][3-9][0-9]{9}$/,
           message: '请输入按照正确格式输入手机号',
@@ -226,7 +225,6 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         <el-input v-model="formValues.phone" style="width:300px" placeholder="请输入" clearable />
       </el-form-item>
       <el-form-item prop="email" :rules="[
-        { required: true, message: '请输入邮箱' },
         {
           pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
           message: '请输入按照正确格式输入邮箱',
