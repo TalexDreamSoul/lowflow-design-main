@@ -10,7 +10,7 @@ const props = defineProps<{
 }>();
 const origin = {
   labelName: "",
-  onlyuseDaily: false,
+  currentDayEffective: false,
   labelType: "",
   labelValue: {
     data: [""],
@@ -140,7 +140,7 @@ function handleChange(val: any) {
           <el-form-item label="仅使用当日数据">
             <span>
               （若此开关打开，使用该标签时仅当日效据有效）
-            </span> <el-switch v-model="model.onlyuseDaily" />
+            </span> <el-switch v-model="model.currentDayEffective" />
 
           </el-form-item>
 
