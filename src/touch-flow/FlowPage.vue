@@ -7,7 +7,7 @@ import XFlow from "./x/XFlow.vue";
 import { ArrowRight } from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import { flatConvert2Tree } from "./flow-utils";
+import { flatConvert2Tree, validateNode } from "./flow-utils";
 import { IFlowHeader } from "./flow-types";
 import { getmarketingTouchDetail, updateMarketingTouch } from "~/api/index";
 import { reactiveMessage } from "~/utils/mention/mention";
@@ -274,6 +274,15 @@ async function submitReview(status: string = "approvalPending") {
     ...transformDisturb(flowOptions.basic.disturb),
     ...transformTarget(flowOptions.basic.target),
   };
+
+  if ([..._flowOptions.nodes].filter(node => validateNode(node)).length) {
+    loading.value = false;
+
+    title.value = "提交失败";
+    content.value = "存在未完全配置的节点！";
+
+    return
+  }
 
   console.log("flowOptions", _flowOptions);
 

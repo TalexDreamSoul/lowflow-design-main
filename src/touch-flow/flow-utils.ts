@@ -376,14 +376,11 @@ export function debounceFunc(func: Function, time: number = 1000) {
 /**
  * 校验节点是否完善
  */
-export function validateNodes(node: any) {
-  const nodesValidation = {
-    'subDiversion': () => {
-
-    }
+export function validateNode(node: any) {
+  const { nodeType } = node
+  if (nodeType === 'subDiversion') {
+    return node.nodeDelayed?.delayedAction?.length
   }
 
-  return (() => {
-
-  })()
+  return true;
 }

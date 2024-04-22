@@ -42,28 +42,6 @@ const del = useDel().del
     :display="data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate">
     <p class="title">
       <!-- 选择策略器 -->
-<<<<<<< Updated upstream
-     <span>
-      {{ data.nodeName }}
-     </span>
-     <el-popconfirm
-     hide-icon
-     confirm-button-text="确认"
-     cancel-button-text="取消"
-     title="是否确认删除？"
-     @confirm="del(__data)"
-     @cancel="visible = false"
-   >
-   <template #reference>
-     <el-button v-if="!readonly" @click="visible = true" text type="primary">
-       <el-icon>
-         <Delete />
-       </el-icon>
-       删除
-     </el-button>
-   </template>
-   </el-popconfirm> 
-=======
       <span>
         {{ data.nodeName }}
       </span>
@@ -82,7 +60,6 @@ const del = useDel().del
           </el-button>
         </template>
       </el-popover>
->>>>>>> Stashed changes
     </p>
     <div class="PBlock-Content theme" @click="openCondition">
       <div v-if="data.diversionType !== 'safeguard'" style="--theme-color: #90a0b8" class="PBlock-Section">
