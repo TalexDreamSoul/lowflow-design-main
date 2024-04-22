@@ -31,7 +31,7 @@
             placeholder="H5活动名称"
             clearable
             :suffix-icon="Search"
-          />
+            maxlength="50" />
         </el-form-item>
       </el-form>
     </div>

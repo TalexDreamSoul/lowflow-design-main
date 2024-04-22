@@ -18,7 +18,7 @@
             placeholder="黑名单名称"
             clearable
             :suffix-icon="Search"
-          />
+            maxlength="50" />
         </el-form-item>
       </el-form>
       <el-button

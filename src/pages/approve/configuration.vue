@@ -59,7 +59,7 @@
         :disabled="checkStringEqual(modalType, DrawerType.Detail)"
       >
         <el-form-item label="审核流程名称" prop="configName">
-          <el-input v-model="formValues.configName" :disabled="true" />
+          <el-input v-model="formValues.configName" :disabled="true" maxlength="50"/>
         </el-form-item>
         <el-form-item label="审核层级">
           <el-input :disabled="true" :model-value="formValues.auditor.length" />

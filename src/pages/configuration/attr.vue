@@ -8,7 +8,8 @@
             v-model="pageParams.fieldName"
             placeholder="属性名称"
             clearable
-            :suffix-icon="Search"
+            maxlength="50"
+               :suffix-icon="Search"
           />
         </el-form-item>
       </el-form>
@@ -138,7 +139,7 @@
             v-model="formValues.fieldName"
             placeholder="请输入"
             clearable
-          />
+            maxlength="50"  />
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择数据类别' }]"

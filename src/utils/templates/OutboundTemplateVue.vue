@@ -75,7 +75,7 @@ const tableData = [
 <template>
   <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input :disabled="readonly" v-model="data.name" style="width: 50%"></el-input>
+      <el-input :disabled="readonly" v-model="data.name" style="width: 50%" maxlength="50"></el-input>
     </el-form-item>
     <el-form-item label="外呼唯一标志">
       <el-input :disabled="readonly" v-model="data.outboundCode" style="width: 50%"></el-input>

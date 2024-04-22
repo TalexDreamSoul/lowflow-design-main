@@ -225,7 +225,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input v-model="formInline.equityName" placeholder="权益展示名称" clearable style="width:200px" :suffix-icon="Search" />
+            <el-input v-model="formInline.equityName" placeholder="权益展示名称" clearable style="width:200px" :suffix-icon="Search" maxlength="50"/>
           </el-form-item>
 
         </el-form>
@@ -301,7 +301,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
     },
   ]" label="权益展示名称" prop="equityName">
-        <el-input v-model="formValues.equityName" placeholder="请输入权益展示名称" clearable />
+        <el-input v-model="formValues.equityName" placeholder="请输入权益展示名称" clearable maxlength="50"/>
       </el-form-item>
       <el-form-item :rules="[{ required: true, message: '请输入权益展示主图' }]" label="权益展示主图" prop="equityImageUrl">
         <div style="width: 100%;">

@@ -134,7 +134,7 @@ function handleChange(val: any) {
             </el-select>
           </el-form-item>
           <el-form-item label="标签名称">
-            <el-input v-model="model.labelName" />
+            <el-input v-model="model.labelName" maxlength="50"/>
           </el-form-item>
 
           <el-form-item label="仅使用当日数据">

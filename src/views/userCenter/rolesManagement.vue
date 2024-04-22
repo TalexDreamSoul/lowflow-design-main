@@ -148,7 +148,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         <el-form :inline="true">
 
           <el-form-item>
-            <el-input v-model="formInline.roleName" placeholder="角色名称" clearable style="width:200px" :suffix-icon="Search" />
+            <el-input v-model="formInline.roleName" placeholder="角色名称" clearable style="width:200px" :suffix-icon="Search" maxlength="50"/>
           </el-form-item>
 
         </el-form>
@@ -195,7 +195,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
     },
   ]" label="角色名称" prop="roleName">
-        <el-input v-model="formValues.roleName" style="width:300px" placeholder="请输入" clearable />
+        <el-input v-model="formValues.roleName" style="width:300px" placeholder="请输入" clearable maxlength="50" />
       </el-form-item>
 
       <el-form-item prop="describe" label="角色说明">

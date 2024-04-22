@@ -232,7 +232,7 @@ const flowTime = (data: any) => {
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="formInline.touchName" placeholder="请输入策略流程名称" clearable style="width:200px" :prefix-icon="Search" />
+          <el-input v-model="formInline.touchName" placeholder="请输入策略流程名称" clearable style="width:200px" :prefix-icon="Search" maxlength="50"/>
         </el-form-item>
 
       </el-form>

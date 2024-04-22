@@ -103,7 +103,7 @@ regSaveFunc(saveData);
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
       <el-form-item label="选择策略器名称：">
-        <el-input :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" />
+        <el-input :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" maxlength="50"/>
       </el-form-item>
       <CommonAttr :readonly="readonly" ref="touchSettingsRef" :size-form="sizeForm" />
 

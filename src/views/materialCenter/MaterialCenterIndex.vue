@@ -263,7 +263,7 @@ const changeTime = (val: any) => {
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width: 200px" :suffix-icon="Search" />
+            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width: 200px" :suffix-icon="Search" maxlength="50"/>
           </el-form-item>
         </el-form>
         <div v-if="String(route.params.type).replace('Template', '') != 'all'">

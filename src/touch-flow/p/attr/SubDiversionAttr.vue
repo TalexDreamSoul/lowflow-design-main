@@ -123,7 +123,7 @@ regSaveFunc(saveData);
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
       <el-form-item label="流量策略器名称：">
-        <el-input v-model="sizeForm.nodeName" placeholder="填写名称" />
+        <el-input v-model="sizeForm.nodeName" placeholder="填写名称" maxlength="50"/>
       </el-form-item>
 
       <CommonAttr ref="touchSettingsRef" :size-form="sizeForm" />
