@@ -41,9 +41,9 @@ const { pushTemplate, delayedActionStr } = useDisplayAttr()
   <BaseNode :params="params" :disabled="readonly || haveDiverse"
     :display="data.nodeDelayed?.isDelayed !== undefined || pushTemplate?.has">
     <p class="title">
-     <span>
-      {{ data.nodeName }}
-     </span> 
+      <span>
+        {{ data.nodeName }}
+      </span>
       <span style="float: right;font-size: 14px;color:#797979;
       font-weight: 500;">
         {{ data.nodeContent?.data?.branchName }}

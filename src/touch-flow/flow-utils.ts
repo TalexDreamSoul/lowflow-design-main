@@ -288,8 +288,6 @@ export function commonValidate(rule: any, value: any, callback: any) {
 export function validateAES(data: CustomSearchDTO, xor: boolean = false) {
   const { customAttr, customEvent, eventSequence } = data;
 
-  console.error("validate aes", data)
-
   if (!validateObjConditions(customAttr)) {
     if (!xor) return false;
   } else if (xor) return true;
@@ -373,4 +371,19 @@ export function debounceFunc(func: Function, time: number = 1000) {
       func.apply(this, args)
     }, time)
   }
+}
+
+/**
+ * 校验节点是否完善
+ */
+export function validateNodes(node: any) {
+  const nodesValidation = {
+    'subDiversion': () => {
+
+    }
+  }
+
+  return (() => {
+
+  })()
 }

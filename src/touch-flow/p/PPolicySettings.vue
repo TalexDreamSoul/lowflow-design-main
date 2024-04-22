@@ -34,15 +34,15 @@ function openCondition() {
 
 const { pushTemplate, delayedActionStr } = useDisplayAttr()
 
-const visible= useDel().visible
-const del  = useDel().del
+const del = useDel().del
 </script>
 
 <template>
   <BaseNode :params="params" :disabled="readonly || haveDiverse"
     :display="data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate">
-    <p class="title"> 
+    <p class="title">
       <!-- 选择策略器 -->
+<<<<<<< Updated upstream
      <span>
       {{ data.nodeName }}
      </span>
@@ -63,6 +63,26 @@ const del  = useDel().del
      </el-button>
    </template>
    </el-popconfirm> 
+=======
+      <span>
+        {{ data.nodeName }}
+      </span>
+      <el-popover trigger="hover" placement="top" :width="160">
+        <p>是否确认删除？</p>
+        <div style="text-align: right; margin: 0">
+          <el-button size="small" text>取消</el-button>
+          <el-button size="small" type="primary" @click="del(__data)">确认</el-button>
+        </div>
+        <template #reference>
+          <el-button v-if="!readonly" text type="primary">
+            <el-icon>
+              <Delete />
+            </el-icon>
+            删除
+          </el-button>
+        </template>
+      </el-popover>
+>>>>>>> Stashed changes
     </p>
     <div class="PBlock-Content theme" @click="openCondition">
       <div v-if="data.diversionType !== 'safeguard'" style="--theme-color: #90a0b8" class="PBlock-Section">
