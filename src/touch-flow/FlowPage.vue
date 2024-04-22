@@ -275,7 +275,7 @@ async function submitReview(status: string = "approvalPending") {
     ...transformTarget(flowOptions.basic.target),
   };
 
-  if ([..._flowOptions.nodes].filter(node => validateNode(node)).length) {
+  if ([..._flowOptions.nodes].filter(node => !validateNode(node)).length) {
     loading.value = false;
 
     title.value = "提交失败";

@@ -1,6 +1,5 @@
 <script setup lang="ts" name="StrategistTargetAttr">
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
-import DiversionBehavior from "../p/behavior/diversion/DiversionBehavior.vue";
 import TargetContent from "../header/TargetContent.vue";
 import { ref } from "vue";
 
@@ -12,12 +11,7 @@ const props = defineProps<{
 const dict = ref<any>();
 
 !(async () => {
-  const res = await getDictFilterTree(
-    {
-      pageNum: "1",
-      pageSize: "999"
-    }
-  );
+  const res: any = await getDictFilterTree();
 
   if (res.data) {
     dict.value = res.data;
@@ -73,11 +67,11 @@ if (!props.sizeForm?.targetRuleContent?.targetDelayed) {
       <el-switch :disabled="readonly" v-model="sizeForm.containTarget" />
     </div>
 
-    <div class="MainBlock-Content" v-if="sizeForm.containTarget">
+    <div class="MainBlock-Content" v-if="dict && sizeForm.containTarget">
       <div class="MainBlock-ContentItem bg-transparent">
         <el-text>该策略器的延时以及动作执行完毕后，在</el-text>&nbsp;
-        <el-input-number :disabled="readonly" v-model="sizeForm.targetRuleContent.targetDelayed.delayedTime" :min="0"  controls-position="right" 
-          style="width: 100px" />&nbsp;
+        <el-input-number :disabled="readonly" v-model="sizeForm.targetRuleContent.targetDelayed.delayedTime" :min="0"
+          controls-position="right" style="width: 100px" />&nbsp;
         <el-select :disabled="readonly" v-model="sizeForm.targetRuleContent.targetDelayed.delayedUnit"
           style="width: 150px">
           <el-option value="minute" label="分钟">分钟</el-option>
