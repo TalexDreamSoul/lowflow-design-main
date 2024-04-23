@@ -222,9 +222,12 @@ import API from "~/api/approve";
 import { pageActivityList } from "~/api/activity";
 import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
-import { FormInstance } from "element-plus";
+import { FormInstance, dayjs } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
 import Maskgroup from "~/assets/icon/Maskgroup.png";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 enum DrawerType {
   ApproveDatail = "approve-datail",
@@ -291,8 +294,8 @@ const getData = async (params: any) => {
     let activityBeginTime;
     let activityEndTime;
     if (time) {
-      activityBeginTime = time[0];
-      activityEndTime = time[1];
+      activityBeginTime = dayjs(time[0]).format('YYYY-MM-DD');
+      activityEndTime = dayjs(time[1]).format('YYYY-MM-DD');
     }
     let res: any = await pageActivityList({
       activityBeginTime,
@@ -312,7 +315,7 @@ const getData = async (params: any) => {
 
 const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Detail) {
-    window.open(values.diffuseUrl, "_blank");
+    router.push(`/activityCenter/details/${values.activityId}`);
     return;
   } else if (type === DrawerType.ApproveDatail) {
     let res: any = await API.listApproveRecord({

@@ -226,7 +226,6 @@ const getData = async (params: any) => {
 };
 
 const handleModal = async (type: typeof drawerOptions.type, values?: any) => {
-  console.log(type);
   drawerOptions.id = values?.id || -1;
   drawerOptions.type = type;
 
