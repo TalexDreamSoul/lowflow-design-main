@@ -253,7 +253,7 @@ const handleUnitChange = (newVal: string) => {
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
       <el-form-item label="选择策略器名称：">
-        <el-input :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" maxlength="50" />
+        <el-input show-word-limit :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" maxlength="50" />
       </el-form-item>
       <el-form-item label="分流类型：">
         <!-- (_edit && sizeForm.nodeId) || -->
@@ -284,12 +284,11 @@ const handleUnitChange = (newVal: string) => {
         <div class="flex-column titleCondition">
           <el-text>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</el-text>
           <el-input-number :disabled="readonly || sizeForm.$index > 1" :min="1"
-      :max="sizeForm.eventDelayed!.delayedUnit=='day'?30:(sizeForm.eventDelayed!.delayedUnit=='hour'?720:43200)" 
-      v-model="sizeForm.eventDelayed!.delayedTime" controls-position="right" type="number"
+            :max="sizeForm.eventDelayed!.delayedUnit=='day'?30:(sizeForm.eventDelayed!.delayedUnit=='hour'?720:43200)"
+            v-model="sizeForm.eventDelayed!.delayedTime" controls-position="right" type="number"
             style="width: 100px" />&nbsp;
           <el-select :disabled="readonly || sizeForm.$index > 1" v-model="sizeForm.eventDelayed!.delayedUnit"
-            @change="handleUnitChange"
-            style="width: 100px">
+            @change="handleUnitChange" style="width: 100px">
             <el-option value="minute" label="分钟">分钟</el-option>
             <el-option value="hour" label="小时">小时</el-option>
             <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
