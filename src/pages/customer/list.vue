@@ -109,7 +109,7 @@
         background
         layout="prev, pager, next, jumper"
         :total="total"
-        :page-sizes="[10]"
+        :page-size="10"
         @current-change="currentChange"
       />
     </div>
@@ -398,7 +398,11 @@ const pageNum = ref(1);
 watch(
   pageParams,
   debounce(() => {
-    getData({ ...pageParams, pageNum: 1 });
+    if (filtering.logicalChar) {
+      getData({ ...pageParams, pageNum: 1 }, filtering);
+    } else {
+      getData({ ...pageParams, pageNum: 1 });
+    }
   }, 200)
 );
 
@@ -408,18 +412,23 @@ onMounted(() => {
 
 const currentChange = (value: number) => {
   pageNum.value = value;
-  getData({ ...pageParams, pageNum: value });
+  if (filtering.logicalChar) {
+    getData({ ...pageParams, pageNum: value }, filtering);
+  } else {
+    getData({ ...pageParams, pageNum: value });
+  }
 };
 
-const getData = async (params: any, filtering?: any) => {
+const getData = async (params: any, filteringValue?: any) => {
   try {
     let res = await API.qryCustomList({
       pageNum: 1,
-      ...filtering,
+      ...filteringValue,
       ...params,
       pageSize: 10,
     });
     if (checkStringEqual(res?.code, 0)) {
+      Object.assign(filtering, filteringValue);
       total.value = res?.data?.total;
       tableData.value = res?.data?.records;
     }

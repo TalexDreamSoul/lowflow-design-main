@@ -224,7 +224,6 @@ const handleSelect = (selection: any, row: any) => {
 };
 
 const getSelectData = async (params: any) => {
-  console.log(`output->type`,props.drawerType)
   let res = await API.blacklistContainCustoms({
     id: props.formValues.id,
     ...params,

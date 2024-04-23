@@ -97,6 +97,11 @@ export const setUpdateMaterialStatus = (data: any) => {
   return request.post({ url: "/api/updateMaterialStatus.do", data });
 };
 
+// 字典查询
+export const queryDict = (dictKey: string):Promise<any>=> {
+  return request.get({ url: `/api/queryDict.do?dictKey=${dictKey}` });
+}
+
 export const addMaterial = (data: any) => {
   return request.post({
     url: "/api/addMaterial.do",

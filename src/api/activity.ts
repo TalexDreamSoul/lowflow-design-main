@@ -27,3 +27,47 @@ export const listActivityTemplate = ():Promise<any>=> {
 export const queryDict = ():Promise<any>=> {
   return request.get({ url: "/api/queryDict.do",params:{ dictKey: 'frontEndDomain'} });
 }
+
+export const getPlayData = (url: string, data: any) => {
+  return request.post({ url: `/api/${url}.do`, data });
+}
+
+export const getBrowseData = (data: any) => {
+  return request.post({ url: `/api/pageBrowseData.do`, data });
+}
+
+export const getClickButtonData = (data: any) => {
+  return request.post({ url: `/api/pageClickButtonData.do`, data });
+}
+
+export const queryActivityForm = (data: any) => {
+  return request.post({ url: `/api/queryActivityForm.do`, data });
+}
+
+export const getFormCustomData = (data: any) => {
+  return request.post({ url: `/api/pageFormCustomData.do`, data });
+}
+
+export const formConversionData = (data: any) => {
+  return request.post({ url: `/api/formConversionData.do`, data });
+}
+
+export const listActivityPlay = (data: any) => {
+  return request.post({ url: `/api/listActivityPlay.do`, data });
+}
+
+export const queryLotteryJackpot = (data: any) => {
+  return request.post({ url: `/api/queryLotteryJackpot.do`, data });
+}
+
+export const exportBrowseData = (data: any) => {
+  return request.post({ url: `/api/exportBrowseData.do`, data, responseType: 'blob', });
+}
+
+export const exportClickButtonData = (data: any) => {
+  return request.post({ url: `/api/exportClickButtonData.do`, data, responseType: 'blob', });
+}
+
+export const exportFormCustomData = (data: any) => {
+  return request.post({ url: `/api/exportFormCustomData.do`, data, responseType: 'blob', });
+}

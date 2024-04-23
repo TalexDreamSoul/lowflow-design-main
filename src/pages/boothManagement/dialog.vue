@@ -145,7 +145,6 @@ const getData = async (params: any) => {
 
 const onSubmit = async () => {
   if(!skipActivityId.value) {
-    console.log(props);
     ElMessage.error("请选择活动");
     return;
   }

@@ -226,7 +226,7 @@ const openUrl = (id: string, type: string) => {
 const detailsData = async (row: any) => {
 
   console.log(`output->row`,row)
-  router.push(`/activityCenter/details/${row.id}`);
+  router.push(`/activityCenter/details/${row.activityId}`);
 };
 let pageParams = reactive({
   pageNum: 1,
