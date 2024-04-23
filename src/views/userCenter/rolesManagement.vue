@@ -199,7 +199,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       </el-form-item>
 
       <el-form-item prop="describe" label="角色说明">
-        <el-input v-model="formValues.describe" style="width:300px" placeholder="请输入" clearable />
+        <el-input v-model="formValues.describe" style="width:300px" placeholder="请输入" clearable maxlength="140"/>
       </el-form-item>
       <el-form-item :rules="[
     { required: true, message: '请选择权限' },
