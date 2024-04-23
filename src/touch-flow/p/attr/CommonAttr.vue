@@ -22,6 +22,21 @@ defineExpose({
 
   }
 })
+const handleUnitChange = (newVal: string) => {
+  let maxValue = 0;
+  // 根据选择的单位更新最大值和输入框的最大限制
+  if (newVal === "day") {
+    maxValue = 30;
+  } else if (newVal === "hour") {
+    maxValue = 720;
+  } else if (newVal === "minute") {
+    maxValue = 43200;
+  }
+  // 如果当前输入值超过最大值，则将输入值设为最大值
+  if (props.sizeForm.nodeDelayed.delayedTime > maxValue) {
+    props.sizeForm.nodeDelayed.delayedTime = maxValue;
+  }
+};
 </script>
 
 <template>
@@ -31,9 +46,11 @@ defineExpose({
       <el-option :value="true" label="延迟">延迟</el-option>
       <el-option :value="false" label="立即">立即</el-option> </el-select>&nbsp;
     <template v-if="sizeForm.nodeDelayed.isDelayed">
-      <el-input-number :disabled="readonly" :min="1" v-model="sizeForm.nodeDelayed.delayedTime" type="number"
+      <el-input-number :disabled="readonly" :min="1"
+      :max="sizeForm.nodeDelayed.delayedUnit=='day'?30:(sizeForm.nodeDelayed.delayedUnit=='hour'?720:43200)" 
+      v-model="sizeForm.nodeDelayed.delayedTime" type="number"
         controls-position="right" style="width: 100px" />&nbsp;
-      <el-select :disabled="readonly" placeholder="请选择" v-model="sizeForm.nodeDelayed.delayedUnit" style="width: 100px">
+      <el-select :disabled="readonly" placeholder="请选择" @change="handleUnitChange" v-model="sizeForm.nodeDelayed.delayedUnit" style="width: 100px">
         <el-option value="minute" label="分钟">分钟</el-option>
         <el-option value="hour" label="小时">小时</el-option>
         <el-option value="day" label="天">天</el-option> </el-select>&nbsp;

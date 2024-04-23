@@ -21,7 +21,7 @@
             v-model="pageParams.eventName"
             placeholder="事件名称"
             clearable
-            :suffix-icon="Search"
+            maxlength="50"  :suffix-icon="Search"
           />
         </el-form-item>
       </el-form>
@@ -167,7 +167,7 @@
               v-model="formValues.eventName"
               placeholder="请输入"
               clearable
-            />
+              maxlength="50" />
           </el-form-item>
           <el-form-item
             :rules="[{ required: true, message: '请选择事件类别' }]"
@@ -327,7 +327,7 @@
           <el-input
             v-model="attrFormValues.fieldName"
             placeholder="请输入"
-            clearable
+            maxlength="50"    clearable
           />
         </el-form-item>
         <el-form-item

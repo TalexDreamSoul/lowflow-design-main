@@ -28,7 +28,7 @@
           label="黑名单名称"
           prop="blacklistName"
         >
-          <el-input v-model="formValues.blacklistName" placeholder="请输入" clearable />
+          <el-input v-model="formValues.blacklistName" placeholder="请输入" clearable maxlength="50"/>
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择黑名单类型' }]"

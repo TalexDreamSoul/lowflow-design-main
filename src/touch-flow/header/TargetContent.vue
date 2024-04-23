@@ -1,11 +1,11 @@
 <script setup lang="ts" name="TargetContent">
-import { computed } from "vue";
 import { CirclePlusFilled, Delete } from "@element-plus/icons-vue";
 import { num2character } from "~/utils/common";
 import AttrRender from "../page/AttrRender.vue";
 import Operator from "../page/Operator.vue";
 import Trigger from "../page/Trigger.vue";
 import LogicalLine from "../p/behavior/LogicalLine.vue";
+import { ref, watch, nextTick, computed } from "vue";
 import { DictTreeType, ITargetContent } from "../flow-types";
 
 interface ITargentContentProp {
@@ -100,6 +100,22 @@ function handleSelectChanged(val: string) {
 
   conditions.value.eventName = targetEvent.eventName;
 }
+
+const handleUnitChange = (newVal: string) => {
+  let maxValue = 0;
+  // 根据选择的单位更新最大值和输入框的最大限制
+  if (newVal === "day") {
+    maxValue = 30;
+  } else if (newVal === "hour") {
+    maxValue = 720;
+  } else if (newVal === "minute") {
+    maxValue = 43200;
+  }
+  // 如果当前输入值超过最大值，则将输入值设为最大值
+  if (props.target.targetDelayed.delayedTime > maxValue) {
+    props.target.targetDelayed.delayedTime = maxValue;
+  }
+};
 </script>
 
 <template>
@@ -117,9 +133,12 @@ function handleSelectChanged(val: string) {
     <div class="filter-wrap">
       <div v-if="index !== undefined" class="garyblock">
         <el-text>客户进入流程后，在</el-text>&nbsp;
-        <el-input-number :min="1" :disabled="readonly" v-model="target.targetDelayed.delayedTime"
-        controls-position="right"  style="width: 100px" />&nbsp;
-        <el-select :disabled="readonly" v-model="target.targetDelayed.delayedUnit" style="width: 150px">
+        <!-- 输入框 -->
+        <el-input-number :min="1" 
+        :max="target.targetDelayed?.delayedUnit=='day'?30:(target.targetDelayed?.delayedUnit=='hour'?720:43200)" 
+        :disabled="readonly" v-model="target.targetDelayed.delayedTime" controls-position="right" style="width: 100px" ref="delayedTimeInput"></el-input-number>&nbsp;
+        <!-- 选择框 -->
+        <el-select :disabled="readonly" v-model="target.targetDelayed.delayedUnit" style="width: 150px" @change="handleUnitChange">
           <el-option value="minute" label="分钟">分钟</el-option>
           <el-option value="hour" label="小时">小时</el-option>
           <el-option value="day" label="天">天</el-option>
@@ -127,29 +146,23 @@ function handleSelectChanged(val: string) {
         <el-text>内完成以下转化事件，则认为完成目标</el-text>
       </div>
       <div>
-        <el-select @change="handleSelectChanged" :disabled="readonly" v-model="conditions.eventCode"
-          style="width: 240px" placeholder="请选择">
+        <el-select @change="handleSelectChanged" :disabled="readonly" v-model="conditions.eventCode" style="width: 240px" placeholder="请选择">
           <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
             <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode!" />
           </el-option-group> </el-select>&nbsp;
-        <el-text v-if="conditions.eventCode" :disabled="readonly" type="primary" style="cursor: pointer"
-          @click="addCondition">
+        <el-text v-if="conditions.eventCode" :disabled="readonly" type="primary" style="cursor: pointer" @click="addCondition">
           <el-icon size="14">
             <CirclePlusFilled />
           </el-icon>
           筛选条件
         </el-text>
       </div>
-      <LogicalLine v-if="attrs && conditions.eventCode" :display="conditions.conditions.conditions.length < 2"
-        title="并且满足" v-model="conditions.conditions.logicalChar">
+      <LogicalLine v-if="attrs && conditions.eventCode" :display="conditions.conditions.conditions.length < 2" title="并且满足" v-model="conditions.conditions.logicalChar">
         <ul :label-width="0" :inline="true">
           <li v-for="(item, index) in conditions.conditions.conditions" :key="index">
-            <trigger :conditions="conditions.conditions.conditions" :item="item" :readonly="readonly"
-              v-model="item.attr.field" :attrs="attrs" />
-            <operator :item="item.attr" :attrs="attrs" :readonly="readonly" ref="operatorRef"
-              v-model="item.attr.fieldOp" />
-            <AttrRender :obj="item" :conditions="conditions.conditions.conditions" :readonly="readonly" :item="item.attr"
-              :attrs="attrs" />
+            <trigger :conditions="conditions.conditions.conditions" :item="item" :readonly="readonly" v-model="item.attr.field" :attrs="attrs" />
+            <operator :item="item.attr" :attrs="attrs" :readonly="readonly" ref="operatorRef" v-model="item.attr.fieldOp" />
+            <AttrRender :obj="item" :conditions="conditions.conditions.conditions" :readonly="readonly" :item="item.attr" :attrs="attrs" />
             <el-text type="primary" style="cursor: pointer" @click="handleDel(index)">
               <el-icon size="14">
                 <Delete :disabled="readonly" />

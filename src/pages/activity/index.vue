@@ -26,7 +26,8 @@
         <el-table-column prop="activityName" label="H5活动名称" width="220" show-overflow-tooltip />
         <el-table-column label="状态">
           <template #default="scope">
-            <span>{{ activityStatus[scope.row.activityStatus] }}</span>
+            <el-tag :type="activityStatus[scope.row.activityStatus].type">{{ activityStatus[scope.row.activityStatus].label }}</el-tag>
+            <span></span>
           </template>
         </el-table-column>
         <el-table-column label="活动有效期" width="220">
@@ -207,12 +208,27 @@ const activities: ActivityTypes = {
   "6": "表单组件",
 };
 
-const activityStatus: ActivityTypes = {
-  "1": "草稿",
-  "2": "待审批",
-  "3": "审核不通过",
-  "4": "运行中",
-  "5": "已结束",
+const activityStatus = {
+  1: {
+    label: "草稿",
+    type: "info",
+  },
+  2: {
+    label: "待审批",
+    type: "success",
+  },
+  3: {
+    label: "审核不通过",
+    type: "danger",
+  },
+  4: {
+    label: "运行中",
+    type: "primary",
+  },
+  5: {
+    label: "已结束",
+    type: "info",
+  },
 };
 
 const handleCurrentChange = (e: any) => {

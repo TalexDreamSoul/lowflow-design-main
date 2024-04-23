@@ -134,7 +134,7 @@ function handleChange(val: any) {
             </el-select>
           </el-form-item>
           <el-form-item label="标签名称">
-            <el-input v-model="model.labelName" />
+            <el-input v-model="model.labelName" maxlength="50"/>
           </el-form-item>
 
           <el-form-item label="仅使用当日数据">
@@ -149,7 +149,7 @@ function handleChange(val: any) {
           </el-form-item>
           <el-form-item v-if="model.labelValueType === 'text'" v-for="(item, index) in model.labelValue.data" :label="`标签值${index + 1}`">
             <div style="display: flex;width: 100%;">
-              <el-input style="width: 100%" v-model="model.labelValue.data[index]" />
+              <el-input style="width: 100%" v-model="model.labelValue.data[index]"  maxlength="50"/>
               <el-button @click="handleDelete(index)" plain text v-if="index" style="margin-left: 10px">
                 <el-icon>
                   <Delete />

@@ -12,7 +12,7 @@
           <el-date-picker v-model="pageParams.time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />
         </el-form-item>
         <el-form-item>
-          <el-input v-model="pageParams.touchName" placeholder="策略流程名称" clearable :suffix-icon="Search" />
+          <el-input v-model="pageParams.touchName" placeholder="策略流程名称" clearable :suffix-icon="Search" maxlength="50"/>
         </el-form-item>
       </el-form>
     </div>

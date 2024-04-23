@@ -102,6 +102,14 @@ function saveData() {
     return false;
   }
 
+  if (sizeForm?.targetRuleContent?.targetDelayed?.delayedTime && !validateCommonDays(sizeForm?.targetRuleContent?.targetDelayed?.delayedTime, sizeForm?.targetRuleContent?.targetDelayed?.delayedUnit)) {
+    ElMessage.warning({
+      message: "目标设置中延时设置折算时间不可超过30天！",
+    });
+
+    return false;
+  }
+
   if (!touchSettingsRef.value.updateData()) return false
 
   console.log("> update", sizeForm, props);
@@ -123,7 +131,7 @@ regSaveFunc(saveData);
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
       <el-form-item label="流量策略器名称：">
-        <el-input v-model="sizeForm.nodeName" placeholder="填写名称" />
+        <el-input v-model="sizeForm.nodeName" placeholder="填写名称" maxlength="50"/>
       </el-form-item>
 
       <CommonAttr ref="touchSettingsRef" :size-form="sizeForm" />

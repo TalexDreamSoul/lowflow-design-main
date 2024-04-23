@@ -49,7 +49,7 @@
             placeholder="配置名称"
             clearable
             :suffix-icon="Search"
-          />
+            maxlength="50" />
         </el-form-item>
       </el-form>
       <el-button
@@ -142,7 +142,7 @@
           :disabled="modalType === DrawerType.Detail"
         >
           <el-form-item label="配置名称" :rules="inputRules" prop="configName">
-            <el-input v-model="formValues.configName" />
+            <el-input v-model="formValues.configName" maxlength="50"/>
           </el-form-item>
           <el-form-item label="配置说明" prop="configDesc">
             <el-input
@@ -272,7 +272,7 @@
                 :rules="inputRules"
                 prop="boothName"
               >
-                <el-input v-model="formValues.boothName" />
+                <el-input v-model="formValues.boothName" maxlength="50"/>
               </el-form-item>
               <el-form-item
                 :label="configTypeMap[formValues.configType] + '图片'"

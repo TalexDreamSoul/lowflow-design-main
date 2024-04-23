@@ -71,7 +71,7 @@ defineExpose({ saveData });
 <template>
   <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input :disabled="readonly" v-model="data.name"></el-input>
+      <el-input :disabled="readonly" v-model="data.name" maxlength="50"></el-input>
     </el-form-item>
     <el-form-item label="场景码">
       <el-input :disabled="readonly" v-model="data.sceneCode" placeholder="请输入"></el-input>

@@ -62,7 +62,7 @@ defineExpose({
           <el-input
             :show-word-limit="true"
             v-model="basic.touchName"
-            maxlength="18"
+            maxlength="50"
             :disabled="readonly"
             placeholder="策略流程名称"
             :style="{ width: '400px', height: '40px' }"

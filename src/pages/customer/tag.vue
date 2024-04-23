@@ -31,7 +31,7 @@
             placeholder="标签名称"
             clearable
             :suffix-icon="Search"
-          />
+            maxlength="50" />
         </el-form-item>
       </el-form>
       <el-button
@@ -190,7 +190,7 @@
             v-model="formValues.labelName"
             placeholder="请输入"
             clearable
-          />
+            maxlength="50" />
         </el-form-item>
 
         <el-form-item label="仅使用当日数据" prop="currentDayEffective">

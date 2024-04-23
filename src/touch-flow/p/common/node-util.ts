@@ -203,16 +203,12 @@ function useSaveFunc(innerData: any, refNodeData: any, pushTemplate: any, callba
 function genDel($data: any) {
 
   return function useDel() {
-    const visible = ref(false)
     function del(p: any) {
       $data.$del(p);
-
-      visible.value = false;
     }
 
     return {
-      del,
-      visible
+      del
     }
   }
 }

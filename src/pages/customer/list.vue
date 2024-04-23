@@ -140,7 +140,7 @@
           label="客户名称"
           prop="name"
         >
-          <el-input v-model="formValues.name" placeholder="请输入" clearable />
+          <el-input v-model="formValues.name" placeholder="请输入" clearable maxlength="50"/>
         </el-form-item>
         <el-form-item
           :rules="

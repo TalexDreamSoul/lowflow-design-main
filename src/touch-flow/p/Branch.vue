@@ -7,7 +7,7 @@ import { MarketingTouchEditDTO } from './behavior/marketing';
 import { genNodeParams } from './common/node-util';
 
 const params = genNodeParams()
-const { readonly, $data, data, __data, openDrawer } = params
+const { readonly, $data, data, __data, openDrawer, useDel } = params
 
 function openCondition() {
   openDrawer({
@@ -15,29 +15,23 @@ function openCondition() {
     comp: DeliverySettingsAttr
   })
 }
-const visible = ref(false)
-function del(p: MarketingTouchEditDTO) {
-  console.log("del", p, data, $data)
-  $data.$del(p);
-
-  visible.value = false;
-}
+const del = useDel().del
 </script>
 
 <template>
   <BaseNode :params="params" :disabled="readonly" :display="true">
     <p class="title">
-    <span>
-      {{ data.nodeName }}
-    </span>
-      <el-popover :visible="visible" placement="top" :width="160">
+      <span>
+        {{ data.nodeName }}
+      </span>
+      <el-popover trigger="hover" placement="top" :width="160">
         <p>是否确认删除？</p>
         <div style="text-align: right; margin: 0">
-          <el-button size="small" text @click="visible = false">取消</el-button>
+          <el-button size="small" text>取消</el-button>
           <el-button size="small" type="primary" @click="del(__data)">确认</el-button>
         </div>
         <template #reference>
-          <el-button v-if="!readonly" @click="visible = true" text type="primary">
+          <el-button v-if="!readonly" text type="primary">
             <el-icon>
               <Delete />
             </el-icon>
