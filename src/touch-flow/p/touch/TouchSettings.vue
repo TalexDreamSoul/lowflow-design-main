@@ -221,6 +221,8 @@ function updateData() {
 
   Object.assign(props.touch, touchOptions);
 
+  delete props.touch.material.templates
+
   return true
 }
 
