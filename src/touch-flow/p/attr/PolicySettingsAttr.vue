@@ -232,6 +232,21 @@ function saveData() {
 type IRegSaveFunc = (regFunc: () => boolean) => void;
 const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
+const handleUnitChange = (newVal: string) => {
+  let maxValue = 0;
+  // 根据选择的单位更新最大值和输入框的最大限制
+  if (newVal === "day") {
+    maxValue = 30;
+  } else if (newVal === "hour") {
+    maxValue = 720;
+  } else if (newVal === "minute") {
+    maxValue = 43200;
+  }
+  // 如果当前输入值超过最大值，则将输入值设为最大值
+  if (sizeForm.eventDelayed!.delayedTime > maxValue) {
+   sizeForm.eventDelayed!.delayedTime = maxValue;
+  }
+};
 </script>
 
 <template>
@@ -268,10 +283,12 @@ regSaveFunc(saveData);
         :class="{ animation: true, display: sizeForm.diversionType === 'event' }">
         <div class="flex-column titleCondition">
           <el-text>进入该策略器的客户需要满足以下条件：在&nbsp;&nbsp;</el-text>
-          <el-input-number :disabled="!readonly || sizeForm.$index > 1" :min="1"
-            v-model="sizeForm.eventDelayed!.delayedTime" controls-position="right" type="number"
+          <el-input-number :disabled="readonly || sizeForm.$index > 1" :min="1"
+      :max="sizeForm.eventDelayed!.delayedUnit=='day'?30:(sizeForm.eventDelayed!.delayedUnit=='hour'?720:43200)" 
+      v-model="sizeForm.eventDelayed!.delayedTime" controls-position="right" type="number"
             style="width: 100px" />&nbsp;
           <el-select :disabled="readonly || sizeForm.$index > 1" v-model="sizeForm.eventDelayed!.delayedUnit"
+            @change="handleUnitChange"
             style="width: 100px">
             <el-option value="minute" label="分钟">分钟</el-option>
             <el-option value="hour" label="小时">小时</el-option>

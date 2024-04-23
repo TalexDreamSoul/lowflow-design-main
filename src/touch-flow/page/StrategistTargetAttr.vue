@@ -57,6 +57,21 @@ if (!props.sizeForm?.targetRuleContent?.targetDelayed) {
     },
   };
 }
+const handleUnitChange = (newVal: string) => {
+  let maxValue = 0;
+  // 根据选择的单位更新最大值和输入框的最大限制
+  if (newVal === "day") {
+    maxValue = 30;
+  } else if (newVal === "hour") {
+    maxValue = 720;
+  } else if (newVal === "minute") {
+    maxValue = 43200;
+  }
+  // 如果当前输入值超过最大值，则将输入值设为最大值
+  if (props.sizeForm.targetRuleContent.targetDelayed.delayedTime > maxValue) {
+    props.sizeForm.targetRuleContent.targetDelayed.delayedTime = maxValue;
+  }
+};
 </script>
 
 <template>
@@ -71,9 +86,10 @@ if (!props.sizeForm?.targetRuleContent?.targetDelayed) {
       <div class="MainBlock-ContentItem bg-transparent">
         <el-text>该策略器的延时以及动作执行完毕后，在</el-text>&nbsp;
         <el-input-number :disabled="readonly" v-model="sizeForm.targetRuleContent.targetDelayed.delayedTime" :min="0"
+        :max="sizeForm.targetRuleContent.targetDelayed.delayedUnit=='day'?30:(sizeForm.targetRuleContent.targetDelayed.delayedUnit=='hour'?720:43200)" 
           controls-position="right" style="width: 100px" />&nbsp;
         <el-select :disabled="readonly" v-model="sizeForm.targetRuleContent.targetDelayed.delayedUnit"
-          style="width: 150px">
+        @change="handleUnitChange"   style="width: 150px">
           <el-option value="minute" label="分钟">分钟</el-option>
           <el-option value="hour" label="小时">小时</el-option>
           <el-option value="day" label="天">天</el-option> </el-select>&nbsp;
