@@ -6,7 +6,7 @@ import FilterGroup from "./condition/FilterGroup.vue";
 import BehaviorGroupPlus from "../behavior/BehaviorGroupPlus.vue";
 import { markRaw, computed } from "vue";
 import CommonAttr from "./CommonAttr.vue";
-import { validateCommonDays } from "~/touch-flow/flow-utils";
+import { validateAES, validateCommonDays } from "~/touch-flow/flow-utils";
 import { MarketingTouchNodeEditDTO } from "~/touch-flow/touch-total";
 import StrategistTargetAttr from "~/touch-flow/page/StrategistTargetAttr.vue";
 
@@ -163,6 +163,14 @@ function saveData() {
   if (_gotNode && _gotNode?.nodeId !== sizeForm.nodeId) {
     ElMessage.warning({
       message: "节点名称重复",
+    });
+
+    return false;
+  }
+
+  if (!validateAES(sizeForm.customRuleContent!)) {
+    ElMessage.warning({
+      message: "客户属性，客户行为，行为序列满足中不能有选项为空！",
     });
 
     return false;
