@@ -29,9 +29,7 @@
 
         <template #empty>
           <el-empty :image="Maskgroup" :image-size="76">
-            <template #description>
-              暂无数据
-            </template>
+            <template #description> 暂无数据 </template>
           </el-empty>
         </template>
       </el-table>
@@ -59,7 +57,11 @@
         :disabled="checkStringEqual(modalType, DrawerType.Detail)"
       >
         <el-form-item label="审核流程名称" prop="configName">
-          <el-input v-model="formValues.configName" :disabled="true" maxlength="50"/>
+          <el-input
+            v-model="formValues.configName"
+            :disabled="true"
+            maxlength="50"
+          />
         </el-form-item>
         <el-form-item label="审核层级">
           <el-input :disabled="true" :model-value="formValues.auditor.length" />
@@ -68,10 +70,16 @@
           v-for="(domain, index) in formValues.auditor"
           :key="index"
           :prop="'auditor.' + index + '.auditorId'"
-          :rules="{
-            required: true,
-            message: '请选择审核人',
-          }"
+          :rules="[
+            {
+              required: true,
+              message: '请选择审核人',
+            },
+            {
+              asyncValidator: validatorFn,
+              trigger: 'change',
+            },
+          ]"
         >
           <template #label>
             {{ index + 1 }}级审核人
@@ -177,6 +185,18 @@ onMounted(() => {
 const currentChange = (value: number) => {
   pageNum.value = value;
   getData({ ...pageParams, pageNum: value });
+};
+
+const validatorFn = (_: any, value: any) => {
+  return new Promise<void>((resolve, reject) => {
+    let { auditor } = formValues;
+    let ids = [...new Set(auditor.map((v: any) => v.auditorId))];
+    if (auditor?.length !== ids.length) {
+      reject("审核人不可以重复添加!");
+    } else {
+      resolve();
+    }
+  });
 };
 
 const addDomain = () => {
