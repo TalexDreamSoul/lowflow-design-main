@@ -255,7 +255,7 @@ function assignData(val: any) {
     status: res.status,
   });
 
-  setTimeout(() => (showComp.value = true), 10);
+  setTimeout(() => (showComp.value = true), 0);
 }
 
 const platformOptions: Record<
