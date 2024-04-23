@@ -183,7 +183,7 @@ function saveData() {
     _.nodeId = _preId
     _.preNodeId = props.p.nodeId
 
-   
+
     if (props.p.children) {
       props.p.children.push(_);
     } else props.p.children = [_]
@@ -219,7 +219,7 @@ const deleteBranch = (index: number) => {
         客户将流量分配比例随机进入任一分支，流量总和为100%。如果同一个客户多次进入该流程，每次都默认分配到同一个组内。
       </div>
       <el-form-item label="分流器名称：">
-        <el-input v-model="sizeForm.nodeName" placeholder="填写名称" style="width: 400px"  maxlength="50"/>
+        <el-input show-word-limit v-model="sizeForm.nodeName" placeholder="填写名称" style="width: 400px" maxlength="50" />
       </el-form-item>
 
       <div class="blockbg">
@@ -235,7 +235,7 @@ const deleteBranch = (index: number) => {
           <el-row :gutter="20" style="    align-items: center;
           margin-top: 16px;" v-for="(branch, index) in sizeForm.diversionRuleContent.data" :key="index">
             <el-col :span="12">
-              <el-input placeholder="请输入分支名称" v-model="branch.branchName" maxlength="50"/>
+              <el-input show-word-limit placeholder="请输入分支名称" v-model="branch.branchName" maxlength="50" />
             </el-col>
             <el-col :span="7">
               <el-input-number :min="0" :max="100 - +totalBranchRatio + branch.branchRatio" placeholder="百分比"
