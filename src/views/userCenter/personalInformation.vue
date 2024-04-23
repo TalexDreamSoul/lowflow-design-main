@@ -103,10 +103,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       <el-form ref="formRef" :hide-required-asterisk="true" label-position="top" class="form" style="margin:32px" :model="formValues">
         <el-form-item :rules="[
         { required: true, message: '请输入帐号名称' },
-        {
-          pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
-          message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
-        },
+       
       ]" label="帐号名称" prop="accountName">
           <el-input v-model="formValues.accountName" style="width:300px" placeholder="请输入" clearable maxlength="50"/>
         </el-form-item>
