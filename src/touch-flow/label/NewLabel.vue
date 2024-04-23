@@ -101,15 +101,18 @@ function handleChange(val: any) {
     <div class="NewLabel-Main">
       <el-text>
         符合该策略器条件的用户打上
-        <el-select :disabled="readonly" @change="p.labelContent.labelValue = ''" v-model="p.labelContent.labelName" placeholder="标签名称" style="width: 150px">
+        <el-select :disabled="readonly" @change="p.labelContent.labelValue = ''" v-model="p.labelContent.labelName"
+          placeholder="标签名称" style="width: 150px">
           <el-option v-for="item in labelList" :key="item.labelName" :label="item.labelName" :value="item.labelName" />
         </el-select>
         &nbsp;
         <template v-if="selectItem?.labelValueType">
-          <el-select collapse-tags :disabled="readonly" v-if="selectItem.labelValueType === 'text'" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px" multiple>
+          <el-select collapse-tags :disabled="readonly" v-if="selectItem.labelValueType === 'text'"
+            v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px" multiple>
             <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
           </el-select>
-          <el-select :disabled="readonly" v-else="" v-model="p.labelContent.labelValue" placeholder="标签值" style="width: 150px">
+          <el-select :disabled="readonly" v-else="" v-model="p.labelContent.labelValue" placeholder="标签值"
+            style="width: 150px">
             <!-- <el-option /> -->
             <el-option v-for="item in selectItem.labelValue.data" :key="item.id" :label="item" :value="item" />
           </el-select>
@@ -134,7 +137,7 @@ function handleChange(val: any) {
             </el-select>
           </el-form-item>
           <el-form-item label="标签名称">
-            <el-input v-model="model.labelName" maxlength="50"/>
+            <el-input show-word-limit v-model="model.labelName" maxlength="50" />
           </el-form-item>
 
           <el-form-item label="仅使用当日数据">
@@ -147,9 +150,10 @@ function handleChange(val: any) {
           <el-form-item label="标签说明">
             <el-input v-model="model.labelDesc" placeholder="请输入" clearable />
           </el-form-item>
-          <el-form-item v-if="model.labelValueType === 'text'" v-for="(item, index) in model.labelValue.data" :label="`标签值${index + 1}`">
+          <el-form-item v-if="model.labelValueType === 'text'" v-for="(item, index) in model.labelValue.data"
+            :label="`标签值${index + 1}`">
             <div style="display: flex;width: 100%;">
-              <el-input style="width: 100%" v-model="model.labelValue.data[index]"  maxlength="50"/>
+              <el-input show-word-limit style="width: 100%" v-model="model.labelValue.data[index]" maxlength="50" />
               <el-button @click="handleDelete(index)" plain text v-if="index" style="margin-left: 10px">
                 <el-icon>
                   <Delete />
