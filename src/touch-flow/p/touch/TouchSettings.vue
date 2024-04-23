@@ -378,7 +378,7 @@ defineExpose({ updateData });
       </el-form-item>
       <el-form-item v-if="touchOptions.type" label="选择模版">
         <el-select @change="assignData" :disabled="readonly" v-model="touchOptions.id" style="width: 120px">
-          <el-option v-for="item in touchOptions.material.templates" :value="item.id" :label="item.name">
+          <el-option v-for="(item,index) in touchOptions.material.templates"  :key="index" :value="item.id" :label="item.name" style="height:auto">
             <div class="template-option">
               <span>{{ item.name }}</span>
               <span class="template-desc" v-if="(item as any)?.content?.content">

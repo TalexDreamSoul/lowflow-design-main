@@ -144,9 +144,7 @@ regSaveFunc(saveData);
 </template>
 
 <style lang="scss">
-li:has(.template-option):has(.template-desc) {
-  height: 50px;
-}
+
 
 .template-desc {
   position: relative;

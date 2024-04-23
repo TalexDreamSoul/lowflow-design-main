@@ -341,9 +341,6 @@ const handleUnitChange = (newVal: string) => {
   margin-bottom: -50px;
 }
 
-li:has(.template-option):has(.template-desc) {
-  height: 50px;
-}
 
 .template-desc {
   position: relative;
