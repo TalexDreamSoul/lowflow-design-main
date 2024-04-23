@@ -50,7 +50,7 @@ function saveData() {
     znxContent,
     znxTitle,
     znxTitleVariables,
-    znxContentVariables,sceneCode
+    znxContentVariables, sceneCode
   } = data;
 
   const znxTemplate: any = {
@@ -77,18 +77,18 @@ function saveData() {
 
   return props.type == "details" || props.type == "update"
     ? {
-        id,
-        name,
-        type: data.type,
-        status: "available",
-        znxTemplate: znxTemplate,
-      }
+      id,
+      name,
+      type: data.type,
+      status: "available",
+      znxTemplate: znxTemplate,
+    }
     : {
-        name,
-        type: data.type,
-        status: "available",
-        znxTemplate: znxTemplate,
-      };
+      name,
+      type: data.type,
+      status: "available",
+      znxTemplate: znxTemplate,
+    };
 }
 
 defineExpose({ saveData });
@@ -97,44 +97,29 @@ defineExpose({ saveData });
 <template>
   <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input :disabled="readonly" v-model="data.name" maxlength="50"></el-input>
+      <el-input show-word-limit :disabled="readonly" v-model="data.name" maxlength="50"></el-input>
     </el-form-item>
-   
+
     <el-form-item label="场景码">
-      <el-input :disabled="readonly" v-model="data.sceneCode" ></el-input>
+      <el-input :disabled="readonly" v-model="data.sceneCode"></el-input>
     </el-form-item>
-     <el-form-item label="模块ID">
+    <el-form-item label="模块ID">
       <el-input :disabled="readonly" v-model="data.moduleId"></el-input>
     </el-form-item>
     <el-form-item label="轮播图ID">
       <el-input :disabled="readonly" v-model="data.carouselId"></el-input>
     </el-form-item>
     <el-form-item label="列表标题">
-      <TouchSettingContents
-        :disabled="readonly"
-        variables="titleVariables"
-        content="listTitle"
-        v-model="data"
-        buttonTitle="输入变量"
-      />
+      <TouchSettingContents :disabled="readonly" variables="titleVariables" content="listTitle" v-model="data"
+        buttonTitle="输入变量" />
     </el-form-item>
     <el-form-item label="站内信标题">
-      <TouchSettingContents
-        :disabled="readonly"
-        variables="znxTitleVariables"
-        content="znxTitle"
-        v-model="data"
-        buttonTitle="输入变量"
-      />
+      <TouchSettingContents :disabled="readonly" variables="znxTitleVariables" content="znxTitle" v-model="data"
+        buttonTitle="输入变量" />
     </el-form-item>
     <el-form-item label="站内信简介">
-      <TouchSettingContents
-        :disabled="readonly"
-        variables="znxContentVariables"
-        content="znxContent"
-        v-model="data"
-        buttonTitle="输入变量"
-      />
+      <TouchSettingContents :disabled="readonly" variables="znxContentVariables" content="znxContent" v-model="data"
+        buttonTitle="输入变量" />
     </el-form-item>
   </el-form>
 </template>
