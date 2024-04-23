@@ -19,7 +19,7 @@ const del = useDel().del
 </script>
 
 <template>
-  <BaseNode :params="params" :disabled="readonly" :display="true">
+  <BaseNode :params="params" :disabled="true" :display="true">
     <p class="title">
       <span>
         {{ data.nodeName }}

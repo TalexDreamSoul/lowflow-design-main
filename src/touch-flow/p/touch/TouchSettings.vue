@@ -221,6 +221,8 @@ function updateData() {
 
   Object.assign(props.touch, touchOptions);
 
+  delete props.touch.material.templates
+
   return true
 }
 
@@ -253,7 +255,7 @@ function assignData(val: any) {
     status: res.status,
   });
 
-  setTimeout(() => (showComp.value = true), 10);
+  setTimeout(() => (showComp.value = true), 0);
 }
 
 const platformOptions: Record<

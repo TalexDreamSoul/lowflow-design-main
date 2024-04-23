@@ -210,12 +210,7 @@ const regSaveFunc: IRegSaveFunc = inject("save")!;
 regSaveFunc(saveData);
 
 onMounted(async () => {
-  const res = await getDictFilterTree(
-    {
-      pageNum: "1",
-      pageSize: "999"
-    }
-  );
+  const res: any = await getDictFilterTree();
 
   if (res.data) {
     dict.value = res.data;
