@@ -39,7 +39,7 @@ function toggle() {
 <style lang="scss">
 .LogicalLine {
   display: flex;
-  //margin: 10px 0;
+  margin-top: 10px;
 
   &.disabled {
     cursor: not-allowed;

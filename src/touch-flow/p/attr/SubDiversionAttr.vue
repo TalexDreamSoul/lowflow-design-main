@@ -144,9 +144,7 @@ regSaveFunc(saveData);
 </template>
 
 <style lang="scss">
-li:has(.template-option):has(.template-desc) {
-  height: 50px;
-}
+
 
 .template-desc {
   position: relative;
@@ -216,7 +214,7 @@ li:has(.template-option):has(.template-desc) {
 
 :deep(.el-form-item) {
   margin-right: 0;
-  margin-bottom: 0;
+ // margin-bottom: 0;
 }
 
 .el-collapse {

@@ -188,7 +188,7 @@ const getCurrSelected = (condition: any) => {
 
 .AttrLine {
   display: flex;
-  margin-top: 1rem;
+  //margin-top: 1rem;
   flex-wrap: wrap;
   align-items: center;
 

@@ -3,6 +3,7 @@ import { onMounted, ref, nextTick, computed } from "vue";
 import TargetContent from "./TargetContent.vue";
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
 import { IHeaderTarget } from "../flow-types";
+import { useRouter } from "vue-router";
 
 interface ITargetProp {
   target: IHeaderTarget;
@@ -15,7 +16,11 @@ const props = defineProps<ITargetProp>();
 if (!props.readonly && !props.target.targetRuleContent.data?.length) {
   addTarget();
 }
+const router = useRouter();
 
+const goBack = () => {
+  router.go(-1);
+};
 const dict = ref<any>();
 
 !(async () => {
@@ -24,14 +29,14 @@ const dict = ref<any>();
       pageNum:"1",
       pageSize:"999"
     }
-  );
+  )as {data:any};
 
   if (res.data) {
     dict.value = res.data;
   } else {
     console.log(res);
 
-    window.history.back()
+    goBack()
 
     throw new Error('获取字典失败,无法完成流程!')
   }

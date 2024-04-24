@@ -27,43 +27,23 @@ const disturbOptions = [
 ];
 
 
-
-
-// function analyzeTime(time: string) {
-//   // 新建一个 new Date对象 将小时 分钟 秒 设置为传入进来的 `HH:MM:ss`
-//   const date = new Date();
-
-//   date.setHours(+time.split(":")[0]);
-//   date.setMinutes(+time.split(":")[1]);
-//   // date.setSeconds(+time.split(":")[2]);
-
-//   return date;
-// }
 console.log("change", props.disturb.time);
 
-function handleChange(value: any) {
-  console.log("change", value);
-  if (!value.length || !value[0] || !value[1]) return;
 
-  props.disturb.time = [
-    value[0],
-    value[1],
-  ];
-  console.log(`output->props.disturb.time`,props.disturb.time)
-}
 
 
 </script>
 
 <template>
   <el-form-item class="Basic-Block transition-item" :class="{ expand }">
-    <template #label>
-      <div class="Basic-Block-Head">
-        <label class="el-form-item__label">勿扰设置</label>
-        <el-switch :disabled="readonly" inline-prompt v-model="disturb.enable"
-          style="margin-top: -4px; --el-switch-on-color: #4078e0" />
-      </div>
-    </template>
+    <div class="Basic-Block-Head">
+      <label class="el-form-item__label">勿扰设置</label>
+      <el-switch
+        :disabled="readonly"
+        v-model="disturb.enable"
+        style="margin-top: -4px; --el-switch-on-color: #4078e0"
+      />
+    </div>
     <div class="Basic-Block-Content" v-show="disturb.enable">
       <el-form-item>
         <el-time-picker  :disabled="readonly"  type="daterange" v-model="disturb.time[0]" placeholder="开始时间"   value-format="HH:mm"/>&nbsp;-&nbsp;
