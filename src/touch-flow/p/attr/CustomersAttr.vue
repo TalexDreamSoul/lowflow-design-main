@@ -159,7 +159,7 @@ const handleUnitChange = (newVal: string) => {
   console.log(newVal, "blackListArray");
   blackListArray.value = [];
   Object.assign(blackList, {
-    _enable: newVal?  "yes" : "no",
+    _enable: newVal,
     blacklist: { list: [] },
   });
 };
