@@ -98,7 +98,7 @@ watch(
   }
 );
 
-watch(props.p, () => {
+watchEffect(() => {
   const { nodeId, nodeType, children, preNodeId } = props.p;
 
   if (nodeId && nodeType === 'strategy') {
@@ -115,9 +115,12 @@ watch(props.p, () => {
     } else {
       const fatherNode = window.$getNodeById(preNodeId)
       if (!fatherNode) return
+      // console.log("psa1", props.p, fatherNode, sizeForm, [...fatherNode.children].findIndex(item => item.nodeId === nodeId))
 
       sizeForm.$index = _edit.value ? fatherNode.children.length : [...fatherNode.children].findIndex(item => item.nodeId === nodeId)  //fatherNode.children.length
       //[...fatherNode.children].indexOf(props.p)
+
+      console.log("index", sizeForm.$index)
     }
 
     return;
@@ -130,12 +133,12 @@ watch(props.p, () => {
   sizeForm.diversionType = children[0].diversionType
   sizeForm.eventDelayed!.delayedTime = children[0].eventDelayed.delayedTime
   sizeForm.eventDelayed!.delayedUnit = children[0].eventDelayed.delayedUnit
-}, { immediate: true })
+})
 
 watchEffect(() => {
   const { nodeType, nodeId } = props.p;
 
-  console.log("w", props, JSON.parse(JSON.stringify(toRaw(props.p))), sizeForm)
+  // console.log("w", props, JSON.parse(JSON.stringify(toRaw(props.p))), sizeForm)
 
   if (props.new || nodeType !== "strategy") return;
 
