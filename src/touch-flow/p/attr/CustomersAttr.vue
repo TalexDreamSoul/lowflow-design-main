@@ -146,6 +146,10 @@ function transformBlackListData() {
     blackListArray.value= blackList.list 
   }
 }
+const handleUnitChange = (newVal: string) => {
+ console.log(newVal,"blackListArray");
+    blackListArray.value= []
+};
 </script>
 
 <template>
@@ -163,7 +167,7 @@ function transformBlackListData() {
       <div class="MainTitle">黑名单</div>
 
       <el-form-item v-if="blackListFields" label="过滤黑名单" label-class="custom-label">
-        <el-select :disabled="readonly" v-model="blackList._enable" style="width: 100px">
+        <el-select :disabled="readonly" v-model="blackList._enable" style="width: 100px" @change="handleUnitChange">
           <el-option value="no" label="不过滤">不过滤</el-option>
           <el-option value="yes" label="过滤">过滤</el-option>
         </el-select>
