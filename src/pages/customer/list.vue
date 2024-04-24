@@ -110,6 +110,7 @@
         layout="prev, pager, next, jumper"
         :total="total"
         :page-size="10"
+        :current-page="pageNum"
         @current-change="currentChange"
       />
     </div>
@@ -140,7 +141,12 @@
           label="客户名称"
           prop="name"
         >
-          <el-input v-model="formValues.name" placeholder="请输入" clearable maxlength="50"/>
+          <el-input
+            v-model="formValues.name"
+            placeholder="请输入"
+            clearable
+            maxlength="50"
+          />
         </el-form-item>
         <el-form-item
           :rules="
@@ -330,9 +336,7 @@
     </el-dialog>
     <DrawerSerach
       ref="drawerRef"
-      :getData="
-        (filtering: any) => getData({ ...pageParams, pageNum }, filtering)
-      "
+      :getData="advancedSearch"
     />
   </div>
 </template>
@@ -398,6 +402,7 @@ const pageNum = ref(1);
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     if (filtering.logicalChar) {
       getData({ ...pageParams, pageNum: 1 }, filtering);
     } else {
@@ -417,6 +422,11 @@ const currentChange = (value: number) => {
   } else {
     getData({ ...pageParams, pageNum: value });
   }
+};
+
+const advancedSearch = (filteringValue: any) => {
+  pageNum.value = 1;
+  getData({ ...pageParams, pageNum: 1 }, filteringValue);
 };
 
 const getData = async (params: any, filteringValue?: any) => {

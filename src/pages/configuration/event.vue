@@ -114,6 +114,7 @@
         layout="prev, pager, next, jumper"
         :total="total"
         :page-sizes="[10]"
+        @current-change="currentChange"
         v-model:current-page="pageNum"
       />
     </div>
@@ -139,8 +140,8 @@
             :rules="[
               { required: true, message: '请输入事件编码' },
               {
-                pattern: /^[a-zA-Z0-9_]{1,18}$/,
-                message: '仅支持数字、字母、下划线，不超过18个字符',
+                pattern: /^[a-zA-Z0-9_]{1,200}$/,
+                message: '仅支持数字、字母、下划线，不超过200个字符',
               },
             ]"
             label="事件编码"
@@ -452,13 +453,15 @@ const pageNum = ref(1);
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );
 
-watch(pageNum, () => {
-  getData({ ...pageParams, pageNum: pageNum.value });
-});
+const currentChange = (value: number) => {
+  pageNum.value = value;
+  getData({ ...pageParams, pageNum: value });
+};
 
 onMounted(() => {
   getData({ ...pageParams, pageNum: 1 });
