@@ -82,19 +82,26 @@ const del = useDel().del
       </div>
       <div style="--theme-color: #7dc757" class="PBlock-Section">
         <p>延时设置</p>
-        <span v-if="data.nodeDelayed?.isDelayed">
-          符合该策略器 {{ data.nodeDelayed.delayedTime }}
-          <span>
-            <span v-if="data.nodeDelayed.delayedUnit === 'day'"> 天 </span>
-            <span v-else-if="data.nodeDelayed.delayedUnit === 'hour'"> 小时 </span>
-            <span v-else-if="data.nodeDelayed.delayedUnit === 'minute'"> 分钟 </span>
+        <div >
+
+          <span v-if="data.nodeDelayed?.isDelayed">
+            符合该策略器 {{ data.nodeDelayed.delayedTime }}
+            <span>
+              <span v-if="data.nodeDelayed.delayedUnit === 'day'"> 天 </span>
+              <span v-else-if="data.nodeDelayed.delayedUnit === 'hour'"> 小时 </span>
+              <span v-else-if="data.nodeDelayed.delayedUnit === 'minute'"> 分钟 </span>
+            </span>
+            后
+            <!-- {{ delayedActionStr }} -->
           </span>
-          后
-          <!-- {{ delayedActionStr }} -->
-        </span>
-        <!-- <span v-else-if="data.nodeDelayed.delayedAction === 'nothing'">不执行动作</span> -->
-        <span v-else>立即针对符合该策略器条件的客户</span>
-        <span>{{ delayedActionStr }}</span>
+          <!-- <span v-else-if="data.nodeDelayed.delayedAction === 'nothing'">不执行动作</span> -->
+          <span v-else>立即针对符合该策略器条件的客户</span>
+          <span style="    width: 100%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: block;">{{ delayedActionStr }}</span>
+        </div>
       </div>
       <div v-if="pushTemplate.has" style="--theme-color: #ffb858" class="PBlock-Section">
         <p>{{ pushTemplate.title }}</p>
