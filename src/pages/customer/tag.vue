@@ -353,6 +353,7 @@ const upload = ref<UploadInstance>();
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );

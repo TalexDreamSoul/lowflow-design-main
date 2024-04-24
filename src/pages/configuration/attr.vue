@@ -89,6 +89,7 @@
         :total="total"
         :page-sizes="[10]"
         v-model:current-page="pageNum"
+        @current-change="currentChange"
       />
     </div>
     <el-dialog
@@ -243,13 +244,15 @@ const pageNum = ref(1);
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );
 
-watch(pageNum, () => {
-  getData({ ...pageParams, pageNum: pageNum.value });
-});
+const currentChange = (value: number) => {
+  pageNum.value = value;
+  getData({ ...pageParams, pageNum: value });
+};
 
 onMounted(() => {
   getData({ ...pageParams, pageNum: 1 });

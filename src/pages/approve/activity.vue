@@ -275,6 +275,7 @@ const modalType = ref<any>(DrawerType.Detail);
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );
