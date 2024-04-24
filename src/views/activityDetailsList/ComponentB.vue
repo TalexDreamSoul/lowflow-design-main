@@ -1,206 +1,91 @@
 <script setup lang="ts">
-import { ref, unref, reactive, onMounted, watch } from "vue";
-import {
-  getqryMarketingTouch,
-  deleteMarketingTouch,
-  getqryTouchStatusCount,
-  getstartMarketingTouch,
-  getpauseMarketingTouch,
-  updateMarketingTouchStatus,
-  copyMarketingTouch,
-} from "~/api/index";
-import { useRouter, useRoute } from "vue-router";
-import { ElMessageBox, ElMessage, ElTag } from "element-plus";
+import { ref, onMounted, watch } from "vue";
 import { Download } from "@element-plus/icons-vue";
-import dayjs from "dayjs";
-import { getmarketingTouchDetail, marketingTouchStatistics } from "~/api/index";
+import * as API from "~/api/activity";
 import * as echarts from "echarts/core";
 import { FunnelChart } from "echarts/charts";
-import {
-  TitleComponent,
-  TooltipComponent,
-  GridComponent,
-} from "echarts/components";
+import { TooltipComponent, LegendComponent } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
+import { formatNumToThousandth } from '~/utils/common';
 
-import { BlackAddTypeEnum, BLACK_LIST_TYPE } from "~/constants";
-
+const props = defineProps({
+  activityId: String,
+});
 const funnelChart = ref(null);
-const formInline = reactive({
-  touchName: "",
-  executeType: "",
-  beginTime: "",
-  endTime: "",
-  status: "",
-});
-
-const time = ref(null);
-const router = useRouter();
-const route = useRoute();
-
-const statusLabels = {
-  draft: { Text: "草稿", type: "info" },
-  approvalPending: { Text: "待审批", type: "success" },
-  approvalSuccess: { Text: "审批成功", type: "info" },
-  approvalRefuse: { Text: "审批拒绝", type: "warning" },
-  waitStart: { Text: "等待启动", type: "warning" },
-  running: { Text: "发送中", type: "" },
-  suspend: { Text: "暂停", type: "warning" },
-  done: { Text: "已结束", type: "info" },
-};
-const typeMap = {
-  immediately: "定时-单次",
-  delayed: "定时-重复",
-  trigger: "触发型",
-};
 const tableData = ref([]);
-const currentPage = ref(1);
-const pageSize = ref(10);
-const small = ref(false);
-const background = ref(false);
-const disabled = ref(false);
-const total = ref(110);
-
-const StatisticsList = ref({
-  suspend: 0,
-  running: 0,
-  total: 0,
-  waitStart: 0,
-  draft: 0,
-  approvalPending: 0,
-  approvalSuccess: 0,
-  approvalRefuse: 0,
-  done: 0,
-  accumulateCompleteCount: 0,
-  accumulateEntryCount: 0,
-  accumulateTouchCount: 0,
-  completeTargetCount1: 0,
-  completeTargetCount2: 0,
-  timeIntervals: [
-    "0-5s",
-    "6-10s",
-    "11～20s",
-    "21～40s",
-    "81～160s",
-    "161～320s",
-    "321～640s",
-    "641～1280s",
-    "≥1280s",
-  ],
-  percentages: [60, 45, 15, 60, 45, 15, 60, 45, 15],
-});
+const total = ref(0);
+const pageHeaderMap = ref({});
+const activityFormData = ref([]);
+const interactId = ref("");
 
 onMounted(async () => {
-  fetchDataApi();
+  fetchActivityForm();
+  fetchDataApi({ pageNum: 1 });
 });
-watch([currentPage, pageSize, formInline], () => {
-  fetchDataApi();
-});
-const fetchDataApi = async () => {
-  const res = await getqryMarketingTouch({
-    pageNum: unref(currentPage),
-    pageSize: unref(pageSize),
-    ...formInline,
-  });
-  tableData.value = res.data.records;
-  total.value = res.data.total;
-};
 
-const handleSizeChange = (val: any) => {
-  console.log(`${val} items per page`);
-};
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
-};
-const changeTime = (val: any) => {
-  console.log(val, "change");
-  if (val == null) {
-    formInline.beginTime = "";
-    formInline.endTime = "";
-  } else {
-    formInline.beginTime = dayjs(val[0]).format("YYYY-MM-DD");
-    formInline.endTime = dayjs(val[1]).format("YYYY-MM-DD");
+watch(interactId, () => {
+  formConversionData();
+});
+
+const fetchActivityForm = async () => {
+  const res = await API.queryActivityForm({ activityId: props.activityId });
+  activityFormData.value = res?.data;
+  if (res?.data?.[0]?.interactId) {
+    interactId.value = res?.data?.[0]?.interactId;
   }
 };
 
-const changeStatus = (val: any) => {
-  console.log(val, "change");
-  formInline.status = val;
+const fetchDataApi = async (params: any) => {
+  const res = await API.getClickButtonData({
+    ...params,
+    pageSize: 10,
+    activityId: props.activityId,
+  });
+  const { pageHeader, pageData } = res?.data;
+  pageHeaderMap.value = pageHeader;
+  tableData.value = pageData.records;
+  total.value = pageData.total;
 };
-const defaultFormValues = {
-  blacklistName: "",
-  blacklistDesc: "",
-  blacklistType: "",
-};
-let formValues = reactive<any>({ ...defaultFormValues });
 
-onMounted(async () => {
-  // const response: any = await marketingTouchStatistics({
-  //   id: route.params.id,
-  // });
-  // const data = response?.data;
-
-  // const chart = echarts.init(chartContainerB.value);
-
-  // const options = {
-  //   xAxis: {
-  //     type: "funnel",
-  //     data: [
-  //       { value: 12345, name: "浏览量人数UV" },
-  //       { value: 5435, name: "表单提交人数" },
-  //     ],
-  //   },
-  //   yAxis: {
-  //     type: "value",
-  //     min: 0,
-  //     max: 60,
-  //   },
-
-  //   series: [
-  //     {
-  //       name: "Percentage",
-  //       type: "bar",
-  //       barWidth: "40px", // 设置柱体宽度
-  //       data: StatisticsList.value?.percentages,
-  //     },
-  //   ],
-  // };
-
-  // chart.setOption(options);
-
-  echarts.use([
-    TitleComponent,
-    TooltipComponent,
-    GridComponent,
-    CanvasRenderer,
-  ]);
-  echarts.use(FunnelChart);
-
+const formConversionData = async () => {
+  const res = await API.formConversionData({
+    activityId: props.activityId,
+    interactId: interactId.value,
+  });
+  const { activityUv, formUv } = res?.data;
   const chartData = [
-    { value: 100, name: "Step 1" },
-    { value: 80, name: "Step 2" },
-    { value: 60, name: "Step 3" },
-    { value: 40, name: "Step 4" },
-    { value: 20, name: "Step 5" },
+    { value: activityUv +10, name: "浏览量人数UV" },
+    { value: formUv +10, name: "表单提交人数" },
   ];
 
   const myChart = echarts.init(funnelChart.value);
 
   const option = {
-    tooltip: {
-      trigger: "item",
-      formatter: "{a} <br/>{b} : {c}%",
+    // tooltip: {
+    //   trigger: "item",
+    //   formatter: "{a} <br/>{b} : {c}%",
+    // },
+    legend: {
+      data: ["浏览量人数UV", "表单提交人数"],
+      bottom: 20
     },
     series: [
       {
         type: "funnel",
-        left: "10%",
-        top: 60,
-        bottom: 60,
-        width: "80%",
+        width: "100%",
+        top: 0,
+        bottom: 50,
+        right: 0,
+        left: 0,
         label: {
           show: true,
           position: "inside",
+          formatter: (params: any) => {
+            return formatNumToThousandth(params.value - 10);
+          },
+          color: '#FFFFFF',
+          fontSize: 28,
+          fontWeight: 600
         },
         data: chartData,
       },
@@ -208,58 +93,88 @@ onMounted(async () => {
   };
 
   myChart.setOption(option);
+};
+
+const handleCurrentChange = (val: number) => {
+  fetchDataApi({ pageNum: val });
+};
+
+const handleDownLoad = async () => {
+  const res = await API.exportClickButtonData({ activityId: props.activityId });
+  const fileNames = res?.headers
+    .get("content-disposition")
+    .split("filename=")[1];
+  let url = window.URL.createObjectURL(new Blob([res?.data]));
+  let a = document.createElement("a");
+  a.href = url;
+  a.download = decodeURI(fileNames);
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
+
+onMounted(async () => {
+  echarts.use([TooltipComponent, LegendComponent, FunnelChart, CanvasRenderer]);
 });
 </script>
 
 <template>
   <div class="warp">
-
     <div class="tableCard">
       <div class="spanDataName">
-        <span>
-          按钮点击数据
-        </span>&nbsp;
-        <el-button type="primary" :icon="Download" class="primaryStyle">下载</el-button>
+        <span> 按钮点击数据 </span>&nbsp;
+        <el-button
+          type="primary"
+          :icon="Download"
+          class="primaryStyle"
+          @click="handleDownLoad"
+          >下载</el-button
+        >
       </div>
-
-      <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
-        <el-table-column label="时间段" width="320">
-          <template #default="scope">
-            {{ scope.row.id }}
-          </template>
-        </el-table-column>
-        <el-table-column label="浏览量PV" prop="touchName" />
-        <el-table-column label="浏览量人数UV">
-          <template #default="scope">
-            {{ statusLabels[scope.row.status].Text }}
-          </template>
-        </el-table-column>
+      <el-table
+        :data="tableData"
+        style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;"
+      >
+        <el-table-column
+          v-for="(item, key) in pageHeaderMap"
+          :label="item"
+          :prop="key"
+        ></el-table-column>
       </el-table>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background" layout="prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
-
+      <el-pagination
+        background
+        layout="prev, pager, next, jumper"
+        :total="total"
+        :page-sizes="[10]"
+        @current-change="handleCurrentChange"
+        class="pagination"
+      />
     </div>
-
   </div>
-  <div class="warp">
+  <div class="warp" v-if="!!activityFormData.length">
     <div class="tableCardunder">
-      <div class="spanDataName">
-        <span>
-          表单转化数据
-        </span>&nbsp;
-      </div>
+      <div class="spanDataName"><span> 表单转化数据 </span>&nbsp;</div>
 
       <div>
         <el-form-item label="表单">
-          <el-select v-model="formValues.blacklistType" placeholder="请选择" style="width:300px" clearable>
-            <el-option v-for="item of BLACK_LIST_TYPE" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="interactId"
+            placeholder="请选择"
+            style="width: 300px"
+          >
+            <el-option
+              v-for="item of activityFormData"
+              :label="item.interactName"
+              :value="item.interactId"
+            />
           </el-select>
         </el-form-item>
         <div>
-          <div ref="funnelChart" style="width: 1000px; height: 400px;"></div>
+          <div ref="funnelChart" style="width: 428px; height: 400px"></div>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 <style lang="scss" scoped>

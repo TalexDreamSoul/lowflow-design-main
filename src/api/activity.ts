@@ -60,6 +60,10 @@ export const queryLotteryJackpot = (data: any) => {
   return request.post({ url: `/api/queryLotteryJackpot.do`, data });
 }
 
+export const playCustomData = (data: any) => {
+  return request.post({ url: `/api/playCustomData.do`, data });
+}
+
 export const exportBrowseData = (data: any) => {
   return request.post({ url: `/api/exportBrowseData.do`, data, responseType: 'blob', });
 }
@@ -70,4 +74,8 @@ export const exportClickButtonData = (data: any) => {
 
 export const exportFormCustomData = (data: any) => {
   return request.post({ url: `/api/exportFormCustomData.do`, data, responseType: 'blob', });
+}
+
+export const playCustomDataExport = (data: any) => {
+  return request.post({ url: `/api/playCustomDataExport.do`, data, responseType: 'blob', });
 }
