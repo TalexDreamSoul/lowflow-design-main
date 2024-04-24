@@ -336,9 +336,9 @@ const handleUnitChange = (newVal: string) => {
   opacity: 0;
   pointer-events: none;
 
-  height: 36px;
+  height: 0px;
 
-  margin-bottom: -50px;
+ // margin-bottom: -50px;
 }
 
 

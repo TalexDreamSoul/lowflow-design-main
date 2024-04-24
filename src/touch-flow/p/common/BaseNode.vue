@@ -16,7 +16,7 @@ const { readonly, data, dialogVisible, drawerOptions, openDrawer, comps, handleC
     <slot />
 
     <teleport to=".FlowPage">
-      <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
+      <el-dialog v-model="dialogVisible" width="500px" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item, true)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
             class="PBlock-Section">
