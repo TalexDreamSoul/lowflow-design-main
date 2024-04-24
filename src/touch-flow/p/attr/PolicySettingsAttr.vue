@@ -117,7 +117,8 @@ watchEffect(() => {
       if (!fatherNode) return
       // console.log("psa1", props.p, fatherNode, sizeForm, [...fatherNode.children].findIndex(item => item.nodeId === nodeId))
 
-      sizeForm.$index = _edit.value ? fatherNode.children.length : [...fatherNode.children].findIndex(item => item.nodeId === nodeId)  //fatherNode.children.length
+      sizeForm.$index = fatherNode.children.length
+      // _edit.value ? fatherNode.children.length : [...fatherNode.children].findIndex(item => item.nodeId === nodeId)  //fatherNode.children.length
       //[...fatherNode.children].indexOf(props.p)
 
       console.log("index", sizeForm.$index)
@@ -267,8 +268,8 @@ const handleUnitChange = (newVal: string) => {
         <el-input show-word-limit :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" maxlength="50" />
       </el-form-item>
       <el-form-item label="分流类型：">
-        <!-- (_edit && sizeForm.nodeId) || -->
-        <el-radio-group :disabled="(_edit && sizeForm.$index && !props.new) || readonly || sizeForm.$index"
+        <!-- {{_edit }}{{ sizeForm.$index }} -->
+        <el-radio-group  :disabled="(props.new&&sizeForm.$index==1) || readonly || sizeForm.$index>1"
           v-model="sizeForm.diversionType">
           <el-radio label="noDiversion">不分流</el-radio>
           <el-radio label="attr">按属性用户行为分流</el-radio>
