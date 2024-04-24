@@ -111,7 +111,7 @@ const getCurrSelected = (condition: any) => {
     flex: 1;
     gap: 0.5rem;
     align-items: center;
-    margin-top: 1rem;
+    //margin-top: 1rem;
 
   }
 
