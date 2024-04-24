@@ -33,6 +33,7 @@ const blackList = reactive<{
   list: [],
   data: [],
 });
+const blackListArray = ref<Array<any>>([]);
 
 interface ICustomerAttrProp {
   p: MarketingTouchEditDTO;
@@ -51,7 +52,7 @@ watchEffect(() => {
       _enable: props.p.blacklist?.data?.length ? "yes" : "no",
       data: props.p.blacklist?.data || [],
     });
-
+    blackListArray.value=blackList.list
     if (blackListFields.value) transformBlackListData();
   }
 
@@ -87,7 +88,8 @@ function saveData(): boolean {
 
   // 验证黑名单是否填写完整
   if (blackList._enable === "yes") {
-    if (!validatePropValue(blackList.list)) {
+    if (!validatePropValue(    blackListArray.value
+)) {
       ElMessage({
         message: "过滤黑名单必须选择内容！",
         type: "error",
@@ -96,7 +98,7 @@ function saveData(): boolean {
       return false;
     } else {
       props.p.blacklist = {
-        data: blackList.list.map((item) => {
+        data:  blackListArray.value.map((item) => {
           const res = [...blackListFields.value.records].find((each) => each.id === item);
 
           return {
@@ -141,6 +143,7 @@ function transformBlackListData() {
 
     // 去重
     blackList.list = [ ...new Set(blackList.list) ]
+    blackListArray.value= blackList.list 
   }
 }
 </script>
@@ -165,7 +168,7 @@ function transformBlackListData() {
           <el-option value="yes" label="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select  collapse-tags   placeholder="请选择" v-model="blackList.list" multiple :disabled="readonly"
+        <el-select  collapse-tags   placeholder="请选择" v-model="blackListArray" multiple :disabled="readonly"
           v-if="blackList?._enable === 'yes'" style="width: 300px">
           <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
