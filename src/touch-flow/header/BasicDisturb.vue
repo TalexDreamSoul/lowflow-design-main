@@ -27,30 +27,9 @@ const disturbOptions = [
 ];
 
 
-
-
-// function analyzeTime(time: string) {
-//   // 新建一个 new Date对象 将小时 分钟 秒 设置为传入进来的 `HH:MM:ss`
-//   const date = new Date();
-
-//   date.setHours(+time.split(":")[0]);
-//   date.setMinutes(+time.split(":")[1]);
-//   // date.setSeconds(+time.split(":")[2]);
-
-//   return date;
-// }
 console.log("change", props.disturb.time);
 
-function handleChange(value: any) {
-  console.log("change", value);
-  if (!value.length || !value[0] || !value[1]) return;
 
-  props.disturb.time = [
-    value[0],
-    value[1],
-  ];
-  console.log(`output->props.disturb.time`,props.disturb.time)
-}
 
 
 </script>
