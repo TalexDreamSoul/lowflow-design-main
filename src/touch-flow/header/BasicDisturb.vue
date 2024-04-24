@@ -57,13 +57,14 @@ function handleChange(value: any) {
 
 <template>
   <el-form-item class="Basic-Block transition-item" :class="{ expand }">
-    <template #label>
-      <div class="Basic-Block-Head">
-        <label class="el-form-item__label">勿扰设置</label>
-        <el-switch :disabled="readonly" inline-prompt v-model="disturb.enable"
-          style="margin-top: -4px; --el-switch-on-color: #4078e0" />
-      </div>
-    </template>
+    <div class="Basic-Block-Head">
+      <label class="el-form-item__label">勿扰设置</label>
+      <el-switch
+        :disabled="readonly"
+        v-model="disturb.enable"
+        style="margin-top: -4px; --el-switch-on-color: #4078e0"
+      />
+    </div>
     <div class="Basic-Block-Content" v-show="disturb.enable">
       <el-form-item>
         <el-time-picker  :disabled="readonly"  type="daterange" v-model="disturb.time[0]" placeholder="开始时间"   value-format="HH:mm"/>&nbsp;-&nbsp;
