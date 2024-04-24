@@ -330,7 +330,7 @@ const handleUnitChange = (newVal: string) => {
 
     height: unset;
 
-    margin-bottom: 0;
+   // margin-bottom: 0;
   }
 
   opacity: 0;
