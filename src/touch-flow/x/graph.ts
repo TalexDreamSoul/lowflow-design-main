@@ -12,10 +12,10 @@ const ports = {
       position: "top",
       attrs: {
         circle: {
-          r: 4,
+          r: 1,
           magnet: true,
           stroke: "#277AE7",
-          strokeWidth: 1,
+          strokeWidth: .1,
           fill: "#277AE7",
         },
       },
@@ -24,10 +24,10 @@ const ports = {
       position: "bottom",
       attrs: {
         circle: {
-          r: 4,
+          r: 1,
           magnet: true,
           stroke: "#277AE7",
-          strokeWidth: 1,
+          strokeWidth: .1,
           fill: "#277AE7",
         },
       },
