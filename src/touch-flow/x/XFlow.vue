@@ -118,7 +118,7 @@ const layoutFn = () => {
   } = { nodes: [], edges: [] };
 
   const _: any = {
-    Start: (height: number) => height - 86,
+    Start: (height: number) => height - 92,
     strategy: (height: number, data: any) => {
       const fatherNode = getNodeReactive(data.data?.preNodeId);
       console.log("@@@---", data.data);
