@@ -124,19 +124,6 @@ const getCurrSelected = (condition: any) => {
 
     return arr.find((_: any) => _.id === id);
   }
-
-  // console.log("233", [...attrs.value]
-  //   .map((_: any) =>
-  //     [..._.children].map((__: any) => (__.children?.length ? __.children : [__]))
-  //   )
-  //   .flat(2), condition)
-
-  // return [...attrs.value]
-  //   .map((_: any) =>
-  //     [..._.children].map((__: any) => (__.children?.length ? __.children : [__]))
-  //   )
-  //   .flat(2)
-  //   .find((_: any) => _.field === condition.field || _.label === condition.field)
 };
 </script>
 
