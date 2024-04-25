@@ -2,7 +2,7 @@
  * @Author: 张佳 zhangjia@4paradigm.com
  * @Date: 2024-04-19 10:17:02
  * @LastEditors: 张佳 zhangjia@4paradigm.com
- * @LastEditTime: 2024-04-24 15:55:39
+ * @LastEditTime: 2024-04-25 16:43:13
  * @FilePath: /lowflow-design-main-frontend/src/views/activityDetailsList/ComponentD.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -86,6 +86,7 @@ const activeTabComponent = computed(() => components[tabVModel.value]);
     <component
       :is="activeTabComponent"
       :activityId="props.activityId"
+      :key="playId"
       :playId="playId"
       :playType="playType"
     />
