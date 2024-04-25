@@ -90,23 +90,23 @@ function saveData() {
     return false;
   }
 
-  if (
-    !validateCommonDays(
-      sizeForm.nodeDelayed.delayedTime,
-      sizeForm.nodeDelayed.delayedUnit
-    )
-  ) {
-    ElMessage.warning({
-      message: "延时设置折算时间不可超过30天！",
-    });
+  // if (
+  //   !validateCommonDays(
+  //     sizeForm.nodeDelayed.delayedTime,
+  //     sizeForm.nodeDelayed.delayedUnit
+  //   )
+  // ) {
+  //   ElMessage.warning({
+  //     message: "延时设置折算时间不可超过30天！",
+  //   });
 
-    return false;
-  }
+  //   return false;
+  // }
 
-  if (sizeForm?.targetRuleContent?.targetDelayed?.delayedTime && !validateCommonDays(sizeForm?.targetRuleContent?.targetDelayed?.delayedTime, sizeForm?.targetRuleContent?.targetDelayed?.delayedUnit)) {
-    ElMessage.warning({
-      message: "目标设置中延时设置折算时间不可超过30天！",
-    });
+  // if (sizeForm?.targetRuleContent?.targetDelayed?.delayedTime && !validateCommonDays(sizeForm?.targetRuleContent?.targetDelayed?.delayedTime, sizeForm?.targetRuleContent?.targetDelayed?.delayedUnit)) {
+  //   ElMessage.warning({
+  //     message: "目标设置中延时设置折算时间不可超过30天！",
+  //   });
 
     return false;
   }
