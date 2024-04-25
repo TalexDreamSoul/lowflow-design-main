@@ -13,6 +13,7 @@ const origin: MarketingTouchNodeEditDTO = {
   nodeName: "默认分支",
   target: false,
   touchTemplateContent: {},
+  touchType: "nothing",
   nodeDelayed: {
     delayedAction: "nothing",
     delayedTime: 0,

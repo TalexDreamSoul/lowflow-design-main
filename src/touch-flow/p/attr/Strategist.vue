@@ -14,6 +14,7 @@ const origin: MarketingTouchNodeEditDTO = {
   preNodeId: "",
   diversionType: "safeguard",
   touchTemplateContent: {},
+  touchType: "nothing",
   nodeDelayed: {
     delayedAction: "nothing",
     delayedTime: 0,
