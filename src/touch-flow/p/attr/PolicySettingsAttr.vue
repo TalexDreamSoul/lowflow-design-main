@@ -204,8 +204,8 @@ function saveData() {
   //     message: "目标设置中延时设置折算时间不可超过30天！",
   //   });
 
-    return false;
-  }
+  //   return false;
+  // }
 
   if (!touchSettingsRef.value.updateData()) return false;
 
