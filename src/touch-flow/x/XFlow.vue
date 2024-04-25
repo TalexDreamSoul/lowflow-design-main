@@ -118,7 +118,7 @@ const layoutFn = () => {
   } = { nodes: [], edges: [] };
 
   const _: any = {
-    Start: (height: number) => height - 90,
+    Start: (height: number) => height - 92,
     strategy: (height: number, data: any) => {
       const fatherNode = getNodeReactive(data.data?.preNodeId);
       console.log("@@@---", data.data);
@@ -170,7 +170,6 @@ const layoutFn = () => {
           .toLocaleLowerCase()
           .indexOf("touch") !== -1
       ){
-        debugger
         calcHeight = calcHeight +30;
       }
 
@@ -216,8 +215,9 @@ const layoutFn = () => {
               position: "bottom",
               attrs: {
                 circle: {
-                  stroke: "transparent",
-                  strokeWidth: 1,
+                  r: 1, // 设置连接点的半径为6
+                   stroke: "transparent",
+                  strokeWidth: .1,
                   fill: "transparent",
                 },
               },
@@ -228,7 +228,7 @@ const layoutFn = () => {
               attrs: {
                 circle: {
                   stroke: "transparent;",
-                  strokeWidth: 1,
+                  strokeWidth: .1,
                   fill: "transparent",
                 },
               },
@@ -387,14 +387,11 @@ window.$refreshLayout = layoutFn;
     content: "";
     position: absolute;
     margin: -1rem;
-
-    width: 150%;
-    height: 150%;
-
-    left: -25%;
-    top: -25%;
-
-    border-radius: 50%;
+    width: 160%;
+    height: 160%;
+    left: 20%;
+    top: 20%;
+    z-index: 66;
   }
 
   &.disabled {

@@ -22,7 +22,7 @@ if (!props.conditions) {
 const model = useVModel(props, "modelValue", emits);
 const ph = computed(() => props?.placeholder ?? "选择字段");
 
-const allowNode = computed(() => props.conditions?.filter(item => item.attr?.field === 'touchId')?.length)
+const allowNode = computed(() => props.conditions?.filter(item => item.attr?.field === 'touchCode')?.length)
 const haveNode = computed(() => props.conditions?.filter(item => item.attr?.field === 'nodeId')?.length)
 
 watch(
@@ -52,9 +52,9 @@ watch(
 
 <template>
   <div class="Trigger-Wrapper">
-    <el-select :disabled="readonly || !!(model === 'touchId' && haveNode)" class="trigger-container" v-model="model"
+    <el-select :disabled="readonly || !!(model === 'touchCode' && haveNode)" class="trigger-container" v-model="model"
       :placeholder="ph">
-      <el-option :disabled="!!(item.field === 'touchId' && allowNode) || (item.field === 'nodeId' && (model === 'touchId' || !allowNode))"
+      <el-option :disabled="!!(item.field === 'touchCode' && allowNode) || (item.field === 'nodeId' && (model === 'touchCode' || !allowNode))"
         v-for="item in attrs" :key="item.field" :label="item.fieldName" :value="item.field" />
     </el-select>
   </div>

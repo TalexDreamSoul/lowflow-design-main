@@ -74,6 +74,7 @@ function handleChangeSelect(val: string) {
       id: res.id,
       labelId: res.id,
       labelName: res.labelName,
+      labelValue: [],
     })
 
     labelOptions.value.label = res
