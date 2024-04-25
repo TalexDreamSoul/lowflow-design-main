@@ -135,7 +135,7 @@ regSaveFunc(saveData);
         <el-input show-word-limit v-model="sizeForm.nodeName" placeholder="填写名称" maxlength="50" />
       </el-form-item>
 
-      <CommonAttr ref="touchSettingsRef" :size-form="sizeForm" />
+      <CommonAttr  :readonly="readonly" ref="touchSettingsRef" :size-form="sizeForm" />
 
       <!-- <TouchEstimation :readonly="readonly" :custom-rule-content="sizeForm.customRuleContent" /> -->
 
