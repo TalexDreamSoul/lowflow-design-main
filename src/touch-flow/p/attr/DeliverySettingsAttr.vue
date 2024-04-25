@@ -283,7 +283,7 @@ const deleteBranch = (index: number) => {
 
 :deep(.el-form-item) {
   margin-right: 0;
-  margin-bottom: 0;
+  //margin-bottom: 0;
 }
 
 .blockbg {

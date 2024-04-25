@@ -1,226 +1,133 @@
 <script setup lang="ts">
-import { ref, unref, reactive, onMounted, watch } from "vue";
-import {
-  getqryMarketingTouch,
-  deleteMarketingTouch,
-  getqryTouchStatusCount,
-  getstartMarketingTouch,
-  getpauseMarketingTouch,
-  updateMarketingTouchStatus,
-  copyMarketingTouch,
-} from "~/api/index";
-import { useRouter, useRoute } from "vue-router";
-import { ElMessageBox, ElMessage, ElTag } from "element-plus";
+import { ref, onMounted, watch, defineProps } from "vue";
+import * as API from "~/api/activity";
 import { Download } from "@element-plus/icons-vue";
-import dayjs from "dayjs";
-import { getmarketingTouchDetail, marketingTouchStatistics } from "~/api/index";
-import * as echarts from "echarts";
+import { dayjs } from "element-plus";
 
-const formInline = reactive({
-  touchName: "",
-  executeType: "",
-  beginTime: "",
-  endTime: "",
-  status: "",
+const props = defineProps({
+  activityId: String,
+  time: Array,
 });
 
-const time = ref(null);
-const router = useRouter();
-const route = useRoute();
-
-const statusLabels = {
-  draft: { Text: "草稿", type: "info" },
-  approvalPending: { Text: "待审批", type: "success" },
-  approvalSuccess: { Text: "审批成功", type: "info" },
-  approvalRefuse: { Text: "审批拒绝", type: "warning" },
-  waitStart: { Text: "等待启动", type: "warning" },
-  running: { Text: "发送中", type: "" },
-  suspend: { Text: "暂停", type: "warning" },
-  done: { Text: "已结束", type: "info" },
-};
-const typeMap = {
-  immediately: "定时-单次",
-  delayed: "定时-重复",
-  trigger: "触发型",
-};
 const tableData = ref([]);
-const currentPage = ref(1);
-const pageSize = ref(10);
-const small = ref(false);
-const background = ref(false);
-const disabled = ref(false);
-const total = ref(110);
-
-const StatisticsList = ref({
-  suspend: 0,
-  running: 0,
-  total: 0,
-  waitStart: 0,
-  draft: 0,
-  approvalPending: 0,
-  approvalSuccess: 0,
-  approvalRefuse: 0,
-  done: 0,
-  accumulateCompleteCount: 0,
-  accumulateEntryCount: 0,
-  accumulateTouchCount: 0,
-  completeTargetCount1: 0,
-  completeTargetCount2: 0,
-  timeIntervals: ["0-5s", "6-10s",'11～20s','21～40s','81～160s','161～320s','321～640s','641～1280s', "≥1280s"],
-  percentages: [60, 45, 15,60, 45, 15,60, 45, 15],
-});
+const pageHeaderMap = ref({});
+const total = ref(0);
+const countMap = ref({});
+const pageNum = ref(1);
 
 onMounted(async () => {
-  fetchDataApi();
+  fetchDataApi({ ...props, pageNum: 1 });
 });
-watch([currentPage, pageSize, formInline], () => {
-  fetchDataApi();
+watch([props], () => {
+  pageNum.value = 1;
+  fetchDataApi({ ...props, pageNum: 1 });
 });
-const fetchDataApi = async () => {
-  const res = await getqryMarketingTouch({
-    pageNum: unref(currentPage),
-    pageSize: unref(pageSize),
-    ...formInline,
-  });
-  tableData.value = res.data.records;
-  total.value = res.data.total;
-};
-
-const handleSizeChange = (val: any) => {
-  console.log(`${val} items per page`);
-};
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
-};
-const changeTime = (val: any) => {
-  console.log(val, "change");
-  if (val == null) {
-    formInline.beginTime = "";
-    formInline.endTime = "";
-  } else {
-    formInline.beginTime = dayjs(val[0]).format("YYYY-MM-DD");
-    formInline.endTime = dayjs(val[1]).format("YYYY-MM-DD");
+const fetchDataApi = async (params: any) => {
+  const { time, ...value } = params;
+  let startTime = null;
+  let endTime = null;
+  if (time) {
+    startTime = dayjs(time?.[0] as any).format("YYYY-MM-DD HH:mm:ss");
+    endTime = dayjs(time?.[1] as any).format("YYYY-MM-DD HH:mm:ss");
   }
-};
-
-const changeStatus = (val: any) => {
-  console.log(val, "change");
-  formInline.status = val;
-};
-
-const chart = ref(null);
-
-const chartContainer = ref<HTMLElement | null>(null);
-
-onMounted(async () => {
-  try {
-    const response :any= await marketingTouchStatistics({
-    id: route.params.id,
+  const res = await API.getBrowseData({
+    startTime,
+    endTime,
+    ...value,
+    pageSize: 10,
   });
-    const data = response?.data;
+  const { averageDuration, collectPv, collectUv, pageHeader, pageData } =
+    res?.data;
+  pageHeaderMap.value = pageHeader;
+  tableData.value = pageData.records;
+  total.value = pageData.total;
+  countMap.value = { averageDuration, collectPv, collectUv };
+};
 
-       chart.value = echarts.init(chartContainer.value);
+const handleCurrentChange = (val: any) => {
+  pageNum.value = val;
+  fetchDataApi({ ...props, pageNum: val });
+};
 
-      const options = {
-        xAxis: {
-          type: 'category',
-          data: StatisticsList.value?.timeIntervals
-        },
-        yAxis: {
-          type: 'value',
-          min: 0,
-          max: 60
-        },
-        series: [{
-          name: 'Percentage',
-          type: 'bar',
-          barWidth: '40px', // 设置柱体宽度
-          data:  StatisticsList.value?.percentages
-        }]
-      };
-
-      chart.value.setOption(options);
-  } catch (error) {
-    console.error('Error fetching data:', error);
+const handleDownLoad = async () => {
+  const { time, ...value } = props;
+  let startTime = null;
+  let endTime = null;
+  if (time) {
+    startTime = dayjs(time?.[0] as any).format("YYYY-MM-DD HH:mm:ss");
+    endTime = dayjs(time?.[1] as any).format("YYYY-MM-DD HH:mm:ss");
   }
-});
-
+  const res = await API.exportBrowseData({
+    startTime,
+    endTime,
+    ...value,
+  });
+  const fileNames = res?.headers.get("content-disposition").split('filename=')[1];
+  let url = window.URL.createObjectURL(new Blob([res?.data]));
+  let a = document.createElement('a');
+  a.href = url;
+  a.download = decodeURI(fileNames);
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
 </script>
 
 <template>
   <div class="warp">
-    <div class="topSearch">
-      <el-form-item label="筛选日期：">
-        <el-date-picker v-model="time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
-      </el-form-item>
-    </div>
-
     <div class="tableCard">
       <div class="spanDataName">
-        <span>
-          浏览基础数据
-        </span>&nbsp;
-        <el-button type="primary" :icon="Download" class="primaryStyle">下载</el-button>
+        <span> 浏览基础数据 </span>&nbsp;
+        <el-button type="primary" @click="handleDownLoad" :icon="Download" class="primaryStyle"
+          >下载</el-button
+        >
       </div>
       <div class="countCard">
-
-        <div class="showCount" :class="formInline.status=='running'?'bgblue':''" @click="changeStatus('running')">
+        <div class="showCount">
           <div class="topcount">
-            {{ StatisticsList?.running !== undefined ? StatisticsList?.running : '--' }}
+            {{ countMap?.collectPv || 0 }}
           </div>
           <div class="undercount">总浏览量PV</div>
         </div>
-        <div class="showCount" @click="changeStatus('suspend')" :class="formInline.status=='suspend'?'bgblue':''">
+        <div class="showCount">
           <div class="topcount">
-            {{ StatisticsList?.suspend !== undefined ? StatisticsList?.suspend : '--' }}
+            {{ countMap?.collectUv || 0 }}
           </div>
           <div class="undercount">总浏览量人数UV</div>
         </div>
       </div>
-      <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
-        <el-table-column label="时间段" width="320">
-          <template #default="scope">
-            {{ scope.row.id }}
-          </template>
-        </el-table-column>
-        <el-table-column label="浏览量PV" prop="touchName" />
-        <el-table-column label="浏览量人数UV">
-          <template #default="scope">
-            {{ statusLabels[scope.row.status].Text }}
-          </template>
-        </el-table-column>
+      <el-table
+        :data="tableData"
+        style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;"
+      >
+        <el-table-column
+          v-for="(item, key) in pageHeaderMap"
+          :label="item"
+          :prop="key"
+        ></el-table-column>
       </el-table>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background" layout="prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
-
+      <el-pagination
+        background
+        :current-page="pageNum"
+        layout="prev, pager, next, jumper"
+        :total="total"
+        :page-sizes="[10]"
+        @current-change="handleCurrentChange"
+        class="pagination"
+      />
     </div>
-
   </div>
   <div class="warp">
     <div class="tableCardunder">
-      <div class="spanDataName">
-        <span>
-          浏览时长
-        </span>&nbsp;
-      </div>
-
+      <div class="spanDataName"><span> 浏览时长 </span>&nbsp;</div>
       <div class="countCard">
-
-        <div class="showCount" :class="formInline.status=='running'?'bgblue':''" @click="changeStatus('running')">
-          <div class="topcount">
-            {{ StatisticsList?.running !== undefined ? StatisticsList?.running : '--' }}s
-          </div>
+        <div class="showCount">
+          <div class="topcount">{{ countMap?.averageDuration || 0 }}s</div>
           <div class="undercount">平均时长</div>
-        </div>
-
-        <div>
-          <div class="description">
-            百分比
-          </div>
-          <div ref="chartContainer" style="width: 1000px; height: 400px;"></div>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 <style lang="scss" scoped>
@@ -281,7 +188,11 @@ onMounted(async () => {
   min-width: 160px;
   max-height: 96px;
   margin-right: 16px;
-  background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%);
+  background: linear-gradient(
+    180deg,
+    #f2f4f8 0%,
+    rgba(242, 244, 248, 0.4) 100%
+  );
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;

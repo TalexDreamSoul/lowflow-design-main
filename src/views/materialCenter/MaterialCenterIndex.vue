@@ -23,7 +23,7 @@ console.log("1", String(route.params.type).replace("Template", ""));
 
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
-const formInline = reactive({
+const formInline = ref({
   name: "",
   // type	素材类型：sms 短信，appPush app消息，digital 数字员工，outbound 智能外呼，znx 站内信
   type: String(route.params.type).replace("Template", ""),
@@ -39,7 +39,7 @@ const small = ref(false);
 const background = ref(false);
 const disabled = ref(false);
 const time = ref(null);
-const statusLabels : Record<string, StatusLabel> = {
+const statusLabels: Record<string, StatusLabel> = {
   available: { text: "可用", type: "success" },
   offline: { text: "下线", type: "info" },
 };
@@ -49,7 +49,6 @@ const statusLabels : Record<string, StatusLabel> = {
 //   update: false,
 //   delete: false,
 // })
-
 
 interface StatusLabel {
   text: string;
@@ -66,11 +65,10 @@ const getStatusType = (status: string) =>
 const getStatusText = (status: string) =>
   statusLabels[status]?.text || "其他状态";
 
-
 const value = ref();
 type MaterialType = {
-    name: string;
-    value: string;
+  name: string;
+  value: string;
 };
 
 const materialType = ref<MaterialType[]>([]);
@@ -117,19 +115,28 @@ watch(
       materialType.value,
       String(route.params.type).replace("Template", "")
     );
-    formInline.type = String(route.params.type).replace("Template", "");
+
+    formInline.value = {
+      name: "",
+      // type	素材类型：sms 短信，appPush app消息，digital 数字员工，outbound 智能外呼，znx 站内信
+      type: String(route.params.type).replace("Template", ""),
+      beginTime: "",
+      endTime: "",
+      status: "",
+    };
+    time.value = null;
     fetchDataApi();
   }
 );
-watch([currentPage, pageSize, formInline, value], () => {
+watch([currentPage, pageSize, formInline.value, value], () => {
   fetchDataApi();
 });
 const fetchDataApi = async () => {
-  const res = await getQryMaterial({
+  const res = (await getQryMaterial({
     pageNum: unref(currentPage),
     pageSize: unref(pageSize),
-    ...formInline,
-  })as {code:any, message:any, data:any};
+    ...formInline.value,
+  })) as { code: any; message: any; data: any };
   tableData.value = res.data.records;
   total.value = res.data.total;
   console.log(`output->tabledata`, tableData.value);
@@ -147,11 +154,11 @@ const delData = async (row: any) => {
     confirmButtonClass: "pd-button",
     customClass: "delete-modal",
   }).then(async () => {
-    let res = await setDeleteMaterial({
+    let res = (await setDeleteMaterial({
       id: row.id,
       status: row.status,
-      type: formInline.type,
-    })as {code:any, message:any, data:any};
+      type: formInline.value.type,
+    })) as { code: any; message: any; data: any };
     if (res?.code == 0) {
       fetchDataApi();
       ElMessage.success(res.message);
@@ -160,11 +167,11 @@ const delData = async (row: any) => {
 };
 // 上线素材
 const updateMaterialStatusData = async (row: any, status: String) => {
-  let res = await setUpdateMaterialStatus({
+  let res = (await setUpdateMaterialStatus({
     id: row.id,
     status: status,
-    type: formInline.type,
-  })as {code:any, message:any, data:any};
+    type: formInline.value.type,
+  })) as { code: any; message: any; data: any };
   if (res?.code == 0) {
     ElMessage.success(res.message);
     fetchDataApi();
@@ -180,11 +187,11 @@ const addData = async () => {
   let name = "新建" + materialTypeName.value + "模版";
 
   // @ts-ignore force
-  createTemplatePopover(name, formInline.type).then(fetchDataApi);
+  createTemplatePopover(name, formInline.value.type).then(fetchDataApi);
 };
 const updateData = (row: any, readonly: boolean = false, type?: any) => {
   const { content, ...rest } = row;
-  if (formInline.type == "digital") {
+  if (formInline.value.type == "digital") {
     value.value = row;
   } else {
     value.value = { ...content, ...rest };
@@ -206,7 +213,7 @@ const updateData = (row: any, readonly: boolean = false, type?: any) => {
         (!readonly ? "编辑" : "查看") + materialTypeName.value + "模版";
       createTemplatePopover(
         name,
-        !readonly ? formInline.type : row.type,
+        !readonly ? formInline.value.type : row.type,
         value,
         readonly ? "details" : "update",
         readonly
@@ -217,7 +224,7 @@ const updateData = (row: any, readonly: boolean = false, type?: any) => {
     let name = (!readonly ? "编辑" : "查看") + materialTypeName.value + "模版";
     createTemplatePopover(
       name,
-      !readonly ? formInline.type : row.type,
+      !readonly ? formInline.value.type : row.type,
       value,
       readonly ? "details" : "update",
       readonly
@@ -233,11 +240,11 @@ const handleCurrentChange = (val: number) => {
 const changeTime = (val: any) => {
   console.log(val, "change");
   if (val == null) {
-    formInline.beginTime = "";
-    formInline.endTime = "";
+    formInline.value.beginTime = "";
+    formInline.value.endTime = "";
   } else {
-    formInline.beginTime = dayjs(val[0]).format("YYYY-MM-DD");
-    formInline.endTime = dayjs(val[1]).format("YYYY-MM-DD");
+    formInline.value.beginTime = dayjs(val[0]).format("YYYY-MM-DD");
+    formInline.value.endTime = dayjs(val[1]).format("YYYY-MM-DD");
   }
 };
 </script>
@@ -263,7 +270,7 @@ const changeTime = (val: any) => {
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width: 200px" :suffix-icon="Search" maxlength="50"/>
+            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width: 200px" :suffix-icon="Search" maxlength="50" />
           </el-form-item>
         </el-form>
         <div v-if="String(route.params.type).replace('Template', '') != 'all'">

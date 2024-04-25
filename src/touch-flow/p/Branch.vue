@@ -41,7 +41,7 @@ const del = useDel().del
       </el-popover>
     </p>
     <div class="PBlock-Content theme">
-      <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Section">
+      <div style="--theme-color: #90A0B8" @click="openCondition" class="PBlock-Selection">
         <div>
           包含{{ data.children.length }}个分支
         </div>

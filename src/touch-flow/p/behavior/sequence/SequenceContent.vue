@@ -170,8 +170,7 @@ const defaultTime2: [Date, Date] = [
         </el-icon>
         删除
       </el-text>
-
-      <SequenceSubContent :index="_index" :dict="dict" :eventCode="event.eventCode" :condition="event.conditions" :readonly="readonly" :outside="outside"/>
+      <SequenceSubContent :index="_index" :dict="dict" v-if="event.conditions.conditions?.length >0" :eventCode="event.eventCode" :condition="event.conditions" :readonly="readonly" :outside="outside"/>
     </div>
   </div>
 </template>

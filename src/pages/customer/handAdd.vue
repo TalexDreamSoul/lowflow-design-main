@@ -159,6 +159,7 @@ const pageNum = ref(1);
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     if ("id" in props.formValues && props.formValues?.id !== null) {
       getSelectData({ ...pageParams, pageNum: 1 });
     } else {

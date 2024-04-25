@@ -71,7 +71,7 @@ const attrs = computed(() => {
 </script>
 
 <template>
-  <div class="SequenceSubContent">
+  <div class="SequenceSubContent" >
     <LogicalLine v-model="condition.logicalChar" :display="condition.conditions?.length < 2">
       <div class="SequenceSubContent-Line" v-if="attrs" v-for="(item, index) in getConditions()" :key="index">
         <trigger :conditions="getConditions()" :item="item" v-model="item.attr.field" :attrs="attrs"
@@ -98,7 +98,7 @@ const attrs = computed(() => {
 
     gap: 0.5rem;
     align-items: center;
-    margin-top: 1rem;
+    //margin-top: 1rem;
   }
 
   // margin: 10px 0;

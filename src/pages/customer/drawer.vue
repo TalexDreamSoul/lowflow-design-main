@@ -21,8 +21,8 @@
           :rules="[
             { required: true, message: '请输入黑名单名称' },
             {
-              pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
-              message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
+              pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,50}$/,
+              message: '仅支持数字、汉字、字母、下划线，不超过50个字符',
             },
           ]"
           label="黑名单名称"
@@ -44,7 +44,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          :rules="[{ max: 40, message: '最多可输入40字' }]"
+          :rules="[{ max: 140, message: '最多可输入140字' }]"
           label="黑名单说明"
           prop="blacklistDesc"
         >

@@ -36,14 +36,14 @@ let _Graph: any;
 
 let treeMap = props.p;
 
-const route = useRoute()
-const { width, height } = useWindowSize()
-const _edit = computed(() => route.params?.id)
+const route = useRoute();
+const { width, height } = useWindowSize();
+const _edit = computed(() => route.params?.id);
 const getNodeReactive = genIdNodeReactive(props.p);
 const getNodeName = genNameFunc(props.p);
 
-window['$getNodeName'] = getNodeName
-window['$getNodeById'] = getNodeReactive
+window["$getNodeName"] = getNodeName;
+window["$getNodeById"] = getNodeReactive;
 // provide('$getNodeName', getNodeName)
 
 const del = (p: MarketingTouchEditDTO) => {
@@ -65,12 +65,12 @@ const del = (p: MarketingTouchEditDTO) => {
 };
 
 const layoutFn = () => {
-  const _c = window.console
+  const _c = window.console;
   var console = {
     log: (...arg: any) => void 0,
     groupCollapsed: (arg: any) => void 0,
-    groupEnd: () => void 0
-  }
+    groupEnd: () => void 0,
+  };
 
   console.groupCollapsed("layoutFn");
 
@@ -85,7 +85,7 @@ const layoutFn = () => {
       if (nodeType === "subDiversion") {
         console.log("__subDiversion");
         return 540;
-      }else if (nodeType === "diversion") {
+      } else if (nodeType === "diversion") {
         console.log("diversion");
         return 210;
       }
@@ -118,28 +118,38 @@ const layoutFn = () => {
   } = { nodes: [], edges: [] };
 
   const _: any = {
-    Start: (height: number) => height - 90,
+    Start: (height: number) => height - 92,
     strategy: (height: number, data: any) => {
-      const fatherNode = getNodeReactive(data.data?.preNodeId)
+      const fatherNode = getNodeReactive(data.data?.preNodeId);
       console.log("@@@---", data.data);
       if (fatherNode?.nodeType === "subDiversion") return height - 360;
       if (data.data.diversionType === "safeguard") return height - 455;
 
       if (props.readonly) {
-        if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
-          return height - 77
+        if (
+          String(data.data.nodeDelayed.delayedAction)
+            .toLocaleLowerCase()
+            .indexOf("touch") !== -1
+        )
+          return height - 77;
 
-        return height - 160
+        return height - 160;
       }
+      // 策略器下接的分流器的连线
+      if (
+        String(data.data.nodeDelayed.delayedAction)
+          .toLocaleLowerCase()
+          .indexOf("touch") !== -1
+      )
+        return height - 192;
 
-      if (String(data.data.nodeDelayed.delayedAction).toLocaleLowerCase().indexOf('touch') !== -1)
-        return height - 280
+  
 
-    // c策略器节点连接策略器长度连线
-      return height - 380;
+      // 策略器节点连接策略器长度连线
+      return height - 320;
     },
     // 分流器节点长度连线---包含{xx}分支
-    diversion: (height: number) => height - 125,
+    diversion: (height: number) => height - 113,
     subDiversion: (height: number, _data: any) => {
       const { data } = _data;
       let calcHeight = height - 125;
@@ -150,13 +160,22 @@ const layoutFn = () => {
           calcHeight += 100;
         }
       }
-
+      // 分流器的策略器连接选择策略器的连线
       if (data.nodeDelayed?.delayedAction) {
-        calcHeight = calcHeight - 180;
+        calcHeight = calcHeight - 163;
+      }
+     // 分流器策略器下接的分流器的连线
+     if (
+        String(data.nodeDelayed?.delayedAction)
+          .toLocaleLowerCase()
+          .indexOf("touch") !== -1
+      ){
+        calcHeight = calcHeight +30;
       }
 
+  
       if (props.readonly) {
-        calcHeight -= 80
+        calcHeight -= 80;
       }
 
       console.log("><", data);
@@ -196,8 +215,9 @@ const layoutFn = () => {
               position: "bottom",
               attrs: {
                 circle: {
-                  stroke: "transparent",
-                  strokeWidth: 1,
+                  r: 1, // 设置连接点的半径为6
+                   stroke: "transparent",
+                  strokeWidth: .1,
                   fill: "transparent",
                 },
               },
@@ -208,7 +228,7 @@ const layoutFn = () => {
               attrs: {
                 circle: {
                   stroke: "transparent;",
-                  strokeWidth: 1,
+                  strokeWidth: .1,
                   fill: "transparent",
                 },
               },
@@ -257,11 +277,11 @@ const layoutFn = () => {
   console.log(model);
 
   console.groupEnd();
-  window.console = _c
+  window.console = _c;
 
   _Graph.fromJSON(model);
 
-  setTimeout(() => _Graph.positionContent("top"), 200)
+  setTimeout(() => _Graph.positionContent("top"), 200);
 };
 
 onMounted(() => {
@@ -269,7 +289,7 @@ onMounted(() => {
 
   // layoutFn();
   watchEffect(() => {
-    $ignored: [width.value + height.value]
+    $ignored: [width.value + height.value];
     const { p } = toRefs(props);
 
     layoutFn();
@@ -367,14 +387,11 @@ window.$refreshLayout = layoutFn;
     content: "";
     position: absolute;
     margin: -1rem;
-
-    width: 150%;
-    height: 150%;
-
-    left: -25%;
-    top: -25%;
-
-    border-radius: 50%;
+    width: 160%;
+    height: 160%;
+    left: 20%;
+    top: 20%;
+    z-index: 66;
   }
 
   &.disabled {
@@ -416,7 +433,6 @@ body:has(.PBlock) .el-drawer {
 }
 
 div.PBlock {
-
   p {
     &.title {
       .el-button {
@@ -462,7 +478,12 @@ div.PBlock {
 
     padding: 16px;
     width: 280px;
-    background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%) rgba(255, 255, 255, 0.4);
+    background: linear-gradient(
+        180deg,
+        #f2f4f8 0%,
+        rgba(242, 244, 248, 0.4) 100%
+      )
+      rgba(255, 255, 255, 0.4);
     border-radius: 8px 8px 8px 8px;
     opacity: 1;
   }
@@ -470,7 +491,35 @@ div.PBlock {
   &-Content {
     &.theme {
       flex-direction: column;
+      & .PBlock-Selection {
+        &::before {
+          z-index: -1;
+          content: "";
+          position: absolute;
 
+          left: 0;
+          top: 0;
+
+          width: 100%;
+          height: 100%;
+
+          opacity: 0.12;
+          border-radius: 0 4px 4px 0;
+          background-color: var(--theme-color, red);
+        }
+
+        position: relative;
+        width: 368px;
+        height: 64px;
+        font-size: 16px;
+        font-weight: bold;
+        border: none;
+        border-left: 4px solid var(--theme-color, red);
+        line-height: 64px;
+        border-radius: 4px;
+        background: unset;
+        padding-left: 16px;
+      }
       & .PBlock-Section {
         &::before {
           z-index: -1;
@@ -489,8 +538,8 @@ div.PBlock {
         }
 
         position: relative;
-
-        width: 100%;
+        width: 368px;
+        height: 120px;
         border: none;
         border-left: 4px solid var(--theme-color, red);
 

@@ -228,7 +228,7 @@ ul {
 
 :deep(.el-form-item) {
   margin-right: 0;
-  margin-bottom: 0;
+ // margin-bottom: 0;
 }
 
 :deep(.Logical-Line) {

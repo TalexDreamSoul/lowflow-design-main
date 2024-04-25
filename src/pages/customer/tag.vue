@@ -204,6 +204,7 @@
             v-model="formValues.labelDesc"
             placeholder="请输入"
             clearable
+            maxlength="140"
           />
         </el-form-item>
       </el-form>
@@ -353,6 +354,7 @@ const upload = ref<UploadInstance>();
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );

@@ -2,12 +2,17 @@
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
 import TargetContent from "../header/TargetContent.vue";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps<{
   sizeForm: any;
   readonly?: boolean;
 }>();
+const router = useRouter();
 
+const goBack = () => {
+  router.go(-1);
+};
 const dict = ref<any>();
 
 !(async () => {
@@ -18,7 +23,7 @@ const dict = ref<any>();
   } else {
     console.log(res);
 
-    window.history.back();
+    goBack()
 
     throw new Error("获取字典失败,无法完成流程!");
   }

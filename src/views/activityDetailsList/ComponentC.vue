@@ -1,268 +1,156 @@
 <script setup lang="ts">
-import { ref, unref, reactive, onMounted, watch } from "vue";
-import {
-  getqryMarketingTouch,
-  deleteMarketingTouch,
-  getqryTouchStatusCount,
-  getstartMarketingTouch,
-  getpauseMarketingTouch,
-  updateMarketingTouchStatus,
-  copyMarketingTouch,
-} from "~/api/index";
-import { useRouter, useRoute } from "vue-router";
-import { ElMessageBox, ElMessage, ElTag } from "element-plus";
+import { ref, onMounted, watch } from "vue";
 import { Download } from "@element-plus/icons-vue";
-import dayjs from "dayjs";
-import { getmarketingTouchDetail, marketingTouchStatistics } from "~/api/index";
-import * as echarts from "echarts/core";
-import { FunnelChart } from "echarts/charts";
-import {
-  TitleComponent,
-  TooltipComponent,
-  GridComponent,
-} from "echarts/components";
-import { CanvasRenderer } from "echarts/renderers";
+import * as API from "~/api/activity";
+import { dayjs } from "element-plus";
 
-import { BlackAddTypeEnum, BLACK_LIST_TYPE } from "~/constants";
+const curTime = dayjs(new Date()).format("YYYY-MM-DD");
 
-const funnelChart = ref(null);
-const formInline = reactive({
-  touchName: "",
-  executeType: "",
-  beginTime: "",
-  endTime: "",
-  status: "",
+const props = defineProps({
+  activityId: String,
 });
-
-const time = ref(null);
-const router = useRouter();
-const route = useRoute();
-
-const statusLabels = {
-  draft: { Text: "草稿", type: "info" },
-  approvalPending: { Text: "待审批", type: "success" },
-  approvalSuccess: { Text: "审批成功", type: "info" },
-  approvalRefuse: { Text: "审批拒绝", type: "warning" },
-  waitStart: { Text: "等待启动", type: "warning" },
-  running: { Text: "发送中", type: "" },
-  suspend: { Text: "暂停", type: "warning" },
-  done: { Text: "已结束", type: "info" },
-};
-const typeMap = {
-  immediately: "定时-单次",
-  delayed: "定时-重复",
-  trigger: "触发型",
-};
+const time = ref([
+  new Date(`${curTime} 00:00:00`),
+  new Date(`${curTime} 23:59:59`),
+]);
 const tableData = ref([]);
-const currentPage = ref(1);
-const pageSize = ref(10);
-const small = ref(false);
-const background = ref(false);
-const disabled = ref(false);
-const total = ref(110);
-
-const StatisticsList = ref({
-  suspend: 0,
-  running: 0,
-  total: 0,
-  waitStart: 0,
-  draft: 0,
-  approvalPending: 0,
-  approvalSuccess: 0,
-  approvalRefuse: 0,
-  done: 0,
-  accumulateCompleteCount: 0,
-  accumulateEntryCount: 0,
-  accumulateTouchCount: 0,
-  completeTargetCount1: 0,
-  completeTargetCount2: 0,
-  timeIntervals: [
-    "0-5s",
-    "6-10s",
-    "11～20s",
-    "21～40s",
-    "81～160s",
-    "161～320s",
-    "321～640s",
-    "641～1280s",
-    "≥1280s",
-  ],
-  percentages: [60, 45, 15, 60, 45, 15, 60, 45, 15],
-});
+const total = ref(0);
+const pageHeaderMap = ref({});
+const activityFormData = ref([]);
+const interactId = ref("");
+const pageNum = ref(1);
 
 onMounted(async () => {
-  fetchDataApi();
+  fetchActivityForm();
 });
-watch([currentPage, pageSize, formInline], () => {
-  fetchDataApi();
-});
-const fetchDataApi = async () => {
-  const res = await getqryMarketingTouch({
-    pageNum: unref(currentPage),
-    pageSize: unref(pageSize),
-    ...formInline,
-  });
-  tableData.value = res.data.records;
-  total.value = res.data.total;
-};
 
-const handleSizeChange = (val: any) => {
-  console.log(`${val} items per page`);
-};
-const handleCurrentChange = (val: number) => {
-  console.log(`current page: ${val}`);
-};
-const changeTime = (val: any) => {
-  console.log(val, "change");
-  if (val == null) {
-    formInline.beginTime = "";
-    formInline.endTime = "";
-  } else {
-    formInline.beginTime = dayjs(val[0]).format("YYYY-MM-DD");
-    formInline.endTime = dayjs(val[1]).format("YYYY-MM-DD");
+watch([interactId, time], () => {
+  pageNum.value = 1;
+  fetchDataApi({ interactId: interactId.value, time: time.value, pageNum: 1 });
+});
+
+const fetchActivityForm = async () => {
+  const res = await API.queryActivityForm({ activityId: props.activityId });
+  activityFormData.value = res?.data;
+  if (res?.data?.[0]?.interactId) {
+    interactId.value = res?.data?.[0]?.interactId;
   }
 };
 
-const changeStatus = (val: any) => {
-  console.log(val, "change");
-  formInline.status = val;
+const fetchDataApi = async (params: any) => {
+  const { time, ...value } = params;
+  let startTime = null;
+  let endTime = null;
+  if (time) {
+    startTime = dayjs(time?.[0] as any).format("YYYY-MM-DD HH:mm:ss");
+    endTime = dayjs(time?.[1] as any).format("YYYY-MM-DD HH:mm:ss");
+  }
+  const res = await API.getFormCustomData({
+    startTime,
+    endTime,
+    ...value,
+    pageSize: 10,
+    activityId: props.activityId,
+  });
+  const { pageHeader, pageData } = res?.data;
+  pageHeaderMap.value = pageHeader;
+  tableData.value = pageData.records;
+  total.value = pageData.total;
 };
-const defaultFormValues = {
-  blacklistName: "",
-  blacklistDesc: "",
-  blacklistType: "",
+
+const handleCurrentChange = (val: number) => {
+  pageNum.value = val;
+  fetchDataApi({ pageNum: val, interactId: interactId.value });
 };
-let formValues = reactive<any>({ ...defaultFormValues });
 
-onMounted(async () => {
-  // const response: any = await marketingTouchStatistics({
-  //   id: route.params.id,
-  // });
-  // const data = response?.data;
-
-  // const chart = echarts.init(chartContainerB.value);
-
-  // const options = {
-  //   xAxis: {
-  //     type: "funnel",
-  //     data: [
-  //       { value: 12345, name: "浏览量人数UV" },
-  //       { value: 5435, name: "表单提交人数" },
-  //     ],
-  //   },
-  //   yAxis: {
-  //     type: "value",
-  //     min: 0,
-  //     max: 60,
-  //   },
-
-  //   series: [
-  //     {
-  //       name: "Percentage",
-  //       type: "bar",
-  //       barWidth: "40px", // 设置柱体宽度
-  //       data: StatisticsList.value?.percentages,
-  //     },
-  //   ],
-  // };
-
-  // chart.setOption(options);
-
-  echarts.use([
-    TitleComponent,
-    TooltipComponent,
-    GridComponent,
-    CanvasRenderer,
-  ]);
-  echarts.use(FunnelChart);
-
-  const chartData = [
-    { value: 100, name: "Step 1" },
-    { value: 80, name: "Step 2" },
-    { value: 60, name: "Step 3" },
-    { value: 40, name: "Step 4" },
-    { value: 20, name: "Step 5" },
-  ];
-
-  const myChart = echarts.init(funnelChart.value);
-
-  const option = {
-    tooltip: {
-      trigger: "item",
-      formatter: "{a} <br/>{b} : {c}%",
-    },
-    series: [
-      {
-        type: "funnel",
-        left: "10%",
-        top: 60,
-        bottom: 60,
-        width: "80%",
-        label: {
-          show: true,
-          position: "inside",
-        },
-        data: chartData,
-      },
-    ],
-  };
-
-  myChart.setOption(option);
-});
+const handleDownLoad = async () => {
+  let startTime = null;
+  let endTime = null;
+  if (time.value) {
+    startTime = dayjs(time.value?.[0] as any).format("YYYY-MM-DD HH:mm:ss");
+    endTime = dayjs(time.value?.[1] as any).format("YYYY-MM-DD HH:mm:ss");
+  }
+  const res = await API.exportFormCustomData({
+    startTime,
+    endTime,
+    interactId: interactId.value,
+    activityId: props.activityId
+  });
+  const fileNames = res?.headers
+    .get("content-disposition")
+    .split("filename=")[1];
+  let url = window.URL.createObjectURL(new Blob([res?.data]));
+  let a = document.createElement("a");
+  a.href = url;
+  a.download = decodeURI(fileNames);
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+};
 </script>
 
 <template>
   <div class="warp">
-
     <div class="tableCard">
       <div>
         <el-form :inline="true" class="demo-form-inline">
-
           <el-form-item label="表单">
-            <el-select v-model="formInline.executeType" clearable style="width:200px">
-              <el-option label="定时-单次" value="immediately" />
-              <el-option label="定时-重复" value="delayed" />
-              <el-option label="触发型" value="trigger" />
+            <el-select
+              v-model="interactId"
+              placeholder="请选择"
+              style="width: 300px"
+            >
+              <el-option
+                v-for="item of activityFormData"
+                :label="item.interactName"
+                :value="item.interactId"
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="筛选日期：">
-            <el-date-picker v-model="time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
+            <el-date-picker
+              v-model="time"
+              type="datetimerange"
+              range-separator="-"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              format="YYYY-MM-DD HH:mm:ss"
+              time-format="hh:mm:ss"
+              :clearable="false"
+            />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" :icon="Download" class="primaryStyle">下载</el-button>
+            <el-button
+              type="primary"
+              :icon="Download"
+              class="primaryStyle"
+              @click="handleDownLoad"
+              >下载</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
-
-      <el-table :data="tableData" style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;">
-
-        <el-table-column prop="id" label="序号"></el-table-column>
-        <el-table-column label="客户ID">
-          <template #default="scope">
-            {{ scope.row.id }}
-          </template>
-        </el-table-column>
-        <el-table-column label="客户名" prop="touchName" />
-        <el-table-column label="互金客户号">
-          <template #default="scope">
-            {{ statusLabels[scope.row.status].Text }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="phone" label="手机号" ></el-table-column>
-
-        <el-table-column prop="phone" label="你从哪里知道我们" ></el-table-column>
-
-        <el-table-column prop="phone" label="你喜欢什么产品"></el-table-column>
-
-        <el-table-column prop="phone" label="您有什么建议" ></el-table-column>
-
-        <el-table-column prop="phone" label="提交时间" ></el-table-column>
-
+      <el-table
+        :data="tableData"
+        style="width: 100% ----el-table-header-bg-color: #F2F4F8;--el-table-header-bg-color: #F2F4F8;--el-table-header-text-color:#333;"
+      >
+        <el-table-column
+          v-for="(item, key) in pageHeaderMap"
+          :label="item"
+          :prop="key"
+        ></el-table-column>
       </el-table>
-      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[100, 200, 300, 400]" :small="small" :disabled="disabled" :background="background" layout="prev, pager, next, jumper" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
-
+      <el-pagination
+        :current-page="pageNum"
+        background
+        layout="prev, pager, next, jumper"
+        :total="total"
+        :page-sizes="[10]"
+        @current-change="handleCurrentChange"
+        class="pagination"
+      />
     </div>
-
   </div>
 </template>
 <style lang="scss" scoped>
@@ -323,7 +211,11 @@ onMounted(async () => {
   min-width: 160px;
   max-height: 96px;
   margin-right: 16px;
-  background: linear-gradient(180deg, #f2f4f8 0%, rgba(242, 244, 248, 0.4) 100%);
+  background: linear-gradient(
+    180deg,
+    #f2f4f8 0%,
+    rgba(242, 244, 248, 0.4) 100%
+  );
   border-radius: 8px 8px 8px 8px;
   opacity: 1;
   margin-bottom: 24px;
