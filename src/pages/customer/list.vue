@@ -133,10 +133,6 @@
         <el-form-item
           :rules="[
             { required: true, message: '请输入客户名称' },
-            {
-              pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
-              message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
-            },
           ]"
           label="客户名称"
           prop="name"

@@ -204,6 +204,7 @@
             v-model="formValues.labelDesc"
             placeholder="请输入"
             clearable
+            maxlength="140"
           />
         </el-form-item>
       </el-form>

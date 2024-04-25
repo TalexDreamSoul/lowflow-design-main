@@ -139,10 +139,6 @@
           <el-form-item
             :rules="[
               { required: true, message: '请输入事件编码' },
-              {
-                pattern: /^[a-zA-Z0-9_]{1,200}$/,
-                message: '仅支持数字、字母、下划线，不超过200个字符',
-              },
             ]"
             label="事件编码"
             prop="eventCode"
@@ -157,8 +153,8 @@
             :rules="[
               { required: true, message: '请输入事件名称' },
               {
-                pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
-                message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
+                pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,50}$/,
+                message: '仅支持数字、汉字、字母、下划线，不超过50个字符',
               },
             ]"
             label="事件名称"
@@ -188,7 +184,7 @@
             </el-select>
           </el-form-item>
           <el-form-item
-            :rules="[{ max: 40, message: '最多可输入40字' }]"
+            :rules="[{ max: 140, message: '最多可输入140字' }]"
             label="事件说明"
             prop="describe"
           >
@@ -299,13 +295,9 @@
       >
         <el-form-item
           :rules="[
-            { required: true, message: '请输入属性编码' },
-            {
-              pattern: /^[a-zA-Z0-9_]{1,18}$/,
-              message: '仅支持数字、字母、下划线，不超过18个字符',
-            },
+            { required: true, message: '请输入事件属性编码' },
           ]"
-          label="属性编码"
+          label="事件属性编码"
           prop="field"
         >
           <el-input
@@ -316,13 +308,13 @@
         </el-form-item>
         <el-form-item
           :rules="[
-            { required: true, message: '请输入属性名称' },
+            { required: true, message: '请输入事件属性名称' },
             {
-              pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
-              message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
+              pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,50}$/,
+              message: '仅支持数字、汉字、字母、下划线，不超过50个字符',
             },
           ]"
-          label="属性名称"
+          label="事件属性名称"
           prop="fieldName"
         >
           <el-input
@@ -349,7 +341,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          :rules="[{ max: 40, message: '最多可输入40字' }]"
+          :rules="[{ max: 140, message: '最多可输入140字' }]"
           label="属性说明"
           prop="describe"
         >
