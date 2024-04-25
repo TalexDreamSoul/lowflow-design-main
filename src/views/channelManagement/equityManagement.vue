@@ -287,11 +287,10 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   </CustomEventComponent>
   <el-dialog class="pd-modal" destroy-on-close :close-on-click-modal="false" v-model="modalVisible" :title="ModalTitleMap[modalType]">
     <el-form :disabled="checkStringEqual(modalType, DrawerType.Detail)" ref="formRef" :hide-required-asterisk="true" label-position="top" class="form" :model="formValues">
-
-      <el-form-item :rules="[
+      <el-form-item  :rules="[
     { required: true, message: '请输入商品编号' }
   ]" label="商品编号" prop="skuCode">
-        <el-input v-model="formValues.skuCode" placeholder="请输入商品编号" clearable />
+        <el-input :disabled="modalType=='edit'" v-model="formValues.skuCode" placeholder="请输入商品编号" clearable />
       </el-form-item>
 
       <el-form-item :rules="[
