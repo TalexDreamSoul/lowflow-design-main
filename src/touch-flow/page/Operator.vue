@@ -30,7 +30,7 @@ const operatorOptions = [
   },
   {
     value: "等于",
-    type: ["num", "text", "nodeId", "touchResult", "touchId"],
+    type: ["num", "text", "nodeId", "touchResult", "touchCode"],
   },
   {
     value: "不等于",
@@ -88,8 +88,8 @@ const operators = computed(() => {
     _type = "nodeId"
   } else if (selectItem.value?.field === "touchResult") {
     _type = "touchResult"
-  } else if (selectItem.value?.field === "touchId") {
-    _type = "touchId"
+  } else if (selectItem.value?.field === "touchCode") {
+    _type = "touchCode"
   }
 
   return operatorOptions.filter((item) => item.type.includes(_type))
