@@ -57,7 +57,7 @@
         round
         type="primary"
         @click="handleModal(DrawerType.Create)"
-        >新建展位配置</el-button
+        >新建展位</el-button
       >
     </div>
     <div class="content">
@@ -463,9 +463,9 @@ const skipTypeMap: any = {
 };
 
 const ModalTitleMap: any = {
-  [DrawerType.Edit]: "编辑配置",
-  [DrawerType.Detail]: "查看配置详情",
-  [DrawerType.Create]: "新建配置",
+  [DrawerType.Edit]: "编辑展位",
+  [DrawerType.Detail]: "查看展位详情",
+  [DrawerType.Create]: "新建展位",
 };
 
 const pageParams = reactive({
