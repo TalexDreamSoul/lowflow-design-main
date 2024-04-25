@@ -37,7 +37,12 @@ const handleUnitChange = (newVal: string) => {
 };
 const handledelayedActionChange = (newVal: string) => {
   Object.assign(props.sizeForm, {
-    nodeDelayed: { delayedAction: newVal },
+  nodeDelayed: {
+    delayedAction: newVal,
+    delayedTime: props.sizeForm.nodeDelayed.delayedTime,
+    delayedUnit: props.sizeForm.nodeDelayed.delayedUnit,
+    isDelayed: props.sizeForm.nodeDelayed.isDelayed,
+  },
     touchType: newVal,
   });
 };
