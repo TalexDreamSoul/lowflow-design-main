@@ -238,7 +238,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
       <el-table :data="tableData">
         <el-table-column label="权益ID" prop="id" />
-        <el-table-column label="权益编号" prop="skuCode" />
+        <el-table-column label="商品编号" prop="skuCode" />
         <el-table-column label="权益展示名称" prop="equityName" />
 
         <el-table-column label="权益展示主图" prop="equityImageUrl">
