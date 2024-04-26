@@ -22,9 +22,9 @@
     </div>
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="activityId" label="H5活动ID" width="220" show-overflow-tooltip />
-        <el-table-column prop="activityName" label="H5活动名称" width="220" show-overflow-tooltip />
-        <el-table-column label="状态"  width="100">
+        <el-table-column prop="activityId" label="H5活动ID" width="200" show-overflow-tooltip />
+        <el-table-column prop="activityName" label="H5活动名称" width="230" show-overflow-tooltip />
+        <el-table-column label="状态"  >
           <template #default="scope">
             <el-tag :type="activityStatus[scope.row.activityStatus].type">{{ activityStatus[scope.row.activityStatus].label }}</el-tag>
             <span></span>
@@ -62,7 +62,7 @@
           </template>
         </el-table-column> -->
 
-        <el-table-column prop="creatorName" label="创建人"   width="100"/>
+        <el-table-column prop="creatorName" label="创建人"   width="220"/>
         <el-table-column prop="creatorName" label="操作" fixed="right" width="430">
           <template #default="scope">
             <el-space wrap>
