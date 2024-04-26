@@ -60,7 +60,7 @@ const fetchDataApi = async () => {
   });
 
   console.log("res", res.data);
-  tableData.value = res.data.data;
+  tableData.value = res.data.records;
   total.value = res.data?.total;
 };
 async function handleClickqryNodeTouchCustom() {
