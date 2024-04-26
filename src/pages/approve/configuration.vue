@@ -230,7 +230,7 @@ const getData = async (params: any) => {
 };
 
 const handleModal = async (type: string, values?: any) => {
-  Object.assign(formValues, values);
+  Object.assign(formValues, JSON.parse(JSON.stringify(values)));
   modalType.value = type;
   modalVisible.value = true;
 };
