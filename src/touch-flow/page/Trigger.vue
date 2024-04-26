@@ -36,8 +36,7 @@ watch(
     if (item.attr?.hasOwnProperty?.('fieldType')) {
       item.attr.fieldType = res.fieldType;
       item.attr.fieldName = res.fieldName;
-
-      item.attr.fieldOp = ''
+      // item.attr.fieldOp = ''
     }
     else {
       item.fieldType = res.fieldType;
@@ -52,7 +51,7 @@ watch(
 
 <template>
   <div class="Trigger-Wrapper">
-    <el-select :disabled="readonly || !!(model === 'touchCode' && haveNode)" class="trigger-container" v-model="model"
+    <el-select filterable :disabled="readonly || !!(model === 'touchCode' && haveNode)" class="trigger-container" v-model="model"
       :placeholder="ph">
       <el-option :disabled="!!(item.field === 'touchCode' && allowNode) || (item.field === 'nodeId' && (model === 'touchCode' || !allowNode))"
         v-for="item in attrs" :key="item.field" :label="item.fieldName" :value="item.field" />

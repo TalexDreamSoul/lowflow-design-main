@@ -146,7 +146,7 @@ const handleUnitChange = (newVal: string) => {
         <el-text>内完成以下转化事件，则认为完成目标</el-text>
       </div>
       <div>
-        <el-select @change="handleSelectChanged" :disabled="readonly" v-model="conditions.eventCode" style="width: 240px" placeholder="请选择">
+        <el-select filterable  @change="handleSelectChanged" :disabled="readonly" v-model="conditions.eventCode" style="width: 240px" placeholder="请选择">
           <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
             <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode!" />
           </el-option-group> </el-select>&nbsp;

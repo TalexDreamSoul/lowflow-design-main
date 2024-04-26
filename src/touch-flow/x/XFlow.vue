@@ -123,17 +123,21 @@ const layoutFn = () => {
       const fatherNode = getNodeReactive(data.data?.preNodeId);
       console.log("@@@---", data.data);
       if (fatherNode?.nodeType === "subDiversion") return height - 360;
+      // if (fatherNode?.nodeType === "strategy"&&props.readonly) return height - 360;
       if (data.data.diversionType === "safeguard") return height - 455;
-
+      // 查看详情里的连线
       if (props.readonly) {
         if (
           String(data.data.nodeDelayed.delayedAction)
             .toLocaleLowerCase()
             .indexOf("touch") !== -1
-        )
-          return height - 77;
-
-        return height - 160;
+        ) {
+          // 有触达的策略器
+          return height + 0;
+        } else {
+          // 没有触达的策略器
+          return height - 129;
+        }
       }
       // 策略器下接的分流器的连线
       if (
@@ -143,13 +147,14 @@ const layoutFn = () => {
       )
         return height - 192;
 
-  
-
       // 策略器节点连接策略器长度连线
       return height - 320;
     },
     // 分流器节点长度连线---包含{xx}分支
-    diversion: (height: number) => height - 113,
+    diversion:  (height: number, data: any) => {
+     
+      return height - 113
+    },
     subDiversion: (height: number, _data: any) => {
       const { data } = _data;
       let calcHeight = height - 125;
@@ -164,16 +169,15 @@ const layoutFn = () => {
       if (data.nodeDelayed?.delayedAction) {
         calcHeight = calcHeight - 163;
       }
-     // 分流器策略器下接的分流器的连线
-     if (
+      // 分流器策略器下接的分流器的连线
+      if (
         String(data.nodeDelayed?.delayedAction)
           .toLocaleLowerCase()
           .indexOf("touch") !== -1
-      ){
-        calcHeight = calcHeight +30;
+      ) {
+        calcHeight = calcHeight + 30;
       }
 
-  
       if (props.readonly) {
         calcHeight -= 80;
       }
@@ -216,8 +220,8 @@ const layoutFn = () => {
               attrs: {
                 circle: {
                   r: 1, // 设置连接点的半径为6
-                   stroke: "transparent",
-                  strokeWidth: .1,
+                  stroke: "transparent",
+                  strokeWidth: 0.1,
                   fill: "transparent",
                 },
               },
@@ -228,7 +232,7 @@ const layoutFn = () => {
               attrs: {
                 circle: {
                   stroke: "transparent;",
-                  strokeWidth: .1,
+                  strokeWidth: 0.1,
                   fill: "transparent",
                 },
               },

@@ -383,7 +383,7 @@ defineExpose({ updateData });
   <div>
     <el-form>
       <el-form-item label="触达通道">
-        <el-select :disabled="readonly" placeholder="请选择通道" @change="refreshMaterialTemplate" v-model="touchOptions.type" style="width: 120px">
+        <el-select filterable :disabled="readonly" placeholder="请选择通道" @change="refreshMaterialTemplate" v-model="touchOptions.type" style="width: 120px">
           <!-- 
           <el-option value="sms" label="短信">手机短信</el-option>
           <el-option value="appPush" label="app消息">appPush</el-option>
@@ -394,7 +394,7 @@ defineExpose({ updateData });
         </el-select>
       </el-form-item>
       <el-form-item v-if="touchOptions.type" label="选择模版">
-        <el-select @change="assignData" :disabled="readonly" v-model="touchOptions.id" style="width: 120px">
+        <el-select filterable @change="assignData" :disabled="readonly" v-model="touchOptions.id" style="width: 120px">
           <el-option v-for="(item,index) in touchOptions.material.templates" :key="index" :value="item.id" :label="item.name" style="height:auto">
             <div class="template-option">
               <span>{{ item.name }}</span>

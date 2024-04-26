@@ -185,7 +185,7 @@ const handleUnitChange = (newVal: string) => {
           <el-option value="yes" label="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select collapse-tags placeholder="请选择" v-model="blackListArray" multiple :disabled="readonly" v-if="blackList?._enable === 'yes'" style="width: 300px">
+        <el-select filterable collapse-tags placeholder="请选择" v-model="blackListArray" multiple :disabled="readonly" v-if="blackList?._enable === 'yes'" style="width: 300px">
           <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
             <!-- <p>{{ item.blacklistDesc }}</p> -->

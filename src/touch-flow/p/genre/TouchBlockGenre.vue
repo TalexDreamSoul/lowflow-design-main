@@ -89,7 +89,7 @@ function handleSelectChanged(val: string, event: any) {
     <LogicalLine :disabled="readonly" v-model="condition.logicalChar"  :display="condition?.conditions[0]?.conditions.length<2" >
       <div class="EventA-Wrapper" v-for="(event, index) in conditionList">
         <div class="EventA-Wrapper-Head">
-          <el-select :disabled="readonly" @change="handleSelectChanged($event, event)" placeholder="选择事件"
+          <el-select filterable :disabled="readonly" @change="handleSelectChanged($event, event)" placeholder="选择事件"
             v-model="event.eventCode" style="width: 200px">
             <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
               <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />

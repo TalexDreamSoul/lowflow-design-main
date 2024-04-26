@@ -191,14 +191,26 @@ queryDict().then((res) => {
 interface ActivityTypes {
   [key: string]: string;
 }
-async function copyToClipboard(text:string) {  
-    try {  
-        await navigator.clipboard.writeText(text);  
-        ElMessage.success("复制成功！");
-    } catch (err) {  
-        console.error('无法复制文本: ', err);  
-    }  
-}  
+
+function copyToClipboard(text:string) {
+  // 创建一个临时的输入框来存储要复制的文本
+  var input = document.createElement('input');
+  input.value = text;
+ 
+  // 将输入框添加到页面中
+  document.body.appendChild(input);
+ 
+  // 选中输入框的内容
+  input.select();
+ 
+  // 执行复制操作
+  document.execCommand('copy');
+  ElMessage.success("复制成功！");
+ 
+  // 移除临时输入框
+  document.body.removeChild(input);
+}
+
 const activities: ActivityTypes = {
   "1": "问卷玩法",
   "2": "抽奖玩法",

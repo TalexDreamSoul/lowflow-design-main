@@ -126,6 +126,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     if (modalType.value === DrawerType.Create) {
       res = await API.addAccount(values);
     } else {
+      delete values?.accountPassword
       res = await API.updateAccount(values);
     }
     if (checkStringEqual(res?.code, 0)) {
