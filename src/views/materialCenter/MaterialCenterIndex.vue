@@ -32,7 +32,7 @@ const formInline = ref({
   status: "",
 });
 const tableData = ref([]); // 表格数据
-const total = ref(100); // 总数
+const total = ref(0); // 总数
 const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
@@ -128,9 +128,12 @@ watch(
     fetchDataApi();
   }
 );
-watch([currentPage, pageSize, formInline.value, value], () => {
+watch([currentPage, pageSize, value], () => {
+  console.log(formInline.value,"formInline")
+  // formInline.value.name,formInline.value.status,formInline.value.beginTime,formInline.value.status,formInline.value.endTime,
   fetchDataApi();
 });
+// formInline.value.name,formInline.value.status,formInline.value.beginTime,formInline.value.status,formInline.value.endTime,
 const fetchDataApi = async () => {
   const res = (await getQryMaterial({
     pageNum: unref(currentPage),
@@ -246,7 +249,24 @@ const changeTime = (val: any) => {
     formInline.value.beginTime = dayjs(val[0]).format("YYYY-MM-DD");
     formInline.value.endTime = dayjs(val[1]).format("YYYY-MM-DD");
   }
+  fetchDataApi();
+
 };
+
+const changeStatus = (val: string) => {
+  formInline.value.status=val
+  fetchDataApi();
+};
+const changeType = (val: string) => {
+  formInline.value.type=val
+  fetchDataApi();
+};
+
+const changeName = (val: string) => {
+  formInline.value.name=val
+  fetchDataApi();
+};
+
 </script>
 
 <template>
@@ -258,19 +278,19 @@ const changeTime = (val: any) => {
           <el-form-item label="创建时间:">
             <el-date-picker v-model="time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
           </el-form-item>
-          <el-form-item v-if="String(route.params.type).replace('Template', '') == 'all'" label="模板类型:">
+          <el-form-item v-if="String(route.params.type).replace('Template', '') == 'all'" label="模板类型:" @change="changeType">
             <el-select v-model="formInline.type" style="width: 200px" placeholder="模板类型">
               <el-option v-for="item in materialType" :label="item.name" :value="item.value" />
             </el-select>
           </el-form-item>
           <el-form-item label="模板状态:">
-            <el-select v-model="formInline.status" clearable style="width: 200px" placeholder="模板状态">
+            <el-select v-model="formInline.status" clearable style="width: 200px" placeholder="模板状态" @change="changeStatus">
               <el-option label="可用" value="available" />
               <el-option label="下线" value="offline" />
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width: 200px" :suffix-icon="Search" maxlength="50" />
+            <el-input v-model="formInline.name" :placeholder="`请输入${materialTypeName}模板名称`" clearable style="width: 200px" :suffix-icon="Search" maxlength="50"  @input="changeName" />
           </el-form-item>
         </el-form>
         <div v-if="String(route.params.type).replace('Template', '') != 'all'">

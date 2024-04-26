@@ -1,5 +1,5 @@
 <script setup lang="ts" name="StatisticsDisplay">
-import { ref } from "vue";
+import { ref, unref, watch } from "vue";
 import { ArrowRight } from "@element-plus/icons-vue";
 import { marketingTouchNodeStatistics, qryNodeTouchCustom } from "~/api/index";
 
@@ -17,7 +17,10 @@ const data = ref({
 });
 const modalVisible = ref(false);
 const tableData = ref<any[]>([]);
-
+const total = ref(0); // 总数
+const currentPage = ref(1);
+const pageSize = ref(10);
+const small = ref(false);
 async function handleClick() {
   if (data.value._fetched) return;
 
@@ -41,20 +44,32 @@ async function handleClick() {
     _fetched: true,
   });
 }
-async function handleClickqryNodeTouchCustom() {
+const handleSizeChange = (val: any) => {
+  console.log(`${val} items per page`);
+};
+const handleCurrentChange = (val: number) => {
+  console.log(`current page: ${val}`);
+};
+const fetchDataApi = async () => {
   const id = +location.href.split("/").at(-1)!;
-
   const res: any = await qryNodeTouchCustom({
     id,
-    pageNum: 1,
-    pageSize: 10,
+    pageNum: unref(currentPage),
+    pageSize: unref(pageSize),
     touchNodeId: props.nodeId,
   });
 
   console.log("res", res.data);
-  tableData.value = res.data;
+  tableData.value = res.data.records;
+  total.value = res.data?.total;
+};
+async function handleClickqryNodeTouchCustom() {
+  fetchDataApi();
   modalVisible.value = true;
 }
+watch([currentPage, pageSize], () => {
+  fetchDataApi();
+});
 const { status, containTarget } = window.$flow?.p;
 </script>
 
@@ -115,11 +130,13 @@ const { status, containTarget } = window.$flow?.p;
           background: rgb(242, 244, 248);
           ">
             <el-table-column prop="id" label="客户ID" width="120" />
-            <el-table-column prop="name" label="客户名" min-width="72" />
-            <el-table-column prop="itFinCode" label="互金客户号" width="120" />
+            <el-table-column prop="name" label="客户名" min-width="30" />
+            <el-table-column prop="itFinCode" label="互金客户号" width="140" />
             <el-table-column prop="phone" label="手机号" width="120"></el-table-column>
-            <el-table-column prop="updatedTime" label="触达时间" width="120"></el-table-column>
+            <el-table-column prop="createTime" label="触达时间" width="180"></el-table-column>
           </el-table>
+          <el-pagination class="pagination" v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next" :page-sizes="[10]" :small="small" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+
         </div>
       </div>
     </el-dialog>
@@ -209,5 +226,10 @@ const { status, containTarget } = window.$flow?.p;
 
     list-style: none;
   }
+}
+.pagination{
+  margin-top: 24px;
+  display: flex;
+    flex-direction: row-reverse;
 }
 </style>

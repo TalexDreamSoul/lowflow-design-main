@@ -79,3 +79,12 @@ export const exportFormCustomData = (data: any) => {
 export const playCustomDataExport = (data: any) => {
   return request.post({ url: `/api/playCustomDataExport.do`, data, responseType: 'blob', });
 }
+
+// 结束活动
+export const finishActivity = (data:any)=> {
+  return request.post({ url: "/api/finishActivity.do", data });
+}
+// 复制活动
+export const copyActivity = (data:any)=> {
+  return request.post({ url: "/api/copyActivity.do", data });
+}

@@ -22,7 +22,7 @@ const formInline = reactive({
 });
 
 const tableData = ref([]); // 表格数据
-const total = ref(100); // 总数
+const total = ref(0); // 总数
 
 const currentPage = ref(1);
 const pageSize = ref(10);

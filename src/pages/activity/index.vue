@@ -22,9 +22,9 @@
     </div>
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="activityId" label="H5活动ID" width="220" show-overflow-tooltip />
-        <el-table-column prop="activityName" label="H5活动名称" width="220" show-overflow-tooltip />
-        <el-table-column label="状态">
+        <el-table-column prop="activityId" label="H5活动ID" width="200" show-overflow-tooltip />
+        <el-table-column prop="activityName" label="H5活动名称" width="230" show-overflow-tooltip />
+        <el-table-column label="状态"  >
           <template #default="scope">
             <el-tag :type="activityStatus[scope.row.activityStatus].type">{{ activityStatus[scope.row.activityStatus].label }}</el-tag>
             <span></span>
@@ -40,7 +40,7 @@
             <div v-else>-</div>
           </template>
         </el-table-column>
-        <el-table-column label="包含玩法" show-overflow-tooltip>
+        <el-table-column label="包含玩法" show-overflow-tooltip  width="220">
           <template #default="scope">
             <div>
               <span v-if="!scope.row.playTypeList.length">-</span>
@@ -62,14 +62,16 @@
           </template>
         </el-table-column> -->
 
-        <el-table-column prop="creatorName" label="创建人"  />
-        <el-table-column prop="creatorName" label="操作" fixed="right" width="350">
+        <el-table-column prop="creatorName" label="创建人"   width="220"/>
+        <el-table-column prop="creatorName" label="操作" fixed="right" width="430">
           <template #default="scope">
             <el-space wrap>
   
               <el-button :disabled="![1,3,4].includes(scope.row.activityStatus)" link type="primary" @click="openUrl(scope.row.activityId,'true')">编辑</el-button>
             <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+            <el-button link type="primary" @click="actCopy(scope.row.activityId)">复制</el-button>
             <el-button :disabled="![1,3,5].includes(scope.row.activityStatus)" link type="primary" @click="del(scope.row.activityId)">删除</el-button>
+            <el-button :disabled="![4].includes(scope.row.activityStatus)" link type="primary" @click="actStop(scope.row.activityId)">结束</el-button>
             <el-button :disabled="!([4,5].includes(scope.row.activityStatus))" link type="primary" @click="()=>{
               activityInfo = scope.row;
               dialogVisible = true;
@@ -173,6 +175,8 @@ import {
   saveActivityTemplate,
   deleteActivityInfo,
   listActivityTemplate,
+  copyActivity,
+  finishActivity,
   queryDict,
 } from "~/api/activity";
 import dayjs from "dayjs";
@@ -352,7 +356,39 @@ const del = async (activityId: number) => {
     }
   });
 };
+//复制活动
+const actCopy = async(activityId: number)=>{
+  await copyActivity({
+        activityId,
+      })
+      getActivityList();
+      ElMessage.success("复制成功");
 
+}
+
+//结束活动
+const actStop = async (activityId: number) => {
+  ElMessageBox.alert("是否结束活动?", "提示", {
+    showCancelButton: true,
+    roundButton: true,
+    cancelButtonClass: "pd-button",
+    confirmButtonClass: "pd-button",
+    customClass: "delete-modal",
+  }).then(async () => {
+    try {
+      let res = await finishActivity({
+        activityId,
+      });
+      if (res) {
+        ElMessage.success("活动结束成功");
+        getActivityList();
+      }
+    } catch (error) {
+      console.log(error);
+      ElMessage.error("操作失败");
+    }
+  });
+};
 const delTem = async (activityId: number) => {
   ElMessageBox.alert("模板删除后将无法恢复", "确认删除", {
     showCancelButton: true,
