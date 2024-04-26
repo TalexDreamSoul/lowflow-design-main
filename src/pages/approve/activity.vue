@@ -31,7 +31,8 @@
             placeholder="H5活动名称"
             clearable
             :suffix-icon="Search"
-            maxlength="50" />
+            maxlength="50"
+          />
         </el-form-item>
       </el-form>
     </div>
@@ -95,12 +96,10 @@
             >
           </template>
         </el-table-column>
-        
+
         <template #empty>
           <el-empty :image="Maskgroup" :image-size="76">
-            <template #description>
-              暂无数据
-            </template>
+            <template #description> 暂无数据 </template>
           </el-empty>
         </template>
       </el-table>
@@ -147,6 +146,19 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item
+          label="审核备注"
+          prop="approveRemark"
+          :rules="[{ max: 140, message: '最多可输入140字' }]"
+        >
+          <el-input
+            v-model="formValues.approveRemark"
+            :autosize="{ minRows: 4 }"
+            type="textarea"
+            :show-word-limit="true"
+            placeholder="请输入"
+          />
+        </el-form-item>
       </el-form>
       <el-table
         :data="modalData"
@@ -175,6 +187,11 @@
             >
           </template></el-table-column
         >
+        <el-table-column
+          prop="approveRemark"
+          label="审核备注"
+          width="272"
+        ></el-table-column>
         <el-table-column prop="operationTime" label="操作时间" min-width="202">
           <template #default="scope">
             {{ scope.row.operationTime || "-" }}
@@ -183,9 +200,7 @@
 
         <template #empty>
           <el-empty :image="Maskgroup" :image-size="76">
-            <template #description>
-              暂无数据
-            </template>
+            <template #description> 暂无数据 </template>
           </el-empty>
         </template>
       </el-table>
@@ -260,6 +275,7 @@ const pageParams = reactive({
 
 const defaultFormValues = {
   approveStatus: "",
+  approveRemark: "",
 };
 let formValues = reactive({ ...defaultFormValues });
 let modalData = reactive<any>([]);
@@ -295,8 +311,8 @@ const getData = async (params: any) => {
     let activityBeginTime;
     let activityEndTime;
     if (time) {
-      activityBeginTime = dayjs(time[0]).format('YYYY-MM-DD');
-      activityEndTime = dayjs(time[1]).format('YYYY-MM-DD');
+      activityBeginTime = dayjs(time[0]).format("YYYY-MM-DD");
+      activityEndTime = dayjs(time[1]).format("YYYY-MM-DD");
     }
     let res: any = await pageActivityList({
       activityBeginTime,
@@ -327,6 +343,7 @@ const handleModal = async (type: string, values?: any) => {
     Object.assign(formValues, {
       recordId: values.approveRecordId,
       approveStatus: "",
+      approveRemark: "",
     });
   }
   modalType.value = type;
