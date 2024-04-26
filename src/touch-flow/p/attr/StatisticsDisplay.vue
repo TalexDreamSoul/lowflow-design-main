@@ -133,7 +133,7 @@ const { status, containTarget } = window.$flow?.p;
             <el-table-column prop="name" label="客户名" min-width="50" />
             <el-table-column prop="itFinCode" label="互金客户号" width="140" />
             <el-table-column prop="phone" label="手机号" width="120"></el-table-column>
-            <el-table-column prop="updatedTime" label="触达时间" width="120"></el-table-column>
+            <el-table-column prop="createTime" label="触达时间" width="120"></el-table-column>
           </el-table>
           <el-pagination class="pagination" v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next" :page-sizes="[10]" :small="small" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
 
