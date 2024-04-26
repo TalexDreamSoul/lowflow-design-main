@@ -4,6 +4,7 @@ import SubDiversionAttr from './attr/SubDiversionAttr.vue';
 import Maskgroup from "~/assets/icon/Maskgroup.png";
 import { genNodeParams } from './common/node-util';
 import BaseNode from './common/BaseNode.vue';
+import StatisticsDisplay from './attr/StatisticsDisplay.vue'
 
 const params = genNodeParams()
 const { readonly, useDisplayAttr, data, openDrawer, haveDiverse } = params
@@ -82,7 +83,9 @@ const { pushTemplate, delayedActionStr } = useDisplayAttr()
             <p>{{ pushTemplate.title }}</p>
             <span>{{ pushTemplate.title }}：{{ pushTemplate.val }}</span>
           </div>
-
+          <div v-if="readonly">
+            <StatisticsDisplay :nodeId="data.$id" />
+          </div>
         </div>
       </template>
       <template v-else>
