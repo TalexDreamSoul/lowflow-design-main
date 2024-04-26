@@ -60,10 +60,11 @@ const fetchDataApi = async () => {
   });
 
   console.log("res", res.data);
-  tableData.value = res.data;
-  total.value = data?.total;
+  tableData.value = res.data.data;
+  total.value = res.data?.total;
 };
 async function handleClickqryNodeTouchCustom() {
+  fetchDataApi();
   modalVisible.value = true;
 }
 watch([currentPage, pageSize], () => {
@@ -134,7 +135,7 @@ const { status, containTarget } = window.$flow?.p;
             <el-table-column prop="phone" label="手机号" width="120"></el-table-column>
             <el-table-column prop="updatedTime" label="触达时间" width="120"></el-table-column>
           </el-table>
-          <el-pagination class="pagination" v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+          <el-pagination class="pagination" v-model:current-page="currentPage" v-model:page-size="pageSize" background layout="prev, pager, next" :page-sizes="[10]" :small="small" :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
 
         </div>
       </div>
