@@ -36,8 +36,7 @@ watch(
     if (item.attr?.hasOwnProperty?.('fieldType')) {
       item.attr.fieldType = res.fieldType;
       item.attr.fieldName = res.fieldName;
-
-      item.attr.fieldOp = ''
+      // item.attr.fieldOp = ''
     }
     else {
       item.fieldType = res.fieldType;
