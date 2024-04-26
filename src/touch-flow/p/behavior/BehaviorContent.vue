@@ -100,7 +100,7 @@ const defaultTime2: [Date, Date] = [
         <el-option label="做过" value="=" />
         <el-option label="未做过" value="!=" />
       </el-select>
-      <el-select @change="handleChange($event, condition)" style="width: 150px" :disabled="readonly" placeholder="选择事件"
+      <el-select filterable @change="handleChange($event, condition)" style="width: 150px" :disabled="readonly" placeholder="选择事件"
         v-model="condition.eventCode">
         <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
           <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />

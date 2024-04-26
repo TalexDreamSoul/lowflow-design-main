@@ -256,12 +256,12 @@ const defaultTime2: [Date, Date] = [
         </el-select>
         &nbsp;
         &nbsp;
-        <el-select v-if="sizeForm.repeatTime.repeatType === 'month'" v-model="sizeForm.repeatTime.repeatDay"
+        <el-select filterable v-if="sizeForm.repeatTime.repeatType === 'month'" v-model="sizeForm.repeatTime.repeatDay"
           placeholder="选择月份的天数" style="width: 150px" multiple collapse-tags>
           <el-option v-for="day in 30" :key="day" :label="`${day}号`" :value="day"></el-option>
         </el-select>
         &nbsp;
-        <el-select v-if="sizeForm.repeatTime.repeatType === 'week'" v-model="sizeForm.repeatTime.repeatDay"
+        <el-select filterable v-if="sizeForm.repeatTime.repeatType === 'week'" v-model="sizeForm.repeatTime.repeatDay"
           placeholder="选择星期几" style="width: 150px" multiple collapse-tags>
           <el-option v-for="(day, index) in daysOfWeek" :key="index" :label="`星期${day}`" :value="index + 1"></el-option>
         </el-select>

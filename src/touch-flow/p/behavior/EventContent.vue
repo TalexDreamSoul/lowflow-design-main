@@ -45,7 +45,7 @@ const attrs = computed(() => {
             <el-row class="filter-item-rule">
               &nbsp;<el-col :xs="24" :sm="6">
                 <el-form-item :prop="'conditions.' + index + '.value'" style="width: 100%">
-                  <el-select v-model="item.eventCode">
+                  <el-select filterable v-model="item.eventCode">
                     <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
                       <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
                     </el-option-group> </el-select>

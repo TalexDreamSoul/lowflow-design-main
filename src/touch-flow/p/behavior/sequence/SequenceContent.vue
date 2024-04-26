@@ -148,7 +148,7 @@ const defaultTime2: [Date, Date] = [
     </div>
 
     <div class="SequenceContent-Events" v-for="(event, _index) in condition.conditions" :key="_index">
-      <el-select @change="handleEventChanged($event, event)" style="width: 200px" :disabled="readonly"
+      <el-select filterable @change="handleEventChanged($event, event)" style="width: 200px" :disabled="readonly"
         placeholder="选择事件" v-model="event.eventCode">
         <el-option-group v-for="group in dict?.events" :key="group.eventType" :label="group.eventTypeName">
           <el-option v-for="item in group.events" :key="item.id" :label="item.eventName" :value="item.eventCode" />
