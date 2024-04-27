@@ -1,10 +1,9 @@
 <script setup lang="ts" name="ConditionSetAttr">
+import 'dayjs/locale/zh-cn'
 import { computed, ref, inject, reactive, onMounted, watch } from "vue";
-import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import DayJs from 'dayjs'
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
-import TouchBlockGenre from "~/touch-flow/p/genre/TouchBlockGenre.vue";
 import FlowTypeSelector from "./condition/FlowTypeSelector.vue";
 import { validateABGroup, validatePropValue } from "~/touch-flow/flow-utils";
 import EventGroup from "./condition/EventGroup.vue";

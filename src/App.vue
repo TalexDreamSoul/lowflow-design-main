@@ -1,6 +1,8 @@
 <template>
   <el-config-provider :button="{ autoInsertSpace: true }" :locale="zhCn">
-    <el-watermark zIndex="9999" style="height: 100%;" :content='`${appOptions?.user?.accountName}+${dayjs(new Date().getTime()).format("YYYY-MM-DD")}`' :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
+    <el-watermark :zIndex="9999" style="height: 100%;"
+      :content='`${appOptions?.user?.accountName}+${dayjs(new Date().getTime()).format("YYYY-MM-DD")}`'
+      :font="{ color: 'rgba(0, 0, 0, 0.15)' }">
       <div class="common-layout">
         <TopMenu v-if="!meta.hideTopMenu" />
         <div class="content">
@@ -13,8 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-// @ts-ignore sure exist
-import zhCn from "element-plus/dist/locale/zh-cn.mjs";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
 import TopMenu from "~/views/TopMenu/index.vue";
 import {
   computed,
@@ -70,10 +71,10 @@ const getMarketingTokenFromURL = async () => {
       filteredMenu &&
         filteredMenu.forEach(
           (item: any) =>
-            (map[item.menuCode] = reactive({
-              children: [],
-              ...item,
-            }))
+          (map[item.menuCode] = reactive({
+            children: [],
+            ...item,
+          }))
         );
 
       const clearCodes: string[] = [];
@@ -102,13 +103,11 @@ const getMarketingTokenFromURL = async () => {
       useLocalStorage("menuMap-default", { menuMap });
       useLocalStorage(
         "router-default",
-        `/${Object.keys(menuMap.value)[0]}/${
-          menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+        `/${Object.keys(menuMap.value)[0]}/${menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
         }`
       );
       router.push(
-        `/${Object.keys(menuMap.value)[0]}/${
-          menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+        `/${Object.keys(menuMap.value)[0]}/${menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
         }`
       );
     });
@@ -131,9 +130,11 @@ onBeforeRouteUpdate((to, from, next) => {
 });
 
 const appOptions: RemovableRef<{
-  user: {};
+  user: {
+    accountName: string
+  };
   menu: {};
-}> = useLocalStorage("app-options", { user: {}, menu: {} });
+}> = useLocalStorage("app-options", { user: { accountName: "" }, menu: {} });
 // const appOptions = ref({})
 
 const meta = computed(() => route.meta);
@@ -231,10 +232,10 @@ watch([appOptions.value?.menu], () => {
   filteredMenu &&
     filteredMenu.forEach(
       (item: any) =>
-        (map[item.menuCode] = reactive({
-          children: [],
-          ...item,
-        }))
+      (map[item.menuCode] = reactive({
+        children: [],
+        ...item,
+      }))
     );
 
   const clearCodes: string[] = [];
@@ -263,8 +264,7 @@ watch([appOptions.value?.menu], () => {
   useLocalStorage("menuMap-default", { menuMap });
   useLocalStorage(
     "router-default",
-    `/${Object.keys(menuMap.value)[0]}/${
-      menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
+    `/${Object.keys(menuMap.value)[0]}/${menuMap.value[Object.keys(menuMap.value)[0]]?.children[0].menuCode
     }`
   );
 });
@@ -300,10 +300,8 @@ div {
 .content {
   flex: 1;
   overflow-y: scroll;
-  background: linear-gradient(
-    to bottom,
-    #eeeff6,
-    rgba(56, 128, 228, 0.1098039216)
-  );
+  background: linear-gradient(to bottom,
+      #eeeff6,
+      rgba(56, 128, 228, 0.1098039216));
 }
 </style>
