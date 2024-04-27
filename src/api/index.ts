@@ -5,13 +5,43 @@ export interface Role {
   name: string;
 }
 
+function genDictFileTree() {
+
+  function _req(data: any) {
+    return request.post({ url: "/api/dictFilterTree.do", data });
+  }
+
+  const cache = new Map<string, any>();
+
+  return (data: any = {
+    pageNum: "1",
+    pageSize: "999"
+  }): Promise<any> => {
+    return new Promise(resolve => {
+      const key = JSON.stringify(data);
+      if (cache.has(key)) {
+        const { time, value } = cache.get(key);
+        if (Date.now() - time < 1000 * 60) {
+          resolve(value);
+          return;
+        }
+      }
+
+      _req(data).then((res: any) => {
+        cache.set(key, {
+          time: Date.now(),
+          value: res
+        });
+
+        resolve(res)
+      })
+    })
+  }
+}
+
 // 分割线api/营销触达
-export const dictFilterTree = (data: any = {
-  pageNum: "1",
-  pageSize: "999"
-}) => {
-  return request.post({ url: "/api/dictFilterTree.do", data });
-};
+export const dictFilterTree = genDictFileTree();
+
 // 营销触达节点统计
 export const getmarketingTouchEstimate = (data: any) => {
   return request.post({ url: "/api/marketingTouchEstimate.do", data });
@@ -98,7 +128,7 @@ export const setUpdateMaterialStatus = (data: any) => {
 };
 
 // 字典查询
-export const queryDict = (dictKey: string):Promise<any>=> {
+export const queryDict = (dictKey: string): Promise<any> => {
   return request.get({ url: `/api/queryDict.do?dictKey=${dictKey}` });
 }
 

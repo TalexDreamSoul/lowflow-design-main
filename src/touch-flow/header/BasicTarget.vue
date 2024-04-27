@@ -24,12 +24,7 @@ const goBack = () => {
 const dict = ref<any>();
 
 !(async () => {
-  const res = await getDictFilterTree(
-    {
-      pageNum:"1",
-      pageSize:"999"
-    }
-  )as {data:any};
+  const res = await getDictFilterTree();
 
   if (res.data) {
     dict.value = res.data;
