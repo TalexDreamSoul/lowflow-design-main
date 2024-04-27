@@ -5,9 +5,10 @@
       <el-form :inline="true" :model="pageParams">
         <el-form-item>
           <el-select
+            style="width: 150px;"
             :fit-input-width="true"
             v-model="pageParams.configType"
-            placeholder="配置类型"
+            placeholder="展位类型"
             clearable
           >
             <el-option
@@ -17,7 +18,22 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="配置有效期">
+        <el-form-item>
+          <el-select
+            style="width: 150px;"
+            :fit-input-width="true"
+            v-model="pageParams.configStatus"
+            placeholder="展位状态"
+            clearable
+          >
+            <el-option
+              v-for="(item, key) in {1: '生效', 2: '失效'}"
+              :label="item"
+              :value="key"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="展位有效期">
           <el-date-picker
             v-model="pageParams.time"
             type="datetimerange"
@@ -30,10 +46,10 @@
         <el-form-item>
           <el-input
             v-model="pageParams.configName"
-            placeholder="配置名称"
+            placeholder="展位名称"
             clearable
             :suffix-icon="Search"
-          />
+            maxlength="50" />
         </el-form-item>
       </el-form>
       <el-button
@@ -41,25 +57,36 @@
         round
         type="primary"
         @click="handleModal(DrawerType.Create)"
-        >新建展位配置</el-button
+        >新建展位</el-button
       >
     </div>
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="configId" label="展位配置ID" width="232" />
-        <el-table-column prop="configName" label="配置名称" width="276" />
-        <el-table-column prop="configDesc" label="配置说明" width="278" />
+        <el-table-column prop="configId" label="展位ID" width="232" />
+        <el-table-column prop="configName" label="展位名称" width="276" />
+        <el-table-column prop="configDesc" label="展位说明" width="278" />
         <el-table-column prop="visualRange" label="可见范围" width="283">
           <template #default="scope">
             {{ visualRangeMap[scope.row.visualRange] }}
           </template>
         </el-table-column>
-        <el-table-column label="配置有效期" width="333">
+        <el-table-column prop="configStatus" label="展位状态" width="200">
+          <template #default="scope">
+            {{
+              scope.row.configStatus
+                ? checkStringEqual(scope.row.configStatus, 1)
+                  ? "生效"
+                  : "失效"
+                : "-"
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column label="展位有效期" width="333">
           <template #default="scope">
             {{ scope.row.startTime }} - {{ scope.row.endTime }}
           </template>
         </el-table-column>
-        <el-table-column prop="configType" label="配置类型" width="266">
+        <el-table-column prop="configType" label="展位类型" width="266">
           <template #default="scope">
             {{ configTypeMap[scope.row.configType] }}
           </template>
@@ -82,6 +109,12 @@
             >
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description> 暂无数据 </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination
         background
@@ -108,15 +141,21 @@
           :model="formValues"
           :disabled="modalType === DrawerType.Detail"
         >
-          <el-form-item label="配置名称" :rules="inputRules" prop="configName">
-            <el-input v-model="formValues.configName" />
+          <el-form-item label="展位名称" :rules="inputRules" prop="configName">
+            <el-input v-model="formValues.configName" maxlength="50"/>
           </el-form-item>
-          <el-form-item label="配置说明" prop="configDesc">
+          <el-form-item :rules="[{ max: 140, message: '最多可输入140字' }]" label="展位说明" prop="configDesc">
             <el-input
               :rows="2"
               type="textarea"
               v-model="formValues.configDesc"
             />
+          </el-form-item>
+          <el-form-item label="展位状态" prop="configStatus">
+            <el-radio-group v-model="formValues.configStatus">
+              <el-radio :value="1" size="large">生效</el-radio>
+              <el-radio :value="2" size="large">失效</el-radio>
+            </el-radio-group>
           </el-form-item>
           <div class="flex">
             <div class="item">
@@ -193,7 +232,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="配置有效期" :rules="selectRules" prop="time">
+          <el-form-item label="展位有效期" :rules="selectRules" prop="time">
             <el-date-picker
               v-model="formValues.time"
               type="datetimerange"
@@ -207,7 +246,7 @@
             <div class="config-type">
               <el-form-item
                 class="inline"
-                label="配置类型"
+                label="展位类型"
                 :rules="selectRules"
                 prop="configType"
               >
@@ -216,6 +255,7 @@
                   :fit-input-width="true"
                   placeholder="请选择"
                   style="width: 160px"
+                  @change="formValues.boothName = ''"
                 >
                   <el-option
                     v-for="(item, key) in configTypeMap"
@@ -232,7 +272,7 @@
                 :rules="inputRules"
                 prop="boothName"
               >
-                <el-input v-model="formValues.boothName" />
+                <el-input v-model="formValues.boothName" maxlength="50"/>
               </el-form-item>
               <el-form-item
                 :label="configTypeMap[formValues.configType] + '图片'"
@@ -384,6 +424,7 @@ import { Search, CirclePlusFilled } from "@element-plus/icons-vue";
 import { ElMessage, FormInstance, dayjs } from "element-plus";
 import Dialog from "./dialog.vue";
 import "element-plus/theme-chalk/el-message-box.css";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 const inputRules = [
   {
@@ -422,15 +463,16 @@ const skipTypeMap: any = {
 };
 
 const ModalTitleMap: any = {
-  [DrawerType.Edit]: "编辑配置",
-  [DrawerType.Detail]: "查看配置详情",
-  [DrawerType.Create]: "新建配置",
+  [DrawerType.Edit]: "编辑展位",
+  [DrawerType.Detail]: "查看展位详情",
+  [DrawerType.Create]: "新建展位",
 };
 
 const pageParams = reactive({
   configName: "",
   configType: "",
   time: "",
+  configStatus: ''
 });
 
 const defaultFormValues = {
@@ -450,6 +492,7 @@ const defaultFormValues = {
   skipActivityName: null,
   skipParam: null,
   skipActivityId: null,
+  configStatus: 1,
 };
 let formValues = reactive<any>({ ...defaultFormValues });
 const pageNum = ref(1);
@@ -466,6 +509,7 @@ const blacklist = ref<any>([]);
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );
@@ -563,8 +607,13 @@ const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Create) {
     Object.assign(formValues, defaultFormValues);
   } else {
+    // console.log(values);
     let { startTime, endTime, blacklist, ...params } = values;
-    Object.assign(formValues, { time: [new Date(startTime), new Date(endTime)], blacklist: blacklist.map((v: any) => v.blacklistId), ...params });
+    Object.assign(formValues, {
+      time: [new Date(startTime), new Date(endTime)],
+      blacklist: blacklist.map((v: any) => v.blacklistId),
+      ...params,
+    });
   }
   modalType.value = type;
   modalVisible.value = true;

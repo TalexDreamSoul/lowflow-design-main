@@ -6,6 +6,7 @@ import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, FormInstance } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { checkStringEqual, debounce } from "~/utils/common";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 // 通过 route.params 获取路由中的 type 参数
 // const getType = route.params.type;
@@ -15,7 +16,7 @@ const formInline = reactive({
 });
 const tableData = ref([]); // 表格数据
 const RoleList = ref([]); // 权限列表
-const total = ref(100); // 总数
+const total = ref(0); // 总数
 const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
@@ -125,6 +126,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
     if (modalType.value === DrawerType.Create) {
       res = await API.addAccount(values);
     } else {
+      delete values?.accountPassword
       res = await API.updateAccount(values);
     }
     if (checkStringEqual(res?.code, 0)) {
@@ -175,6 +177,14 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
     </template>
     <template #pagination>
@@ -185,13 +195,13 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
   <el-dialog width="350" destroy-on-close :close-on-click-modal="false" v-model="modalVisible" :title="ModalTitleMap[modalType]">
     <el-form ref="formRef" :hide-required-asterisk="true" label-position="top" class="form" :model="formValues">
       <el-form-item :rules="[
-            { required: true, message: '请输入帐号名称' },
+            { required: true, message: '请输入用户名' },
             {
               pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
               message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
             },
-          ]" label="帐号名称" prop="accountName">
-        <el-input v-model="formValues.accountName" style="width:300px" placeholder="请输入" clearable />
+          ]" label="用户名" prop="accountName">
+        <el-input v-model="formValues.accountName" style="width:300px" placeholder="请输入" clearable maxlength="50"/>
       </el-form-item>
       <el-form-item v-if="modalType === DrawerType.Create" prop="accountPassword" label="用户密码" :rules="[
         { required: true, message: '请输入用户密码' },
@@ -202,13 +212,14 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       ]">
         <el-input v-model="formValues.accountPassword" style="width:300px" placeholder="请输入" clearable />
       </el-form-item>
-      <el-form-item prop="roleId" label="用户角色">
+      <el-form-item prop="roleId" label="用户角色" :rules="[
+        { required: true, message: '请选择用户角色' },
+      ]">
         <el-select v-model="formValues.roleId" clearable style="width:300px" placeholder="用户角色" name="roleId" tabindex="2" autocomplete="on">
           <el-option v-for="item in RoleList" :label="item.roleName" :value="item.id" />
         </el-select>
       </el-form-item>
       <el-form-item :rules="[
-        { required: true, message: '请输入手机号' },
         {
           pattern: /^[1][3-9][0-9]{9}$/,
           message: '请输入按照正确格式输入手机号',
@@ -217,7 +228,6 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         <el-input v-model="formValues.phone" style="width:300px" placeholder="请输入" clearable />
       </el-form-item>
       <el-form-item prop="email" :rules="[
-        { required: true, message: '请输入邮箱' },
         {
           pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
           message: '请输入按照正确格式输入邮箱',

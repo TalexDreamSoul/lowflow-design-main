@@ -66,3 +66,32 @@ export function sleep(num: number = 200) {
     setTimeout(resolve, num)
   })
 }
+
+export const formatNumToThousandth = (val: number | string): string => {
+  if(!['string', 'number'].includes(typeof(val))) {
+    return val as any;
+  }
+  if (isNaN(Number(val))) {
+    // console.warn('请输入数字的number或string格式');
+    return '';
+  }
+  const _str = `${val}`;
+  const [int, decimal] = _str.split('.');
+  const _int = int
+    .split('')
+    .reverse()
+    .reduce((cur, item, index, arr) => {
+      if ((index + 1) % 3 === 0 && index + 1 !== arr.length) {
+        return `${cur}${item},`;
+      }
+      return `${cur}${item}`;
+    }, '')
+    .split('')
+    .reverse()
+    .join('');
+  const _decimal =
+    decimal?.length > 3
+      ? decimal.split('').reduce((cur, item, index) => ((index + 1) % 3 === 0 ? `${cur}${item},` : `${cur}${item}`), '')
+      : decimal;
+  return `${_int}${_decimal ? '.' + _decimal : ''}`;
+};

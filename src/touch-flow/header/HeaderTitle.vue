@@ -38,7 +38,7 @@ const rules = reactive<FormRules<IFlowHeader>>({
           <template #label>
             <p class="HeaderTitle-Label">策略流程名称：</p>
           </template>
-          <el-input :show-word-limit="true" style="margin-top: 10px" prop="touchName" maxlength="18" :disabled="readonly" placeholder="策略流程名称"
+          <el-input :show-word-limit="true" style="margin-top: 10px" prop="touchName" maxlength="50" :disabled="readonly" placeholder="策略流程名称"
             v-model="model" :style="{ width: '400px', height: '40px' }" />
         </el-form-item>
       </el-form>

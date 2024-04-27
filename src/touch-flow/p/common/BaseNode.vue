@@ -9,6 +9,10 @@ const props = defineProps<{
 
 const { readonly, data, dialogVisible, drawerOptions, openDrawer, comps, handleClick, handleSave } = props.params
 
+// 关闭抽屉后删除组件，避免存在局部缓存导致数据错误。
+function handleClosed() {
+  drawerOptions.comp = null
+}
 </script>
 
 <template>
@@ -16,7 +20,7 @@ const { readonly, data, dialogVisible, drawerOptions, openDrawer, comps, handleC
     <slot />
 
     <teleport to=".FlowPage">
-      <el-dialog v-model="dialogVisible" width="25%" title="请选择添加类型" align-center>
+      <el-dialog v-model="dialogVisible" width="500px" title="请选择添加类型" align-center>
         <div class="Dialog-Sections">
           <div @click="openDrawer(item, true)" v-for="item in comps" :class="{ disabled: item.disabled?.value }"
             class="PBlock-Section">
@@ -35,7 +39,7 @@ const { readonly, data, dialogVisible, drawerOptions, openDrawer, comps, handleC
     </teleport>
 
     <teleport to=".FlowPage">
-      <el-drawer @click="handleClick" v-model="drawerOptions.visible" :title="drawerOptions.title" size="65%">
+      <el-drawer @closed="handleClosed" @click="handleClick" v-model="drawerOptions.visible" :title="drawerOptions.title" size="65%">
         <component :new="drawerOptions?.new" :readonly="readonly" :p="data" :is="drawerOptions.comp" />
         <template #footer>
           <template v-if="readonly">

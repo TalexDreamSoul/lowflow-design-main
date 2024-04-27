@@ -4,6 +4,7 @@ import SubDiversionAttr from './attr/SubDiversionAttr.vue';
 import Maskgroup from "~/assets/icon/Maskgroup.png";
 import { genNodeParams } from './common/node-util';
 import BaseNode from './common/BaseNode.vue';
+import StatisticsDisplay from './attr/StatisticsDisplay.vue'
 
 const params = genNodeParams()
 const { readonly, useDisplayAttr, data, openDrawer, haveDiverse } = params
@@ -41,7 +42,9 @@ const { pushTemplate, delayedActionStr } = useDisplayAttr()
   <BaseNode :params="params" :disabled="readonly || haveDiverse"
     :display="data.nodeDelayed?.isDelayed !== undefined || pushTemplate?.has">
     <p class="title">
-      {{ data.nodeName }}
+      <span>
+        {{ data.nodeName }}
+      </span>
       <span style="float: right;font-size: 14px;color:#797979;
       font-weight: 500;">
         {{ data.nodeContent?.data?.branchName }}
@@ -55,27 +58,34 @@ const { pushTemplate, delayedActionStr } = useDisplayAttr()
           <!-- v-if="data.nodeDelayed?.isDelayed" -->
           <div style="--theme-color: #7dc757" class="PBlock-Section">
             <p>延时设置</p>
-            <span v-if="data.nodeDelayed?.isDelayed">
-              符合该策略器 {{ data.nodeDelayed.delayedTime }}
-              <span>
-                <span v-if="data.nodeDelayed.delayedUnit === 'day'"> 天 </span>
-                <span v-else-if="data.nodeDelayed.delayedUnit === 'hour'"> 小时 </span>
-                <span v-else-if="data.nodeDelayed.delayedUnit === 'minute'"> 分钟 </span>
-              </span>
-              后
-              <!-- {{ delayedActionStr }} -->
-            </span>
-            <!-- <span v-else-if="data.nodeDelayed.delayedAction === 'nothing'">不执行动作</span> -->
-            <span v-else>立即针对符合该策略器条件的客户</span>
-            <span>{{ delayedActionStr }}</span>
-          </div>
-          <div v-if="pushTemplate.has" style="--theme-color: #FFB858" class="PBlock-Section">
-            <p>
-              APP推送
-            </p>
-            <span>{{ pushTemplate.val }}</span>
-          </div>
+            <div >
 
+              <span v-if="data.nodeDelayed?.isDelayed">
+                符合该策略器 {{ data.nodeDelayed.delayedTime }}
+                <span>
+                  <span v-if="data.nodeDelayed.delayedUnit === 'day'"> 天 </span>
+                  <span v-else-if="data.nodeDelayed.delayedUnit === 'hour'"> 小时 </span>
+                  <span v-else-if="data.nodeDelayed.delayedUnit === 'minute'"> 分钟 </span>
+                </span>
+                后
+                <!-- {{ delayedActionStr }} -->
+              </span>
+              <!-- <span v-else-if="data.nodeDelayed.delayedAction === 'nothing'">不执行动作</span> -->
+              <span v-else>立即针对符合该策略器条件的客户</span>
+              <span style="    width: 100%;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              display: block;">{{ delayedActionStr }}</span>
+            </div>
+          </div>
+          <div v-if="pushTemplate.has" style="--theme-color: #ffb858" class="PBlock-Section">
+            <p>{{ pushTemplate.title }}</p>
+            <span>{{ pushTemplate.title }}：{{ pushTemplate.val }}</span>
+          </div>
+          <div v-if="readonly">
+            <StatisticsDisplay :nodeId="data.$id" />
+          </div>
         </div>
       </template>
       <template v-else>

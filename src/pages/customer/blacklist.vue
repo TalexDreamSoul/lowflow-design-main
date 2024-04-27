@@ -18,7 +18,7 @@
             placeholder="黑名单名称"
             clearable
             :suffix-icon="Search"
-          />
+            maxlength="50" />
         </el-form-item>
       </el-form>
       <el-button
@@ -122,6 +122,13 @@
             >
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination
         background
@@ -149,6 +156,7 @@ import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import BlackListDrawer from "./BlackListDrawer.vue";
 import "element-plus/theme-chalk/el-message-box.css";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 enum DrawerType {
   Create = "create",
@@ -185,6 +193,7 @@ const currentChange = (value: number) => {
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );
@@ -218,7 +227,6 @@ const getData = async (params: any) => {
 };
 
 const handleModal = async (type: typeof drawerOptions.type, values?: any) => {
-  console.log(type);
   drawerOptions.id = values?.id || -1;
   drawerOptions.type = type;
 

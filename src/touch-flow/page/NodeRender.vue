@@ -23,7 +23,7 @@ const model = useVModel(props, 'modelValue', emits)
 function getNodes() {
   // 去找那一条的field是touchId
   const { conditions, obj } = props
-  const res = conditions.find(item => item.attr?.field === 'touchId')
+  const res = conditions.find(item => item.attr?.field === 'touchCode')
 
   const { fieldReplaceValue } = res.attr
   if (Number.isInteger(fieldReplaceValue)) {
@@ -54,7 +54,7 @@ getNodes()
 
 <template>
   <div>
-    <el-select style="width: 181px" v-model="model" :disabled="readonly">
+    <el-select filterable style="width: 181px" v-model="model" :disabled="readonly">
       <el-option :value="item.nodeId" :label="item.nodeName" v-for="item in nodes">{{ item.nodeName }}</el-option>
     </el-select>
   </div>

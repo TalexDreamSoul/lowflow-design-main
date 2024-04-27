@@ -25,7 +25,6 @@ const props = defineProps<{
 }>();
 const emits = defineEmits(["getData", "onCancel"]);
 
-console.log("加载组件");
 const drawerTitle = (() => {
   const map = {
     create: "新建黑名单",
@@ -123,8 +122,6 @@ watchEffect(() => {
 
   if (!props.type) return;
 
-  console.log("UPDATED");
-
   async function _() {
     addType.value = BlackAddTypeEnum.Manual;
 
@@ -133,7 +130,6 @@ watchEffect(() => {
     } else {
       let res: any = await API.blacklistDetail({ id: props.id });
       if (!checkStringEqual(res?.code, 0)) return;
-      console.log("a", res);
       Object.assign(formValues, res?.data);
       Object.assign(eventContent, res?.data?.eventContent);
       Object.assign(ruleContent, res?.data?.ruleContent);
@@ -210,7 +206,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
             v-model="formValues.blacklistName"
             placeholder="请输入"
             clearable
-          />
+            maxlength="50" />
         </el-form-item>
         <el-form-item
           :rules="[{ required: true, message: '请选择黑名单类型' }]"

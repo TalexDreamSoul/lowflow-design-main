@@ -14,6 +14,7 @@ const origin: MarketingTouchNodeEditDTO = {
   preNodeId: "",
   diversionType: "safeguard",
   touchTemplateContent: {},
+  touchType: "nothing",
   nodeDelayed: {
     delayedAction: "nothing",
     delayedTime: 0,
@@ -84,7 +85,11 @@ function saveData() {
     _.nodeId = randomStr(12);
     _.preNodeId = props.p.nodeId;
 
-    props.p.children.push(_);
+
+    if (props.p.children) {
+      props.p.children.push(_);
+    } else props.p.children = [_]
+
   }
 
   return true;
@@ -99,7 +104,7 @@ regSaveFunc(saveData);
   <div>
     <el-form ref="form" :model="sizeForm" label-width="auto" label-position="left">
       <el-form-item label="选择策略器名称：">
-        <el-input :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" />
+        <el-input show-word-limit :disabled="readonly" v-model="sizeForm.nodeName" placeholder="填写名称" maxlength="50" />
       </el-form-item>
       <CommonAttr :readonly="readonly" ref="touchSettingsRef" :size-form="sizeForm" />
 
@@ -113,6 +118,6 @@ regSaveFunc(saveData);
 <style scoped lang="scss">
 :deep(.el-form-item) {
   margin-right: 0;
-  margin-bottom: 0;
+ // margin-bottom: 0;
 }
 </style>

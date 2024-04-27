@@ -6,6 +6,7 @@ import { useRouter, useRoute } from "vue-router";
 import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, ElMessage, ElTag } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 import API from "~/api/channelManagement";
 import { checkStringEqual, debounce } from "~/utils/common";
@@ -21,7 +22,7 @@ const formInline = reactive({
 });
 
 const tableData = ref([]); // 表格数据
-const total = ref(100); // 总数
+const total = ref(0); // 总数
 
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -144,8 +145,8 @@ function formatDate(value: number) {
     <template #search>
       <div class="search">
         <el-form :inline="true">
-          <el-form-item label="创建时间：">
-            <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
+          <el-form-item label="交易日期：">
+            <el-date-picker v-model="time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
           </el-form-item>
           <el-form-item>
             <el-select v-model="formInline.status" clearable style="width:200px" placeholder="校对结果">
@@ -194,6 +195,14 @@ function formatDate(value: number) {
             </el-space>
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
     </template>
     <template #pagination>
@@ -235,6 +244,14 @@ function formatDate(value: number) {
             </el-space>
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination v-model:current-page="colmPage" v-model:page-size="colmpageSize" background layout="prev, pager, next, jumper" :page-sizes="[10]" :small="small" :disabled="disabled" :total="colmDatatotal" @size-change="handleSizeChange" @current-change="handleCurrentChange" class="pagination" />
     </div>

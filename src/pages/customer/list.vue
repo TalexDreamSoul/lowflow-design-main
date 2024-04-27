@@ -51,14 +51,7 @@
           label="手机号"
           width="187"
         ></el-table-column>
-        <el-table-column prop="sex" label="性别" width="188">
-          <template #default="scope">
-            {{
-              PEOPLE_SEX.find((v) => checkStringEqual(v.value, scope.row.sex))
-                ?.label || "未知"
-            }}
-          </template>
-        </el-table-column>
+        <!-- <el-table-column prop="sex" label="性别" width="188" /> -->
         <!-- <el-table-column
           prop="province"
           label="省份"
@@ -106,12 +99,18 @@
             >
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description> 暂无数据 </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination
         background
         layout="prev, pager, next, jumper"
         :total="total"
-        :page-sizes="[10]"
+        :page-size="10"
+        :current-page="pageNum"
         @current-change="currentChange"
       />
     </div>
@@ -134,21 +133,33 @@
         <el-form-item
           :rules="[
             { required: true, message: '请输入客户名称' },
-            {
-              pattern: /^[\u4e00-\u9fa5a-zA-Z_\d]{1,18}$/,
-              message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
-            },
           ]"
           label="客户名称"
           prop="name"
         >
-          <el-input v-model="formValues.name" placeholder="请输入" clearable />
+          <el-input
+            v-model="formValues.name"
+            placeholder="请输入"
+            clearable
+            maxlength="50"
+          />
         </el-form-item>
         <el-form-item
           :rules="
             formValues.itFinCode
-              ? []
-              : [{ required: true, message: '请输入手机号' }]
+              ? [
+                  {
+                    pattern: /^[1][3-9][0-9]{9}$/,
+                    message: '请输入按照正确格式输入手机号',
+                  },
+                ]
+              : [
+                  {
+                    pattern: /^[1][3-9][0-9]{9}$/,
+                    message: '请输入按照正确格式输入手机号',
+                  },
+                  { required: true, message: '请输入手机号' },
+                ]
           "
           label="手机号"
           prop="phone"
@@ -171,7 +182,7 @@
           />
         </el-form-item>
         <div class="flex">
-          <el-form-item label="性别" prop="sex">
+          <!-- <el-form-item label="性别" prop="sex">
             <el-select v-model="formValues.sex" placeholder="请选择" clearable>
               <el-option
                 v-for="item of PEOPLE_SEX"
@@ -179,7 +190,7 @@
                 :value="item.value"
               />
             </el-select>
-          </el-form-item>
+          </el-form-item> -->
           <!-- <el-form-item label="省份" prop="province">
             <el-select
               v-model="formValues.province"
@@ -211,6 +222,7 @@
             type="date"
             placeholder="请选择"
             value-format="YYYY-MM-DD"
+            width="100%"
           />
         </el-form-item>
       </el-form>
@@ -237,17 +249,9 @@
             <el-table-column
               prop="phone"
               label="手机号"
-              width="120"
+              width="180"
             ></el-table-column>
-            <el-table-column prop="sex" label="性别" width="71">
-              <template #default="scope">
-                {{
-                  PEOPLE_SEX.find((v) =>
-                    checkStringEqual(v.value, scope.row.sex)
-                  )?.label || "未知"
-                }}
-              </template>
-            </el-table-column>
+            <!-- <el-table-column prop="sex" label="性别" width="71" /> -->
             <!-- <el-table-column
               prop="province"
               label="省份"
@@ -263,24 +267,41 @@
               label="生日"
               min-width="120"
             ></el-table-column>
+            <template #empty>
+              <el-empty :image="Maskgroup" :image-size="76">
+                <template #description> 暂无数据 </template>
+              </el-empty>
+            </template>
           </el-table>
         </div>
         <div class="tag">
           <div class="title">客户标签</div>
           <div class="tag-content">
-            <el-tag v-for="item of modalData?.labels || []"
-              >{{ item.labelName }}：{{
-                item.labelValue?.data?.join?.("、")
-              }}</el-tag
+            <el-tooltip
+              effect="dark"
+              v-for="item of modalData?.labels || []"
+              :content="`${item.labelName}：${item.labelValue?.data?.join?.('、')}`"
+              placement="top-start"
             >
+              <el-tag
+                >{{ item.labelName }}：{{
+                  item.labelValue?.data?.join?.("、")
+                }}</el-tag
+              >
+            </el-tooltip>
           </div>
         </div>
         <div class="black-list">
           <div class="title">所在黑名单</div>
           <div class="tag-content">
-            <el-tag v-for="item of modalData?.blacklists || []">{{
-              item.blacklistName
-            }}</el-tag>
+            <el-tooltip
+              effect="dark"
+              v-for="item of modalData?.blacklists || []"
+              :content="`${item.blacklistName}`"
+              placement="top-start"
+            >
+              <el-tag>{{ item.blacklistName }}</el-tag>
+            </el-tooltip>
             <a v-if="!modalData?.blacklists">无</a>
           </div>
         </div>
@@ -311,9 +332,7 @@
     </el-dialog>
     <DrawerSerach
       ref="drawerRef"
-      :getData="
-        (filtering: any) => getData({ ...pageParams, pageNum }, filtering)
-      "
+      :getData="advancedSearch"
     />
   </div>
 </template>
@@ -331,6 +350,7 @@ import { Search } from "@element-plus/icons-vue";
 import { ElMessageBox, FormInstance } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
 import DrawerSerach from "./drawerSerach.vue";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 enum DrawerType {
   Create = "create",
@@ -341,7 +361,7 @@ enum DrawerType {
 const ModalTitleMap: any = {
   [DrawerType.Create]: "手动添加客户",
   [DrawerType.Detail]: "客户详情",
-  [DrawerType.Edit]: "编辑属性",
+  [DrawerType.Edit]: "编辑客户信息",
 };
 
 const pageParams = reactive({
@@ -378,7 +398,12 @@ const pageNum = ref(1);
 watch(
   pageParams,
   debounce(() => {
-    getData({ ...pageParams, pageNum: 1 });
+    pageNum.value = 1;
+    if (filtering.logicalChar) {
+      getData({ ...pageParams, pageNum: 1 }, filtering);
+    } else {
+      getData({ ...pageParams, pageNum: 1 });
+    }
   }, 200)
 );
 
@@ -388,18 +413,28 @@ onMounted(() => {
 
 const currentChange = (value: number) => {
   pageNum.value = value;
-  getData({ ...pageParams, pageNum: value });
+  if (filtering.logicalChar) {
+    getData({ ...pageParams, pageNum: value }, filtering);
+  } else {
+    getData({ ...pageParams, pageNum: value });
+  }
 };
 
-const getData = async (params: any, filtering?: any) => {
+const advancedSearch = (filteringValue: any) => {
+  pageNum.value = 1;
+  getData({ ...pageParams, pageNum: 1 }, filteringValue);
+};
+
+const getData = async (params: any, filteringValue?: any) => {
   try {
     let res = await API.qryCustomList({
       pageNum: 1,
-      ...filtering,
+      ...filteringValue,
       ...params,
       pageSize: 10,
     });
     if (checkStringEqual(res?.code, 0)) {
+      Object.assign(filtering, filteringValue);
       total.value = res?.data?.total;
       tableData.value = res?.data?.records;
     }
@@ -494,14 +529,22 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       }
       .tag-content {
         display: flex;
-        gap: 4px;
+        gap: 8px;
         margin-top: 8px;
         overflow: hidden;
         flex-wrap: wrap;
         .el-tag {
-          padding: 8px;
+          padding: 0 8px;
           font-size: 14px;
           line-height: 16px;
+          max-width: 150px;
+          &__content {
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            word-break: keep-all;
+          }
         }
       }
       .user {

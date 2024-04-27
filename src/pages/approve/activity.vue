@@ -31,6 +31,7 @@
             placeholder="H5活动名称"
             clearable
             :suffix-icon="Search"
+            maxlength="50"
           />
         </el-form-item>
       </el-form>
@@ -95,6 +96,12 @@
             >
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description> 暂无数据 </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination
         background
@@ -139,6 +146,19 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item
+          label="审核备注"
+          prop="approveRemark"
+          :rules="[{ max: 140, message: '最多可输入140字' }]"
+        >
+          <el-input
+            v-model="formValues.approveRemark"
+            :autosize="{ minRows: 4 }"
+            type="textarea"
+            :show-word-limit="true"
+            placeholder="请输入"
+          />
+        </el-form-item>
       </el-form>
       <el-table
         :data="modalData"
@@ -167,11 +187,22 @@
             >
           </template></el-table-column
         >
+        <el-table-column
+          prop="approveRemark"
+          label="审核备注"
+          width="272"
+        ></el-table-column>
         <el-table-column prop="operationTime" label="操作时间" min-width="202">
           <template #default="scope">
             {{ scope.row.operationTime || "-" }}
           </template></el-table-column
         >
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description> 暂无数据 </template>
+          </el-empty>
+        </template>
       </el-table>
       <template #footer>
         <span class="dialog-footer">
@@ -206,8 +237,12 @@ import API from "~/api/approve";
 import { pageActivityList } from "~/api/activity";
 import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
-import { FormInstance } from "element-plus";
+import { FormInstance, dayjs } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 enum DrawerType {
   ApproveDatail = "approve-datail",
@@ -240,6 +275,7 @@ const pageParams = reactive({
 
 const defaultFormValues = {
   approveStatus: "",
+  approveRemark: "",
 };
 let formValues = reactive({ ...defaultFormValues });
 let modalData = reactive<any>([]);
@@ -255,6 +291,7 @@ const modalType = ref<any>(DrawerType.Detail);
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );
@@ -274,8 +311,8 @@ const getData = async (params: any) => {
     let activityBeginTime;
     let activityEndTime;
     if (time) {
-      activityBeginTime = time[0];
-      activityEndTime = time[1];
+      activityBeginTime = dayjs(time[0]).format("YYYY-MM-DD");
+      activityEndTime = dayjs(time[1]).format("YYYY-MM-DD");
     }
     let res: any = await pageActivityList({
       activityBeginTime,
@@ -295,7 +332,7 @@ const getData = async (params: any) => {
 
 const handleModal = async (type: string, values?: any) => {
   if (type === DrawerType.Detail) {
-    window.open(values.diffuseUrl, "_blank");
+    router.push(`/activityCenter/details/${values.activityId}`);
     return;
   } else if (type === DrawerType.ApproveDatail) {
     let res: any = await API.listApproveRecord({
@@ -306,6 +343,7 @@ const handleModal = async (type: string, values?: any) => {
     Object.assign(formValues, {
       recordId: values.approveRecordId,
       approveStatus: "",
+      approveRemark: "",
     });
   }
   modalType.value = type;

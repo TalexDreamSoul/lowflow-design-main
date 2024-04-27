@@ -11,6 +11,7 @@ import {
 } from "element-plus";
 import CustomEventComponent from "~/components/CustomEventComponent.vue";
 import { checkStringEqual, debounce } from "~/utils/common";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 // 使用 useRoute 获取当前路由信息
 const route = useRoute();
@@ -21,7 +22,7 @@ const formInline = reactive({
 });
 const tableData = ref([]); // 表格数据
 const MenuList = ref([]); // 权限列表
-const total = ref(100); // 总数
+const total = ref(0); // 总数
 const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
@@ -147,7 +148,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
         <el-form :inline="true">
 
           <el-form-item>
-            <el-input v-model="formInline.roleName" placeholder="角色名称" clearable style="width:200px" :suffix-icon="Search" />
+            <el-input v-model="formInline.roleName" placeholder="角色名称" clearable style="width:200px" :suffix-icon="Search" maxlength="50"/>
           </el-form-item>
 
         </el-form>
@@ -170,6 +171,14 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
     </template>
     <template #pagination>
@@ -186,11 +195,11 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
       message: '仅支持数字、汉字、字母、下划线，不超过18个字符',
     },
   ]" label="角色名称" prop="roleName">
-        <el-input v-model="formValues.roleName" style="width:300px" placeholder="请输入" clearable />
+        <el-input v-model="formValues.roleName" style="width:300px" placeholder="请输入" clearable maxlength="50" />
       </el-form-item>
 
       <el-form-item prop="describe" label="角色说明">
-        <el-input v-model="formValues.describe" style="width:300px" placeholder="请输入" clearable />
+        <el-input v-model="formValues.describe" style="width:300px" placeholder="请输入" clearable maxlength="140"/>
       </el-form-item>
       <el-form-item :rules="[
     { required: true, message: '请选择权限' },

@@ -7,6 +7,7 @@ import { ElMessage } from "element-plus";
 import { dictFilterTree } from "~/api/index";
 // 定义名称固定顺序
 const nameOrder: string[] = ["APP PUSH", "手机短信", "企微", "外呼", "站内信"];
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 
 const tableData = ref<any[]>([]);
@@ -151,14 +152,22 @@ const onSubmit = async () => {
 
   // 替换字段并进行值转换
   const modifiedData = { ...OptionsData.value.data };
-  // console.log(
-  //   "modifiedData",
-  //   OptionsData.value.data,
-  //   modifiedData,
-  //   OptionsData.value.$touchLimit
-  // );
-  // 如果 startDate 和 endDate 字段为 null，则将 $date 字段的值赋给它们
-  if (modifiedData.date.length == 2) {
+
+ if(OptionsData.value.data.blacklistLimit&&blackList.value.length == 0){
+  ElMessage({
+      message: "请选择过滤黑名单！",
+      type: "error",
+    });
+    return false;
+}
+if(OptionsData.value.data.disturbLimit&&!modifiedData.date){
+  ElMessage({
+      message: "请设置默认勿扰时段！",
+      type: "error",
+    });
+    return false;
+}
+  if (modifiedData.date?.length == 2) {
       modifiedData.startDate = modifiedData.date[0];
       modifiedData.endDate = modifiedData.date[1];
     }
@@ -222,6 +231,14 @@ const onSubmit = async () => {
             </el-space>
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
     </template>
   </CustomEventComponent>
@@ -231,7 +248,7 @@ const onSubmit = async () => {
       <div class="line">
         <span>1.每个客户触达次数限制：</span>
         <span>
-        <el-select :disabled="OptionsData?.disabled" v-model="OptionsData.data.touchLimit" class="ml-4" style="width: 100px">
+        <el-select :disabled="OptionsData?.disabled" v-model="OptionsData.data.touchLimit" class="ml-4" style="width: 100px" @change="OptionsData.data.limitDay=1,OptionsData.data.limitCount=1">
           <el-option :value="false" label="不限制">不限制</el-option>
           <el-option :value="true" label="限制">限制</el-option>
         </el-select>
@@ -246,7 +263,7 @@ const onSubmit = async () => {
       <div class="line">
         <span>2.勿扰时段限制：</span>
         <span>
-        <el-select :disabled="OptionsData?.disabled" v-model="OptionsData.data.disturbLimit" class="ml-4" style="width: 100px">
+        <el-select :disabled="OptionsData?.disabled" v-model="OptionsData.data.disturbLimit" class="ml-4" style="width: 100px" @change="OptionsData.data.date=null">
           <el-option :value="false" label="不限制">不限制</el-option>
           <el-option :value="true" label="限制">限制</el-option>
         </el-select>
@@ -259,7 +276,7 @@ const onSubmit = async () => {
       </div>
       <div class="line">
         3.过滤黑名单
-        <el-select :disabled="OptionsData?.disabled" v-model="OptionsData.data.blacklistLimit" style="width: 100px">
+        <el-select :disabled="OptionsData?.disabled" v-model="OptionsData.data.blacklistLimit" style="width: 100px" @change="OptionsData.data.blacklistList=[],blackList=[]">
           <el-option :value="false" label="不过滤">不过滤</el-option>
           <el-option :value="true" label="过滤">过滤</el-option>
         </el-select>

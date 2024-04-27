@@ -50,8 +50,6 @@ const handleModal = async () => {
 };
 
 const onSubmit = async (formEl: FormInstance | undefined) => {
-  console.log( "submit", customRuleContent )
-
   try {
     await props?.getData?.({...customRuleContent});
       modalVisible.value = false;

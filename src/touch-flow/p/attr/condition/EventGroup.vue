@@ -38,6 +38,23 @@ function addEventB() {
     dict.value = res.data;
   }
 })();
+
+
+const handleUnitChange = (newVal: string) => {
+  let maxValue = 0;
+  // 根据选择的单位更新最大值和输入框的最大限制
+  if (newVal === "day") {
+    maxValue = 30;
+  } else if (newVal === "hour") {
+    maxValue = 720;
+  } else if (newVal === "minute") {
+    maxValue = 43200;
+  }
+  // 如果当前输入值超过最大值，则将输入值设为最大值
+  if (props.p.triggerRuleContent.delayed.delayedTime > maxValue) {
+    props.p.triggerRuleContent.delayed.delayedTime = maxValue;
+  }
+};
 </script>
 
 <template>
@@ -86,8 +103,10 @@ function addEventB() {
       <el-form-item v-if="p.triggerRuleContent.delayed.isDelayed">
         <div class="EventGroup-SubEvent">
           <el-text>且在</el-text>&nbsp;
-          <el-input-number :disabled="readonly" :min="1" placeholder="输入值" controls-position="right" v-model="p.triggerRuleContent.delayed.delayedTime" style="width: 100px" />
-          <el-select :disabled="readonly" placeholder="选择单位" v-model="p.triggerRuleContent.delayed.delayedUnit" style="width: 100px">
+        <el-input-number :disabled="readonly" :min="1" 
+        :max="p.triggerRuleContent.delayed.delayedUnit=='day'?30:(p.triggerRuleContent.delayed.delayedUnit=='hour'?720:43200)" 
+         placeholder="输入值" controls-position="right" v-model="p.triggerRuleContent.delayed.delayedTime" style="width: 100px" />
+          <el-select :disabled="readonly" placeholder="选择单位" v-model="p.triggerRuleContent.delayed.delayedUnit" style="width: 100px" @change="handleUnitChange">
             <el-option value="minute" label="分钟">分钟</el-option>
             <el-option value="hour" label="小时">小时</el-option>
             <el-option value="day" label="天">天</el-option>

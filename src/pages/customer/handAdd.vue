@@ -53,14 +53,14 @@
           label="手机号"
           width="117"
         ></el-table-column>
-        <el-table-column prop="sex" label="性别" min-width="51">
+        <!-- <el-table-column prop="sex" label="性别" min-width="51">
           <template #default="scope">
             {{
               PEOPLE_SEX.find((v) => checkStringEqual(v.value, scope.row.sex))
                 ?.label || "未知"
             }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <!-- <el-table-column
           prop="province"
           label="省份"
@@ -96,6 +96,13 @@
             >
           </template>
         </el-table-column>
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination
         background
@@ -127,6 +134,7 @@ import API from "~/api/customer";
 import { checkStringEqual, debounce } from "~/utils/common";
 import { Search } from "@element-plus/icons-vue";
 import Dialog from "./dialog.vue";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 const props = defineProps(["drawerType", "formValues"]);
 
@@ -151,6 +159,7 @@ const pageNum = ref(1);
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     if ("id" in props.formValues && props.formValues?.id !== null) {
       getSelectData({ ...pageParams, pageNum: 1 });
     } else {
@@ -216,7 +225,6 @@ const handleSelect = (selection: any, row: any) => {
 };
 
 const getSelectData = async (params: any) => {
-  console.log(`output->type`,props.drawerType)
   let res = await API.blacklistContainCustoms({
     id: props.formValues.id,
     ...params,

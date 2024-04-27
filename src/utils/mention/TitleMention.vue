@@ -6,8 +6,6 @@ const props = defineProps<{
   text: String,
 }>()
 
-console.log("tm", props)
-
 const dom = ref()
 
 async function refreshText(text: string) {

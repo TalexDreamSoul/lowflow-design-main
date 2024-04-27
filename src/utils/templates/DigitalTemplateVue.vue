@@ -172,7 +172,7 @@ function assignData(val: any) {
 <template>
   <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input :disabled="readonly" v-model="data.name" style="width: 50%"></el-input>
+      <el-input show-word-limit :disabled="readonly" v-model="data.name" style="width: 50%" maxlength="50"></el-input>
     </el-form-item>
     <el-form-item label="企微触达方式">
       <el-select :disabled="readonly" @change="assignData" placeholder="请选择" v-model="data.digitalTemplate.type"

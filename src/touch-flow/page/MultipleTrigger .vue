@@ -74,6 +74,7 @@ function handleChangeSelect(val: string) {
       id: res.id,
       labelId: res.id,
       labelName: res.labelName,
+      labelValue: [],
     })
 
     labelOptions.value.label = res
@@ -111,13 +112,13 @@ handleChangeSelect(select.value)
 
 <template>
   <div class="Trigger-Wrapper">
-    <el-select :disabled="readonly" @change="handleChangeSelect" :placeholder="_PlaceHolder" v-model="select">
+    <el-select filterable :disabled="readonly" @change="handleChangeSelect" :placeholder="_PlaceHolder" v-model="select">
       <el-option-group :placeholder="placeholder" v-for="(group, index) in attrs" :key="index" :label="group.label">
         <el-option v-for="(item, ind) in group.children" :key="`${group.value}-${item.id}`"
           :value="`${group.value}-${item.id}`" :label="item.label" />
       </el-option-group>
     </el-select>
-    <el-select :disabled="readonly" v-model="obj.label.labelValue" multiple placeholder="请选择标签" v-if="labelOptions.do">
+    <el-select filterable :disabled="readonly" v-model="obj.label.labelValue" multiple placeholder="请选择标签" v-if="labelOptions.do">
       <el-option :value="each" :key="each" :label="each" v-for="(each, i) in labelOptions.label.labelValue?.data" />
     </el-select>
   </div>

@@ -41,7 +41,7 @@ const type = computed(() =>
 const doTouchFlow = computed(() => {
   const { item } = props
 
-  return item.field === 'touchId'
+  return item.field === 'touchCode'
 })
 
 watchEffect(() => {

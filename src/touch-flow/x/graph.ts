@@ -12,10 +12,10 @@ const ports = {
       position: "top",
       attrs: {
         circle: {
-          r: 4,
+          r: 1,
           magnet: true,
           stroke: "#277AE7",
-          strokeWidth: 1,
+          strokeWidth: .1,
           fill: "#277AE7",
         },
       },
@@ -24,10 +24,10 @@ const ports = {
       position: "bottom",
       attrs: {
         circle: {
-          r: 4,
+          r: 1,
           magnet: true,
           stroke: "#277AE7",
-          strokeWidth: 1,
+          strokeWidth: .1,
           fill: "#277AE7",
         },
       },
@@ -160,13 +160,13 @@ export default function initGraph() {
       enabled: true,
       eventTypes: ["leftMouseDown", "mouseWheel"],
     },
-    // mousewheel: {
-    //   enabled: true,
-    //   modifiers: "ctrl",
-    //   factor: 0.8,
-    //   maxScale: 1.5,
-    //   minScale: 0.5,
-    // },
+    mousewheel: {
+      enabled: true,
+      modifiers: "ctrl",
+      factor: 0.8,
+      maxScale: 1.5,
+      minScale: 0.2,
+    },
     highlighting: {
       magnetAdsorbed: {
         name: "stroke",

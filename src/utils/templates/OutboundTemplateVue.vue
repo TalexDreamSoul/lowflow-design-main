@@ -39,18 +39,18 @@ function saveData() {
 
   return props.type == "details" || props.type == "update"
     ? {
-        id,
-        name,
-        type: data.type,
-        status: "available",
-        outboundTemplate,
-      }
+      id,
+      name,
+      type: data.type,
+      status: "available",
+      outboundTemplate,
+    }
     : {
-        name,
-        type: data.type,
-        status: "available",
-        outboundTemplate,
-      };
+      name,
+      type: data.type,
+      status: "available",
+      outboundTemplate,
+    };
 }
 
 defineExpose({ saveData });
@@ -75,28 +75,20 @@ const tableData = [
 <template>
   <el-form label-position="top" :model="data">
     <el-form-item label="模板名称">
-      <el-input :disabled="readonly" v-model="data.name" style="width: 50%"></el-input>
+      <el-input show-word-limit :disabled="readonly" v-model="data.name" style="width: 50%" maxlength="50"></el-input>
     </el-form-item>
     <el-form-item label="外呼唯一标志">
       <el-input :disabled="readonly" v-model="data.outboundCode" style="width: 50%"></el-input>
     </el-form-item>
     <el-form-item label="外呼话术模版">
-      <el-select
-        :disabled="readonly"
-        v-model="data.template"
-        placeholder="请选择"
-        style="width: 50%"
-      >
+      <el-select :disabled="readonly" v-model="data.template" placeholder="请选择" style="width: 50%">
         <el-option label="外呼系统的话术模版" value="sendMessage" />
         <el-option label="外呼系统的话术模版2" value="addfriends" />
       </el-select>
     </el-form-item>
     <el-form-item label="设置变量值">
-      <el-table
-        :disabled="readonly"
-        :data="tableData"
-        style="width: 100% ----el-table-header-bg-color: #EDEFF4;--el-table-header-bg-color: #EDEFF4;--el-table-tr-bg-color: #F7F8FB;--el-table-header-text-color:#333;"
-      >
+      <el-table :disabled="readonly" :data="tableData"
+        style="width: 100% ----el-table-header-bg-color: #EDEFF4;--el-table-header-bg-color: #EDEFF4;--el-table-tr-bg-color: #F7F8FB;--el-table-header-text-color:#333;">
         <el-table-column prop="id" label="序号" />
         <el-table-column prop="variableFilled" label="待填变量"> </el-table-column>
 

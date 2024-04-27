@@ -63,6 +63,14 @@
         </template>
       </el-table-column>
       <el-table-column prop="creatorName" label="创建人" width="120" />
+
+      <template #empty>
+        <el-empty :image="Maskgroup" :image-size="76">
+          <template #description>
+            暂无数据
+          </template>
+        </el-empty>
+      </template>
     </el-table>
     <el-pagination
       background
@@ -88,6 +96,7 @@ import { ElMessage } from "element-plus";
 import { ref, defineExpose, defineProps, onMounted } from "vue";
 import { pageActivityList } from "~/api/activity";
 import { checkStringEqual } from "~/utils/common";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 const props = defineProps(["skipActivityId", 'onSelectActivity']);
 interface ActivityTypes {
@@ -136,7 +145,6 @@ const getData = async (params: any) => {
 
 const onSubmit = async () => {
   if(!skipActivityId.value) {
-    console.log(props);
     ElMessage.error("请选择活动");
     return;
   }

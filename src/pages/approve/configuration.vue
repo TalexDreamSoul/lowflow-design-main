@@ -26,6 +26,12 @@
             >
           </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description> 暂无数据 </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination
         background
@@ -51,7 +57,11 @@
         :disabled="checkStringEqual(modalType, DrawerType.Detail)"
       >
         <el-form-item label="审核流程名称" prop="configName">
-          <el-input v-model="formValues.configName" :disabled="true" />
+          <el-input
+            v-model="formValues.configName"
+            :disabled="true"
+            maxlength="50"
+          />
         </el-form-item>
         <el-form-item label="审核层级">
           <el-input :disabled="true" :model-value="formValues.auditor.length" />
@@ -60,10 +70,16 @@
           v-for="(domain, index) in formValues.auditor"
           :key="index"
           :prop="'auditor.' + index + '.auditorId'"
-          :rules="{
-            required: true,
-            message: '请选择审核人',
-          }"
+          :rules="[
+            {
+              required: true,
+              message: '请选择审核人',
+            },
+            {
+              asyncValidator: validatorFn,
+              trigger: 'change',
+            },
+          ]"
         >
           <template #label>
             {{ index + 1 }}级审核人
@@ -125,6 +141,7 @@ import { checkStringEqual, debounce } from "~/utils/common";
 import { Delete, CirclePlusFilled } from "@element-plus/icons-vue";
 import { FormInstance } from "element-plus";
 import "element-plus/theme-chalk/el-message-box.css";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
 
 enum DrawerType {
   Detail = "detail",
@@ -156,6 +173,7 @@ const peopleList = ref<any[]>([]);
 watch(
   pageParams,
   debounce(() => {
+    pageNum.value = 1;
     getData({ ...pageParams, pageNum: 1 });
   }, 200)
 );
@@ -168,6 +186,18 @@ onMounted(() => {
 const currentChange = (value: number) => {
   pageNum.value = value;
   getData({ ...pageParams, pageNum: value });
+};
+
+const validatorFn = (_: any, value: any) => {
+  return new Promise<void>((resolve, reject) => {
+    let { auditor } = formValues;
+    let ids = [...new Set(auditor.map((v: any) => v.auditorId))];
+    if (auditor?.length !== ids.length) {
+      reject("审核人不可以重复添加!");
+    } else {
+      resolve();
+    }
+  });
 };
 
 const addDomain = () => {
@@ -200,7 +230,7 @@ const getData = async (params: any) => {
 };
 
 const handleModal = async (type: string, values?: any) => {
-  Object.assign(formValues, values);
+  Object.assign(formValues, JSON.parse(JSON.stringify(values)));
   modalType.value = type;
   modalVisible.value = true;
 };

@@ -242,7 +242,7 @@ onMounted(async () => {
     <div class="tableCard">
       <el-form :inline="true" style="margin-bottom: 16px;">
         <el-form-item label="筛选日期：">
-          <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
+          <el-date-picker v-model="time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
         </el-form-item>
         <el-form-item >
           <el-button type="primary" :icon="Download" class="primaryStyle">下载</el-button>

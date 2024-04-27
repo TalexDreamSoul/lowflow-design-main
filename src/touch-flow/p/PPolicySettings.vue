@@ -34,23 +34,25 @@ function openCondition() {
 
 const { pushTemplate, delayedActionStr } = useDisplayAttr()
 
-const { visible, del } = useDel()
+const del = useDel().del
 </script>
 
 <template>
   <BaseNode :params="params" :disabled="readonly || haveDiverse"
     :display="data.diversionType && data.nodeDelayed.isDelayed !== undefined && pushTemplate">
-    <p>
+    <p class="title">
       <!-- 选择策略器 -->
-      {{ data.nodeName }}
-      <el-popover :visible="visible" placement="top" :width="160">
+      <span>
+        {{ data.nodeName }}
+      </span>
+      <el-popover trigger="hover" placement="top" :width="160">
         <p>是否确认删除？</p>
         <div style="text-align: right; margin: 0">
-          <el-button size="small" text @click="visible = false">取消</el-button>
+          <el-button size="small" text>取消</el-button>
           <el-button size="small" type="primary" @click="del(__data)">确认</el-button>
         </div>
         <template #reference>
-          <el-button v-if="readonly" @click="visible = true" text type="primary">
+          <el-button v-if="!readonly" text type="primary">
             <el-icon>
               <Delete />
             </el-icon>
@@ -80,19 +82,26 @@ const { visible, del } = useDel()
       </div>
       <div style="--theme-color: #7dc757" class="PBlock-Section">
         <p>延时设置</p>
-        <span v-if="data.nodeDelayed?.isDelayed">
-          符合该策略器 {{ data.nodeDelayed.delayedTime }}
-          <span>
-            <span v-if="data.nodeDelayed.delayedUnit === 'day'"> 天 </span>
-            <span v-else-if="data.nodeDelayed.delayedUnit === 'hour'"> 小时 </span>
-            <span v-else-if="data.nodeDelayed.delayedUnit === 'minute'"> 分钟 </span>
+        <div >
+
+          <span v-if="data.nodeDelayed?.isDelayed">
+            符合该策略器 {{ data.nodeDelayed.delayedTime }}
+            <span>
+              <span v-if="data.nodeDelayed.delayedUnit === 'day'"> 天 </span>
+              <span v-else-if="data.nodeDelayed.delayedUnit === 'hour'"> 小时 </span>
+              <span v-else-if="data.nodeDelayed.delayedUnit === 'minute'"> 分钟 </span>
+            </span>
+            后
+            <!-- {{ delayedActionStr }} -->
           </span>
-          后
-          <!-- {{ delayedActionStr }} -->
-        </span>
-        <!-- <span v-else-if="data.nodeDelayed.delayedAction === 'nothing'">不执行动作</span> -->
-        <span v-else>立即针对符合该策略器条件的客户</span>
-        <span>{{ delayedActionStr }}</span>
+          <!-- <span v-else-if="data.nodeDelayed.delayedAction === 'nothing'">不执行动作</span> -->
+          <span v-else>立即针对符合该策略器条件的客户</span>
+          <span style="    width: 100%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: block;">{{ delayedActionStr }}</span>
+        </div>
       </div>
       <div v-if="pushTemplate.has" style="--theme-color: #ffb858" class="PBlock-Section">
         <p>{{ pushTemplate.title }}</p>

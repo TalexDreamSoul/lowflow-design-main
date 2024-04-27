@@ -15,7 +15,7 @@ const formInline = reactive({
 });
 
 const tableData = ref([]); // 表格数据
-const total = ref(100); // 总数
+const total = ref(0); // 总数
 const currentPage = ref(1);
 const pageSize = ref(10);
 const small = ref(false);
@@ -69,12 +69,12 @@ const changeTime = (val: any) => {
       <template #search>
         <div class="search">
           <el-form :inline="true">
-            <el-form-item label="创建时间：">
-              <el-date-picker v-model="time" type="daterange" range-separator="To" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
+            <el-form-item label="交易成功日期：">
+              <el-date-picker v-model="time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" :size="size" @change="changeTime" />
             </el-form-item>
 
           <el-form-item >
-            <el-select v-model="formInline.trsPlatform" style="width: 200px" placeholder="模板类型">
+            <el-select v-model="formInline.trsPlatform" style="width: 200px" placeholder="交易平台">
               <el-option label="全部" value="" />
               <el-option label="积分平台" value="point" />
               <el-option label="权益厂商" value="equity" />
@@ -88,7 +88,14 @@ const changeTime = (val: any) => {
         <el-table :data="tableData">
           <el-table-column label="交易明细ID" prop="id" />
           <el-table-column label="客户ID" prop="customId" />
-          <el-table-column label="交易类型">
+         
+          <el-table-column label="交易平台" prop="trsPlatform">
+            <!-- point 积分平台 equity 权益厂商 -->
+            <template #default="scope">
+              {{ scope.row.trsPlatform=='point'?'积分平台':'权益厂商' }}
+            </template>
+          </el-table-column>
+           <el-table-column label="交易类型">
             <template #default="scope">
               {{ statusLabels[scope.row.trsType].Text }}
             </template>
@@ -100,6 +107,14 @@ const changeTime = (val: any) => {
           </el-table-column>
           <el-table-column label="交易话术" prop="trsChatContent" />
           <el-table-column label="交易成功时间" width="180" prop="createTime" />
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
         </el-table>
       </template>
       <template #pagination>

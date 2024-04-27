@@ -4,7 +4,11 @@ import { getBlackList } from "~/api/index";
 import { MarketingTouchEditDTO } from "../behavior/marketing";
 import { CustomSearchDTO } from "../../touch-total";
 import TouchEstimation from "~/touch-flow/page/TouchEstimation.vue";
-import { validateAES, validateCommonDays, validatePropValue } from "../../flow-utils";
+import {
+  validateAES,
+  validateCommonDays,
+  validatePropValue,
+} from "../../flow-utils";
 import { ElMessage } from "element-plus";
 import FilterGroup from "./condition/FilterGroup.vue";
 
@@ -33,6 +37,7 @@ const blackList = reactive<{
   list: [],
   data: [],
 });
+const blackListArray = ref<Array<any>>([]);
 
 interface ICustomerAttrProp {
   p: MarketingTouchEditDTO;
@@ -51,7 +56,7 @@ watchEffect(() => {
       _enable: props.p.blacklist?.data?.length ? "yes" : "no",
       data: props.p.blacklist?.data || [],
     });
-
+    blackListArray.value = blackList.list;
     if (blackListFields.value) transformBlackListData();
   }
 
@@ -87,7 +92,7 @@ function saveData(): boolean {
 
   // 验证黑名单是否填写完整
   if (blackList._enable === "yes") {
-    if (!validatePropValue(blackList.list)) {
+    if (!validatePropValue(blackListArray.value)) {
       ElMessage({
         message: "过滤黑名单必须选择内容！",
         type: "error",
@@ -96,8 +101,10 @@ function saveData(): boolean {
       return false;
     } else {
       props.p.blacklist = {
-        data: blackList.list.map((item) => {
-          const res = [...blackListFields.value.records].find((each) => each.id === item);
+        data: blackListArray.value.map((item) => {
+          const res = [...blackListFields.value.records].find(
+            (each) => each.id === item
+          );
 
           return {
             id: res.id,
@@ -106,12 +113,17 @@ function saveData(): boolean {
         }),
       };
     }
-  }
 
-  Object.assign(props.p, {
-    customRuleContent,
-    // targetRuleContent: sizeForm.targetRuleContent,
-  });
+    Object.assign(props.p, {
+      customRuleContent,
+      // targetRuleContent: sizeForm.targetRuleContent,
+    });
+  } else {
+    Object.assign(props.p, {
+      customRuleContent,
+      blacklist: { data: [] },
+    });
+  }
 
   return true;
 }
@@ -133,16 +145,24 @@ regSaveFunc(saveData);
 function transformBlackListData() {
   // console.log("transform blacklist", blackList);
 
-
   if (blackList.data.length) {
     [...blackList.data].forEach((item) => {
       blackList.list.push(item.id);
     });
 
     // 去重
-    blackList.list = [ ...new Set(blackList.list) ]
+    blackList.list = [...new Set(blackList.list)];
+    blackListArray.value = blackList.list;
   }
 }
+const handleUnitChange = (newVal: string) => {
+  console.log(newVal, "blackListArray");
+  blackListArray.value = [];
+  Object.assign(blackList, {
+    _enable: newVal,
+    blacklist: { list: [] },
+  });
+};
 </script>
 
 <template>
@@ -160,13 +180,12 @@ function transformBlackListData() {
       <div class="MainTitle">黑名单</div>
 
       <el-form-item v-if="blackListFields" label="过滤黑名单" label-class="custom-label">
-        <el-select :disabled="readonly" v-model="blackList._enable" style="width: 100px">
+        <el-select :disabled="readonly" v-model="blackList._enable" style="width: 100px" @change="handleUnitChange">
           <el-option value="no" label="不过滤">不过滤</el-option>
           <el-option value="yes" label="过滤">过滤</el-option>
         </el-select>
         &nbsp;
-        <el-select  collapse-tags   placeholder="请选择" v-model="blackList.list" multiple :disabled="readonly"
-          v-if="blackList?._enable === 'yes'" style="width: 300px">
+        <el-select filterable collapse-tags placeholder="请选择" v-model="blackListArray" multiple :disabled="readonly" v-if="blackList?._enable === 'yes'" style="width: 300px">
           <el-option v-for="item in blackListFields.records" :value="item.id" :label="item.blacklistName">
             <span>{{ item.blacklistName }}</span>
             <!-- <p>{{ item.blacklistDesc }}</p> -->
@@ -180,6 +199,6 @@ function transformBlackListData() {
 <style scoped lang="scss">
 :deep(.el-form-item) {
   margin-right: 0;
-  margin-bottom: 0;
+  // margin-bottom: 0;
 }
 </style>

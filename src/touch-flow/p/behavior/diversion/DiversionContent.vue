@@ -57,7 +57,7 @@ const attrs = computed(() => {
                   :prop="'conditions.' + index + '.value'"
                   style="width: 100%"
                 >
-                  <el-select placeholder="请选择" v-model="item.action">
+                  <el-select filterable placeholder="请选择" v-model="item.action">
                     <el-option-group
                       v-for="group in dict?.events"
                       :key="group.eventType"
@@ -204,7 +204,7 @@ const attrs = computed(() => {
 
 :deep(.el-form-item) {
   margin-right: 0;
-  margin-bottom: 0;
+ // margin-bottom: 0;
 }
 
 .custom-switch {

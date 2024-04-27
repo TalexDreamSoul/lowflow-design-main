@@ -1,21 +1,17 @@
 <script setup lang="ts">
 import {
   ref,
-  unref,
-  reactive,
-  onMounted,
-  watch,
   computed,
   defineAsyncComponent,
   DefineComponent,
+  onMounted,
+  watch,
 } from "vue";
-import { getmarketingTouchDetail, marketingTouchStatistics } from "~/api/index";
-import dayjs from "dayjs";
-import { useRoute, Router, useRouter } from "vue-router";
-import * as echarts from "echarts";
-import { num2character } from "~/utils/common";
-import strategyProcessList from "./strategyProcessList.vue";
+import { useRoute, useRouter } from "vue-router";
 import { ArrowLeft } from "@element-plus/icons-vue";
+import { dayjs } from "element-plus";
+import * as API from "~/api/activity";
+
 const router = useRouter();
 const route = useRoute();
 
@@ -23,78 +19,120 @@ const goBack = () => {
   router.go(-1);
 };
 
-const formInline = reactive({
-  touchName: "",
-  executeType: "",
-  beginTime: "",
-  endTime: "",
-  status: "",
-});
-
-const typeMap = {
-  immediately: "定时-单次",
-  delayed: "定时-重复",
-  trigger: "触发型",
-};
-
-const marketingDetail = ref();
-const currentPage = ref(1);
-const pageSize = ref(10);
-
-const StatisticsList = ref({
-  accumulateCompleteCount: 0,
-  accumulateEntryCount: 0,
-  accumulateTouchCount: 0,
-  completeTargetCount1: 0,
-  completeTargetCount2: 0,
-});
-
-const chartContainer = ref(null);
-const chart = ref(null);
-
-const tabs = ["浏览数据", "转化数据", "表单数据", "玩法数据"];
-const activeTab = ref(tabs[3]);
+const initTabs = ["浏览数据", "转化数据", "表单数据", "玩法数据"];
+const activeTab = ref("");
+const curTime = dayjs(new Date()).format("YYYY-MM-DD");
+const time = ref([
+  new Date(`${curTime} 00:00:00`),
+  new Date(`${curTime} 23:59:59`),
+]);
+const playTypeMap = ref([]);
+const activityFormData = ref([]);
 
 interface Components {
   [key: string]: DefineComponent<{}, {}, any>;
 }
-
 const components: Components = {
   浏览数据: defineAsyncComponent(() => import("./ComponentA.vue")),
   转化数据: defineAsyncComponent(() => import("./ComponentB.vue")),
   表单数据: defineAsyncComponent(() => import("./ComponentC.vue")),
   玩法数据: defineAsyncComponent(() => import("./ComponentD.vue")),
 };
-
 const activeTabComponent = computed(() => components[activeTab.value]);
+const tabs = computed(() => {
+  let res = [...initTabs];
+  return res.filter((v: any) => {
+    if (v === "玩法数据" && !playTypeMap.value.length) {
+      return false;
+    }
+    if (v === "表单数据" && !activityFormData.value.length) {
+      return false;
+    }
+    return true;
+  });
+});
+
+watch([tabs], () => {
+  activeTab.value = [...tabs.value].reverse()[0];
+});
+
+onMounted(async () => {
+  getPlayType();
+  fetchActivityForm();
+});
+
+const getPlayType = async () => {
+  let res = await API.listActivityPlay({ activityId: route?.params.id });
+  playTypeMap.value = res?.data;
+};
+
+const fetchActivityForm = async () => {
+  const res = await API.queryActivityForm({ activityId: route?.params.id });
+  activityFormData.value = res?.data;
+};
 </script>
 
 <template>
-  <div>
+  <div style="height: 100%">
     <div class="pageTitle">
-      <el-button :icon="ArrowLeft"></el-button>&nbsp;&nbsp;
-      活动详情名称
+      <div class="text">
+        <el-button :icon="ArrowLeft" @click="goBack"></el-button>&nbsp;&nbsp;
+        活动详情名称
+      </div>
+      <el-form v-if="activeTab === tabs?.[0]" :inline="true">
+        <el-form-item label="筛选日期">
+          <el-date-picker
+            :clearable="false"
+            v-model="time"
+            type="datetimerange"
+            range-separator="-"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            format="YYYY-MM-DD HH:mm:ss"
+            time-format="hh:mm:ss"
+          />
+        </el-form-item>
+      </el-form>
     </div>
     <div class="tab-switch">
       <div class="tabs">
-        <div v-for="(tab, index) in tabs" :key="index" @click="activeTab = tab" :class="{ active: activeTab === tab }" @mouseover="hoveredTab = tab" @mouseleave="hoveredTab = ''">
+        <div
+          v-for="(tab, index) in tabs || []"
+          :key="index"
+          @click="activeTab = tab"
+          :class="{ active: activeTab === tab }"
+          @mouseover="hoveredTab = tab"
+          @mouseleave="hoveredTab = ''"
+        >
           {{ tab }}
         </div>
       </div>
       <div class="contentBlock">
-        <component :is="activeTabComponent" />
+        <component
+          :is="activeTabComponent"
+          :time="time"
+          :activityId="route?.params.id"
+        />
       </div>
     </div>
   </div>
 </template>
 <style lang="scss" scoped>
 .pageTitle {
-  padding: 16px;
-  font-size: 20px;
-  font-weight: 500;
-  color: #000000;
+  padding: 16px 20px 16px 16px;
+  display: flex;
+  justify-content: space-between;
+  .text {
+    font-size: 20px;
+    font-weight: 500;
+    color: #000000;
+  }
+  .el-form--inline .el-form-item {
+    margin: 0;
+  }
 }
 .tab-switch {
+  height: calc(100% - 64px);
   display: flex;
 }
 
@@ -132,5 +170,6 @@ const activeTabComponent = computed(() => components[activeTab.value]);
 .contentBlock {
   flex: 1;
   margin-right: 20px;
+  overflow-x: hidden;
 }
 </style>

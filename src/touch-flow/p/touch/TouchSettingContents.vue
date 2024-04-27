@@ -536,7 +536,7 @@ function handleAdd() {
   z-index: 100;
   padding: 0.5rem;
 
-  width: 160px;
+  width: 200px;
   height: 160px;
 
   overflow: hidden;

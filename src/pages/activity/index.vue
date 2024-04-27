@@ -8,7 +8,7 @@
             <el-option v-for="(item, key) in activities" :label="item" :value="key" />
           </el-select>
         </el-form-item>
-        <el-form-item label="创建日期">
+        <el-form-item label="活动有效期">
           <el-date-picker v-model="pageParams.time" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" />
         </el-form-item>
         <el-form-item>
@@ -22,11 +22,12 @@
     </div>
     <div class="content">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="activityId" label="H5活动ID" width="220" show-overflow-tooltip />
-        <el-table-column prop="activityName" label="H5活动名称" width="220" show-overflow-tooltip />
-        <el-table-column label="状态" width="120">
+        <el-table-column prop="activityId" label="H5活动ID" width="200" show-overflow-tooltip />
+        <el-table-column prop="activityName" label="H5活动名称" width="230" show-overflow-tooltip />
+        <el-table-column label="状态"  >
           <template #default="scope">
-            <span>{{ activityStatus[scope.row.activityStatus] }}</span>
+            <el-tag :type="activityStatus[scope.row.activityStatus].type">{{ activityStatus[scope.row.activityStatus].label }}</el-tag>
+            <span></span>
           </template>
         </el-table-column>
         <el-table-column label="活动有效期" width="220">
@@ -39,7 +40,7 @@
             <div v-else>-</div>
           </template>
         </el-table-column>
-        <el-table-column label="包含玩法" width="220" show-overflow-tooltip>
+        <el-table-column label="包含玩法" show-overflow-tooltip  width="220">
           <template #default="scope">
             <div>
               <span v-if="!scope.row.playTypeList.length">-</span>
@@ -49,7 +50,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="活动链接" show-overflow-tooltip width="250">
+        <!-- <el-table-column label="活动链接" show-overflow-tooltip width="250">
           <template #default="scope">
             <span>{{ scope.row.diffuseUrl }}</span>
           </template>
@@ -59,16 +60,18 @@
             <el-image preview-teleported style="width: 50px; height: 50px" :src="scope.row.diffuseCode" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :preview-src-list="[scope.row.diffuseCode]" :z-index="9999" fit="cover" />
             <div></div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
 
-        <el-table-column prop="creatorName" label="创建人" width="120" />
-        <el-table-column prop="creatorName" label="操作" fixed="right" width="350">
+        <el-table-column prop="creatorName" label="创建人"   width="220"/>
+        <el-table-column prop="creatorName" label="操作" fixed="right" width="430">
           <template #default="scope">
             <el-space wrap>
   
               <el-button :disabled="![1,3,4].includes(scope.row.activityStatus)" link type="primary" @click="openUrl(scope.row.activityId,'true')">编辑</el-button>
             <el-link type="primary" @click="detailsData(scope.row)">查看详情</el-link>
+            <el-button link type="primary" @click="actCopy(scope.row.activityId)">复制</el-button>
             <el-button :disabled="![1,3,5].includes(scope.row.activityStatus)" link type="primary" @click="del(scope.row.activityId)">删除</el-button>
+            <el-button :disabled="![4].includes(scope.row.activityStatus)" link type="primary" @click="actStop(scope.row.activityId)">结束</el-button>
             <el-button :disabled="!([4,5].includes(scope.row.activityStatus))" link type="primary" @click="()=>{
               activityInfo = scope.row;
               dialogVisible = true;
@@ -77,6 +80,14 @@
          </el-space>
          </template>
         </el-table-column>
+
+        <template #empty>
+          <el-empty :image="Maskgroup" :image-size="76">
+            <template #description>
+              暂无数据
+            </template>
+          </el-empty>
+        </template>
       </el-table>
       <el-pagination background layout="prev, pager, next, jumper" :total="total" v-model:current-page="pageParams.pageNum" @current-change="handleCurrentChange" />
     </div>
@@ -164,10 +175,14 @@ import {
   saveActivityTemplate,
   deleteActivityInfo,
   listActivityTemplate,
+  copyActivity,
+  finishActivity,
   queryDict,
 } from "~/api/activity";
 import dayjs from "dayjs";
 import { Search,Download } from "@element-plus/icons-vue";
+import Maskgroup from "~/assets/icon/Maskgroup.png";
+
 import { useRouter, useRoute } from "vue-router";
 import { ElMessageBox, ElMessage } from "element-plus";
 const router = useRouter();
@@ -180,14 +195,26 @@ queryDict().then((res) => {
 interface ActivityTypes {
   [key: string]: string;
 }
-async function copyToClipboard(text:string) {  
-    try {  
-        await navigator.clipboard.writeText(text);  
-        ElMessage.success("复制成功！");
-    } catch (err) {  
-        console.error('无法复制文本: ', err);  
-    }  
-}  
+
+function copyToClipboard(text:string) {
+  // 创建一个临时的输入框来存储要复制的文本
+  var input = document.createElement('input');
+  input.value = text;
+ 
+  // 将输入框添加到页面中
+  document.body.appendChild(input);
+ 
+  // 选中输入框的内容
+  input.select();
+ 
+  // 执行复制操作
+  document.execCommand('copy');
+  ElMessage.success("复制成功！");
+ 
+  // 移除临时输入框
+  document.body.removeChild(input);
+}
+
 const activities: ActivityTypes = {
   "1": "问卷玩法",
   "2": "抽奖玩法",
@@ -197,12 +224,27 @@ const activities: ActivityTypes = {
   "6": "表单组件",
 };
 
-const activityStatus: ActivityTypes = {
-  "1": "草稿",
-  "2": "待审批",
-  "3": "审核不通过",
-  "4": "运行中",
-  "5": "已结束",
+const activityStatus = {
+  1: {
+    label: "草稿",
+    type: "info",
+  },
+  2: {
+    label: "待审批",
+    type: "success",
+  },
+  3: {
+    label: "审核不通过",
+    type: "danger",
+  },
+  4: {
+    label: "运行中",
+    type: "primary",
+  },
+  5: {
+    label: "已结束",
+    type: "info",
+  },
 };
 
 const handleCurrentChange = (e: any) => {
@@ -216,7 +258,7 @@ const openUrl = (id: string, type: string) => {
 const detailsData = async (row: any) => {
 
   console.log(`output->row`,row)
-  router.push(`/activityCenter/details/${row.id}`);
+  router.push(`/activityCenter/details/${row.activityId}`);
 };
 let pageParams = reactive({
   pageNum: 1,
@@ -314,7 +356,39 @@ const del = async (activityId: number) => {
     }
   });
 };
+//复制活动
+const actCopy = async(activityId: number)=>{
+  await copyActivity({
+        activityId,
+      })
+      getActivityList();
+      ElMessage.success("复制成功");
 
+}
+
+//结束活动
+const actStop = async (activityId: number) => {
+  ElMessageBox.alert("是否结束活动?", "提示", {
+    showCancelButton: true,
+    roundButton: true,
+    cancelButtonClass: "pd-button",
+    confirmButtonClass: "pd-button",
+    customClass: "delete-modal",
+  }).then(async () => {
+    try {
+      let res = await finishActivity({
+        activityId,
+      });
+      if (res) {
+        ElMessage.success("活动结束成功");
+        getActivityList();
+      }
+    } catch (error) {
+      console.log(error);
+      ElMessage.error("操作失败");
+    }
+  });
+};
 const delTem = async (activityId: number) => {
   ElMessageBox.alert("模板删除后将无法恢复", "确认删除", {
     showCancelButton: true,

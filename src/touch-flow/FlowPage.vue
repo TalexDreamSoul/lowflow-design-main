@@ -7,7 +7,7 @@ import XFlow from "./x/XFlow.vue";
 import { ArrowRight } from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import { flatConvert2Tree } from "./flow-utils";
+import { flatConvert2Tree, validateNode } from "./flow-utils";
 import { IFlowHeader } from "./flow-types";
 import { getmarketingTouchDetail, updateMarketingTouch } from "~/api/index";
 import { reactiveMessage } from "~/utils/mention/mention";
@@ -43,7 +43,7 @@ const flowOptions = reactive<
     },
   },
   p: {
-    nodeId: "root",/* randomStr(12) */
+    nodeId: "root" /* randomStr(12) */,
     nodeType: "Start",
     height: 250,
     children: [] as any[],
@@ -135,39 +135,38 @@ function transformNodes(__nodes: Array<any>) {
   const res: Array<any> = [];
 
   [...__nodes].forEach((_node: any) => {
-    const node = { ..._node }
-    const nodeFather = window.$getNodeById(node.preNodeId)
+    const node = { ..._node };
+    const nodeFather = window.$getNodeById(node.preNodeId);
 
     if (node.touchTemplateContent?.type) {
-      const type = node.touchTemplateContent.type
+      const type = node.touchTemplateContent.type;
 
-      if (type === 'sms') {
-        delete node.touchTemplateContent.appPushTemplate
-        delete node.touchTemplateContent.digitalTemplate
-        delete node.touchTemplateContent.outboundTemplate
-        delete node.touchTemplateContent.znxTemplate
-      } else if (type === 'znx') {
-        delete node.touchTemplateContent.appPushTemplate
-        delete node.touchTemplateContent.digitalTemplate
-        delete node.touchTemplateContent.outboundTemplate
-        delete node.touchTemplateContent.smsTemplate
-      } else if (type === 'appPush') {
-        delete node.touchTemplateContent.znxTemplate
-        delete node.touchTemplateContent.digitalTemplate
-        delete node.touchTemplateContent.outboundTemplate
-        delete node.touchTemplateContent.smsTemplate
-      } else if (type === 'outbound') {
-        delete node.touchTemplateContent.appPushTemplate
-        delete node.touchTemplateContent.digitalTemplate
-        delete node.touchTemplateContent.znxTemplate
-        delete node.touchTemplateContent.smsTemplate
-      } else if (type === 'digital') {
-        delete node.touchTemplateContent.appPushTemplate
-        delete node.touchTemplateContent.outboundTemplate
-        delete node.touchTemplateContent.znxTemplate
-        delete node.touchTemplateContent.smsTemplate
+      if (type === "sms") {
+        delete node.touchTemplateContent.appPushTemplate;
+        delete node.touchTemplateContent.digitalTemplate;
+        delete node.touchTemplateContent.outboundTemplate;
+        delete node.touchTemplateContent.znxTemplate;
+      } else if (type === "znx") {
+        delete node.touchTemplateContent.appPushTemplate;
+        delete node.touchTemplateContent.digitalTemplate;
+        delete node.touchTemplateContent.outboundTemplate;
+        delete node.touchTemplateContent.smsTemplate;
+      } else if (type === "appPush") {
+        delete node.touchTemplateContent.znxTemplate;
+        delete node.touchTemplateContent.digitalTemplate;
+        delete node.touchTemplateContent.outboundTemplate;
+        delete node.touchTemplateContent.smsTemplate;
+      } else if (type === "outbound") {
+        delete node.touchTemplateContent.appPushTemplate;
+        delete node.touchTemplateContent.digitalTemplate;
+        delete node.touchTemplateContent.znxTemplate;
+        delete node.touchTemplateContent.smsTemplate;
+      } else if (type === "digital") {
+        delete node.touchTemplateContent.appPushTemplate;
+        delete node.touchTemplateContent.outboundTemplate;
+        delete node.touchTemplateContent.znxTemplate;
+        delete node.touchTemplateContent.smsTemplate;
       }
-
     }
 
     node.$id && (node.id = node.$id);
@@ -235,7 +234,16 @@ function flatMaps(__nodes: Array<any>) {
     const node = stack.pop();
 
     const obj = { ...node };
-
+    console.log(
+      obj,
+      " (obj.$id && (obj.id = obj.$id, delete obj.$id)), delete obj.id"
+    );
+    // debugger
+    obj.$id && ((obj.id = obj.$id), delete obj.$id);
+    // 判断obj.id是否为字符串类型
+    if (typeof obj.id === "string") {
+      delete obj.id
+    }
     if (obj.children) {
       stack.push(...node.children);
 
@@ -267,6 +275,15 @@ async function submitReview(status: string = "approvalPending") {
     ...transformTarget(flowOptions.basic.target),
   };
 
+  if ([..._flowOptions.nodes].filter(node => !validateNode(node)).length) {
+    loading.value = false;
+
+    title.value = "提交失败";
+    content.value = "存在未完全配置的节点！";
+
+    return
+  }
+
   console.log("flowOptions", _flowOptions);
 
   delete _flowOptions.children;
@@ -276,9 +293,12 @@ async function submitReview(status: string = "approvalPending") {
     status,
   };
   if (route.params?.id?.length) {
-    Object.assign(data, { ..._flowOptions, id: route.params?.id, status: status });
+    Object.assign(data, {
+      ..._flowOptions,
+      id: route.params?.id,
+      status: status,
+    });
   } else {
-
     Object.assign(_flowOptions, { ..._flowOptions, status: status });
     Object.assign(data, _flowOptions);
   }
@@ -295,7 +315,7 @@ async function submitReview(status: string = "approvalPending") {
   title.value = "提交完毕";
   content.value = res.message || "失败";
 
-  if (res?.code === '0') {
+  if (res?.code === "0") {
     router.push("/touchCenter/touchList");
   }
 
@@ -325,16 +345,14 @@ const goBack = () => {
 
 <template>
   <div class="FlowPage">
-    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }"
-      class="FlowPage-Container">
+    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
       <el-header>
         <FlowHeader v-if="!modelValue || !readonly" :basic="flowOptions.basic">
           <template #controller>
             <div>
               <el-button @click="goBack" round>返回</el-button>
               <el-button @click="submitReview('draft')" round>保存草稿</el-button>
-              <el-button round type="primary" @click="submitReview('approvalPending')"
-                class="primaryStyle">提交审核</el-button>
+              <el-button round type="primary" @click="submitReview('approvalPending')" class="primaryStyle">提交审核</el-button>
             </div>
           </template>
         </FlowHeader>
@@ -357,8 +375,7 @@ const goBack = () => {
 
   <teleport to="body">
     <el-dialog title="流程基础设置" v-model="dialogVisible">
-      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview"
-        :basic="flowOptions.basic" />
+      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview" :basic="flowOptions.basic" />
     </el-dialog>
   </teleport>
 </template>
@@ -431,7 +448,7 @@ div.el-dialog {
     align-items: center;
 
     background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
     background-size: 30px 30px;
 
     transform: translateY(80px);
