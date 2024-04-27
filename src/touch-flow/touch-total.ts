@@ -856,7 +856,7 @@ export type JsonStructListMarketingTouchTargetDTO = {
  */
 export type EventTriggerConditionDTO = {
   delayed?: DelayedDTO;
-  eventA?: CustomSearchDTO;
+  eventA: CustomSearchDTO;
   eventB?: CustomSearchDTO;
   [property: string]: any;
 }

@@ -59,7 +59,8 @@ const handleUnitChange = (newVal: string) => {
 
 <template>
   <div class="EventGroup">
-    <BehaviorGroupPlus :readonly="readonly" :default-expand="true" :hideToggleButton="true" title="触发时间组A" color="#F5F7FA">
+    <BehaviorGroupPlus :readonly="readonly" :default-expand="true" :hideToggleButton="true" title="触发时间组A"
+      color="#F5F7FA">
       <el-form-item>
         <div class="EventGroup-SubEvent">
 
@@ -74,15 +75,17 @@ const handleUnitChange = (newVal: string) => {
 
       </el-form-item>
 
-      <TouchBlockGenre :readonly="readonly" :outside="outside" v-if="dict" :condition="p.triggerRuleContent.eventA.customEvent" :dict="dict" />
+      <TouchBlockGenre :readonly="readonly" :outside="outside" v-if="dict"
+        :condition="p.triggerRuleContent.eventA.customEvent" :dict="dict" />
     </BehaviorGroupPlus>
 
-    <BehaviorGroupPlus :readonly="readonly" :default-expand="p.triggerRuleContent.delayed.isDelayed" title="触发时间组B" color="#F5F7FA">
+    <BehaviorGroupPlus :readonly="readonly" :default-expand="p.triggerRuleContent.delayed.isDelayed" title="触发时间组B"
+      color="#F5F7FA">
       <template #title>
         <el-text style="color: #4078e0; cursor: pointer" v-if="!p.triggerRuleContent.delayed.isDelayed" @click="
-      p.triggerRuleContent.delayed.isDelayed = !p.triggerRuleContent.delayed
-        .isDelayed
-      ">
+          p.triggerRuleContent.delayed.isDelayed = !p.triggerRuleContent.delayed
+            .isDelayed
+          ">
           <el-icon size="14">
             <CirclePlusFilled />
           </el-icon>
@@ -91,7 +94,8 @@ const handleUnitChange = (newVal: string) => {
         <span v-else>触发事件组B</span>
       </template>
       <template #toggle>
-        <el-text style="cursor: pointer" type="primary" v-if="!readonly && p.triggerRuleContent.delayed.isDelayed" @click="p.triggerRuleContent.delayed.isDelayed = false">
+        <el-text style="cursor: pointer" type="primary" v-if="!readonly && p.triggerRuleContent.delayed.isDelayed"
+          @click="p.triggerRuleContent.delayed.isDelayed = false">
           <el-icon size="14">
             <Delete />
           </el-icon>
@@ -103,16 +107,19 @@ const handleUnitChange = (newVal: string) => {
       <el-form-item v-if="p.triggerRuleContent.delayed.isDelayed">
         <div class="EventGroup-SubEvent">
           <el-text>且在</el-text>&nbsp;
-        <el-input-number :disabled="readonly" :min="1" 
-        :max="p.triggerRuleContent.delayed.delayedUnit=='day'?30:(p.triggerRuleContent.delayed.delayedUnit=='hour'?720:43200)" 
-         placeholder="输入值" controls-position="right" v-model="p.triggerRuleContent.delayed.delayedTime" style="width: 100px" />
-          <el-select :disabled="readonly" placeholder="选择单位" v-model="p.triggerRuleContent.delayed.delayedUnit" style="width: 100px" @change="handleUnitChange">
+          <el-input-number :disabled="readonly" :min="1"
+            :max="p.triggerRuleContent.delayed.delayedUnit == 'day' ? 30 : (p.triggerRuleContent.delayed.delayedUnit == 'hour' ? 720 : 43200)"
+            placeholder="输入值" controls-position="right" v-model="p.triggerRuleContent.delayed.delayedTime"
+            style="width: 100px" />
+          <el-select :disabled="readonly" placeholder="选择单位" v-model="p.triggerRuleContent.delayed.delayedUnit"
+            style="width: 100px" @change="handleUnitChange">
             <el-option value="minute" label="分钟">分钟</el-option>
             <el-option value="hour" label="小时">小时</el-option>
             <el-option value="day" label="天">天</el-option>
           </el-select>
           <el-text>后立即判断</el-text>
-          <el-select :disabled="readonly" placeholder="是否做过" v-model="p.triggerRuleContent.delayed.delayedAction" style="width: 150px">
+          <el-select :disabled="readonly" placeholder="是否做过" v-model="p.triggerRuleContent.delayed.delayedAction"
+            style="width: 150px">
             <el-option value="=" label="做过">做过</el-option>
             <el-option value="!=" label="未做过">未做过</el-option>
           </el-select>
@@ -126,7 +133,8 @@ const handleUnitChange = (newVal: string) => {
         </div>
 
       </el-form-item>
-      <TouchBlockGenre v-if="dict" :outside="outside" :condition="p.triggerRuleContent.eventB.customEvent" :dict="dict" :readonly="readonly" />
+      <TouchBlockGenre v-if="dict" :outside="outside" :condition="p.triggerRuleContent.eventB.customEvent" :dict="dict"
+        :readonly="readonly" />
 
     </BehaviorGroupPlus>
   </div>
@@ -145,5 +153,4 @@ const handleUnitChange = (newVal: string) => {
 
 // .EventGroup .BehaviorGroupPlus-Main {
 //   padding: 0;
-// }
-</style>
+// }</style>

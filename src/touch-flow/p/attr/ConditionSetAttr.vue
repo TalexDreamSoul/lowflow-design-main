@@ -6,7 +6,7 @@ import DayJs from 'dayjs'
 import { dictFilterTree as getDictFilterTree } from "~/api/index";
 import TouchBlockGenre from "~/touch-flow/p/genre/TouchBlockGenre.vue";
 import FlowTypeSelector from "./condition/FlowTypeSelector.vue";
-import { validatePropValue } from "~/touch-flow/flow-utils";
+import { validateABGroup, validatePropValue } from "~/touch-flow/flow-utils";
 import EventGroup from "./condition/EventGroup.vue";
 
 const dict = ref<any>();
@@ -71,7 +71,7 @@ const sizeForm = reactive({
       delayedAction: "",
       delayedTime: 0,
       delayedType: "",
-      delayedUnit: "",
+      delayedUnit: "hour",
       isDelayed: false,
     },
     eventA: {
@@ -166,6 +166,16 @@ function saveData() {
   if (enterType === "multi" && !validatePropValue([enterCount, enterDay])) {
     ElMessage({
       message: "请正确填写进入流程限制！",
+      type: "error",
+    });
+    return false;
+  }
+
+  // 判断 triggerRuleContent
+  const { triggerRuleContent } = sizeForm;
+  if (!validateABGroup(triggerRuleContent as any, false)) {
+    ElMessage({
+      message: "请正确填写流程有效期！",
       type: "error",
     });
     return false;

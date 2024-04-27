@@ -1,6 +1,6 @@
 import { customRef, toRefs } from "vue";
 import { dictFilterTree } from "~/api/index";
-import { AttrDTO, CustomSearchDTO, LabelDTO, SearchCondition } from "./touch-total";
+import { AttrDTO, CustomSearchDTO, EventTriggerConditionDTO, LabelDTO, SearchCondition } from "./touch-total";
 
 export async function getDictAnalyzedTree() {
   const dict = await dictFilterTree();
@@ -301,6 +301,30 @@ export function validateAES(data: CustomSearchDTO, xor: boolean = false) {
   } else if (xor) return true;
 
   return true;
+}
+
+/**
+ * 验证 triggerRuleContent (A,B事件组合
+ * 判断规则：
+ * 1. 完全判断 eventA
+ * 2. 根据 delayed 判断 eventB
+ */
+export function validateABGroup(data: EventTriggerConditionDTO, xor: boolean = false) {
+
+  if (!validateAES(data.eventA, xor)) return false;
+
+  const { delayed, eventB } = data
+  if (!(delayed && eventB)) {
+    return true;
+  }
+
+  if (!delayed.isDelayed) return true;
+
+  if (!validateCommonDays(delayed.delayedTime, delayed.delayedUnit)) return false;
+
+  if (!delayed.delayedAction?.length) return false;
+
+  return validateAES(eventB, xor);
 }
 
 /**
