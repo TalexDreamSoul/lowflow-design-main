@@ -341,18 +341,24 @@ Object.defineProperty(window, "$flow", {
 const goBack = () => {
   router.go(-1);
 };
+
+function handleUpper() {
+  window.$refreshLayout()
+}
 </script>
 
 <template>
   <div class="FlowPage">
-    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }" class="FlowPage-Container">
+    <el-container :class="{ shrink: modelValue, readonly, expand: flowOptions.basic._expand }"
+      class="FlowPage-Container">
       <el-header>
         <FlowHeader v-if="!modelValue || !readonly" :basic="flowOptions.basic">
           <template #controller>
             <div>
               <el-button @click="goBack" round>返回</el-button>
               <el-button @click="submitReview('draft')" round>保存草稿</el-button>
-              <el-button round type="primary" @click="submitReview('approvalPending')" class="primaryStyle">提交审核</el-button>
+              <el-button round type="primary" @click="submitReview('approvalPending')"
+                class="primaryStyle">提交审核</el-button>
             </div>
           </template>
         </FlowHeader>
@@ -375,12 +381,43 @@ const goBack = () => {
 
   <teleport to="body">
     <el-dialog title="流程基础设置" v-model="dialogVisible">
-      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview" :basic="flowOptions.basic" />
+      <FlowHeader :readonly="readonly" :expandAll="true" class="FlowPage-ShrinkHeader" @submit-review="submitReview"
+        :basic="flowOptions.basic" />
     </el-dialog>
   </teleport>
+
+  <div @click="handleUpper" class="Upper-Button">
+    <el-icon>
+      <CaretTop />
+    </el-icon>
+  </div>
 </template>
 
 <style lang="scss">
+.Upper-Button {
+  position: absolute;
+
+  right: 2%;
+  bottom: 2%;
+
+  width: 36px;
+  height: 36px;
+
+  background-color: #ffffffA0;
+  backdrop-filter: blur(18px) saturate(180%);
+  border-radius: 50%;
+  box-shadow: 0 4px 4px 8px rgba(0, 0, 0, 0.02),
+    0 2px 4px rgba(0, 0, 0, 0.125);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  transform: scale(1.5);
+}
+
 div.el-dialog {
   border-radius: 8px;
 }
@@ -448,7 +485,7 @@ div.el-dialog {
     align-items: center;
 
     background-image: linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
     background-size: 30px 30px;
 
     transform: translateY(80px);
