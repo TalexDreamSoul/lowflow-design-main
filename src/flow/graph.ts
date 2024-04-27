@@ -181,6 +181,9 @@ export default function initGraph() {
       enabled: true,
       eventTypes: ["leftMouseDown", "mouseWheel"],
     },
+    resizing: {
+      restricted: false
+    },
     mousewheel: {
       enabled: true,
       modifiers: "ctrl",
